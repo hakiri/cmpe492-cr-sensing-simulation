@@ -5,6 +5,7 @@
 package firstproject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class WirelessChannel {
@@ -15,7 +16,7 @@ public class WirelessChannel {
 	/**
 	 * List of frequencies in the channel
 	 */
-	private ArrayList<Boolean> frequencies;
+	private HashMap<Integer,Node> frequencies;
 	/**
 	 * 0 for AWGN, 1 for Rayleigh, 2 for Lognormal
 	 */
@@ -31,9 +32,9 @@ public class WirelessChannel {
 	public WirelessChannel(int channelModel, int numberOfFrequencies)
 	{
 		registeredNodes = new ArrayList<Node>();
-		frequencies = new ArrayList<Boolean>(numberOfFrequencies);
+		frequencies = new HashMap<Integer, Node>();
 		for(int i=0;i<numberOfFrequencies;i++){
-			frequencies.add(Boolean.FALSE);
+			frequencies.put(i, null);
 		}
 		this.channelModel = channelModel;
 	}
@@ -63,10 +64,12 @@ public class WirelessChannel {
 	 * Lets a primary user to occupy a frequency. That is,
 	 * the primary user starts transmission.
 	 * @param frequency In which the user transmits
+	 * @param n Node that occupies the frequency
 	 */
-	public void occupyFrequency(int frequency)
+	public void occupyFrequency(int frequency, Node n)
 	{
-		frequencies.set(frequency, Boolean.TRUE);
+		if(frequencies.get(frequency)==null)
+			frequencies.put(frequency, n);
 	}
 	
 	/**
@@ -76,6 +79,6 @@ public class WirelessChannel {
 	 */
 	public void releaseFrequency(int frequency)
 	{
-		frequencies.set(frequency, Boolean.FALSE);
+		frequencies.put(frequency, null);
 	}
 }
