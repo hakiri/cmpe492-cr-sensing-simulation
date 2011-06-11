@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><umlet_diagram><help_text>// Uncomment the following line to change the fontsize:
+// fontsize=14
+
+// Welcome to UMLet!
+//
+// Double-click on UML elements to add them to the diagram.
+// Edit element properties by modifying the text in this panel.
+// Edit the files in the 'palettes' directory to create your own element palettes.
+// Hold down Ctrl to select multiple elements.
+// Press Del to delete elements.
+// Press Ctrl-c to copy an element, and to store the whole UML diagram to the system clipboard.
+// Select "Custom elements &gt; New..." to create new element types.
+//
+// This text will be stored with each diagram;  use it for notes.</help_text><element><type>com.umlet.element.base.Class</type><coordinates><x>860</x><y>190</y><w>300</w><h>440</h></coordinates><panel_attributes>Wireless Channel
+--
+Attributes:
+-- List or Hash: nodes
+-- List or Hash: frequencies
+-- channelModel
+--
+Methods:
+-- registerNode(Node n):void
+-- generateSNR():double
+-- occupyFrequency(frequency freq):void
+-- releaseFrequency(frequency freq):void
+--
+Responsibilities
+-- All CRNodes should be registered to a
+    channel by using registerNode method
+    via sending their pointer
+-- Registered nodes can use generateSNR
+    method to learn their SNR value
+-- generateSNR will generate a random SNR
+    value according to the channel model
+Notes:
+-- Channel models can be integer, e.g. 0 for
+    AWGN channel, 1 for Rayleigh channel,
+    2 for Lognormal channel, etc. But for this
+    mini project we must at least implement
+    Lognormal channel or any other distance
+    dependent channel model.</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>60</x><y>310</y><w>300</w><h>340</h></coordinates><panel_attributes>Cell
+--
+Attributes:
+-- Point2D center
+-- double radius
+-- int number_of_sectors
+-- int alpha
+-- double set_of_d
+--
+Methods:
+-- deployNode():Point2D
+--
+Notes:
+-- set_of_radius attribute can be a ArrayList
+-- Elements of set_of_radius must be ordered
+    in ascending order such that
+    {d1&lt;d2&lt;d3&lt;...&lt;dn}
+-- number_of_sectors should divide 360 w/o
+    remainder
+-- Alpha must dividie (360/number_of_sectors)
+    w/o remainder</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>100</x><y>780</y><w>300</w><h>140</h></coordinates><panel_attributes>CRBase
+--
+Attributes:
+--
+Methods:
+--
+Notes:
+-- I dont think of any method or additional
+    attribute for this class if you have something
+    in mind you can add.</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>460</x><y>780</y><w>300</w><h>140</h></coordinates><panel_attributes>CRNode
+--
+Attributes:
+-- double snr
+--
+Methods:
+--
+Notes:
+-- I dont think of any method for this class if
+    you have something in mind you can add.</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>1200</x><y>580</y><w>300</w><h>310</h></coordinates><panel_attributes>PrimaryTrafficGenerator
+--
+Attributes:
+List or Hash: nodes
+--
+Methods:
+-- registerNode(Node n):void
+--
+Responsibilities:
+-- This class will registers primary user nodes
+    and generates random traffic for each of
+    by using threads. registerNodes can create
+    a thread when a node is registered
+-- Random trafic generation should be done
+    by assigning the frequencies of the wireless
+    channel as occupied
+Notes:
+-- To create threads another class can be
+    implemented or this class can directly
+    implement Runnable interface of Java</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>860</x><y>780</y><w>300</w><h>140</h></coordinates><panel_attributes>PrimaryTrafficGeneratorNode
+--
+Attributes:
+--
+Methods:
+--
+Notes:
+-- I dont think of any method or additional
+    attribute for this class if you have something
+    in mind you can add.</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>460</x><y>490</y><w>300</w><h>220</h></coordinates><panel_attributes>Node
+&lt;Interface&gt;
+--
+Attributes:
+-- Point2D position
+-- double velocity
+--
+Methods:
+--
+Notes:
+-- I dont think of any method for this class if
+    you have something in mind you can add.
+-- Also I am not sure whether Interface in
+    Java can have attributes. If not this can
+    be abstract class</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Class</type><coordinates><x>460</x><y>0</y><w>300</w><h>410</h></coordinates><panel_attributes>SimulationRunner
+--
+Attributes:
+public static RandomEngine randomGen
+--
+Attributes:
+main(Strings []argv):void
+--
+Responsibilities:
+-- This class may create a cell, a wireless
+    channel, a PrimaryTrafficGenerator a
+    CRBase, some amount of CRNodes (may
+    be parameter), and some amount of
+    PrimaryTrafficGeneratorNodes (may be
+    parameter).
+-- Then it randomly deploys the CRNodes into
+    a zone in the cell and registers them to the
+    channel.
+-- Finally it registers
+    PrimaryTrafficGeneratorNodes to the
+    PrimaryTrafficGenerator and by doing that
+    starts the simulation.
+Notes:
+-- I dont know how can we do termination of
+    simulation. It may go forever or for a
+    predetermined time.</panel_attributes><additional_attributes/></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>169</x><y>656</y><w>311</w><h>144</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;implements&gt;&gt;</panel_attributes><additional_attributes>71;124;71;34;291;34</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>539</x><y>690</y><w>142</w><h>110</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;implements&gt;&gt;</panel_attributes><additional_attributes>71;90;71;20</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>740</x><y>656</y><w>361</w><h>144</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;implements&gt;&gt;</panel_attributes><additional_attributes>290;124;290;34;20;34</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>1120</x><y>650</y><w>100</w><h>220</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>80;20;50;20;50;200;40;200</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>20</x><y>440</y><w>460</w><h>420</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>40;20;20;20;20;300;420;300;420;400;440;400</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>0</x><y>430</y><w>880</w><h>530</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>60;20;20;20;20;510;810;510;810;400;860;400</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>1130</x><y>330</y><w>100</w><h>320</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>30;20;50;20;50;300;70;300</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>730</x><y>310</y><w>150</w><h>530</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;uses&gt;&gt;</panel_attributes><additional_attributes>130;20;50;20;50;510;30;510</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>340</x><y>390</y><w>200</w><h>60</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;instantiates&gt;&gt;</panel_attributes><additional_attributes>20;40;130;40;130;20</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>740</x><y>16</y><w>690</w><h>584</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;instantiates&gt;&gt;</panel_attributes><additional_attributes>620;564;620;34;20;34</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>310</x><y>390</y><w>230</w><h>410</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;instantiates&gt;&gt;</panel_attributes><additional_attributes>20;390;20;370;100;370;100;80;210;80;210;20</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>740</x><y>276</y><w>140</w><h>54</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;instantiates&gt;&gt;</panel_attributes><additional_attributes>120;34;20;34</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>740</x><y>360</y><w>210</w><h>440</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;instantiates&gt;&gt;</panel_attributes><additional_attributes>190;420;190;380;100;380;100;20;20;20</additional_attributes></element><element><type>com.umlet.element.base.Relation</type><coordinates><x>700</x><y>390</y><w>180</w><h>410</h></coordinates><panel_attributes>lt=&lt;.
+&lt;&lt;instantiates&gt;&gt;</panel_attributes><additional_attributes>20;390;20;360;110;360;110;70;20;70;20;20</additional_attributes></element></umlet_diagram>
