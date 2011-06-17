@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package firstproject;
 
+import cern.jet.random.Exponential;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -20,16 +17,24 @@ public class WirelessChannel {
 	/**
 	 * 0 for AWGN, 1 for Rayleigh, 2 for Lognormal
 	 */
+	public static final int AWGNCh = 0;
+	public static final int RayleighCh = 1;
+	public static final int LognormalCh = 2;
 	int channelModel;
-
+	
+	/**
+	 * Mean SNR value of the channel
+	 */
+	double meanSNR;
 	/**
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequncy.
 	 * Initially there is no node in the channel.
 	 * @param channelModel: 0 for AWGN ch., 1 for Rayleigh ch., 2 for Lognormal ch.
 	 * @param numberOfFrequencies 
+	 * @param meanSNR mean SNR value of the channel
 	 */
-	public WirelessChannel(int channelModel, int numberOfFrequencies)
+	public WirelessChannel(int channelModel, int numberOfFrequencies, double meanSNR)
 	{
 		registeredNodes = new ArrayList<Node>();
 		frequencies = new HashMap<Integer, Node>();
@@ -37,6 +42,7 @@ public class WirelessChannel {
 			frequencies.put(i, null);
 		}
 		this.channelModel = channelModel;
+		this.meanSNR = dbToMag(meanSNR*2);
 	}
 	
 	/**
@@ -56,8 +62,13 @@ public class WirelessChannel {
 	 */
 	public double generateSNR(Node sensor, int frequency)
 	{
-		double snr=0;
-		return snr;
+		if(channelModel==AWGNCh)
+			return meanSNR;
+		if(channelModel==RayleighCh){
+			Exponential exponential = new Exponential((double)1/meanSNR, SimulationRunner.randEngine);
+			return exponential.nextDouble();
+		}
+		return 0;
 	}
 	
 	/**
@@ -80,5 +91,24 @@ public class WirelessChannel {
 	public void releaseFrequency(int frequency)
 	{
 		frequencies.put(frequency, null);
+	}
+	
+	public int freeFrequency()
+	{
+		for(int i=0;i<frequencies.size();i++){
+			if(frequencies.get(i)==null)
+				return i;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Computes the magnitude of a given dB
+	 * @param db dB value to be computed
+	 * @return magnitude equivalent of db
+	 */
+	public static double dbToMag(double db)
+	{
+		return Math.pow(10, (db/20));
 	}
 }
