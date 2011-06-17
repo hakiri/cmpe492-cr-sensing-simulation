@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package firstproject;
 
 import cern.jet.random.engine.MersenneTwister;
@@ -12,7 +8,7 @@ public class SimulationRunner {
 	/**
 	 * Main wireless channel which all types of nodes are accessing
 	 */
-	public static WirelessChannel wc = new WirelessChannel(2, 10);
+	public static WirelessChannel wc = new WirelessChannel(WirelessChannel.LognormalCh, 10,5);
 	/**
 	 * Cognitive radio cell structure
 	 */
