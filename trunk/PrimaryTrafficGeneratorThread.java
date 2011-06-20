@@ -4,7 +4,6 @@
  */
 package firstproject;
 
-import cern.jet.random.Exponential;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,14 +17,6 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 */
 	private Thread runner;
 	/**
-	 * Distribution for inter arrival times
-	 */
-	private Exponential interArrival;
-	/**
-	 * Distribution for call durations
-	 */
-	private Exponential callDuration;
-	/**
 	 * Remaining simulation time
 	 */
 	private long simulationDuration;
@@ -33,14 +24,11 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	/**
 	 * Creates a primary traffic generator thread associated with node n
 	 * @param n
-	 * @param alpha number of calls per unit time
-	 * @param meanCallDuration expected value for duration of a call
 	 * @param simulationDuration duration of the simulation in nanoseconds
 	 */
-	public PrimaryTrafficGeneratorThread(Node n, int alpha, double meanCallDuration, int simulationDuration)
+	public PrimaryTrafficGeneratorThread(Node n, long simulationDuration)
 	{
-		interArrival = new Exponential((double)alpha, SimulationRunner.randEngine);
-		callDuration = new Exponential((double)1/meanCallDuration, SimulationRunner.randEngine);
+		
 		this.simulationDuration = simulationDuration;
 		this.n = n;
 		if(runner==null){
@@ -68,39 +56,37 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 */
 	@Override
 	public void run() {
-		double time = 0;
-		int nanos = 0;
-		int millis = 0;
+		long time = 0;
 		int freq=0;
 		while(simulationDuration>0){
 			try {
-				time = Math.round(interArrival.nextDouble()*1000);	//Take a random inter arrival time
+				PrimaryTrafficGenerator.interArrivalLock.lock();
+				time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
+				PrimaryTrafficGenerator.interArrivalLock.unlock();
 				simulationDuration-=time;			//Reduce the simulation time for that amount
 				if(simulationDuration<0)			//If times up
 					break;							//stop simulation
-				nanos = (int)time%1000;				//Divide the waiting time into nano
-				time/=1000;
-				millis = (int)time;					//and milli seconds
-				Thread.sleep(millis, nanos);		//Wait for that amount
+				Thread.sleep(time);		//Wait for that amount
 				
 				if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
 					continue;						//Wait for another inter arrival time
 				
-				time = Math.round(callDuration.nextDouble()*1000);	//Take a random call duration
+				PrimaryTrafficGenerator.callDurationLock.lock();
+				time = Math.round(PrimaryTrafficGenerator.callDuration.nextDouble());	//Take a random call duration
+				PrimaryTrafficGenerator.callDurationLock.unlock();
 				simulationDuration-=time;			//Reduce the simulation time for that amount
 				if(simulationDuration<0){			//if times up
 					time=time+simulationDuration;	//Last the call until end of the simulation
 				}
-				nanos = (int)time%1000;				//Divide the call duration into nano
-				time/=1000;
-				millis = (int)time;					//and milli seconds
-				Thread.sleep(millis, nanos);		//Wait for that amount
+				Thread.sleep(time);		//Wait for that amount
 				PrimaryTrafficGenerator.lock.lock();//Create a critical section to release occupied frequency
 				SimulationRunner.wc.releaseFrequency(freq);	//Release frequency
 			} catch (InterruptedException ex) {
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
 			} finally{
 				PrimaryTrafficGenerator.lock.unlock();	//Release the critical section
+				PrimaryTrafficGenerator.interArrivalLock.unlock();
+				PrimaryTrafficGenerator.callDurationLock.unlock();
 			}
 		}
 	}
