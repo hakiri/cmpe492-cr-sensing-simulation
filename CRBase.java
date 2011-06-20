@@ -4,6 +4,7 @@
  */
 package firstproject;
 
+
 public class CRBase {
 	
 }
