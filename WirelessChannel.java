@@ -17,11 +17,12 @@ public class WirelessChannel {
 	/**
 	 * 0 for AWGN, 1 for Rayleigh, 2 for Lognormal
 	 */
+	int channelModel;
+	/*Constants for wireless channel models*/
 	public static final int AWGNCh = 0;
 	public static final int RayleighCh = 1;
 	public static final int LognormalCh = 2;
-	int channelModel;
-	
+	public static final int NOFREEFREQ = -1;
 	/**
 	 * Mean SNR value of the channel
 	 */
@@ -36,13 +37,14 @@ public class WirelessChannel {
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double meanSNR)
 	{
-		registeredNodes = new ArrayList<Node>();
-		frequencies = new HashMap<Integer, Node>();
+		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
+		frequencies = new HashMap<Integer, Node>();	//Create a hash table for frequencies with integer keys and 
+													//node values which occupied the frequency
 		for(int i=0;i<numberOfFrequencies;i++){
-			frequencies.put(i, null);
+			frequencies.put(i, null);				//Create frequencies
 		}
-		this.channelModel = channelModel;
-		this.meanSNR = dbToMag(meanSNR*2);
+		this.channelModel = channelModel;			//Set channel model
+		this.meanSNR = dbToMag(meanSNR*2);			//Compute the magnitude of the SNR from its dB value
 	}
 	
 	/**
@@ -51,7 +53,7 @@ public class WirelessChannel {
 	 */
 	public void registerNode(Node n)
 	{
-		registeredNodes.add(n);
+		registeredNodes.add(n);						//Add the node to the registered nodes
 	}
 	
 	/**
@@ -79,8 +81,8 @@ public class WirelessChannel {
 	 */
 	public void occupyFrequency(int frequency, Node n)
 	{
-		if(frequencies.get(frequency)==null)
-			frequencies.put(frequency, n);
+		if(frequencies.get(frequency)==null)	//If the frequency is not occupied
+			frequencies.put(frequency, n);		//Assign it to the node n
 	}
 	
 	/**
@@ -90,16 +92,20 @@ public class WirelessChannel {
 	 */
 	public void releaseFrequency(int frequency)
 	{
-		frequencies.put(frequency, null);
+		frequencies.put(frequency, null);		//Release the frequency by deleting its occupier
 	}
 	
+	/**
+	 * Finds a free frequency and returns its ID
+	 * @return ID of frequency. -1 if no free frequency
+	 */
 	public int freeFrequency()
 	{
-		for(int i=0;i<frequencies.size();i++){
-			if(frequencies.get(i)==null)
-				return i;
+		for(int i=0;i<frequencies.size();i++){	//Search for a free frequency
+			if(frequencies.get(i)==null)		//If no node occupied it
+				return i;						//Return its ID
 		}
-		return -1;
+		return NOFREEFREQ;								//Return -1 otherwise
 	}
 	
 	/**

@@ -5,7 +5,6 @@
 package firstproject;
 
 import cern.jet.random.Exponential;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,25 +35,32 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 * @param n
 	 * @param alpha number of calls per unit time
 	 * @param meanCallDuration expected value for duration of a call
+	 * @param simulationDuration duration of the simulation in nanoseconds
 	 */
-	public PrimaryTrafficGeneratorThread(Node n, int alpha, double meanCallDuration)
+	public PrimaryTrafficGeneratorThread(Node n, int alpha, double meanCallDuration, int simulationDuration)
 	{
 		interArrival = new Exponential((double)alpha, SimulationRunner.randEngine);
 		callDuration = new Exponential((double)1/meanCallDuration, SimulationRunner.randEngine);
+		this.simulationDuration = simulationDuration;
 		this.n = n;
 		if(runner==null){
-            runner=new Thread(this);                //Create the thread and start
-            runner.start();
+            runner=new Thread(this);                //Create the thread
+            runner.start();							//Start the thread: This method will call run method below
         }
 	}
 	
+	/**
+	 * Finds a free frequnecy and occupies it. This method is synchronized. That
+	 * is only one thread at a time can run it
+	 * @return ID of the occupied frequency
+	 */
 	private synchronized int generateTraffic()
 	{
-		int freq = SimulationRunner.wc.freeFrequency();
-		if(freq<0)
-			return freq;
-		SimulationRunner.wc.occupyFrequency(freq, n);
-		return freq;
+		int freq = SimulationRunner.wc.freeFrequency();	//Find a free frequency
+		if(freq==WirelessChannel.NOFREEFREQ)			//If there is no available frequency
+			return freq;								//Return immediately
+		SimulationRunner.wc.occupyFrequency(freq, n);	//Occupy the frequency
+		return freq;									//Return its ID
 	}
 	
 	/**
@@ -68,33 +74,33 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		int freq=0;
 		while(simulationDuration>0){
 			try {
-				time = Math.round(interArrival.nextDouble()*1000);
-				simulationDuration-=time;
-				if(simulationDuration<0)
-					break;
-				nanos = (int)time%1000;
+				time = Math.round(interArrival.nextDouble()*1000);	//Take a random inter arrival time
+				simulationDuration-=time;			//Reduce the simulation time for that amount
+				if(simulationDuration<0)			//If times up
+					break;							//stop simulation
+				nanos = (int)time%1000;				//Divide the waiting time into nano
 				time/=1000;
-				millis = (int)time;
-				Thread.sleep(millis, nanos);
+				millis = (int)time;					//and milli seconds
+				Thread.sleep(millis, nanos);		//Wait for that amount
 				
-				if((freq = generateTraffic())<0)
-					continue;
+				if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
+					continue;						//Wait for another inter arrival time
 				
-				time = Math.round(callDuration.nextDouble()*1000);
-				simulationDuration-=time;
-				if(simulationDuration<0){
-					time=time+simulationDuration;
+				time = Math.round(callDuration.nextDouble()*1000);	//Take a random call duration
+				simulationDuration-=time;			//Reduce the simulation time for that amount
+				if(simulationDuration<0){			//if times up
+					time=time+simulationDuration;	//Last the call until end of the simulation
 				}
-				nanos = (int)time%1000;
+				nanos = (int)time%1000;				//Divide the call duration into nano
 				time/=1000;
-				millis = (int)time;
-				Thread.sleep(millis, nanos);
-				PrimaryTrafficGenerator.lock.lock();
-				SimulationRunner.wc.releaseFrequency(freq);
+				millis = (int)time;					//and milli seconds
+				Thread.sleep(millis, nanos);		//Wait for that amount
+				PrimaryTrafficGenerator.lock.lock();//Create a critical section to release occupied frequency
+				SimulationRunner.wc.releaseFrequency(freq);	//Release frequency
 			} catch (InterruptedException ex) {
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
 			} finally{
-				PrimaryTrafficGenerator.lock.unlock();
+				PrimaryTrafficGenerator.lock.unlock();	//Release the critical section
 			}
 		}
 	}
