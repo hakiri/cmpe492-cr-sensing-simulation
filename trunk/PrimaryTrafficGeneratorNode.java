@@ -5,5 +5,9 @@
 package firstproject;
 
 public class PrimaryTrafficGeneratorNode {
+
+    public PrimaryTrafficGeneratorNode() {
+        
+    } 
 	
 }
