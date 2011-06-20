@@ -20,7 +20,7 @@ public class CRNode extends Node{
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param pos Position of the CRNode
      * @param vel Velocity of the CRNode
-     * @param frequencies Frequencies that are assigned to this node.
+     * @param frequencies List of frequencies that are assigned to this node.
      */
     public CRNode(Point2D.Double pos, double vel, ArrayList<Integer> frequencies) {
         this.position = pos;
