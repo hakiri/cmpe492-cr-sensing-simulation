@@ -8,16 +8,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 
 public abstract class Node {
-    /**
-     * Creates a node with the given position and velocity.
-     * @param pos Position of the node
-     * @param vel Velocity of the node
-     */
-    public Node(Point2D.Double pos, double vel) {
-        position = new Point2D.Double(pos.x,pos.y);
-        velocity = vel;
-    }
-
+   
     /**
      * Position of the node
      */
