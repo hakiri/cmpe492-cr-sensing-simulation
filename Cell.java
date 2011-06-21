@@ -12,7 +12,7 @@ import cern.jet.random.Uniform;
 
 public class Cell {
     /**
-     * Position of the cell
+     * Position of the baseStation
      */
     Point2D.Double position = new Point2D.Double(0, 0);
     /**
