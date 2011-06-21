@@ -4,10 +4,22 @@
  */
 package firstproject;
 
-public class PrimaryTrafficGeneratorNode {
+import java.awt.geom.Point2D;
 
-    public PrimaryTrafficGeneratorNode() {
-        
+public class PrimaryTrafficGeneratorNode extends Node{
+    /**
+     * Constructor of the PrimaryTrafficGeneratorNode.
+     * @param pos Position of the node
+     * @param vel Velocity of the node.
+     */
+    public PrimaryTrafficGeneratorNode(Point2D.Double pos, double vel) {
+       this.position = pos;
+       this.velocity = vel;
     } 
-	
+    /**
+     * Sets a new position for the primary traffic generator node.
+     */
+    public void setRandomPosition(){
+        setPosition(Cell.deployNode());
+    }
 }
