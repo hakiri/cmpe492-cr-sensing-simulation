@@ -32,8 +32,8 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		this.simulationDuration = simulationDuration;
 		this.n = n;
 		if(runner==null){
-            runner=new Thread(this);                //Create the thread
-            runner.start();							//Start the thread: This method will call run method below
+            runner=new Thread(this);            //Create the thread
+            runner.start();			//Start the thread: This method will call run method below
         }
 	}
 	
@@ -44,11 +44,11 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 */
 	private synchronized int generateTraffic()
 	{
-		int freq = SimulationRunner.wc.freeFrequency();	//Find a free frequency
+		int freq = SimulationRunner.wc.freeFrequency();         //Find a free frequency
 		if(freq==WirelessChannel.NOFREEFREQ)			//If there is no available frequency
-			return freq;								//Return immediately
-		SimulationRunner.wc.occupyFrequency(freq, n);	//Occupy the frequency
-		return freq;									//Return its ID
+			return freq;					//Return immediately
+		SimulationRunner.wc.occupyFrequency(freq, n);           //Occupy the frequency
+		return freq;						//Return its ID
 	}
 	
 	/**
@@ -65,7 +65,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 				PrimaryTrafficGenerator.interArrivalLock.unlock();
 				simulationDuration-=time;			//Reduce the simulation time for that amount
 				if(simulationDuration<0)			//If times up
-					break;							//stop simulation
+					break;                                  //stop simulation
 				Thread.sleep(time);		//Wait for that amount
 				
 				if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
@@ -74,8 +74,8 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 				PrimaryTrafficGenerator.callDurationLock.lock();
 				time = Math.round(PrimaryTrafficGenerator.callDuration.nextDouble());	//Take a random call duration
 				PrimaryTrafficGenerator.callDurationLock.unlock();
-				simulationDuration-=time;			//Reduce the simulation time for that amount
-				if(simulationDuration<0){			//if times up
+				simulationDuration-=time;		//Reduce the simulation time for that amount
+				if(simulationDuration<0){		//if times up
 					time=time+simulationDuration;	//Last the call until end of the simulation
 				}
 				Thread.sleep(time);		//Wait for that amount
