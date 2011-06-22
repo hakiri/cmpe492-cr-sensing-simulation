@@ -5,20 +5,15 @@
 package firstproject;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 import java.util.ArrayList;
 import cern.jet.random.Uniform;
 
 
 public class Cell {
     /**
-     * Position of the baseStation
-     */
-    Point2D.Double position = new Point2D.Double(0, 0);
-    /**
      * The CRBase at the center of the cell
      */
-    private CRBase baseStation = new CRBase(position);
+    private CRBase baseStation = new CRBase(new Point2D.Double(0, 0));
     /**
      * Radius of the of the network coverage
      */
@@ -33,6 +28,10 @@ public class Cell {
      * "alpha" must divide (360/number_of_sectors) without remainder
      */
     int alpha;
+	/**
+	 * Uniform distribuion to set  random positions to nodes
+	 */
+	private static Uniform uniform = new Uniform(SimulationRunner.randEngine);
     /**
      * List of all distances between the baseStation and the zones which are in 
      * the same sector and have the same angle interval with the baseStation.
@@ -47,7 +46,7 @@ public class Cell {
      */
     public static Point2D.Double deployNode(){
         Point2D.Double position_of_node = new Point2D.Double(0, 0); //initializes the position of the node
-        Uniform uniform = new Uniform(SimulationRunner.randEngine); 
+         
         
         if(uniform.nextBoolean()){      //if the boolean is true then we choose the x-axis first
             position_of_node.x = uniform.nextDoubleFromTo(-radius, radius);     //first we choose a random point from -radius to +radius for the x-axis of the position of the node
@@ -65,14 +64,14 @@ public class Cell {
      * Sets a new position for the baseStation.
      * @param position 
      */
-    public void setPosition(Double position) {
+    public void setPosition(Point2D.Double position) {
         baseStation.setPosition(position);
     }
     /**
      * Gets the current position of the baseStation.
      * @return Position of the baseStation
      */
-    public Double getPosition() {
+    public Point2D.Double getPosition() {
         return baseStation.getPosition();
     }
     

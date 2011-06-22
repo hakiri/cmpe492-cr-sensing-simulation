@@ -54,7 +54,7 @@ public class PrimaryTrafficGenerator {
 	 * @param n node to be registered
 	 * @param simulationDuration Duration of simulation in unit times
 	 */
-	public void registerNode(Node n, long simulationDuration)
+	public void registerNode(PrimaryTrafficGeneratorNode n, long simulationDuration)
 	{
 		registeredNodes.put(n,new PrimaryTrafficGeneratorThread(n, simulationDuration*unitTime));
 	}

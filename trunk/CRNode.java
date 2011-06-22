@@ -23,7 +23,7 @@ public class CRNode extends Node{
      * @param frequencies List of frequencies that are assigned to this node.
      */
     public CRNode(Point2D.Double pos, double vel, ArrayList<Integer> frequencies) {
-        this.position = pos;
+        this.position = new Point2D.Double(pos.x, pos.y);
         this.velocity = vel;
         for(int i=0;i<frequencies.size();i++){ 
             snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
