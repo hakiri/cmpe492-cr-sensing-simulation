@@ -19,7 +19,7 @@ public abstract class Node {
     protected double velocity = 0;
     
     /**
-     * 
+     * Gets the current position of the Node
      * @return position of the node
      */
     public Point2D.Double getPosition() {
@@ -27,7 +27,7 @@ public abstract class Node {
     }
     
     /**
-     * 
+     * Gets the current velocity of the Node
      * @return Velocity of the node
      */
     public double getVelocity() {
