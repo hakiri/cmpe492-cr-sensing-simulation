@@ -28,10 +28,10 @@ public class Cell {
      * "alpha" must divide (360/number_of_sectors) without remainder
      */
     int alpha;
-	/**
-	 * Uniform distribuion to set  random positions to nodes
-	 */
-	private static Uniform uniform = new Uniform(SimulationRunner.randEngine);
+    /**
+     * Uniform distribuion to set random positions to nodes
+     */
+    private static Uniform uniform = new Uniform(SimulationRunner.randEngine);
     /**
      * List of all distances between the baseStation and the zones which are in 
      * the same sector and have the same angle interval with the baseStation.
@@ -40,13 +40,25 @@ public class Cell {
     ArrayList<Integer> set_of_d;
     
     /**
+     * Constructor of the Cell
+     * @param number_of_sectors Number of sectors in the cell.
+     * @param alpha Corresponding angle for a zone at the baseStation
+     * @param set_of_d List of distances
+     */
+    public Cell(int radius,int number_of_sectors, int alpha, ArrayList<Integer> set_of_d) {
+        this.number_of_sectors = number_of_sectors;
+        this.alpha = alpha;
+        this.set_of_d = set_of_d;
+        this.radius = radius;
+    }
+    
+    /**
      * It assigns a random position for a node. Position should be in the coverage area. 
      * It uses the uniform distribution for choosing a random point.
      * @return Position of the node.
      */
     public static Point2D.Double deployNode(){
         Point2D.Double position_of_node = new Point2D.Double(0, 0); //initializes the position of the node
-         
         
         if(uniform.nextBoolean()){      //if the boolean is true then we choose the x-axis first
             position_of_node.x = uniform.nextDoubleFromTo(-radius, radius);     //first we choose a random point from -radius to +radius for the x-axis of the position of the node
