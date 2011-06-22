@@ -23,7 +23,11 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 * Remaining simulation time
 	 */
 	private long simulationDuration;
-
+	/**
+	 * boolean variable to terminate thread
+	 */
+	private boolean finished = false;
+	
 	/**
 	 * Creates a primary traffic generator thread associated with node n
 	 * @param n
@@ -34,6 +38,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		
 		this.simulationDuration = simulationDuration;
 		this.n = n;
+		finished = false;
 		if(runner==null){
             runner=new Thread(this);            //Create the thread
             runner.start();			//Start the thread: This method will call run method below
@@ -62,7 +67,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	public void run() {
 		long time = 0;
 		int freq=0;
-		while(simulationDuration>0){
+		while(simulationDuration>0&&!finished){
 			try {
 				PrimaryTrafficGenerator.interArrivalLock.lock();
 				time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
@@ -93,7 +98,23 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 				PrimaryTrafficGenerator.callDurationLock.unlock();
 			}
 		}
+		finished=true;
 	}
 	
+	/**
+	 * Returns whether the thread is finished or not
+	 * @return finished
+	 */
+	public boolean isFinished()
+	{
+		return finished;
+	}
 	
+	/**
+	 * Terminates the thread
+	 */
+	public void terminate()
+	{
+		finished=true;
+	}
 }
