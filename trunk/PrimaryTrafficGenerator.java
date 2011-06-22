@@ -7,9 +7,24 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class PrimaryTrafficGenerator {
 	/**
-	 * Lock for accessing wireless channel frequencies
+	 * Lock for writing wireless channel frequencies
 	 */
-	static ReentrantLock lock = new ReentrantLock();
+	static ReentrantLock writeLock = new ReentrantLock();
+	/**
+	 * Number of writers waiting for accessing the frequencies
+	 */
+	static int writerCount=0;
+	/**
+	 * Number of readers waiting for accessing the frequencies
+	 */
+	static int readerCount=0;
+	/**
+	 * Lock for reading wireless channel frequencies
+	 */
+	static ReentrantLock readLock = new ReentrantLock();
+	static ReentrantLock x = new ReentrantLock();
+	static ReentrantLock y = new ReentrantLock();
+	static ReentrantLock z = new ReentrantLock();
 	/**
 	 * Lock for accessing wireless channel frequencies
 	 */
