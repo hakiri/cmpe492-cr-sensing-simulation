@@ -13,7 +13,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
      * @param vel Velocity of the node.
      */
     public PrimaryTrafficGeneratorNode(Point2D.Double pos, double vel) {
-       this.position = pos;
+       this.position = new Point2D.Double(pos.x, pos.y);
        this.velocity = vel;
     } 
     /**

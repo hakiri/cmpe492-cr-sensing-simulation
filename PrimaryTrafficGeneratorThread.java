@@ -7,11 +7,15 @@ package firstproject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Thread responsible for generating an invidual traffic in the wireless channel.
+ */
 public class PrimaryTrafficGeneratorThread implements Runnable{
 	/**
 	 * Asscoiated node to this traffic generator
 	 */
 	private Node n;
+	private PrimaryTrafficGeneratorNode n;
 	/**
 	 * Runner thread
 	 */
@@ -27,6 +31,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 * @param simulationDuration duration of the simulation in nanoseconds
 	 */
 	public PrimaryTrafficGeneratorThread(Node n, long simulationDuration)
+	public PrimaryTrafficGeneratorThread(PrimaryTrafficGeneratorNode n, long simulationDuration)
 	{
 		
 		this.simulationDuration = simulationDuration;
@@ -46,6 +51,11 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	{
 		int freq = SimulationRunner.wc.freeFrequency();         //Find a free frequency
 		if(freq==WirelessChannel.NOFREEFREQ)			//If there is no available frequency
+			return freq;								//Return immediately
+		n.setRandomPosition();
+		SimulationRunner.wc.occupyFrequency(freq, n);	//Occupy the frequency
+		return freq;									//Return its ID
+		return freq;									//Return its ID
 			return freq;					//Return immediately
 		SimulationRunner.wc.occupyFrequency(freq, n);           //Occupy the frequency
 		return freq;						//Return its ID

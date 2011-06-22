@@ -1,6 +1,5 @@
 package firstproject;
 
-import cern.jet.random.Exponential;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -19,21 +18,20 @@ public class WirelessChannel {
 	 */
 	int channelModel;
 	/*Constants for wireless channel models*/
-	public static final int AWGNCh = 0;
-	public static final int RayleighCh = 1;
-	public static final int LognormalCh = 2;
+	public static final int SIMPLECH = 0;
+	public static final int LOGNORMALCH = 1;
 	public static final int NOFREEFREQ = -1;
 	/**
 	 * Mean SNR value of the channel
 	 */
-	double meanSNR;
+	double maxSNR;
 	/**
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequncy.
 	 * Initially there is no node in the channel.
 	 * @param channelModel: 0 for AWGN ch., 1 for Rayleigh ch., 2 for Lognormal ch.
 	 * @param numberOfFrequencies 
-	 * @param meanSNR mean SNR value of the channel
+	 * @param maxSNR mean SNR value of the channel
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double meanSNR)
 	{
@@ -44,7 +42,7 @@ public class WirelessChannel {
 			frequencies.put(i, null);				//Create frequencies
 		}
 		this.channelModel = channelModel;			//Set channel model
-		this.meanSNR = dbToMag(meanSNR*2);			//Compute the magnitude of the SNR from its dB value
+		this.maxSNR = dbToMag(meanSNR*2);			//Compute the magnitude of the SNR from its dB value
 	}
 	
 	/**
@@ -64,11 +62,10 @@ public class WirelessChannel {
 	 */
 	public double generateSNR(Node sensor, int frequency)
 	{
-		if(channelModel==AWGNCh)
-			return meanSNR;
-		if(channelModel==RayleighCh){
-			Exponential exponential = new Exponential((double)1/meanSNR, SimulationRunner.randEngine);
-			return exponential.nextDouble();
+		if(channelModel==SIMPLECH)
+			return 0;
+		if(channelModel==LOGNORMALCH){
+			return 0;
 		}
 		return 0;
 	}

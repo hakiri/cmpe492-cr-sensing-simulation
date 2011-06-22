@@ -22,7 +22,7 @@ public abstract class Node {
      * 
      * @return position of the node
      */
-    public Double getPosition() {
+    public Point2D.Double getPosition() {
         return position;
     }
     
@@ -38,8 +38,8 @@ public abstract class Node {
      * Sets a new position for the node
      * @param position Position of the node
      */
-    public void setPosition(Double position) {
-        this.position = position;
+    public void setPosition(Point2D.Double position) {
+        this.position = new Point2D.Double(position.x, position.y);
     }
     
     /**
