@@ -50,7 +50,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 * is only one thread at a time can run it
 	 * @return ID of the occupied frequency
 	 */
-	private synchronized int generateTraffic()
+	private int generateTraffic()
 	{
 		int freq = SimulationRunner.wc.freeFrequency();         //Find a free frequency
 		if(freq==WirelessChannel.NOFREEFREQ)			//If there is no available frequency
@@ -77,8 +77,22 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 					break;                                  //stop simulation
 				Thread.sleep(time);		//Wait for that amount
 				
+				PrimaryTrafficGenerator.y.lock();
+				PrimaryTrafficGenerator.writerCount++;
+				if(PrimaryTrafficGenerator.writerCount==1)
+					PrimaryTrafficGenerator.readLock.lock();
+				PrimaryTrafficGenerator.y.unlock();
+				
+				PrimaryTrafficGenerator.writeLock.lock();
 				if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
 					continue;						//Wait for another inter arrival time
+				PrimaryTrafficGenerator.writeLock.unlock();
+				
+				PrimaryTrafficGenerator.y.lock();
+				PrimaryTrafficGenerator.writerCount--;
+				if(PrimaryTrafficGenerator.writerCount==0)
+					PrimaryTrafficGenerator.readLock.unlock();
+				PrimaryTrafficGenerator.y.unlock();
 				
 				PrimaryTrafficGenerator.callDurationLock.lock();
 				time = Math.round(PrimaryTrafficGenerator.callDuration.nextDouble());	//Take a random call duration
@@ -88,12 +102,28 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 					time=time+simulationDuration;	//Last the call until end of the simulation
 				}
 				Thread.sleep(time);		//Wait for that amount
-				PrimaryTrafficGenerator.lock.lock();//Create a critical section to release occupied frequency
+				
+				PrimaryTrafficGenerator.y.lock();
+				PrimaryTrafficGenerator.writerCount++;
+				if(PrimaryTrafficGenerator.writerCount==1)
+					PrimaryTrafficGenerator.readLock.lock();
+				PrimaryTrafficGenerator.y.unlock();
+				
+				PrimaryTrafficGenerator.writeLock.lock();
 				SimulationRunner.wc.releaseFrequency(freq);	//Release frequency
+				PrimaryTrafficGenerator.writeLock.unlock();
+				
+				PrimaryTrafficGenerator.y.lock();
+				PrimaryTrafficGenerator.writerCount--;
+				if(PrimaryTrafficGenerator.writerCount==0)
+					PrimaryTrafficGenerator.readLock.unlock();
+				PrimaryTrafficGenerator.y.unlock();
 			} catch (InterruptedException ex) {
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
 			} finally{
-				PrimaryTrafficGenerator.lock.unlock();	//Release the critical section
+				PrimaryTrafficGenerator.writeLock.unlock();	//Release the critical section
+				PrimaryTrafficGenerator.readLock.unlock();
+				PrimaryTrafficGenerator.y.unlock();
 				PrimaryTrafficGenerator.interArrivalLock.unlock();
 				PrimaryTrafficGenerator.callDurationLock.unlock();
 			}
