@@ -45,11 +45,12 @@ public class Cell {
      * @param alpha Corresponding angle for a zone at the baseStation
      * @param set_of_d List of distances
      */
-    public Cell(int radius,int number_of_sectors, int alpha, ArrayList<Integer> set_of_d) {
+    public Cell(CRBase baseStation,int radius,int number_of_sectors, int alpha, ArrayList<Integer> set_of_d) {
+        this.baseStation = baseStation;
+        this.radius = radius;
         this.number_of_sectors = number_of_sectors;
         this.alpha = alpha;
         this.set_of_d = set_of_d;
-        this.radius = radius;
     }
     
     /**
@@ -72,6 +73,7 @@ public class Cell {
         }
         return position_of_node;    //finally, it returns the position of the node.
     }
+   
     /**
      * Sets a new position for the baseStation.
      * @param position 
