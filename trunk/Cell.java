@@ -37,15 +37,17 @@ public class Cell {
      * the same sector and have the same angle interval with the baseStation.
      * Distances must be in the ascending order.
      */
-    ArrayList<Integer> set_of_d;
+    ArrayList<Double> set_of_d;
     
     /**
      * Constructor of the Cell
+     * @param baseStation CRBase
+     * @param radius Radius of the Cell
      * @param number_of_sectors Number of sectors in the cell.
      * @param alpha Corresponding angle for a zone at the baseStation
      * @param set_of_d List of distances
      */
-    public Cell(CRBase baseStation,int radius,int number_of_sectors, int alpha, ArrayList<Integer> set_of_d) {
+    public Cell(CRBase baseStation,double radius,int number_of_sectors, int alpha, ArrayList<Double> set_of_d) {
         this.baseStation = baseStation;
         this.radius = radius;
         this.number_of_sectors = number_of_sectors;
