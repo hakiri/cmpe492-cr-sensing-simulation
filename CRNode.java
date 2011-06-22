@@ -30,7 +30,14 @@ public class CRNode extends Node{
                                                     //hash table with 0.0 initial snr value
         }
     }
-
+    /**
+     * Updates all the snr values of the frequencies which are assigned to this CRNode.
+     */
+    public void sense(){
+        for(Integer i:snrValues.keySet()){
+            snrValues.put(i,SimulationRunner.wc.generateSNR(this, i));
+        }
+    }
     /**
      * 
      * @return Snr values of each frequencies which are assigned to this node.
