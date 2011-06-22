@@ -14,7 +14,6 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	/**
 	 * Asscoiated node to this traffic generator
 	 */
-	private Node n;
 	private PrimaryTrafficGeneratorNode n;
 	/**
 	 * Runner thread
@@ -30,7 +29,6 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 * @param n
 	 * @param simulationDuration duration of the simulation in nanoseconds
 	 */
-	public PrimaryTrafficGeneratorThread(Node n, long simulationDuration)
 	public PrimaryTrafficGeneratorThread(PrimaryTrafficGeneratorNode n, long simulationDuration)
 	{
 		
@@ -55,10 +53,6 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		n.setRandomPosition();
 		SimulationRunner.wc.occupyFrequency(freq, n);	//Occupy the frequency
 		return freq;									//Return its ID
-		return freq;									//Return its ID
-			return freq;					//Return immediately
-		SimulationRunner.wc.occupyFrequency(freq, n);           //Occupy the frequency
-		return freq;						//Return its ID
 	}
 	
 	/**
