@@ -1,5 +1,6 @@
 package firstproject;
 
+import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 import java.awt.BorderLayout;
@@ -52,7 +53,14 @@ public class SimulationRunner extends JFrame{
 	 * Random generator for all random number generation operations in the simulation
 	 */
 	public static RandomEngine randEngine = new MersenneTwister(RANDOM_ENGINE_SEED);
-	
+	/**
+	 * Uniform distribution to accomplish frequency assignments
+	 */
+	public static Uniform uniform = new Uniform(randEngine);
+	/**
+	 * Unit of time in milli seconds
+	 */
+	private static int timeUnit;
 	/**
 	 * @param args the command line arguments
 	 */
@@ -346,8 +354,10 @@ public class SimulationRunner extends JFrame{
 		
 		int numberOfCalls = 0;
 		int callDura = 0;
-		int unit = 0;
 		long simDura = 0;
+		
+		int numberOfFreq = 0;
+		int maxFreqCR = 0;
 		ArrayList<Double> setOfD = new ArrayList<Double>();
 		try{
 			sectrNo = Integer.parseInt(sectorNo.getText());
@@ -365,26 +375,50 @@ public class SimulationRunner extends JFrame{
 			
 			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());
 			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());
+			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());
+			maxFreqCR = Integer.parseInt(maxFreq.getText());
 			for(int i = 0; i<numberOfCrNodes ;i++){
-				ArrayList<Integer> freqList = new ArrayList<Integer>();	//TODO Complete frequency options
-				crNodes.add(new CRNode(new Point2D.Double(0, 0), 0, null));	//TODO give random position in a zone
+				ArrayList<Integer> freqList = new ArrayList<Integer>();
+				if(remainFreq>0){
+					for(int j=0,k=numberOfFreq-remainFreq;j<maxFreqCR;j++,k++)
+						freqList.add(k);
+					remainFreq-=maxFreqCR;
+				}
+				else{
+					int freqCount = uniform.nextIntFromTo(1, maxFreqCR);
+					for(;freqList.size()!=freqCount;){
+						int freq = uniform.nextIntFromTo(0, numberOfFreq-1);
+						if(freqList.contains(freq))
+							continue;
+						freqList.add(freq);
+					}
+				}
+				crNodes.add(new CRNode(new Point2D.Double(0, 0), 0, freqList));	//TODO give random position in a zone
 				wc.registerNode(crNodes.get(i));
 			}
 			
 			numberOfCalls = Integer.parseInt(noCalls.getText());
 			callDura = Integer.parseInt(callDur.getText());
-			unit = Integer.parseInt(unitTime.getText());
-			priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, unit);
+			timeUnit = Integer.parseInt(unitTime.getText());
+			priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit);
 			simDura = Long.parseLong(simDur.getText());
 			for(int i = 0;i<numberOfPriNodes;i++){
 				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0));
 				wc.registerNode(priTrafGenNodes.get(i));
 				priTrafGen.registerNode(priTrafGenNodes.get(i), simDura);
 			}
-			//TODO crnodes starts simulation
+			crNodeSimulation();
 		}catch(NumberFormatException nfe){
 			JOptionPane.showMessageDialog(this, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);
 		}
+	}
+	
+	/**
+	 * Performs the CR node related part of the simulation
+	 */
+	private void crNodeSimulation()
+	{
+		//TODO crnodes starts simulation
 	}
 }
