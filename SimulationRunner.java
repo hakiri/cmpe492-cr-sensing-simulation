@@ -369,9 +369,7 @@ public class SimulationRunner extends JFrame{
 			double inc = temp;
 			for(int i = 0;i<dNumber;i++,temp+=inc)
 				setOfD.add(temp);
-			//TODO make radius double in Cell constructor
-			//TODO make setOfD ArrayList<Double> in Cell Constructor
-			cell = new Cell(crBase, (int)radius, sectrNo, alpha, null/*setOfD*/);
+			cell = new Cell(crBase, radius, sectrNo, alpha, setOfD);
 			
 			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());
 			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());

@@ -18,7 +18,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	/**
 	 * Runner thread
 	 */
-	private Thread runner;
+	private Thread runner=null;
 	/**
 	 * Remaining simulation time
 	 */
