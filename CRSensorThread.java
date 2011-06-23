@@ -121,6 +121,7 @@ public class CRSensorThread implements Runnable{
 		SimulationRunner.priTrafGen.terminateAllThreads();
 		SimulationRunner.clear();
 		SimulationRunner.terminateSimulation.setVisible(false);
+		CRNode.closeLogFile();
 		finished=true;
 	}
 	
