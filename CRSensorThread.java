@@ -95,7 +95,7 @@ public class CRSensorThread implements Runnable{
 			PrimaryTrafficGenerator.x.release();
 
 
-			CRNode.writeLogFile(String.format("%.2f\n", (double)(simulationDur-simulationDuration)/(double)2));
+			CRNode.writeLogFile(String.format("Time: %.2f", (double)(simulationDur-simulationDuration)/(double)2));
 			for(int i=0;i<SimulationRunner.crNodes.size();i++){
 				SimulationRunner.crNodes.get(i).logSnrValues();
 			}
