@@ -70,28 +70,11 @@ public class SimulationRunner extends JFrame{
 	 * Unit of time in milli seconds
 	 */
 	private static int timeUnit;
-	/**
-	 * File handler of the logger
-	 */
-	static FileHandler handler = null;
-	/**
-	 * Logger to log SNR values sensed by the CR nodes 
-	 */
-	static Logger logger = null;
 	
 	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		try {
-			// Create a file handler that write log record to a file called log.txt
-			handler = new FileHandler("log.txt",true);
-
-			// Add to the desired logger
-			logger = Logger.getLogger("Simulation is started");
-			logger.addHandler(handler);
-        } catch (IOException e) {
-        }
 		crBase = new CRBase(new Point2D.Double(0, 0));		//Create a CR base station in the origin
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
