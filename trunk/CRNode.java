@@ -59,28 +59,32 @@ public class CRNode extends Node{
     }
     
     public void logSnrValues(double time){
-        try {
-            // Create an appending file handler
-            boolean append = true;
-            SimulationRunner.handler = new FileHandler("log.txt", append);
-
             // Add to the desired logger
             String log_string;
-            log_string = "number: "+String.valueOf(number) + "--- position: " +position.toString() + "--- snrValues: " + snrValues.toString();
+            log_string = "time: " + String.valueOf(time) + "--- number: "+String.valueOf(number) + "--- position: " +position.toString() + "--- snrValues: " + snrValues.toString();
             SimulationRunner.logger.info(log_string);
             SimulationRunner.logger.addHandler(SimulationRunner.handler);
-            SimulationRunner.handler.close();
-        } catch (IOException e) {
-        }
-
-        
     }
 
     public static void initializeAverageSnr(int total_number_of_frequencies){
         averageSnr = new ArrayList<Double>(total_number_of_frequencies);
+        
         for(int i=0;i<total_number_of_frequencies;i++){
             averageSnr.add(i,0.0);
         }
     }
     
+    public static void logAverageSnr(int number_of_crnodes, double time){
+        for(int i=0;i<averageSnr.size();i++){
+            averageSnr.add(i,(averageSnr.get(i)/number_of_crnodes));
+        }
+        String log_string;
+        log_string = "time: " + String.valueOf(time) + "--- average snr values: " + averageSnr.toString();
+        SimulationRunner.logger.info(log_string);
+        SimulationRunner.logger.addHandler(SimulationRunner.handler);
+        
+        for(int i=0;i<averageSnr.size();i++){
+            averageSnr.add(i,0.0);
+        }
+    }
 }
