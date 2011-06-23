@@ -5,9 +5,14 @@
 package firstproject;
 
 import java.awt.geom.Point2D;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
 
@@ -21,6 +26,10 @@ public class CRNode extends Node{
      * Number of the CRNode.
      */
     private int number;
+    
+    private static PrintWriter pw = null;
+    private static String file_name;
+    
     /**
      * Average snr values of the frequencies.
      */
@@ -59,11 +68,11 @@ public class CRNode extends Node{
     }
     
     public void logSnrValues(double time){
-            // Add to the desired logger
-            String log_string;
-            log_string = "time: " + String.valueOf(time) + "--- number: "+String.valueOf(number) + "--- position: " +position.toString() + "--- snrValues: " + snrValues.toString();
-            SimulationRunner.logger.info(log_string);
-            SimulationRunner.logger.addHandler(SimulationRunner.handler);
+        // Add to the desired logger
+        String log_string;
+        log_string = "time: " + String.valueOf(time) + "--- number: "+String.valueOf(number) + "--- position: " +position.toString() + "--- snrValues: " + snrValues.toString();
+        
+        pw.println(log_string);
     }
 
     public static void initializeAverageSnr(int total_number_of_frequencies){
@@ -80,11 +89,25 @@ public class CRNode extends Node{
         }
         String log_string;
         log_string = "time: " + String.valueOf(time) + "--- average snr values: " + averageSnr.toString();
-        SimulationRunner.logger.info(log_string);
-        SimulationRunner.logger.addHandler(SimulationRunner.handler);
+        
+        pw.println(log_string);
         
         for(int i=0;i<averageSnr.size();i++){
             averageSnr.set(i,0.0);
         }
     }
+    
+    public static void createLogFile(String file_name){
+        try {
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
+        } catch (IOException ex) {    
+            System.err.println("Error during file operations");
+        }
+    }
+    
+    public static void closeLogFile(){
+        pw.close();   
+    }
+    
+    
 }
