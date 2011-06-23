@@ -95,11 +95,12 @@ public class CRSensorThread implements Runnable{
 			PrimaryTrafficGenerator.x.release();
 
 
-			double t = (double)(simulationDur-simulationDuration)/(double)2;
+			CRNode.writeLogFile(String.format("%.2f\n", (double)(simulationDur-simulationDuration)/(double)2));
 			for(int i=0;i<SimulationRunner.crNodes.size();i++){
-				SimulationRunner.crNodes.get(i).logSnrValues(t);
+				SimulationRunner.crNodes.get(i).logSnrValues();
 			}
-			CRNode.logAverageSnr(SimulationRunner.crNodes.size(), t);
+			CRNode.logAverageSnr(SimulationRunner.crNodes.size());
+			CRNode.writeLogFile("\n");
 			time = unitTime - (System.currentTimeMillis() - time);
 			if(time>1){
 				try {
