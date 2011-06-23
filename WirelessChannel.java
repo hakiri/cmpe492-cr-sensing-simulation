@@ -120,4 +120,13 @@ public class WirelessChannel {
 	{
 		return Math.pow(10, (db/20));
 	}
+	
+	/**
+	 * Computes the number of frequencies
+	 * @return Number of frequencies
+	 */
+	public int numberOfFreq()
+	{
+		return frequencies.size();
+	}
 }
