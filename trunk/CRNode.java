@@ -5,9 +5,11 @@
 package firstproject;
 
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.ArrayList;
-
+import java.util.logging.Logger;
+import java.util.logging.FileHandler;
 
 public class CRNode extends Node{
     
@@ -46,7 +48,10 @@ public class CRNode extends Node{
     public HashMap<Integer, Double> getSnrValues() {
         return snrValues;
     }
- 
+    
+    public void logSnrValues(){
+        
+    }
  //TODO logSnrValues function should be implemented   
     
 }
