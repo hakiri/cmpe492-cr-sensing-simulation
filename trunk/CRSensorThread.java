@@ -100,7 +100,6 @@ public class CRSensorThread implements Runnable{
 			for(int i=0;i<SimulationRunner.crNodes.size();i++){
 				//TODO Log SNR values
 				System.out.println(SimulationRunner.crNodes.get(i).getSnrValues().toString());
-				System.out.println();
 			}
 			time = unitTime - (System.currentTimeMillis() - time);
 			if(time>1){
@@ -114,11 +113,15 @@ public class CRSensorThread implements Runnable{
 			SimulationRunner.progressBar.setValue(((simulationDur-simulationDuration)*100)/simulationDur);
 			System.out.println("\n");
 		}
-		JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.WARNING_MESSAGE);
+		if(finished)
+			JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.WARNING_MESSAGE);
+		else
+			JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.WARNING_MESSAGE);
 		SimulationRunner.progressBar.setVisible(false);
 		SimulationRunner.progressBar.setValue(0);
 		SimulationRunner.priTrafGen.terminateAllThreads();
 		SimulationRunner.clear();
+		SimulationRunner.terminateSimulation.setVisible(false);
 		finished=true;
 	}
 	

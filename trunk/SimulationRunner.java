@@ -4,12 +4,16 @@ import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -37,6 +41,9 @@ public class SimulationRunner extends JFrame{
 	 * Primary traffic generator for wireless channel frequencies
 	 */
 	public static PrimaryTrafficGenerator priTrafGen = null;
+	/**
+	 * Thread responsible for sensing and logging actions of CR nodes
+	 */
 	public static CRSensorThread crSensor = null;
 	/**
 	 * Base station of CR cell
@@ -64,9 +71,27 @@ public class SimulationRunner extends JFrame{
 	 */
 	private static int timeUnit;
 	/**
+	 * File handler of the logger
+	 */
+	static FileHandler handler = null;
+	/**
+	 * Logger to log SNR values sensed by the CR nodes 
+	 */
+	static Logger logger = null;
+	
+	/**
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
+		try {
+			// Create a file handler that write log record to a file called log.txt
+			handler = new FileHandler("log.txt");
+
+			// Add to the desired logger
+			logger = Logger.getLogger("Simulation is started");
+			logger.addHandler(handler);
+        } catch (IOException e) {
+        }
 		crBase = new CRBase(new Point2D.Double(0, 0));		//Create a CR base station in the origin
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -80,6 +105,10 @@ public class SimulationRunner extends JFrame{
 	private JPanel jPanel1;
 	private JTextField sectorNo;
 	private JTextField dNo;
+	private JTextField alphaNo;
+	private JTextField crSectorNo;
+	private JTextField crDNo;
+	private JTextField crAlphaNo;
 	private JLabel label3;
 	private JLabel label2;
 	private JLabel label1;
@@ -99,9 +128,12 @@ public class SimulationRunner extends JFrame{
 	private JLabel label15;
 	private JLabel label16;
 	private JLabel label17;
+	private JLabel label18;
+	private JLabel label19;
+	private JLabel label20;
 	private JComboBox channelModel;
 	private JButton startSimulation;
-	private JTextField alphaNo;
+	static JButton terminateSimulation;
 	private JTextField noCalls;
 	private JTextField callDur;
 	private JTextField unitTime;
@@ -142,6 +174,7 @@ public class SimulationRunner extends JFrame{
 						noCrNodes = new JTextField();
 						jPanel1.add(noCrNodes);
 						noCrNodes.setBounds(itemPosLeft, 12, 120, 23);
+						noCrNodes.setText("5");
 					}
 					{
 						label2 = new JLabel();
@@ -153,6 +186,7 @@ public class SimulationRunner extends JFrame{
 						noPriNodes = new JTextField();
 						jPanel1.add(noPriNodes);
 						noPriNodes.setBounds(itemPosLeft, 47, 120, 23);
+						noPriNodes.setText("10");
 					}
 					{
 						label7 = new JLabel();
@@ -187,6 +221,7 @@ public class SimulationRunner extends JFrame{
 						simDur = new JTextField();
 						jPanel1.add(simDur);
 						simDur.setBounds(itemPosLeft, 120, 120, 23);
+						simDur.setText("100");
 					}
 					{
 						label17 = new JLabel();
@@ -198,6 +233,7 @@ public class SimulationRunner extends JFrame{
 						maxSNR = new JTextField();
 						jPanel1.add(maxSNR);
 						maxSNR.setBounds(itemPosLeft, 155, 120, 23);
+						maxSNR.setText("10");
 					}
 					{
 						startSimulation = new JButton();
@@ -212,6 +248,27 @@ public class SimulationRunner extends JFrame{
 							}
 
 						});
+
+					}
+					{
+						terminateSimulation = new JButton();
+						jPanel1.add(terminateSimulation);
+						terminateSimulation.setText("Terminate");
+						terminateSimulation.setBounds(labelPosRight, 323, 120, 23);
+						terminateSimulation.addMouseListener(new MouseAdapter() {
+
+							@Override
+							public void mouseClicked(MouseEvent e) {
+								if(crSensor!=null){
+									if(!crSensor.isFinished()){
+										priTrafGen.terminateAllThreads();
+										crSensor.terminate();
+									}
+								}
+							}
+
+						});
+						terminateSimulation.setVisible(false);
 
 					}
 					{
@@ -241,7 +298,20 @@ public class SimulationRunner extends JFrame{
 					{
 						sectorNo = new JTextField();
 						jPanel1.add(sectorNo);
-						sectorNo.setBounds(itemPosRight, 183, 120, 23);
+						sectorNo.setBounds(itemPosRight, 183, 50, 23);
+						sectorNo.setText("3");
+					}
+					{
+						label18 = new JLabel();
+						jPanel1.add(label18);
+						label18.setText("/");
+						label18.setBounds(itemPosRight+59, 183, 18, 23);
+					}
+					{
+						crSectorNo = new JTextField();
+						jPanel1.add(crSectorNo);
+						crSectorNo.setBounds(itemPosRight+70, 183, 50, 23);
+						crSectorNo.setText("0");
 					}
 					{
 						label5 = new JLabel();
@@ -252,7 +322,20 @@ public class SimulationRunner extends JFrame{
 					{
 						dNo = new JTextField();
 						jPanel1.add(dNo);
-						dNo.setBounds(itemPosRight, 218, 120, 23);
+						dNo.setBounds(itemPosRight, 218, 50, 23);
+						dNo.setText("3");
+					}
+					{
+						label19 = new JLabel();
+						jPanel1.add(label19);
+						label19.setText("/");
+						label19.setBounds(itemPosRight+59, 218, 18, 23);
+					}
+					{
+						crDNo = new JTextField();
+						jPanel1.add(crDNo);
+						crDNo.setBounds(itemPosRight+70, 218, 50, 23);
+						crDNo.setText("0");
 					}
 					{
 						label6 = new JLabel();
@@ -263,7 +346,20 @@ public class SimulationRunner extends JFrame{
 					{
 						alphaNo = new JTextField();
 						jPanel1.add(alphaNo);
-						alphaNo.setBounds(itemPosRight, 253, 120, 23);
+						alphaNo.setBounds(itemPosRight, 253, 50, 23);
+						alphaNo.setText("4");
+					}
+					{
+						label20 = new JLabel();
+						jPanel1.add(label20);
+						label20.setText("/");
+						label20.setBounds(itemPosRight+59, 253, 18, 23);
+					}
+					{
+						crAlphaNo = new JTextField();
+						jPanel1.add(crAlphaNo);
+						crAlphaNo.setBounds(itemPosRight+70, 253, 50, 23);
+						crAlphaNo.setText("0");
 					}
 					{
 						label13 = new JLabel();
@@ -275,6 +371,7 @@ public class SimulationRunner extends JFrame{
 						radiusField = new JTextField();
 						jPanel1.add(radiusField);
 						radiusField.setBounds(itemPosRight, 288, 120, 23);
+						radiusField.setText("20");
 					}
 				}
 				/*
@@ -297,6 +394,7 @@ public class SimulationRunner extends JFrame{
 						noCalls = new JTextField();
 						jPanel1.add(noCalls);
 						noCalls.setBounds(itemPosRight, 50, 120, 23);
+						noCalls.setText("2");
 					}
 					{
 						label10 = new JLabel();
@@ -308,6 +406,7 @@ public class SimulationRunner extends JFrame{
 						callDur = new JTextField();
 						jPanel1.add(callDur);
 						callDur.setBounds(itemPosRight, 85, 120, 23);
+						callDur.setText("2");
 					}
 					{
 						label11 = new JLabel();
@@ -319,6 +418,7 @@ public class SimulationRunner extends JFrame{
 						unitTime = new JTextField();
 						jPanel1.add(unitTime);
 						unitTime.setBounds(itemPosRight, 120, 120, 23);
+						unitTime.setText("100");
 					}
 				}
 				/*
@@ -341,6 +441,7 @@ public class SimulationRunner extends JFrame{
 						noFreqs = new JTextField();
 						jPanel1.add(noFreqs);
 						noFreqs.setBounds(itemPosLeft, 225, 120, 23);
+						noFreqs.setText("10");
 					}
 					{
 						label16 = new JLabel();
@@ -352,6 +453,7 @@ public class SimulationRunner extends JFrame{
 						maxFreq = new JTextField();
 						jPanel1.add(maxFreq);
 						maxFreq.setBounds(itemPosLeft, 260, 120, 23);
+						maxFreq.setText("4");
 					}
 				}
 			}
@@ -389,6 +491,9 @@ public class SimulationRunner extends JFrame{
 		int numberOfFreq = 0;
 		int maxFreqCR = 0;
 		double maxSnr = 0;
+		int crAlpha = 0;
+		int crSector = 0;
+		int crD = 0;
 		ArrayList<Double> setOfD = new ArrayList<Double>();
 		try{
 			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());	//Get number of frequencies
@@ -408,6 +513,9 @@ public class SimulationRunner extends JFrame{
 			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());	//Get number of CR nodes
 			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
 			maxFreqCR = Integer.parseInt(maxFreq.getText());			//Get max number of frequencies a node can sense
+			crAlpha = Integer.parseInt(crAlphaNo.getText());
+			crSector = Integer.parseInt(crSectorNo.getText());
+			crD = Integer.parseInt(crDNo.getText());
 			for(int i = 0; i<numberOfCrNodes ;i++){
 				ArrayList<Integer> freqList = new ArrayList<Integer>();
 				if(remainFreq>0){
@@ -424,7 +532,7 @@ public class SimulationRunner extends JFrame{
 						freqList.add(freq);									//If its not in the list already add it to the list
 					}
 				}
-				crNodes.add(new CRNode(Cell.deployNodeinCell(), 0, freqList));	//TODO give random position in a zone
+				crNodes.add(new CRNode(Cell.deployNodeinZone(crSector, crAlpha, crD), 0, freqList));
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
 			}
 			
@@ -441,6 +549,7 @@ public class SimulationRunner extends JFrame{
 			progressBar.setValue(0);								//Initialize progress bar
 			progressBar.setVisible(true);							//Make it visible
 			crSensor = new CRSensorThread((int)simDura, timeUnit);	//Create thread for CR sensors
+			terminateSimulation.setVisible(true);
 		}catch(NumberFormatException nfe){
 			JOptionPane.showMessageDialog(this, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);
