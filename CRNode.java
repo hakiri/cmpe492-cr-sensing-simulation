@@ -47,7 +47,7 @@ public class CRNode extends Node{
     public void sense(){
         for(Integer i:snrValues.keySet()){
             snrValues.put(i,SimulationRunner.wc.generateSNR(this, i));
-            averageSnr.add(i, (averageSnr.get(i)+SimulationRunner.wc.generateSNR(this, i)));
+            averageSnr.set(i, (averageSnr.get(i)+SimulationRunner.wc.generateSNR(this, i)));
         }
     }
     /**
@@ -70,13 +70,13 @@ public class CRNode extends Node{
         averageSnr = new ArrayList<Double>(total_number_of_frequencies);
         
         for(int i=0;i<total_number_of_frequencies;i++){
-            averageSnr.add(i,0.0);
+            averageSnr.add(0.0);
         }
     }
     
     public static void logAverageSnr(int number_of_crnodes, double time){
         for(int i=0;i<averageSnr.size();i++){
-            averageSnr.add(i,(averageSnr.get(i)/number_of_crnodes));
+            averageSnr.set(i,(averageSnr.get(i)/number_of_crnodes));
         }
         String log_string;
         log_string = "time: " + String.valueOf(time) + "--- average snr values: " + averageSnr.toString();
@@ -84,7 +84,7 @@ public class CRNode extends Node{
         SimulationRunner.logger.addHandler(SimulationRunner.handler);
         
         for(int i=0;i<averageSnr.size();i++){
-            averageSnr.add(i,0.0);
+            averageSnr.set(i,0.0);
         }
     }
 }
