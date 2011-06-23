@@ -24,7 +24,7 @@ public class CRNode extends Node{
     /**
      * Average snr values of the frequencies.
      */
-    private static ArrayList<Double> averageSnr = null;//TODO number of frequncies should be learned from simulationrunner.wc..
+    private static ArrayList<Double> averageSnr = null;
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param pos Position of the CRNode
@@ -76,9 +76,9 @@ public class CRNode extends Node{
         
     }
 
-    public void initializeAverageSnr(int size){
-        averageSnr = new ArrayList<Double>(size);
-        for(int i=0;i<size;i++){
+    public static void initializeAverageSnr(int total_number_of_frequencies){
+        averageSnr = new ArrayList<Double>(total_number_of_frequencies);
+        for(int i=0;i<total_number_of_frequencies;i++){
             averageSnr.add(i,0.0);
         }
     }
