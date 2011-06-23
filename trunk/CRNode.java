@@ -67,8 +67,8 @@ public class CRNode extends Node{
         return snrValues;
     }
     
-    public void logSnrValues(double time){        
-        pw.println("time: " + String.valueOf(time) + "--- number: "+String.valueOf(number) + "--- position: " +position.toString() + "--- snrValues: " + snrValues.toString());
+    public void logSnrValues(){        
+        pw.println("number: "+String.valueOf(number) + " -- position: " +position.toString() + " -- snrValues: " + snrValues.toString());
     }
 
     public static void initializeAverageSnr(int total_number_of_frequencies){
@@ -79,12 +79,12 @@ public class CRNode extends Node{
         }
     }
     
-    public static void logAverageSnr(int number_of_crnodes, double time){
+    public static void logAverageSnr(int number_of_crnodes){
         for(int i=0;i<averageSnr.size();i++){
             averageSnr.set(i,(averageSnr.get(i)/number_of_crnodes));
         }
         
-        pw.println("time: " + String.valueOf(time) + "--- average snr values: " + averageSnr.toString());
+        pw.println("average snr values: " + averageSnr.toString());
         
         for(int i=0;i<averageSnr.size();i++){
             averageSnr.set(i,0.0);
