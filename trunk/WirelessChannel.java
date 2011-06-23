@@ -1,5 +1,6 @@
 package firstproject;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -22,7 +23,7 @@ public class WirelessChannel {
 	public static final int LOGNORMALCH = 1;
 	public static final int NOFREEFREQ = -1;
 	/**
-	 * Mean SNR value of the channel
+	 * Max SNR value of the channel
 	 */
 	double maxSNR;
 	/**
@@ -33,7 +34,7 @@ public class WirelessChannel {
 	 * @param numberOfFrequencies 
 	 * @param maxSNR mean SNR value of the channel
 	 */
-	public WirelessChannel(int channelModel, int numberOfFrequencies, double meanSNR)
+	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR)
 	{
 		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
 		frequencies = new HashMap<Integer, Node>();	//Create a hash table for frequencies with integer keys and 
@@ -42,7 +43,7 @@ public class WirelessChannel {
 			frequencies.put(i, null);				//Create frequencies
 		}
 		this.channelModel = channelModel;			//Set channel model
-		this.maxSNR = dbToMag(meanSNR*2);			//Compute the magnitude of the SNR from its dB value
+		this.maxSNR = maxSNR;			//Compute the magnitude of the SNR from its dB value
 	}
 	
 	/**
@@ -62,8 +63,13 @@ public class WirelessChannel {
 	 */
 	public double generateSNR(Node sensor, int frequency)
 	{
-		if(channelModel==SIMPLECH)
-			return 0;
+		if(channelModel==SIMPLECH){
+			double distance = 0;
+			if(frequencies.get(frequency)!=null){	//If the frequency is occupied
+				distance = sensor.getPosition().distance(frequencies.get(frequency).getPosition());	//Find distance
+				return maxSNR/Math.exp(0.12*distance);							//between occupier and sensor and compute
+			}																	//attenuation based on this distance
+		}
 		if(channelModel==LOGNORMALCH){
 			return 0;
 		}

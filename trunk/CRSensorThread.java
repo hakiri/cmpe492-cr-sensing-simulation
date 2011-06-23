@@ -4,8 +4,11 @@
  */
 package firstproject;
 
+import com.sun.java_cup.internal.runtime.Symbol;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.print.attribute.standard.Sides;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -20,7 +23,7 @@ public class CRSensorThread implements Runnable{
 	/**
 	 * Remaining simulation time
 	 */
-	private long simulationDuration;
+	private int simulationDuration;
 	/**
 	 * boolean variable to terminate thread
 	 */
@@ -30,59 +33,92 @@ public class CRSensorThread implements Runnable{
 	 */
 	private long unitTime;
 	
-	public CRSensorThread(long simulationDuration,long unitTime)
+	/**
+	 * Creates a thread that performs simulation action for CR sensor nodes
+	 * @param simulationDuration	Duration of the simulation in unit time
+	 * @param unitTime				Unit of time in milliseconds
+	 */
+	public CRSensorThread(int simulationDuration,long unitTime)
 	{
 		
-		this.simulationDuration = simulationDuration;
-		this.unitTime = unitTime;
+		this.simulationDuration = simulationDuration*2;	//Perform simulation for every half of time unit
+		this.unitTime = unitTime/2;
 		finished = false;
 		if(runner==null){
             runner=new Thread(this);            //Create the thread
             runner.start();			//Start the thread: This method will call run method below
         }
 	}
+	
 	@Override
 	public void run() {
-		long simulationDur = simulationDuration;
+		int simulationDur = simulationDuration;
 		long time = 0;
 		while(simulationDuration>0&&!finished){
+			time = System.currentTimeMillis();
 			try {
-				PrimaryTrafficGenerator.z.lock();
-				PrimaryTrafficGenerator.readLock.lock();
-				PrimaryTrafficGenerator.x.lock();
-				PrimaryTrafficGenerator.readerCount++;
-				if(PrimaryTrafficGenerator.readerCount==1)
-					PrimaryTrafficGenerator.writeLock.lock();
-				PrimaryTrafficGenerator.x.unlock();
-				PrimaryTrafficGenerator.readLock.unlock();
-				PrimaryTrafficGenerator.z.unlock();
-				
-				for(int i=0;i<SimulationRunner.crNodes.size();i++){
-					SimulationRunner.crNodes.get(i).sense();
-				}
-				
-				PrimaryTrafficGenerator.x.lock();
-				PrimaryTrafficGenerator.readerCount--;
-				if(PrimaryTrafficGenerator.readerCount==0)
-					PrimaryTrafficGenerator.writeLock.unlock();
-				PrimaryTrafficGenerator.x.unlock();
-				
-				
-				for(int i=0;i<SimulationRunner.crNodes.size();i++){
-					//TODO Log SNR values
-				}
-				
-				Thread.sleep(time);		//Wait for that amount
-				simulationDuration-=1;			//Reduce the simulation time for that amount
+				PrimaryTrafficGenerator.z.acquire();
 			} catch (InterruptedException ex) {
-				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
-			} finally{
-				PrimaryTrafficGenerator.writeLock.unlock();	//Release the critical section
-				PrimaryTrafficGenerator.readLock.unlock();
-				PrimaryTrafficGenerator.x.unlock();
-				PrimaryTrafficGenerator.z.unlock();
+				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
+			try {
+				PrimaryTrafficGenerator.readLock.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			try {
+				PrimaryTrafficGenerator.x.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			PrimaryTrafficGenerator.readerCount++;
+			if(PrimaryTrafficGenerator.readerCount==1){
+				try {
+					PrimaryTrafficGenerator.writeLock.acquire();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+			PrimaryTrafficGenerator.x.release();
+			PrimaryTrafficGenerator.readLock.release();
+			PrimaryTrafficGenerator.z.release();
+
+			for(int i=0;i<SimulationRunner.crNodes.size();i++){
+				SimulationRunner.crNodes.get(i).sense();
+			}
+			try {
+				PrimaryTrafficGenerator.x.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			PrimaryTrafficGenerator.readerCount--;
+			if(PrimaryTrafficGenerator.readerCount==0)
+				PrimaryTrafficGenerator.writeLock.release();
+			PrimaryTrafficGenerator.x.release();
+
+
+			for(int i=0;i<SimulationRunner.crNodes.size();i++){
+				//TODO Log SNR values
+				System.out.println(SimulationRunner.crNodes.get(i).getSnrValues().toString());
+				System.out.println();
+			}
+			time = unitTime - (System.currentTimeMillis() - time);
+			if(time>1){
+				try {
+					Thread.sleep(time);		//Wait for that amount
+				} catch (InterruptedException ex) {
+					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+			simulationDuration-=1;			//Reduce the simulation time for that amount
+			SimulationRunner.progressBar.setValue(((simulationDur-simulationDuration)*100)/simulationDur);
+			System.out.println("\n");
 		}
+		JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.WARNING_MESSAGE);
+		SimulationRunner.progressBar.setVisible(false);
+		SimulationRunner.progressBar.setValue(0);
+		SimulationRunner.priTrafGen.terminateAllThreads();
+		SimulationRunner.clear();
 		finished=true;
 	}
 	

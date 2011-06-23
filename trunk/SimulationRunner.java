@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
@@ -27,7 +28,7 @@ public class SimulationRunner extends JFrame{
 	/**
 	 * Main wireless channel which all types of nodes are accessing
 	 */
-	public static WirelessChannel wc = new WirelessChannel(WirelessChannel.SIMPLECH, 10,5);
+	public static WirelessChannel wc = null;
 	/**
 	 * Cognitive radio cell structure
 	 */
@@ -36,6 +37,7 @@ public class SimulationRunner extends JFrame{
 	 * Primary traffic generator for wireless channel frequencies
 	 */
 	public static PrimaryTrafficGenerator priTrafGen = null;
+	public static CRSensorThread crSensor = null;
 	/**
 	 * Base station of CR cell
 	 */
@@ -65,7 +67,7 @@ public class SimulationRunner extends JFrame{
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		crBase = new CRBase(new Point2D.Double(0, 0));
+		crBase = new CRBase(new Point2D.Double(0, 0));		//Create a CR base station in the origin
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				SimulationRunner inst = new SimulationRunner();
@@ -96,6 +98,7 @@ public class SimulationRunner extends JFrame{
 	private JLabel label14;
 	private JLabel label15;
 	private JLabel label16;
+	private JLabel label17;
 	private JComboBox channelModel;
 	private JButton startSimulation;
 	private JTextField alphaNo;
@@ -106,10 +109,12 @@ public class SimulationRunner extends JFrame{
 	private JTextField radiusField;
 	private JTextField noFreqs;
 	private JTextField maxFreq;
+	private JTextField maxSNR;
+	static JProgressBar progressBar;
 	private final static int labelPosLeft = 12;
-	private final static int labelPosRight = 360;
+	private final static int labelPosRight = 380;
 	private final static int itemPosLeft = 195;
-	private final static int itemPosRight = 543;
+	private final static int itemPosRight = 523;
 	
 	public SimulationRunner() {
 		super();
@@ -184,6 +189,17 @@ public class SimulationRunner extends JFrame{
 						simDur.setBounds(itemPosLeft, 120, 120, 23);
 					}
 					{
+						label17 = new JLabel();
+						jPanel1.add(label17);
+						label17.setText("Max SNR Value");
+						label17.setBounds(labelPosLeft, 155, 165, 16);
+					}
+					{
+						maxSNR = new JTextField();
+						jPanel1.add(maxSNR);
+						maxSNR.setBounds(itemPosLeft, 155, 120, 23);
+					}
+					{
 						startSimulation = new JButton();
 						jPanel1.add(startSimulation);
 						startSimulation.setText("Start");
@@ -198,6 +214,13 @@ public class SimulationRunner extends JFrame{
 						});
 
 					}
+					{
+						progressBar = new JProgressBar();
+						progressBar.setStringPainted(true);
+						jPanel1.add(progressBar);
+						progressBar.setBounds(labelPosLeft, 323, 165, 23);
+						progressBar.setVisible(false);
+					}
 				}
 				/*
 				 * Zone Related Options
@@ -207,51 +230,51 @@ public class SimulationRunner extends JFrame{
 						label3 = new JLabel();
 						jPanel1.add(label3);
 						label3.setText("Zone");
-						label3.setBounds(labelPosLeft, 153, 165, 16);
+						label3.setBounds(labelPosRight, 153, 165, 16);
 					}
 					{
 						label4 = new JLabel();
 						jPanel1.add(label4);
 						label4.setText("Sector Number");
-						label4.setBounds(labelPosLeft, 188, 165, 16);
+						label4.setBounds(labelPosRight, 188, 165, 16);
 					}
 					{
 						sectorNo = new JTextField();
 						jPanel1.add(sectorNo);
-						sectorNo.setBounds(itemPosLeft, 183, 120, 23);
+						sectorNo.setBounds(itemPosRight, 183, 120, 23);
 					}
 					{
 						label5 = new JLabel();
 						jPanel1.add(label5);
 						label5.setText("D Number");
-						label5.setBounds(labelPosLeft, 223, 165, 16);
+						label5.setBounds(labelPosRight, 223, 165, 16);
 					}
 					{
 						dNo = new JTextField();
 						jPanel1.add(dNo);
-						dNo.setBounds(itemPosLeft, 218, 120, 23);
+						dNo.setBounds(itemPosRight, 218, 120, 23);
 					}
 					{
 						label6 = new JLabel();
 						jPanel1.add(label6);
 						label6.setText("Alpha Number");
-						label6.setBounds(labelPosLeft, 258, 165, 16);
+						label6.setBounds(labelPosRight, 258, 165, 16);
 					}
 					{
 						alphaNo = new JTextField();
 						jPanel1.add(alphaNo);
-						alphaNo.setBounds(itemPosLeft, 253, 120, 23);
+						alphaNo.setBounds(itemPosRight, 253, 120, 23);
 					}
 					{
 						label13 = new JLabel();
 						jPanel1.add(label13);
 						label13.setText("Radius of Cell");
-						label13.setBounds(labelPosLeft, 293, 165, 16);
+						label13.setBounds(labelPosRight, 293, 165, 16);
 					}
 					{
 						radiusField = new JTextField();
 						jPanel1.add(radiusField);
-						radiusField.setBounds(itemPosLeft, 288, 120, 23);
+						radiusField.setBounds(itemPosRight, 288, 120, 23);
 					}
 				}
 				/*
@@ -306,34 +329,34 @@ public class SimulationRunner extends JFrame{
 						label14 = new JLabel();
 						jPanel1.add(label14);
 						label14.setText("Frequency Options");
-						label14.setBounds(labelPosRight, 155, 165, 16);
+						label14.setBounds(labelPosLeft, 190, 165, 16);
 					}
 					{
 						label15 = new JLabel();
 						jPanel1.add(label15);
 						label15.setText("Number of Frequencies");
-						label15.setBounds(labelPosRight, 190, 165, 16);
+						label15.setBounds(labelPosLeft, 225, 165, 16);
 					}
 					{
 						noFreqs = new JTextField();
 						jPanel1.add(noFreqs);
-						noFreqs.setBounds(itemPosRight, 190, 120, 23);
+						noFreqs.setBounds(itemPosLeft, 225, 120, 23);
 					}
 					{
 						label16 = new JLabel();
 						jPanel1.add(label16);
 						label16.setText("Maximum # of Freq. per CR");
-						label16.setBounds(labelPosRight, 225, 165, 16);
+						label16.setBounds(labelPosLeft, 260, 165, 16);
 					}
 					{
 						maxFreq = new JTextField();
 						jPanel1.add(maxFreq);
-						maxFreq.setBounds(itemPosRight, 225, 120, 23);
+						maxFreq.setBounds(itemPosLeft, 260, 120, 23);
 					}
 				}
 			}
 			pack();
-			this.setSize(690, 393);
+			this.setSize(665, 390);
 			this.setResizable(false);
 			this.setTitle("Simulator");
 		} catch (Exception e) {
@@ -342,8 +365,15 @@ public class SimulationRunner extends JFrame{
 		}
 	}
 	
+	/**
+	 * Initializes the main simulation threads
+	 */
 	public void startSimulation()
 	{
+		if(crSensor!=null){
+			if(!crSensor.isFinished())
+				return;
+		}
 		int sectrNo = 0;
 		double dNumber = 0;
 		int alpha = 0;
@@ -352,60 +382,65 @@ public class SimulationRunner extends JFrame{
 		int numberOfCrNodes = 0;
 		int numberOfPriNodes = 0;
 		
-		int numberOfCalls = 0;
-		int callDura = 0;
+		double numberOfCalls = 0;
+		double callDura = 0;
 		long simDura = 0;
 		
 		int numberOfFreq = 0;
 		int maxFreqCR = 0;
+		double maxSnr = 0;
 		ArrayList<Double> setOfD = new ArrayList<Double>();
 		try{
-			sectrNo = Integer.parseInt(sectorNo.getText());
-			dNumber = Integer.parseInt(dNo.getText());
-			alpha = Integer.parseInt(alphaNo.getText());
-			radius = Double.parseDouble(radiusField.getText());
-			alpha = (360/sectrNo)/alpha;
-			double temp = radius / dNumber;
+			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());	//Get number of frequencies
+			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
+			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr);	//Create a wireless channel
+			sectrNo = Integer.parseInt(sectorNo.getText());			//Get number of sectors in the cell
+			dNumber = Integer.parseInt(dNo.getText());				//Get number of d's
+			alpha = Integer.parseInt(alphaNo.getText());			//Get number of alpha's
+			radius = Double.parseDouble(radiusField.getText());		//Get radius of the cell
+			alpha = (360/sectrNo)/alpha;							//Evaluate the angle associated to alpha
+			double temp = radius / dNumber;							//Evaluate length of each d as they will be equal
 			double inc = temp;
 			for(int i = 0;i<dNumber;i++,temp+=inc)
-				setOfD.add(temp);
-			cell = new Cell(crBase, radius, sectrNo, alpha, setOfD);
+				setOfD.add(temp);									//Create set of d's
+			cell = new Cell(crBase, radius, sectrNo, alpha, setOfD);//Create a cell
 			
-			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());
-			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());
-			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());
-			maxFreqCR = Integer.parseInt(maxFreq.getText());
+			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());	//Get number of CR nodes
+			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
+			maxFreqCR = Integer.parseInt(maxFreq.getText());			//Get max number of frequencies a node can sense
 			for(int i = 0; i<numberOfCrNodes ;i++){
 				ArrayList<Integer> freqList = new ArrayList<Integer>();
 				if(remainFreq>0){
-					for(int j=0,k=numberOfFreq-remainFreq;j<maxFreqCR;j++,k++)
-						freqList.add(k);
+					for(int j=0,k=numberOfFreq-remainFreq;j<maxFreqCR&&k<numberOfFreq;j++,k++)	//First nodes covers
+						freqList.add(k);														//all frequencies
 					remainFreq-=maxFreqCR;
 				}
 				else{
-					int freqCount = uniform.nextIntFromTo(1, maxFreqCR);
-					for(;freqList.size()!=freqCount;){
-						int freq = uniform.nextIntFromTo(0, numberOfFreq-1);
+					int freqCount = uniform.nextIntFromTo(1, maxFreqCR);	//Later nodes pick random amount of random
+					for(;freqList.size()!=freqCount;){						//frequencies to sense
+						int freq = uniform.nextIntFromTo(0, numberOfFreq-1);//Pick a random frequency
 						if(freqList.contains(freq))
 							continue;
-						freqList.add(freq);
+						freqList.add(freq);									//If its not in the list already add it to the list
 					}
 				}
-				crNodes.add(new CRNode(new Point2D.Double(0, 0), 0, freqList));	//TODO give random position in a zone
-				wc.registerNode(crNodes.get(i));
+				crNodes.add(new CRNode(Cell.deployNodeinCell(), 0, freqList));	//TODO give random position in a zone
+				wc.registerNode(crNodes.get(i));							//Register CR nodes
 			}
 			
-			numberOfCalls = Integer.parseInt(noCalls.getText());
-			callDura = Integer.parseInt(callDur.getText());
-			timeUnit = Integer.parseInt(unitTime.getText());
+			numberOfCalls = Double.parseDouble(noCalls.getText());			//Get number of calls per unit time
+			callDura = Double.parseDouble(callDur.getText());				//Get call duration in terms of unit time
+			timeUnit = Integer.parseInt(unitTime.getText());				//Get unit time duration in terms of milliseconds
 			priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit);
-			simDura = Long.parseLong(simDur.getText());
+			simDura = Long.parseLong(simDur.getText());						//Get duration of the simulation in terms of unit time
 			for(int i = 0;i<numberOfPriNodes;i++){
-				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0));
-				wc.registerNode(priTrafGenNodes.get(i));
-				priTrafGen.registerNode(priTrafGenNodes.get(i), simDura);
+				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0));	//Create primary traffic
+				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
+				priTrafGen.registerNode(priTrafGenNodes.get(i), simDura);	//and create threads for each of them
 			}
-			crNodeSimulation();
+			progressBar.setValue(0);								//Initialize progress bar
+			progressBar.setVisible(true);							//Make it visible
+			crSensor = new CRSensorThread((int)simDura, timeUnit);	//Create thread for CR sensors
 		}catch(NumberFormatException nfe){
 			JOptionPane.showMessageDialog(this, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);
@@ -413,10 +448,11 @@ public class SimulationRunner extends JFrame{
 	}
 	
 	/**
-	 * Performs the CR node related part of the simulation
+	 * Clears the data of the simulation
 	 */
-	private void crNodeSimulation()
+	public static void clear()
 	{
-		//TODO crnodes starts simulation
+		crNodes.clear();			//Delete CR nodes
+		priTrafGenNodes.clear();	//Delete primary nodes
 	}
 }
