@@ -99,6 +99,10 @@ public class CRNode extends Node{
         }
     }
     
+    public static void writeLogFile(String log_string){
+        pw.println(log_string);
+    }
+    
     public static void closeLogFile(){
         pw.close();   
     }
