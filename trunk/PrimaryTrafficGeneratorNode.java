@@ -20,6 +20,6 @@ public class PrimaryTrafficGeneratorNode extends Node{
      * Sets a new position for the primary traffic generator node.
      */
     public void setRandomPosition(){
-        setPosition(Cell.deployNode());
+        setPosition(Cell.deployNodeinCell());
     }
 }

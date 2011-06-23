@@ -22,12 +22,12 @@ public class Cell {
      * Number of sectors in the network coverage. "number_of_sectors" must divide 
      * 360 without remainder
      */
-    int number_of_sectors;
+    static int number_of_sectors;
     /**
      * This is the corresponding angle at the baseStation for a zone.
      * "alpha" must divide (360/number_of_sectors) without remainder
      */
-    int alpha;
+    static int alpha;
     /**
      * Uniform distribuion to set random positions to nodes
      */
@@ -37,7 +37,7 @@ public class Cell {
      * the same sector and have the same angle interval with the baseStation.
      * Distances must be in the ascending order.
      */
-    ArrayList<Double> set_of_d;
+    static ArrayList<Double> set_of_d;
     
     /**
      * Constructor of the Cell
@@ -56,26 +56,57 @@ public class Cell {
     }
     
     /**
-     * It assigns a random position for a node. Position should be in the coverage area. 
-     * It uses the uniform distribution for choosing a random point.
+     * Finds a random position in the cell with respect to given angles and distances.
+     * This method can be used as creating random position in the cell or 
+     * can be used as creating a random position in a specified zone.
+     * @param angle_small   The minimum angle that random point can have.
+     * @param angle_big     The maximum angle that random point can have.
+     * @param distance_small    The minimum distance from center of the cell to that random point.
+     * @param distance_big      The maximum distance from center of the cell to that random point.
      * @return Position of the node.
      */
-    public static Point2D.Double deployNode(){
+    private static Point2D.Double deployNode(double angle_small,double angle_big,double distance_small,double distance_big){
         Point2D.Double position_of_node = new Point2D.Double(0, 0); //initializes the position of the node
         
-        if(uniform.nextBoolean()){      //if the boolean is true then we choose the x-axis first
-            position_of_node.x = uniform.nextDoubleFromTo(-radius, radius);     //first we choose a random point from -radius to +radius for the x-axis of the position of the node
-            double temp_double = Math.sqrt((radius*radius)-(position_of_node.x*position_of_node.x));
-            position_of_node.y = uniform.nextDoubleFromTo(-temp_double, temp_double);   //then we choose the y-axis of the position so that the (x,y) point should be is in the cell
-        }
-        else{       //if the boolean is false then we choose the y-axis first.
-            position_of_node.y = uniform.nextDoubleFromTo(-radius, radius);     //first we choose a random point from -radius to +radius for the y-axis of the position of the node
-            double temp_double = Math.sqrt((radius*radius)-(position_of_node.y*position_of_node.y));
-            position_of_node.x = uniform.nextDoubleFromTo(-temp_double, temp_double);   //then we choose the x-axis of the position so that the (x,y) point should be in the cell
-        }
-        return position_of_node;    //finally, it returns the position of the node.
+        double random_distance = uniform.nextDoubleFromTo(distance_small,distance_big); 
+        double random_angle = uniform.nextDoubleFromTo( angle_small, angle_big);
+        position_of_node.x = random_distance * Math.cos(random_angle);  //finding x and y axis by using
+        position_of_node.y = random_distance * Math.sin(random_angle);  //angle and distance to center.
+        
+        return position_of_node;
     }
-   
+    
+    /**
+     * Finds a random position for a node in the Cell.
+     * @return Position of the node.
+     */
+    public static Point2D.Double deployNodeinCell(){
+        return deployNode(0,360,0,radius);
+    }
+    /**
+     * Finds a random position for a node in the specified zone.
+     * Note: all the parameter values starts from zero.
+     * @param sector_number Sector number of the node.
+     * @param angle_number Angle number in the sector of the node.
+     * @param distance_number Distance of the zone to the center.
+     * @return Position of the node.
+     */
+    public static Point2D.Double deployNodeinZone(int sector_number,int angle_number,int distance_number){
+        double min_angle = (360/number_of_sectors)*sector_number + alpha*angle_number ; 
+        double max_angle = min_angle + alpha ;  //finds the angle values that random point
+                                                //supposed to be in that angle intervals.
+        double min_distance,max_distance;
+        if(distance_number == 0){   //likewise the angles, finds the corresponding min and max distances.
+            min_distance = 0;
+            max_distance = set_of_d.get(distance_number);
+        }
+        else{
+            min_distance = set_of_d.get(distance_number - 1);
+            max_distance = set_of_d.get(distance_number);
+        }
+        return deployNode(min_angle,max_angle,min_distance,max_distance);
+    }
+    
     /**
      * Sets a new position for the baseStation.
      * @param position 
