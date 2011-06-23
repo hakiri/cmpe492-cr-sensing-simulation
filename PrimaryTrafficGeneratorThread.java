@@ -68,65 +68,95 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		long time = 0;
 		int freq=0;
 		while(simulationDuration>0&&!finished){
+			PrimaryTrafficGenerator.interArrivalLock.lock();
+			time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
+			PrimaryTrafficGenerator.interArrivalLock.unlock();
+			simulationDuration-=time;			//Reduce the simulation time for that amount
+			if(simulationDuration<0)			//If times up
+				break;                                  //stop simulation
+			
+			try{
+				Thread.sleep(time);		//Wait for that amount
+			}
+			catch(InterruptedException ie){
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ie);
+			}
 			try {
-				PrimaryTrafficGenerator.interArrivalLock.lock();
-				time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
-				PrimaryTrafficGenerator.interArrivalLock.unlock();
-				simulationDuration-=time;			//Reduce the simulation time for that amount
-				if(simulationDuration<0)			//If times up
-					break;                                  //stop simulation
-				Thread.sleep(time);		//Wait for that amount
-				
-				PrimaryTrafficGenerator.y.lock();
-				PrimaryTrafficGenerator.writerCount++;
-				if(PrimaryTrafficGenerator.writerCount==1)
-					PrimaryTrafficGenerator.readLock.lock();
-				PrimaryTrafficGenerator.y.unlock();
-				
-				PrimaryTrafficGenerator.writeLock.lock();
-				if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
-					continue;						//Wait for another inter arrival time
-				PrimaryTrafficGenerator.writeLock.unlock();
-				
-				PrimaryTrafficGenerator.y.lock();
-				PrimaryTrafficGenerator.writerCount--;
-				if(PrimaryTrafficGenerator.writerCount==0)
-					PrimaryTrafficGenerator.readLock.unlock();
-				PrimaryTrafficGenerator.y.unlock();
-				
-				PrimaryTrafficGenerator.callDurationLock.lock();
-				time = Math.round(PrimaryTrafficGenerator.callDuration.nextDouble());	//Take a random call duration
-				PrimaryTrafficGenerator.callDurationLock.unlock();
-				simulationDuration-=time;		//Reduce the simulation time for that amount
-				if(simulationDuration<0){		//if times up
-					time=time+simulationDuration;	//Last the call until end of the simulation
-				}
-				Thread.sleep(time);		//Wait for that amount
-				
-				PrimaryTrafficGenerator.y.lock();
-				PrimaryTrafficGenerator.writerCount++;
-				if(PrimaryTrafficGenerator.writerCount==1)
-					PrimaryTrafficGenerator.readLock.lock();
-				PrimaryTrafficGenerator.y.unlock();
-				
-				PrimaryTrafficGenerator.writeLock.lock();
-				SimulationRunner.wc.releaseFrequency(freq);	//Release frequency
-				PrimaryTrafficGenerator.writeLock.unlock();
-				
-				PrimaryTrafficGenerator.y.lock();
-				PrimaryTrafficGenerator.writerCount--;
-				if(PrimaryTrafficGenerator.writerCount==0)
-					PrimaryTrafficGenerator.readLock.unlock();
-				PrimaryTrafficGenerator.y.unlock();
+				PrimaryTrafficGenerator.y.acquire();
 			} catch (InterruptedException ex) {
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
-			} finally{
-				PrimaryTrafficGenerator.writeLock.unlock();	//Release the critical section
-				PrimaryTrafficGenerator.readLock.unlock();
-				PrimaryTrafficGenerator.y.unlock();
-				PrimaryTrafficGenerator.interArrivalLock.unlock();
-				PrimaryTrafficGenerator.callDurationLock.unlock();
 			}
+			PrimaryTrafficGenerator.writerCount++;
+			if(PrimaryTrafficGenerator.writerCount==1){
+				try {
+					PrimaryTrafficGenerator.readLock.acquire();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+			PrimaryTrafficGenerator.y.release();
+			try {
+				PrimaryTrafficGenerator.writeLock.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
+				continue;						//Wait for another inter arrival time
+			PrimaryTrafficGenerator.writeLock.release();
+			try {
+				PrimaryTrafficGenerator.y.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			PrimaryTrafficGenerator.writerCount--;
+			if(PrimaryTrafficGenerator.writerCount==0)
+				PrimaryTrafficGenerator.readLock.release();
+			PrimaryTrafficGenerator.y.release();
+
+			PrimaryTrafficGenerator.callDurationLock.lock();
+			time = Math.round(PrimaryTrafficGenerator.callDuration.nextDouble());	//Take a random call duration
+			PrimaryTrafficGenerator.callDurationLock.unlock();
+			simulationDuration-=time;		//Reduce the simulation time for that amount
+			if(simulationDuration<0){		//if times up
+				time=time+simulationDuration;	//Last the call until end of the simulation
+			}
+			
+			try{
+				Thread.sleep(time);		//Wait for that amount
+			}
+			catch(InterruptedException ie){
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ie);
+			}
+			try {
+				PrimaryTrafficGenerator.y.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			PrimaryTrafficGenerator.writerCount++;
+			if(PrimaryTrafficGenerator.writerCount==1){
+				try {
+					PrimaryTrafficGenerator.readLock.acquire();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
+			}
+			PrimaryTrafficGenerator.y.release();
+			try {
+				PrimaryTrafficGenerator.writeLock.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			SimulationRunner.wc.releaseFrequency(freq);	//Release frequency
+			PrimaryTrafficGenerator.writeLock.release();
+			try {
+				PrimaryTrafficGenerator.y.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
+			PrimaryTrafficGenerator.writerCount--;
+			if(PrimaryTrafficGenerator.writerCount==0)
+				PrimaryTrafficGenerator.readLock.release();
+			PrimaryTrafficGenerator.y.release();
 		}
 		finished=true;
 	}

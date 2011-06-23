@@ -3,13 +3,14 @@ package firstproject;
 
 import cern.jet.random.Exponential;
 import java.util.HashMap;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class PrimaryTrafficGenerator {
 	/**
 	 * Lock for writing wireless channel frequencies
 	 */
-	static ReentrantLock writeLock = new ReentrantLock();
+	static Semaphore writeLock = new Semaphore(1);
 	/**
 	 * Number of writers waiting for accessing the frequencies
 	 */
@@ -21,10 +22,10 @@ public class PrimaryTrafficGenerator {
 	/**
 	 * Lock for reading wireless channel frequencies
 	 */
-	static ReentrantLock readLock = new ReentrantLock();
-	static ReentrantLock x = new ReentrantLock();
-	static ReentrantLock y = new ReentrantLock();
-	static ReentrantLock z = new ReentrantLock();
+	static Semaphore readLock = new Semaphore(1);
+	static Semaphore x = new Semaphore(1);
+	static Semaphore y = new Semaphore(1);
+	static Semaphore z = new Semaphore(1);
 	/**
 	 * Lock for accessing wireless channel frequencies
 	 */
@@ -56,9 +57,9 @@ public class PrimaryTrafficGenerator {
 	 * @param meanCallDuration expected value for duration of a call in time units
 	 * @param unit Unit of time in milliseconds
 	 */
-	public PrimaryTrafficGenerator(int alpha, double meanCallDuration, int unit)
+	public PrimaryTrafficGenerator(double alpha, double meanCallDuration, int unit)
 	{
-		interArrival = new Exponential((double)alpha/(double)unit, SimulationRunner.randEngine);
+		interArrival = new Exponential(alpha/(double)unit, SimulationRunner.randEngine);
 		callDuration = new Exponential((double)1/(meanCallDuration*unit), SimulationRunner.randEngine);
 		registeredNodes = new HashMap<Node, PrimaryTrafficGeneratorThread>();
 		unitTime = unit;
@@ -72,5 +73,15 @@ public class PrimaryTrafficGenerator {
 	public void registerNode(PrimaryTrafficGeneratorNode n, long simulationDuration)
 	{
 		registeredNodes.put(n,new PrimaryTrafficGeneratorThread(n, simulationDuration*unitTime));
+	}
+	
+	/**
+	 * Terminates all associated threads
+	 */
+	public void terminateAllThreads()
+	{
+		for(Node i:registeredNodes.keySet()){
+            registeredNodes.get(i).terminate();
+        }
 	}
 }
