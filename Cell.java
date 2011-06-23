@@ -31,7 +31,7 @@ public class Cell {
     /**
      * Uniform distribuion to set random positions to nodes
      */
-    private static Uniform uniform = new Uniform(SimulationRunner.randEngine);
+    private static Uniform uniform;
     /**
      * List of all distances between the baseStation and the zones which are in 
      * the same sector and have the same angle interval with the baseStation.
@@ -53,6 +53,7 @@ public class Cell {
         this.number_of_sectors = number_of_sectors;
         this.alpha = alpha;
         this.set_of_d = set_of_d;
+        this.uniform = new Uniform(SimulationRunner.randEngine);
     }
     
     /**
