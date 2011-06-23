@@ -588,6 +588,7 @@ public class SimulationRunner extends JFrame{
 			}
 			progressBar.setValue(0);								//Initialize progress bar
 			progressBar.setVisible(true);							//Make it visible
+			CRNode.createLogFile("log.txt");
 			crSensor = new CRSensorThread((int)simDura, timeUnit);	//Create thread for CR sensors
 			terminateSimulation.setVisible(true);
 		}catch(NumberFormatException nfe){
