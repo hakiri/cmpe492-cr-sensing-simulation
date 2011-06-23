@@ -85,7 +85,7 @@ public class SimulationRunner extends JFrame{
 	public static void main(String[] args) {
 		try {
 			// Create a file handler that write log record to a file called log.txt
-			handler = new FileHandler("log.txt");
+			handler = new FileHandler("log.txt",true);
 
 			// Add to the desired logger
 			logger = Logger.getLogger("Simulation is started");
@@ -597,6 +597,7 @@ public class SimulationRunner extends JFrame{
 			timeUnit = Integer.parseInt(unitTime.getText());				//Get unit time duration in terms of milliseconds
 			priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit);
 			simDura = Long.parseLong(simDur.getText());						//Get duration of the simulation in terms of unit time
+			CRNode.initializeAverageSnr(numberOfFreq);
 			for(int i = 0;i<numberOfPriNodes;i++){
 				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0));	//Create primary traffic
 				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
