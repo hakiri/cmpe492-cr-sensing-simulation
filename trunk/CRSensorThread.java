@@ -4,10 +4,8 @@
  */
 package firstproject;
 
-import com.sun.java_cup.internal.runtime.Symbol;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.print.attribute.standard.Sides;
 import javax.swing.JOptionPane;
 
 /**
@@ -104,7 +102,7 @@ public class CRSensorThread implements Runnable{
 			time = unitTime - (System.currentTimeMillis() - time);
 			if(time>1){
 				try {
-					Thread.sleep(time);		//Wait for that amount
+					Thread.sleep(time);		//Wait for unit time amount
 				} catch (InterruptedException ex) {
 					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
 				}

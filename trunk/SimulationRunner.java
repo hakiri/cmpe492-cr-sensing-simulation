@@ -4,7 +4,6 @@ import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -12,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
@@ -131,6 +131,10 @@ public class SimulationRunner extends JFrame{
 	private JLabel label18;
 	private JLabel label19;
 	private JLabel label20;
+	private JLabel label21;
+	private JLabel label22;
+	private JComboBox seedModel;
+	private JTextField seedValue;
 	private JComboBox channelModel;
 	private JButton startSimulation;
 	static JButton terminateSimulation;
@@ -236,10 +240,54 @@ public class SimulationRunner extends JFrame{
 						maxSNR.setText("10");
 					}
 					{
+						label21 = new JLabel();
+						jPanel1.add(label21);
+						label21.setText("Seed Model");
+						label21.setBounds(labelPosLeft, 190, 165, 16);
+					}
+					{
+						ComboBoxModel seedModelModel = 
+							new DefaultComboBoxModel(
+										new String[] { "Random Seed", "Constant Seed"});
+						seedModel = new JComboBox();
+						jPanel1.add(seedModel);
+						seedModel.setModel(seedModelModel);
+						seedModel.addItemListener(new ItemListener() {
+
+							@Override
+							public void itemStateChanged(ItemEvent e) {
+								if(seedModel.getSelectedIndex() == 0){
+									label22.setVisible(false);
+									seedValue.setVisible(false);
+								}
+								else{
+									label22.setVisible(true);
+									seedValue.setVisible(true);
+								}
+							}
+						});
+						jPanel1.add(seedModel);
+						seedModel.setBounds(itemPosLeft, 190, 120, 23);
+					}
+					{
+						label22 = new JLabel();
+						jPanel1.add(label22);
+						label22.setText("Seed Value");
+						label22.setBounds(labelPosLeft, 225, 165, 16);
+						label22.setVisible(false);
+					}
+					{
+						seedValue = new JTextField();
+						jPanel1.add(seedValue);
+						seedValue.setBounds(itemPosLeft, 225, 120, 23);
+						seedValue.setText("111211211");
+						seedValue.setVisible(false);
+					}
+					{
 						startSimulation = new JButton();
 						jPanel1.add(startSimulation);
 						startSimulation.setText("Start");
-						startSimulation.setBounds(itemPosRight, 323, 120, 23);
+						startSimulation.setBounds(itemPosRight, 358, 120, 23);
 						startSimulation.addMouseListener(new MouseAdapter() {
 
 							@Override
@@ -254,7 +302,7 @@ public class SimulationRunner extends JFrame{
 						terminateSimulation = new JButton();
 						jPanel1.add(terminateSimulation);
 						terminateSimulation.setText("Terminate");
-						terminateSimulation.setBounds(labelPosRight, 323, 120, 23);
+						terminateSimulation.setBounds(labelPosRight, 358, 120, 23);
 						terminateSimulation.addMouseListener(new MouseAdapter() {
 
 							@Override
@@ -275,7 +323,7 @@ public class SimulationRunner extends JFrame{
 						progressBar = new JProgressBar();
 						progressBar.setStringPainted(true);
 						jPanel1.add(progressBar);
-						progressBar.setBounds(labelPosLeft, 323, 165, 23);
+						progressBar.setBounds(labelPosLeft, 358, 165, 23);
 						progressBar.setVisible(false);
 					}
 				}
@@ -429,36 +477,36 @@ public class SimulationRunner extends JFrame{
 						label14 = new JLabel();
 						jPanel1.add(label14);
 						label14.setText("Frequency Options");
-						label14.setBounds(labelPosLeft, 190, 165, 16);
+						label14.setBounds(labelPosLeft, 260, 165, 16);
 					}
 					{
 						label15 = new JLabel();
 						jPanel1.add(label15);
 						label15.setText("Number of Frequencies");
-						label15.setBounds(labelPosLeft, 225, 165, 16);
+						label15.setBounds(labelPosLeft, 295, 165, 16);
 					}
 					{
 						noFreqs = new JTextField();
 						jPanel1.add(noFreqs);
-						noFreqs.setBounds(itemPosLeft, 225, 120, 23);
+						noFreqs.setBounds(itemPosLeft, 295, 120, 23);
 						noFreqs.setText("10");
 					}
 					{
 						label16 = new JLabel();
 						jPanel1.add(label16);
 						label16.setText("Maximum # of Freq. per CR");
-						label16.setBounds(labelPosLeft, 260, 165, 16);
+						label16.setBounds(labelPosLeft, 330, 165, 16);
 					}
 					{
 						maxFreq = new JTextField();
 						jPanel1.add(maxFreq);
-						maxFreq.setBounds(itemPosLeft, 260, 120, 23);
+						maxFreq.setBounds(itemPosLeft, 330, 120, 23);
 						maxFreq.setText("4");
 					}
 				}
 			}
 			pack();
-			this.setSize(665, 390);
+			this.setSize(665, 425);
 			this.setResizable(false);
 			this.setTitle("Simulator");
 		} catch (Exception e) {
@@ -496,6 +544,14 @@ public class SimulationRunner extends JFrame{
 		int crD = 0;
 		ArrayList<Double> setOfD = new ArrayList<Double>();
 		try{
+			if(seedModel.getSelectedIndex()==0){
+				randEngine = new MersenneTwister(new Date());
+			}
+			else{
+				int seed = Integer.parseInt(seedValue.getText());
+				randEngine = new MersenneTwister(seed);
+			}
+			uniform = new Uniform(randEngine);
 			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());	//Get number of frequencies
 			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
 			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr);	//Create a wireless channel
@@ -532,7 +588,7 @@ public class SimulationRunner extends JFrame{
 						freqList.add(freq);									//If its not in the list already add it to the list
 					}
 				}
-				crNodes.add(new CRNode(Cell.deployNodeinZone(crSector, crAlpha, crD), 0, freqList));
+				crNodes.add(new CRNode(i,Cell.deployNodeinZone(crSector, crAlpha, crD), 0, freqList));
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
 			}
 			
