@@ -25,6 +25,7 @@ public class CRNode extends Node{
     public CRNode(Point2D.Double pos, double vel, ArrayList<Integer> frequencies) {
         this.position = new Point2D.Double(pos.x, pos.y);
         this.velocity = vel;
+		snrValues = new HashMap<Integer, Double>();
         for(int i=0;i<frequencies.size();i++){ 
             snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
                                                     //hash table with 0.0 initial snr value
