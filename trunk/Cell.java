@@ -51,14 +51,13 @@ public class Cell {
         this.baseStation = baseStation;
         this.radius = radius;
         
-        if((360%number_of_sectors) == 0){
+        if((360%number_of_sectors) == 0){   //this condition should be granted.
             this.number_of_sectors = number_of_sectors; 
         }
         else{
             this.number_of_sectors = 3; //if this is the case then assing a default value for number_of_sectors
         }
-        
-        if(((360/number_of_sectors)%alpha) == 0){
+        if(((360/number_of_sectors)%alpha) == 0){   //this condition should be granted.
             this.alpha = alpha; 
         }
         else{
@@ -84,8 +83,8 @@ public class Cell {
         
         double random_distance = uniform.nextDoubleFromTo(distance_small,distance_big); 
         double random_angle = uniform.nextDoubleFromTo( angle_small, angle_big);
-        position_of_node.x = random_distance * Math.cos(random_angle);  //finding x and y axis by using
-        position_of_node.y = random_distance * Math.sin(random_angle);  //angle and distance to center.
+        position_of_node.x = random_distance * Math.cos((random_angle/180)*Math.PI);  //finding x and y axis by using
+        position_of_node.y = random_distance * Math.sin((random_angle/180)*Math.PI);  //angle and distance to center.
         
         return position_of_node;
     }
@@ -119,7 +118,24 @@ public class Cell {
             min_distance = set_of_d.get(distance_number - 1);
             max_distance = set_of_d.get(distance_number);
         }
-        return deployNode(min_angle,max_angle,min_distance,max_distance);
+        return deployNode(min_angle,max_angle,min_distance,max_distance);   //calls the deployNode function
+    }
+    
+    
+    /**
+     * Sets a CRBase as baseStation to the Cell.
+     * @param baseStation Base station
+     */
+    public void setBaseStation(CRBase baseStation) {
+        this.baseStation = baseStation;
+    }
+    
+    /**
+     * Gets the current baseStation of the Cell.
+     * @return Base Station
+     */
+    public CRBase getBaseStation() {
+        return baseStation;
     }
     
     /**
@@ -185,5 +201,22 @@ public class Cell {
     public static double getRadius() {
         return radius;
     }
+    
+    /**
+     * Sets a new distance list for the Cell.
+     * @param set_of_d Distance list
+     */
+    public static void setSet_of_d(ArrayList<Double> set_of_d) {
+        Cell.set_of_d = set_of_d;
+    }
+    
+    /**
+     * Gets the current distance list of the Cell.
+     * @return Distance list
+     */
+    public static ArrayList<Double> getSet_of_d() {
+        return set_of_d;
+    }
+    
     
 }
