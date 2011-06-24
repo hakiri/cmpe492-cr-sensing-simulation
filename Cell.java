@@ -50,8 +50,21 @@ public class Cell {
     public Cell(CRBase baseStation,double radius,int number_of_sectors, int alpha, ArrayList<Double> set_of_d) {
         this.baseStation = baseStation;
         this.radius = radius;
-        this.number_of_sectors = number_of_sectors;
-        this.alpha = alpha;
+        
+        if((360%number_of_sectors) == 0){
+            this.number_of_sectors = number_of_sectors; 
+        }
+        else{
+            this.number_of_sectors = 3; //if this is the case then assing a default value for number_of_sectors
+        }
+        
+        if(((360/number_of_sectors)%alpha) == 0){
+            this.alpha = alpha; 
+        }
+        else{
+            this.alpha = 40;    //if this is the case then assing a default value for alpha
+        }
+        
         this.set_of_d = set_of_d;
         this.uniform = new Uniform(SimulationRunner.randEngine);
     }
@@ -84,8 +97,9 @@ public class Cell {
     public static Point2D.Double deployNodeinCell(){
         return deployNode(0,360,0,radius);
     }
+    
     /**
-     * Finds a random position for a node in the specified zone.
+     * Finds a random position for a node in a specified zone.
      * Note: all the parameter values starts from zero.
      * @param sector_number Sector number of the node.
      * @param angle_number Angle number in the sector of the node.
@@ -115,12 +129,61 @@ public class Cell {
     public void setPosition(Point2D.Double position) {
         baseStation.setPosition(position);
     }
+    
     /**
      * Gets the current position of the baseStation.
      * @return Position of the baseStation
      */
     public Point2D.Double getPosition() {
         return baseStation.getPosition();
+    }
+    
+    /**
+     * Sets a new alpha value for the Cell.
+     * @param alpha Alpha
+     */
+    public static void setAlpha(int alpha) {
+        Cell.alpha = alpha;
+    }
+    
+    /**
+     * Gets the current alpha value of the Cell.
+     * @return Alpha
+     */
+    public static int getAlpha() {
+        return alpha;
+    }
+    
+    /**
+     * Sets a new number of sectors value for the Cell.
+     * @param number_of_sectors Number of sectors in the Cell
+     */
+    public static void setNumber_of_sectors(int number_of_sectors) {
+        Cell.number_of_sectors = number_of_sectors;
+    }
+    
+    /**
+     * Gets the current number of sectors value of the Cell.
+     * @return Number of sectors
+     */
+    public static int getNumber_of_sectors() {
+        return number_of_sectors;
+    }
+    
+    /**
+     * Sets a new radius value for the Cell.
+     * @param radius Radius of the Cell.
+     */
+    public static void setRadius(double radius) {
+        Cell.radius = radius;
+    }
+    
+    /**
+     * Gets the current radius value of the Cell.
+     * @return Radius of the Cell
+     */
+    public static double getRadius() {
+        return radius;
     }
     
 }
