@@ -13,7 +13,7 @@ public class Cell {
     /**
      * The CRBase at the center of the cell
      */
-    private CRBase baseStation = new CRBase(new Point2D.Double(0, 0));
+    private CRBase baseStation = null;
     /**
      * Radius of the of the network coverage
      */

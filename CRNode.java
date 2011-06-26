@@ -20,10 +20,6 @@ public class CRNode extends Node{
      */
     private HashMap<Integer,Double> snrValues;
     /**
-     * ID number of the CRNode.
-     */
-    private int id;
-    /**
      * Writer for the log file.
      */
     private static PrintWriter pw = null;
