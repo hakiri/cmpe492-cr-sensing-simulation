@@ -5,7 +5,6 @@
 package firstproject;
 
 import java.awt.geom.Point2D;
-import java.awt.geom.Point2D.Double;
 
 public abstract class Node {
    
@@ -17,6 +16,10 @@ public abstract class Node {
      * Velocity of the node
      */
     protected double velocity = 0;
+   /**
+     * Id o the Node
+     */
+    protected int id;
     
     /**
      * Gets the current position of the Node
@@ -49,5 +52,22 @@ public abstract class Node {
     public void setVelocity(double velocity) {
         this.velocity = velocity;
     }
+    
+    /**
+     * Sets an id for the node.
+     * @param id 
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    /**
+     * Returns the current id.
+     * @return Id of the node
+     */
+    public int getId() {
+        return id;
+    }
+    
     
 }
