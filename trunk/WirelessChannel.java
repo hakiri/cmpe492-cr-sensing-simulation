@@ -18,21 +18,30 @@ public class WirelessChannel {
 	 * 0 for AWGN, 1 for Rayleigh, 2 for Lognormal
 	 */
 	int channelModel;
-	/*Constants for wireless channel models*/
+	/**
+	 * Simple Channel Model such that SNR = maxSNR / e^f(distance)
+	 */
 	public static final int SIMPLECH = 0;
+	/**
+	 * Lognormal channel model
+	 */
 	public static final int LOGNORMALCH = 1;
+	/**
+	 * There is no available frequency right now
+	 */
 	public static final int NOFREEFREQ = -1;
 	/**
 	 * Max SNR value of the channel
 	 */
 	double maxSNR;
+	
 	/**
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequncy.
 	 * Initially there is no node in the channel.
-	 * @param channelModel: 0 for AWGN ch., 1 for Rayleigh ch., 2 for Lognormal ch.
+	 * @param channelModel: 0 for Simple ch., 1 for Lognormal ch.
 	 * @param numberOfFrequencies 
-	 * @param maxSNR mean SNR value of the channel
+	 * @param maxSNR max SNR value of the channel
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR)
 	{
@@ -43,7 +52,7 @@ public class WirelessChannel {
 			frequencies.put(i, null);				//Create frequencies
 		}
 		this.channelModel = channelModel;			//Set channel model
-		this.maxSNR = maxSNR;			//Compute the magnitude of the SNR from its dB value
+		this.maxSNR = maxSNR;						//Sets max SNR value
 	}
 	
 	/**
@@ -70,7 +79,7 @@ public class WirelessChannel {
 				return maxSNR/Math.exp(0.12*distance);							//between occupier and sensor and compute
 			}																	//attenuation based on this distance
 		}
-		if(channelModel==LOGNORMALCH){
+		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
 			return 0;
 		}
 		return 0;
@@ -108,7 +117,7 @@ public class WirelessChannel {
 			if(frequencies.get(i)==null)		//If no node occupied it
 				return i;						//Return its ID
 		}
-		return NOFREEFREQ;								//Return -1 otherwise
+		return NOFREEFREQ;						//Return -1 otherwise
 	}
 	
 	/**

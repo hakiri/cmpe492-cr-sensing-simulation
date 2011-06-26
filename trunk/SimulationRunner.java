@@ -9,11 +9,8 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -57,15 +54,14 @@ public class SimulationRunner extends JFrame{
 	 * Primary traffic generator nodes which cause traffic in wireless channel
 	 */
 	public static ArrayList<PrimaryTrafficGeneratorNode> priTrafGenNodes = new ArrayList<PrimaryTrafficGeneratorNode>();
-	private final static int RANDOM_ENGINE_SEED = 111211211;
 	/**
 	 * Random generator for all random number generation operations in the simulation
 	 */
-	public static RandomEngine randEngine = new MersenneTwister(RANDOM_ENGINE_SEED);
+	public static RandomEngine randEngine = null;
 	/**
 	 * Uniform distribution to accomplish frequency assignments
 	 */
-	public static Uniform uniform = new Uniform(randEngine);
+	public static Uniform uniform = null;
 	/**
 	 * Unit of time in milli seconds
 	 */
@@ -86,49 +82,15 @@ public class SimulationRunner extends JFrame{
 	}
 	
 	private JPanel jPanel1;
-	private JTextField sectorNo;
-	private JTextField dNo;
-	private JTextField alphaNo;
-	private JTextField crSectorNo;
-	private JTextField crDNo;
-	private JTextField crAlphaNo;
-	private JLabel label3;
-	private JLabel label2;
-	private JLabel label1;
-	private JTextField noCrNodes;
-	private JTextField noPriNodes;
-	private JLabel label4;
-	private JLabel label5;
-	private JLabel label6;
-	private JLabel label7;
-	private JLabel label8;
-	private JLabel label9;
-	private JLabel label10;
-	private JLabel label11;
-	private JLabel label12;
-	private JLabel label13;
-	private JLabel label14;
-	private JLabel label15;
-	private JLabel label16;
-	private JLabel label17;
-	private JLabel label18;
-	private JLabel label19;
-	private JLabel label20;
-	private JLabel label21;
-	private JLabel label22;
-	private JComboBox seedModel;
-	private JTextField seedValue;
-	private JComboBox channelModel;
+	private JTextField sectorNo,dNo,alphaNo,crSectorNo,crDNo,crAlphaNo,radiusField;
+	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13
+					,label14,label15,label16,label17,label18,label19,label20,label21,label22;
+	private JTextField noCrNodes,noPriNodes,seedValue;
+	private JComboBox seedModel,channelModel;
 	private JButton startSimulation;
 	static JButton terminateSimulation;
-	private JTextField noCalls;
-	private JTextField callDur;
-	private JTextField unitTime;
-	private JTextField simDur;
-	private JTextField radiusField;
-	private JTextField noFreqs;
-	private JTextField maxFreq;
-	private JTextField maxSNR;
+	private JTextField noCalls,callDur,unitTime,simDur;
+	private JTextField noFreqs,maxFreq,maxSNR;
 	static JProgressBar progressBar;
 	private final static int labelPosLeft = 12;
 	private final static int labelPosRight = 380;
@@ -235,6 +197,7 @@ public class SimulationRunner extends JFrame{
 						seedModel = new JComboBox();
 						jPanel1.add(seedModel);
 						seedModel.setModel(seedModelModel);
+						seedModel.setSelectedIndex(1);
 						seedModel.addItemListener(new ItemListener() {
 
 							@Override
@@ -257,14 +220,12 @@ public class SimulationRunner extends JFrame{
 						jPanel1.add(label22);
 						label22.setText("Seed Value");
 						label22.setBounds(labelPosLeft, 225, 165, 16);
-						label22.setVisible(false);
 					}
 					{
 						seedValue = new JTextField();
 						jPanel1.add(seedValue);
 						seedValue.setBounds(itemPosLeft, 225, 120, 23);
 						seedValue.setText("111211211");
-						seedValue.setVisible(false);
 					}
 					{
 						startSimulation = new JButton();
@@ -527,14 +488,14 @@ public class SimulationRunner extends JFrame{
 		int crD = 0;
 		ArrayList<Double> setOfD = new ArrayList<Double>();
 		try{
-			if(seedModel.getSelectedIndex()==0){
-				randEngine = new MersenneTwister(new Date());
+			if(seedModel.getSelectedIndex()==0){				//If seed model is random
+				randEngine = new MersenneTwister(new Date());	//Give date as seed
 			}
 			else{
-				int seed = Integer.parseInt(seedValue.getText());
+				int seed = Integer.parseInt(seedValue.getText());	//Otherwise get seed from user
 				randEngine = new MersenneTwister(seed);
 			}
-			uniform = new Uniform(randEngine);
+			uniform = new Uniform(randEngine);			//Create Uniform distribution to select number of frequencies and their values
 			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());	//Get number of frequencies
 			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
 			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr);	//Create a wireless channel
@@ -552,9 +513,9 @@ public class SimulationRunner extends JFrame{
 			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());	//Get number of CR nodes
 			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
 			maxFreqCR = Integer.parseInt(maxFreq.getText());			//Get max number of frequencies a node can sense
-			crAlpha = Integer.parseInt(crAlphaNo.getText());
-			crSector = Integer.parseInt(crSectorNo.getText());
-			crD = Integer.parseInt(crDNo.getText());
+			crAlpha = Integer.parseInt(crAlphaNo.getText());			//Get alpha number CR nodes will be in
+			crSector = Integer.parseInt(crSectorNo.getText());			//Get sector number CR nodes will be in
+			crD = Integer.parseInt(crDNo.getText());					//Get d interval CR nodes will be in
 			for(int i = 0; i<numberOfCrNodes ;i++){
 				ArrayList<Integer> freqList = new ArrayList<Integer>();
 				if(remainFreq>0){
@@ -575,22 +536,22 @@ public class SimulationRunner extends JFrame{
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
 			}
 			
-			numberOfCalls = Double.parseDouble(noCalls.getText());			//Get number of calls per unit time
-			callDura = Double.parseDouble(callDur.getText());				//Get call duration in terms of unit time
-			timeUnit = Integer.parseInt(unitTime.getText());				//Get unit time duration in terms of milliseconds
+			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per unit time
+			callDura = Double.parseDouble(callDur.getText());	//Get call duration in terms of unit time
+			timeUnit = Integer.parseInt(unitTime.getText());	//Get unit time duration in terms of milliseconds
 			priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit);
-			simDura = Long.parseLong(simDur.getText());						//Get duration of the simulation in terms of unit time
-			CRNode.initializeAverageSnr(numberOfFreq);
+			simDura = Long.parseLong(simDur.getText());			//Get duration of the simulation in terms of unit time
+			CRNode.initializeAverageSnr(numberOfFreq);			//Set average SNR values to zero
+			progressBar.setValue(0);								//Initialize progress bar
+			progressBar.setVisible(true);							//Make it visible
+			CRNode.createLogFile("log.txt");
+			terminateSimulation.setVisible(true);
 			for(int i = 0;i<numberOfPriNodes;i++){
 				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0));	//Create primary traffic
 				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
 				priTrafGen.registerNode(priTrafGenNodes.get(i), simDura);	//and create threads for each of them
 			}
-			progressBar.setValue(0);								//Initialize progress bar
-			progressBar.setVisible(true);							//Make it visible
-			CRNode.createLogFile("log.txt");
 			crSensor = new CRSensorThread((int)simDura, timeUnit);	//Create thread for CR sensors
-			terminateSimulation.setVisible(true);
 		}catch(NumberFormatException nfe){
 			JOptionPane.showMessageDialog(this, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);

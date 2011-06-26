@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package firstproject;
 
 import java.util.logging.Level;
@@ -48,12 +44,16 @@ public class CRSensorThread implements Runnable{
         }
 	}
 	
+	/**
+	 * Main thread operation
+	 */
 	@Override
 	public void run() {
-		int simulationDur = simulationDuration;
-		long time = 0;
-		while(simulationDuration>0&&!finished){
-			time = System.currentTimeMillis();
+		int simulationDur = simulationDuration;		//Save initial simulation duration
+		long time = 0;								//Time to sleep
+		while(simulationDuration>0&&!finished){		//Until simulation duration is elapsed or thread is terminated
+			time = System.currentTimeMillis();		//Save current time
+			/*Perform some semaphore locks to solve reader writer problem*/
 			try {
 				PrimaryTrafficGenerator.z.acquire();
 			} catch (InterruptedException ex) {
@@ -82,8 +82,9 @@ public class CRSensorThread implements Runnable{
 			PrimaryTrafficGenerator.z.release();
 
 			for(int i=0;i<SimulationRunner.crNodes.size();i++){
-				SimulationRunner.crNodes.get(i).sense();
+				SimulationRunner.crNodes.get(i).sense();		//Sense the frequencies for each CR node
 			}
+			
 			try {
 				PrimaryTrafficGenerator.x.acquire();
 			} catch (InterruptedException ex) {
@@ -94,36 +95,35 @@ public class CRSensorThread implements Runnable{
 				PrimaryTrafficGenerator.writeLock.release();
 			PrimaryTrafficGenerator.x.release();
 
-
+			/*Write time to log file*/
 			CRNode.writeLogFile(String.format("Time: %.2f", (double)(simulationDur-simulationDuration)/(double)2));
 			for(int i=0;i<SimulationRunner.crNodes.size();i++){
-				SimulationRunner.crNodes.get(i).logSnrValues();
+				SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
 			}
-			CRNode.logAverageSnr(SimulationRunner.crNodes.size());
+			CRNode.logAverageSnr(SimulationRunner.crNodes.size());	//Log average of SNR values sensed by the CR nodes
 			CRNode.writeLogFile("\n");
-			time = unitTime - (System.currentTimeMillis() - time);
-			if(time>1){
-				try {
+			time = unitTime - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
+			if(time>1){												//unit time if it is greater than 1 milli sec
+				try {												//sleep for that amount
 					Thread.sleep(time);		//Wait for unit time amount
 				} catch (InterruptedException ex) {
 					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
 				}
 			}
 			simulationDuration-=1;			//Reduce the simulation time for that amount
-			SimulationRunner.progressBar.setValue(((simulationDur-simulationDuration)*100)/simulationDur);
-			System.out.println("\n");
+			SimulationRunner.progressBar.setValue(((simulationDur-simulationDuration)*100)/simulationDur);	//Update progress bar
 		}
-		if(finished)
+		if(finished)	//If the thread is terminated
 			JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.WARNING_MESSAGE);
-		else
+		else			//If simulation duration is elapsed
 			JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.WARNING_MESSAGE);
-		SimulationRunner.progressBar.setVisible(false);
-		SimulationRunner.progressBar.setValue(0);
-		SimulationRunner.priTrafGen.terminateAllThreads();
-		SimulationRunner.clear();
-		SimulationRunner.terminateSimulation.setVisible(false);
-		CRNode.closeLogFile();
-		finished=true;
+		SimulationRunner.progressBar.setVisible(false);			//Hide progress bar
+		SimulationRunner.progressBar.setValue(0);				//Set its value to zero
+		SimulationRunner.priTrafGen.terminateAllThreads();		//Terminate other thread in case of they did not
+		SimulationRunner.clear();								//Clear data related to simulation
+		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
+		CRNode.closeLogFile();									//Close log file
+		finished=true;											//Set finished as true
 	}
 	
 	/**

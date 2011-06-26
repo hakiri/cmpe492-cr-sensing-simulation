@@ -8,7 +8,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class PrimaryTrafficGenerator {
 	/**
-	 * Lock for writing wireless channel frequencies
+	 * Semaphore for writing wireless channel frequencies
 	 */
 	static Semaphore writeLock = new Semaphore(1);
 	/**
@@ -20,18 +20,18 @@ public class PrimaryTrafficGenerator {
 	 */
 	static int readerCount=0;
 	/**
-	 * Lock for reading wireless channel frequencies
+	 * Semaphore for reading wireless channel frequencies
 	 */
 	static Semaphore readLock = new Semaphore(1);
 	static Semaphore x = new Semaphore(1);
 	static Semaphore y = new Semaphore(1);
 	static Semaphore z = new Semaphore(1);
 	/**
-	 * Lock for accessing wireless channel frequencies
+	 * Semaphore for entering interarrival period
 	 */
-	static ReentrantLock interArrivalLock = new ReentrantLock();
+	static Semaphore interArrivalSemaphore = new Semaphore(1);
 	/**
-	 * Lock for accessing wireless channel frequencies
+	 * Lock for accessing call duration distribution
 	 */
 	static ReentrantLock callDurationLock = new ReentrantLock();
 	/**
