@@ -71,7 +71,7 @@ public class SimulationRunner extends JFrame{
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		crBase = new CRBase(new Point2D.Double(0, 0));		//Create a CR base station in the origin
+		crBase = new CRBase(new Point2D.Double(0, 0),0);		//Create a CR base station in the origin
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				SimulationRunner inst = new SimulationRunner();
@@ -547,7 +547,7 @@ public class SimulationRunner extends JFrame{
 			CRNode.createLogFile("log.txt");
 			terminateSimulation.setVisible(true);
 			for(int i = 0;i<numberOfPriNodes;i++){
-				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0));	//Create primary traffic
+				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0,0));	//Create primary traffic
 				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
 				priTrafGen.registerNode(priTrafGenNodes.get(i), simDura);	//and create threads for each of them
 			}
