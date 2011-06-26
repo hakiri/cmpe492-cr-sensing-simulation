@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package firstproject;
 
 import java.util.logging.Level;
@@ -68,9 +64,13 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		long time = 0;
 		int freq=0;
 		while(simulationDuration>0&&!finished){
-			PrimaryTrafficGenerator.interArrivalLock.lock();
+			try {
+				PrimaryTrafficGenerator.interArrivalSemaphore.acquire();
+			} catch (InterruptedException ex) {
+				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
+			}
 			time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
-			PrimaryTrafficGenerator.interArrivalLock.unlock();
+			
 			simulationDuration-=time;			//Reduce the simulation time for that amount
 			if(simulationDuration<0)			//If times up
 				break;                                  //stop simulation
@@ -81,6 +81,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			catch(InterruptedException ie){
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ie);
 			}
+			PrimaryTrafficGenerator.interArrivalSemaphore.release();
 			try {
 				PrimaryTrafficGenerator.y.acquire();
 			} catch (InterruptedException ex) {
