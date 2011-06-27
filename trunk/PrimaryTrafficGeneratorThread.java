@@ -1,5 +1,6 @@
 package firstproject;
 
+import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -64,6 +65,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		long time = 0;
 		int freq=0;
 		while(simulationDuration>0&&!finished){
+			DrawCell.paintPrimaryNode(n, Color.BLACK);
 			try {
 				PrimaryTrafficGenerator.interArrivalSemaphore.acquire();
 			} catch (InterruptedException ex) {
@@ -103,6 +105,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			}
 			if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
 				continue;						//Wait for another inter arrival time
+			DrawCell.paintPrimaryNode(n, Color.RED);
 			PrimaryTrafficGenerator.writeLock.release();
 			try {
 				PrimaryTrafficGenerator.y.acquire();
