@@ -66,6 +66,10 @@ public class SimulationRunner extends JFrame{
 	 * Unit of time in milli seconds
 	 */
 	private static int timeUnit;
+	/**
+	 * Draw Frame for cell structure
+	 */
+	private static DrawCell drawCell;
 	
 	/**
 	 * @param args the command line arguments
@@ -104,7 +108,7 @@ public class SimulationRunner extends JFrame{
 	
 	private void initGUI() {
 		try {
-			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			{
 				jPanel1 = new JPanel();
 				getContentPane().add(jPanel1, BorderLayout.CENTER);
@@ -516,6 +520,14 @@ public class SimulationRunner extends JFrame{
 			crAlpha = Integer.parseInt(crAlphaNo.getText());			//Get alpha number CR nodes will be in
 			crSector = Integer.parseInt(crSectorNo.getText());			//Get sector number CR nodes will be in
 			crD = Integer.parseInt(crDNo.getText());					//Get d interval CR nodes will be in
+			double dmin;
+			if(crD==0)
+				dmin=0;
+			else
+				dmin = setOfD.get(crD-1);
+			double dmax = setOfD.get(crD);
+			drawCell = new DrawCell((int)radius, sectrNo, crSector, Integer.parseInt(alphaNo.getText()), crAlpha,
+																(int)dmin, (int)dmax, numberOfCrNodes, numberOfPriNodes);
 			for(int i = 0; i<numberOfCrNodes ;i++){
 				ArrayList<Integer> freqList = new ArrayList<Integer>();
 				if(remainFreq>0){
@@ -534,6 +546,7 @@ public class SimulationRunner extends JFrame{
 				}
 				crNodes.add(new CRNode(i,Cell.deployNodeinZone(crSector, crAlpha, crD), 0, freqList));
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
+				DrawCell.paintCrNode(crNodes.get(i));
 			}
 			
 			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per unit time
@@ -547,7 +560,7 @@ public class SimulationRunner extends JFrame{
 			CRNode.createLogFile("log.txt");
 			terminateSimulation.setVisible(true);
 			for(int i = 0;i<numberOfPriNodes;i++){
-				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0,0));	//Create primary traffic
+				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(new Point2D.Double(0,0), 0,i));	//Create primary traffic
 				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
 				priTrafGen.registerNode(priTrafGenNodes.get(i), simDura);	//and create threads for each of them
 			}
@@ -565,5 +578,6 @@ public class SimulationRunner extends JFrame{
 	{
 		crNodes.clear();			//Delete CR nodes
 		priTrafGenNodes.clear();	//Delete primary nodes
+		drawCell.terminate();
 	}
 }

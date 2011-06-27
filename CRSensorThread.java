@@ -113,13 +113,13 @@ public class CRSensorThread implements Runnable{
 			simulationDuration-=1;			//Reduce the simulation time for that amount
 			SimulationRunner.progressBar.setValue(((simulationDur-simulationDuration)*100)/simulationDur);	//Update progress bar
 		}
+		SimulationRunner.priTrafGen.terminateAllThreads();		//Terminate other thread in case of they did not
 		if(finished)	//If the thread is terminated
 			JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.WARNING_MESSAGE);
 		else			//If simulation duration is elapsed
 			JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.WARNING_MESSAGE);
 		SimulationRunner.progressBar.setVisible(false);			//Hide progress bar
 		SimulationRunner.progressBar.setValue(0);				//Set its value to zero
-		SimulationRunner.priTrafGen.terminateAllThreads();		//Terminate other thread in case of they did not
 		SimulationRunner.clear();								//Clear data related to simulation
 		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
