@@ -22,7 +22,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
 
 public class SimulationRunner extends JFrame{
 
@@ -174,7 +173,7 @@ public class SimulationRunner extends JFrame{
 						simDur = new JTextField();
 						jPanel1.add(simDur);
 						simDur.setBounds(itemPosLeft, 120, 120, 23);
-						simDur.setText("100");
+						simDur.setText("20");
 					}
 					{
 						label17 = new JLabel();
@@ -367,7 +366,7 @@ public class SimulationRunner extends JFrame{
 						radiusField = new JTextField();
 						jPanel1.add(radiusField);
 						radiusField.setBounds(itemPosRight, 288, 120, 23);
-						radiusField.setText("20");
+						radiusField.setText("30");
 					}
 				}
 				/*
@@ -414,7 +413,7 @@ public class SimulationRunner extends JFrame{
 						unitTime = new JTextField();
 						jPanel1.add(unitTime);
 						unitTime.setBounds(itemPosRight, 120, 120, 23);
-						unitTime.setText("100");
+						unitTime.setText("1000");
 					}
 				}
 				/*
