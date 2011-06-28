@@ -42,12 +42,6 @@ public class DrawArea extends JPanel{
 		int tx,ty;
 		int sectorBegDegree = (360/numberOfSectors)*sector;
 		int sectorEndDegree = (360/numberOfSectors)*(sector+1);
-//		tx=cellRadius+(int)(cellRadius*Math.cos(((double)(sectorBegDegree)/(double)180)*Math.PI));
-//		ty=cellRadius-(int)(cellRadius*Math.sin(((double)(sectorBegDegree)/(double)180)*Math.PI));
-//		g.drawLine(cellRadius, cellRadius, tx, ty);
-//		tx=cellRadius+(int)(cellRadius*Math.cos(((double)(sectorEndDegree)/(double)180)*Math.PI));
-//		ty=cellRadius-(int)(cellRadius*Math.sin(((double)(sectorEndDegree)/(double)180)*Math.PI));
-//		g.drawLine(cellRadius, cellRadius, tx, ty);
 		int sectorInc = 360/numberOfSectors;
 		for(int degree=0;degree<360;degree+=sectorInc){
 			tx=cellRadius+(int)(cellRadius*Math.cos(((double)(degree)/(double)180)*Math.PI));

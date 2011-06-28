@@ -9,7 +9,7 @@ import java.util.logging.Logger;
  */
 public class PrimaryTrafficGeneratorThread implements Runnable{
 	/**
-	 * Asscoiated node to this traffic generator
+	 * Associated node to this traffic generator
 	 */
 	private PrimaryTrafficGeneratorNode n;
 	/**
