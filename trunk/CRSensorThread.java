@@ -96,11 +96,12 @@ public class CRSensorThread implements Runnable{
 			PrimaryTrafficGenerator.x.release();
 
 			/*Write time to log file*/
-			CRNode.writeLogFile(String.format("Time: %.2f", (double)(simulationDur-simulationDuration)/(double)2));
+			CRNode.writeLogFile(String.format("Time: %.2f", (double)(simulationDur-simulationDuration)/2.0));
 			for(int i=0;i<SimulationRunner.crNodes.size();i++){
 				SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
 			}
-			CRNode.logAverageSnr(SimulationRunner.crNodes.size());	//Log average of SNR values sensed by the CR nodes
+			CRNode.logAverageSnr(SimulationRunner.crNodes.size(),simulationDur-simulationDuration+1,
+					(double)(simulationDur-simulationDuration)/2.0);	//Log average of SNR values sensed by the CR nodes
 			CRNode.writeLogFile("\n");
 			time = unitTime - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 			if(time>1){												//unit time if it is greater than 1 milli sec
@@ -123,6 +124,7 @@ public class CRSensorThread implements Runnable{
 		SimulationRunner.clear();								//Clear data related to simulation
 		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
+		SimulationRunner.plot.plotAll(simulationDur/2);			//Plot the time vs average SNR graphs
 		finished=true;											//Set finished as true
 	}
 	

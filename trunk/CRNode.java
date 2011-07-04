@@ -87,11 +87,12 @@ public class CRNode extends Node{
      * and then resets the average snr values.
      * @param number_of_crnodes Total number of CRNodes.
      */
-    public static void logAverageSnr(int number_of_crnodes){
+    public static void logAverageSnr(int number_of_crnodes, int colomn, double time){
         for(int i=0;i<averageSnr.size();i++){   //calculates the average snr values
             averageSnr.set(i,(averageSnr.get(i)/number_of_crnodes));
         }
         
+		SimulationRunner.plot.addPoint(time, averageSnr);
         pw.println("average snr values: " + averageSnr.toString()); //writing to log file
         
         for(int i=0;i<averageSnr.size();i++){ //resets the avarageSnr list.
