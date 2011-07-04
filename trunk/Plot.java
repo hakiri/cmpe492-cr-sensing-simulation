@@ -186,6 +186,15 @@ public class Plot {
 		jPlot.main(argv);
     }
 	
+	
+	/**
+	 * Prepares a legend for the graph with the given names
+	 * @param xMin		Min x value of the graphs
+	 * @param xMax		Max x value of the graphs
+	 * @param yMin		Min y value of the graphs
+	 * @param yMax		Max y value of the graphs
+	 * @param names		Min x value of the graphs 
+	 */
 	private void legend(double xMin, double xMax, double yMin, double yMax, ArrayList<String> names)
 	{
 		double yInc = (yMax-yMin)/60.0;
