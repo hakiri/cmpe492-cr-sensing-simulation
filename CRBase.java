@@ -47,15 +47,11 @@ public class CRBase extends Node{
     
     public void assignFrequencies(){
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
-            ArrayList<Integer> frequencies = new ArrayList<Integer>(CRBase.number_of_freq_per_crnode);
-            frequencies = deploy_freq();
-            SimulationRunner.crNodes.get(i).setFrequencyList(frequencies); //assigns new freq list for crnode
-            for(int j=0;j<CRBase.number_of_freq_per_crnode;j++){ //updates the frequency_list
-                frequency_list.set(frequencies.get(j), (frequency_list.get(frequencies.get(j)) + 1));
-            }//TODO frequency list tam dogru hesaplanmiyor. duzelt.
+            SimulationRunner.crNodes.get(i).setFrequencyList(deploy_freq()); //assigns new freq list for crnode
+            //for(int j=0;j<CRBase.number_of_freq_per_crnode;j++){ //updates the frequency_list
+               // frequency_list.set(frequencies.get(j), (frequency_list.get(frequencies.get(j)) + 1));
+            //}//TODO frequency list tam dogru hesaplanmiyor. duzelt.
         }
-        
-        
     }
 
     public ArrayList<Integer> getFrequency_list() {
