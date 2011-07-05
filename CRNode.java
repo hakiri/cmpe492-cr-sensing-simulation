@@ -18,7 +18,7 @@ public class CRNode extends Node{
     /**
      * List of frequencies assigned to this node with respect to their snr values.
      */
-    private HashMap<Integer,Double> snrValues;
+    private static HashMap<Integer,Double> snrValues;
     /**
      * Writer for the log file.
      */
@@ -28,31 +28,25 @@ public class CRNode extends Node{
      */
     private static ArrayList<Double> averageSnr = null;
     
+    
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param pos Position of the CRNode
      * @param vel Velocity of the CRNode
      * @param frequencies List of frequencies that are assigned to this node.
      */
-    public CRNode(int id, Point2D.Double pos, double vel, ArrayList<Integer> frequencies) {
+    public CRNode(int id, Point2D.Double pos, double vel) {
         this.id = id;
         this.position = new Point2D.Double(pos.x, pos.y);
         this.velocity = vel;
-	snrValues = new HashMap<Integer, Double>();
-        for(int i=0;i<frequencies.size();i++){ 
-            snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
-                                                    //hash table with 0.0 initial snr value
-        }
     }
     
     /**
      * Updates all the snr values of the frequencies which are assigned to this CRNode.
      */
-    public void sense(){
-        for(Integer i:snrValues.keySet()){
-            snrValues.put(i,SimulationRunner.wc.generateSNR(this, i));
-            averageSnr.set(i, (averageSnr.get(i)+SimulationRunner.wc.generateSNR(this, i)));
-        }
+    public void sense(int freq){
+        snrValues.put(freq,SimulationRunner.wc.generateSNR(this, freq));
+        averageSnr.set(freq, (averageSnr.get(freq)+snrValues.get(freq)));
     }
     
     /**
@@ -89,7 +83,8 @@ public class CRNode extends Node{
      */
     public static void logAverageSnr(int number_of_crnodes, int colomn, double time){
         for(int i=0;i<averageSnr.size();i++){   //calculates the average snr values
-            averageSnr.set(i,(averageSnr.get(i)/number_of_crnodes));
+            averageSnr.set(i,(averageSnr.get(i)/CRBase.getFrequency_list().get(i))); // gets the current crnode 
+                                                                                        //number that listens to this freq.
         }
         
 		SimulationRunner.plot.addPoint(time, averageSnr);
@@ -127,4 +122,11 @@ public class CRNode extends Node{
         pw.close();   
     }
     
+    public static void  setFrequencyList(ArrayList<Integer> frequencies){
+        snrValues = new HashMap<Integer, Double>();
+        for(int i=0;i<frequencies.size();i++){ 
+            snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
+                                                   //hash table with 0.0 initial snr value
+        }
+    }
 }
