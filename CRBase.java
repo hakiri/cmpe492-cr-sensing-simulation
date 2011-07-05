@@ -32,7 +32,7 @@ public class CRBase extends Node{
         this.number_of_freq_per_crnode = number_of_freq_per_crnode;
         this.frequency_list = new ArrayList<Integer>(SimulationRunner.wc.numberOfFreq());
         for(int i=0;i<frequency_list.size();i++){
-            frequency_list.set(i, 0);
+            frequency_list.add(0);
         }
     }
     
