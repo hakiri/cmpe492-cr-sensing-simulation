@@ -31,7 +31,7 @@ public class CRBase extends Node{
         this.frequency_to_be_listen=0;
         this.number_of_freq_per_crnode = number_of_freq_per_crnode;
         this.frequency_list = new ArrayList<Integer>(SimulationRunner.wc.numberOfFreq());
-        for(int i=0;i<frequency_list.size();i++){
+        for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
             frequency_list.add(0);
         }
     }
@@ -40,10 +40,7 @@ public class CRBase extends Node{
         ArrayList<Integer> freq = new ArrayList<Integer>(number_of_freq_per_crnode);
         for(int i=0;i<number_of_freq_per_crnode;i++){
             freq.add(frequency_to_be_listen);
-            if(frequency_to_be_listen < SimulationRunner.wc.numberOfFreq()-1)
-                frequency_to_be_listen++;
-            else
-                frequency_to_be_listen=0;
+            frequency_to_be_listen=(frequency_to_be_listen+1) % SimulationRunner.wc.numberOfFreq();
         }
         return freq;
     }
@@ -55,8 +52,10 @@ public class CRBase extends Node{
             SimulationRunner.crNodes.get(i).setFrequencyList(frequencies); //assigns new freq list for crnode
             for(int j=0;j<CRBase.number_of_freq_per_crnode;j++){ //updates the frequency_list
                 frequency_list.set(frequencies.get(j), (frequency_list.get(frequencies.get(j)) + 1));
-            }
+            }//TODO frequency list tam dogru hesaplanmiyor. duzelt.
         }
+        
+        
     }
 
     public ArrayList<Integer> getFrequency_list() {
