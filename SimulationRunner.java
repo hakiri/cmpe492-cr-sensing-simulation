@@ -334,7 +334,7 @@ public class SimulationRunner extends JFrame{
 						slotDurField = new JTextField();
 						jPanel1.add(slotDurField);
 						slotDurField.setBounds(itemPosLeft, 330, 120, 23);
-						slotDurField.setText("0.5");
+						slotDurField.setText("0.3");
 						slotDurField.addKeyListener(keyAdapter);
 					}
 					{
@@ -347,7 +347,7 @@ public class SimulationRunner extends JFrame{
 						sensingResultField = new JTextField();
 						jPanel1.add(sensingResultField);
 						sensingResultField.setBounds(itemPosLeft, 365, 120, 23);
-						sensingResultField.setText("0.5");
+						sensingResultField.setText("0.3");
 						sensingResultField.addKeyListener(keyAdapter);
 					}
 					{
@@ -360,7 +360,7 @@ public class SimulationRunner extends JFrame{
 						senseScheduleField = new JTextField();
 						jPanel1.add(senseScheduleField);
 						senseScheduleField.setBounds(itemPosLeft, 400, 120, 23);
-						senseScheduleField.setText("0.5");
+						senseScheduleField.setText("0.3");
 						senseScheduleField.addKeyListener(keyAdapter);
 					}
 					{
@@ -373,7 +373,7 @@ public class SimulationRunner extends JFrame{
 						commDurField = new JTextField();
 						jPanel1.add(commDurField);
 						commDurField.setBounds(itemPosLeft, 435, 120, 23);
-						commDurField.setText("6");
+						commDurField.setText("1");
 						commDurField.addKeyListener(keyAdapter);
 					}
 					{
@@ -386,7 +386,7 @@ public class SimulationRunner extends JFrame{
 						commScheduleField = new JTextField();
 						jPanel1.add(commScheduleField);
 						commScheduleField.setBounds(itemPosLeft, 470, 120, 23);
-						commScheduleField.setText("0.5");
+						commScheduleField.setText("0.3");
 						commScheduleField.addKeyListener(keyAdapter);
 					}
 				}
@@ -617,8 +617,20 @@ public class SimulationRunner extends JFrame{
 		int crAlpha = 0;
 		int crSector = 0;
 		int crD = 0;
+		
+		double slotDur = 0.0;
+		double senseScheduleAdvertisement = 0.0;
+		double commScheduleAdvertisement = 0.0;
+		double commDur = 0.0;
+		double senseResultAdvertisement = 0.0;
 		ArrayList<Double> setOfD = new ArrayList<Double>();
 		try{
+			slotDur = Double.parseDouble(slotDurField.getText());
+			senseScheduleAdvertisement = Double.parseDouble(senseScheduleField.getText());
+			commScheduleAdvertisement = Double.parseDouble(commScheduleField.getText());
+			commDur = Double.parseDouble(commDurField.getText());
+			senseResultAdvertisement = Double.parseDouble(sensingResultField.getText());
+			
 			if(seedModel.getSelectedIndex()==0){				//If seed model is random
 				randEngine = new MersenneTwister(new Date());	//Give date as seed
 			}
@@ -643,7 +655,7 @@ public class SimulationRunner extends JFrame{
 			
 			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());	//Get number of CR nodes
 			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
-			maxFreqCR = Integer.parseInt(maxFreq.getText());			//Get max number of frequencies a node can sense
+			maxFreqCR = Integer.parseInt(noSlotField.getText());			//Get max number of frequencies a node can sense
 			crAlpha = Integer.parseInt(crAlphaNo.getText());			//Get alpha number CR nodes will be in
 			crSector = Integer.parseInt(crSectorNo.getText());			//Get sector number CR nodes will be in
 			crD = Integer.parseInt(crDNo.getText());					//Get d interval CR nodes will be in
@@ -678,7 +690,8 @@ public class SimulationRunner extends JFrame{
 				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
 				priTrafGen.registerNode(priTrafGenNodes.get(i), simDura);	//and create threads for each of them
 			}
-			crSensor = new CRSensorThread((int)simDura, timeUnit);	//Create thread for CR sensors
+			crSensor = new CRSensorThread((int)simDura, timeUnit, maxFreqCR, slotDur, senseScheduleAdvertisement,
+												commScheduleAdvertisement, commDur, senseResultAdvertisement);
 		}catch(NumberFormatException nfe){
 			JOptionPane.showMessageDialog(this, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);
