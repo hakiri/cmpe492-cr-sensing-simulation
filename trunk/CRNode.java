@@ -28,6 +28,7 @@ public class CRNode extends Node{
      */
     private static ArrayList<Double> averageSnr = null;
     
+    private ArrayList<Integer> freq_list;
     
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
@@ -45,8 +46,8 @@ public class CRNode extends Node{
      * Updates all the snr values of the frequencies which are assigned to this CRNode.
      */
     public void sense(int freq){
-        snrValues.put(freq,SimulationRunner.wc.generateSNR(this, freq));
-        averageSnr.set(freq, (averageSnr.get(freq)+snrValues.get(freq)));
+        snrValues.put(freq_list.get(freq),SimulationRunner.wc.generateSNR(this, freq_list.get(freq)));
+        averageSnr.set(freq_list.get(freq), (averageSnr.get(freq_list.get(freq))+snrValues.get(freq_list.get(freq))));
     }
     
     /**
@@ -128,5 +129,6 @@ public class CRNode extends Node{
             snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
                                                    //hash table with 0.0 initial snr value
         }
+        freq_list=frequencies;
     }
 }
