@@ -112,12 +112,11 @@ public class Cell {
         double min_distance,max_distance;
         if(distance_number == 0){   //likewise the angles, finds the corresponding min and max distances.
             min_distance = 0;
-            max_distance = set_of_d.get(distance_number);
         }
         else{
             min_distance = set_of_d.get(distance_number - 1);
-            max_distance = set_of_d.get(distance_number);
         }
+        max_distance = set_of_d.get(distance_number);
         return deployNode(min_angle,max_angle,min_distance,max_distance);   //calls the deployNode function
     }
     
