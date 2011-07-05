@@ -82,7 +82,7 @@ public class DrawArea extends JPanel{
 			if(p==null)
 				continue;
 			g.setColor(p.c);
-			g.fillOval(p.x, p.y, p.r, p.r);
+			g.fillOval(p.x-p.r/2, p.y-p.r/2, p.r, p.r);
 		}
 		for(Integer i:crNodes.keySet()){
 			PointColor p = crNodes.get(i);
