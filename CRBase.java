@@ -39,7 +39,7 @@ public class CRBase extends Node{
     public ArrayList<Integer> deploy_freq(){
         ArrayList<Integer> freq = new ArrayList<Integer>(number_of_freq_per_crnode);
         for(int i=0;i<number_of_freq_per_crnode;i++){
-            freq.set(i, frequency_to_be_listen);
+            freq.add(frequency_to_be_listen);
             if(frequency_to_be_listen < SimulationRunner.wc.numberOfFreq()-1)
                 frequency_to_be_listen++;
             else
