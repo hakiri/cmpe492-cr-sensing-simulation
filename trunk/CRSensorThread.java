@@ -52,49 +52,62 @@ public class CRSensorThread implements Runnable{
 		int simulationDur = simulationDuration;		//Save initial simulation duration
 		long time = 0;								//Time to sleep
 		while(simulationDuration>0&&!finished){		//Until simulation duration is elapsed or thread is terminated
-			time = System.currentTimeMillis();		//Save current time
-			/*Perform some semaphore locks to solve reader writer problem*/
-			try {
-				PrimaryTrafficGenerator.z.acquire();
-			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			try {
-				PrimaryTrafficGenerator.readLock.acquire();
-			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			try {
-				PrimaryTrafficGenerator.x.acquire();
-			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			PrimaryTrafficGenerator.readerCount++;
-			if(PrimaryTrafficGenerator.readerCount==1){
+			//TODO Sensing Schedule advertisement
+			SimulationRunner.crBase.assignFrequencies();
+			for(int j=0;j<CRBase.number_of_freq_per_crnode;j++){
+				time = System.currentTimeMillis();		//Save current time
+				/*Perform some semaphore locks to solve reader writer problem*/
 				try {
-					PrimaryTrafficGenerator.writeLock.acquire();
+					PrimaryTrafficGenerator.z.acquire();
 				} catch (InterruptedException ex) {
 					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
 				}
-			}
-			PrimaryTrafficGenerator.x.release();
-			PrimaryTrafficGenerator.readLock.release();
-			PrimaryTrafficGenerator.z.release();
+				try {
+					PrimaryTrafficGenerator.readLock.acquire();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				try {
+					PrimaryTrafficGenerator.x.acquire();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				PrimaryTrafficGenerator.readerCount++;
+				if(PrimaryTrafficGenerator.readerCount==1){
+					try {
+						PrimaryTrafficGenerator.writeLock.acquire();
+					} catch (InterruptedException ex) {
+						Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+				PrimaryTrafficGenerator.x.release();
+				PrimaryTrafficGenerator.readLock.release();
+				PrimaryTrafficGenerator.z.release();
 
-			for(int i=0;i<SimulationRunner.crNodes.size();i++){
-				SimulationRunner.crNodes.get(i).sense();		//Sense the frequencies for each CR node
-			}
-			
-			try {
-				PrimaryTrafficGenerator.x.acquire();
-			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
-			}
-			PrimaryTrafficGenerator.readerCount--;
-			if(PrimaryTrafficGenerator.readerCount==0)
-				PrimaryTrafficGenerator.writeLock.release();
-			PrimaryTrafficGenerator.x.release();
+				for(int i=0;i<SimulationRunner.crNodes.size();i++){
+					SimulationRunner.crNodes.get(i).sense(j);		//Sense the frequencies for each CR node
+				}
 
+				try {
+					PrimaryTrafficGenerator.x.acquire();
+				} catch (InterruptedException ex) {
+					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
+				PrimaryTrafficGenerator.readerCount--;
+				if(PrimaryTrafficGenerator.readerCount==0)
+					PrimaryTrafficGenerator.writeLock.release();
+				PrimaryTrafficGenerator.x.release();
+				//TODO Correct the time
+				time = unitTime - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
+				if(time>1){												//unit time if it is greater than 1 milli sec
+					try {												//sleep for that amount
+						Thread.sleep(time);		//Wait for unit time amount
+					} catch (InterruptedException ex) {
+						Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+			}
+			//TODO Sensing result acknowledgement
 			/*Write time to log file*/
 			CRNode.writeLogFile(String.format("Time: %.2f", (double)(simulationDur-simulationDuration)/2.0));
 			for(int i=0;i<SimulationRunner.crNodes.size();i++){
@@ -103,6 +116,8 @@ public class CRSensorThread implements Runnable{
 			CRNode.logAverageSnr(SimulationRunner.crNodes.size(),simulationDur-simulationDuration+1,
 					(double)(simulationDur-simulationDuration)/2.0);	//Log average of SNR values sensed by the CR nodes
 			CRNode.writeLogFile("\n");
+			//TODO Communication schedule advertisement
+			//TODO Communicate
 			time = unitTime - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 			if(time>1){												//unit time if it is greater than 1 milli sec
 				try {												//sleep for that amount

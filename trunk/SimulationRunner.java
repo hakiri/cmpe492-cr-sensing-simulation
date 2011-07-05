@@ -80,7 +80,7 @@ public class SimulationRunner extends JFrame{
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		crBase = new CRBase(new Point2D.Double(0, 0),0);		//Create a CR base station in the origin
+		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				SimulationRunner inst = new SimulationRunner();
@@ -655,23 +655,9 @@ public class SimulationRunner extends JFrame{
 			double dmax = setOfD.get(crD);
 			drawCell = new DrawCell((int)radius, sectrNo, crSector, Integer.parseInt(alphaNo.getText()), crAlpha,
 																(int)dmin, (int)dmax, numberOfCrNodes, numberOfPriNodes);
+			crBase = new CRBase(new Point2D.Double(0, 0),0,maxFreqCR);		//Create a CR base station in the origin
 			for(int i = 0; i<numberOfCrNodes ;i++){
-				ArrayList<Integer> freqList = new ArrayList<Integer>();
-				if(remainFreq>0){
-					for(int j=0,k=numberOfFreq-remainFreq;j<maxFreqCR&&k<numberOfFreq;j++,k++)	//First nodes covers
-						freqList.add(k);														//all frequencies
-					remainFreq-=maxFreqCR;
-				}
-				else{
-					int freqCount = uniform.nextIntFromTo(1, maxFreqCR);	//Later nodes pick random amount of random
-					for(;freqList.size()!=freqCount;){						//frequencies to sense
-						int freq = uniform.nextIntFromTo(0, numberOfFreq-1);//Pick a random frequency
-						if(freqList.contains(freq))
-							continue;
-						freqList.add(freq);									//If its not in the list already add it to the list
-					}
-				}
-				crNodes.add(new CRNode(i,Cell.deployNodeinZone(crSector, crAlpha, crD), 0, freqList));
+				crNodes.add(new CRNode(i,Cell.deployNodeinZone(crSector, crAlpha, crD), 0));
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
 				DrawCell.paintCrNode(crNodes.get(i));
 			}
