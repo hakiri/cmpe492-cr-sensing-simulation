@@ -103,8 +103,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			} catch (InterruptedException ex) {
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			if((freq = generateTraffic())==WirelessChannel.NOFREEFREQ)	//If no frequency occupied
-				continue;						//Wait for another inter arrival time
+			freq = generateTraffic();		//Get a free frequency from the channel
 			DrawCell.paintPrimaryNode(n, Color.RED);
 			PrimaryTrafficGenerator.writeLock.release();
 			try {
@@ -117,6 +116,9 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 				PrimaryTrafficGenerator.readLock.release();
 			PrimaryTrafficGenerator.y.release();
 
+			if(freq == WirelessChannel.NOFREEFREQ)	//If no frequency occupied
+				continue;						//Wait for another inter arrival time
+			
 			PrimaryTrafficGenerator.callDurationLock.lock();
 			time = Math.round(PrimaryTrafficGenerator.callDuration.nextDouble());	//Take a random call duration
 			PrimaryTrafficGenerator.callDurationLock.unlock();
@@ -150,7 +152,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			} catch (InterruptedException ex) {
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			SimulationRunner.wc.releaseFrequency(freq);	//Release frequency
+			SimulationRunner.wc.releaseFrequency(freq,n);	//Release frequency
 			PrimaryTrafficGenerator.writeLock.release();
 			try {
 				PrimaryTrafficGenerator.y.acquire();

@@ -6,14 +6,17 @@ import java.util.HashMap;
 
 
 public class WirelessChannel {
+	public static final int PRIMARY = 0;
+	public static final int CR = 1;
 	/**
 	 * List of nodes using channel
 	 */
 	private ArrayList<Node> registeredNodes;
 	/**
-	 * List of frequencies in the channel
+	 * List of frequencies in the channel. ArrayList holds two nodes, first element
+	 * Primary node second element CR node, which use the channel.
 	 */
-	private HashMap<Integer,Node> frequencies;
+	private HashMap<Integer,ArrayList<Node>> frequencies;
 	/**
 	 * 0 for AWGN, 1 for Rayleigh, 2 for Lognormal
 	 */
@@ -37,7 +40,7 @@ public class WirelessChannel {
 	
 	/**
 	 * Creates a wireless channel with the given model.
-	 * It creates numberOfFrequencies amount frequncy.
+	 * It creates numberOfFrequencies amount frequency.
 	 * Initially there is no node in the channel.
 	 * @param channelModel: 0 for Simple ch., 1 for Lognormal ch.
 	 * @param numberOfFrequencies 
@@ -46,10 +49,13 @@ public class WirelessChannel {
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR)
 	{
 		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
-		frequencies = new HashMap<Integer, Node>();	//Create a hash table for frequencies with integer keys and 
+		frequencies = new HashMap<Integer, ArrayList<Node>>();	//Create a hash table for frequencies with integer keys and 
 													//node values which occupied the frequency
 		for(int i=0;i<numberOfFrequencies;i++){
-			frequencies.put(i, null);				//Create frequencies
+			ArrayList<Node> temp = new ArrayList<Node>();
+			temp.add(null);
+			temp.add(null);
+			frequencies.put(i, temp);				//Create frequencies
 		}
 		this.channelModel = channelModel;			//Set channel model
 		this.maxSNR = maxSNR;						//Sets max SNR value
@@ -74,10 +80,28 @@ public class WirelessChannel {
 	{
 		if(channelModel==SIMPLECH){
 			double distance = 0;
-			if(frequencies.get(frequency)!=null){	//If the frequency is occupied
-				distance = sensor.getPosition().distance(frequencies.get(frequency).getPosition());	//Find distance
+			if(frequencies.get(frequency).get(PRIMARY) !=null){	//If the frequency is occupied
+				distance = sensor.getPosition().distance(frequencies.get(frequency).get(PRIMARY).getPosition());	//Find distance
 				return maxSNR/Math.exp(0.12*distance);							//between occupier and sensor and compute
 			}																	//attenuation based on this distance
+		}
+		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
+			return 0;
+		}
+		return 0;
+	}
+	
+	/**
+	 * Finds an snr value according to the channel model.
+	 * @param transmitter	Node transmitting the signal
+	 * @param receiver		Node to assign SNR value
+	 * @return snr value at receiver caused by transmitter
+	 */
+	public double generateSNR(Node transmitter, Node receiver)
+	{
+		if(channelModel==SIMPLECH){
+			double distance = transmitter.getPosition().distance(receiver.getPosition());
+			return maxSNR/Math.exp(0.12*distance);							//between occupier and sensor and compute
 		}
 		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
 			return 0;
@@ -89,12 +113,18 @@ public class WirelessChannel {
 	 * Lets a primary user to occupy a frequency. That is,
 	 * the primary user starts transmission.
 	 * @param frequency In which the user transmits
-	 * @param n Node that occupies the frequency
+	 * @param n			Node that occupies the frequency
 	 */
 	public void occupyFrequency(int frequency, Node n)
 	{
-		if(frequencies.get(frequency)==null)	//If the frequency is not occupied
-			frequencies.put(frequency, n);		//Assign it to the node n
+		if(n.getClass().getName().equals("firstproject.CRNode")){
+			if(frequencies.get(frequency).get(CR) == null)	//If the frequency is not occupied
+				frequencies.get(frequency).set(CR, n);		//Assign it to the node n
+		}
+		else{
+			if(frequencies.get(frequency).get(PRIMARY) == null)	//If the frequency is not occupied
+				frequencies.get(frequency).set(PRIMARY, n);		//Assign it to the node n
+		}
 	}
 	
 	/**
@@ -102,9 +132,14 @@ public class WirelessChannel {
 	 * the primary user finishes transmission.
 	 * @param frequency In which the user transmits
 	 */
-	public void releaseFrequency(int frequency)
+	public void releaseFrequency(int frequency, Node n)
 	{
-		frequencies.put(frequency, null);		//Release the frequency by deleting its occupier
+		if(n.getClass().getName().equals("firstproject.CRNode")){
+			frequencies.get(frequency).set(CR, null);		//Release the frequency by deleting its occupier
+		}
+		else{
+			frequencies.get(frequency).set(PRIMARY, null);	//Release the frequency by deleting its occupier
+		}
 	}
 	
 	/**
@@ -113,11 +148,15 @@ public class WirelessChannel {
 	 */
 	public int freeFrequency()
 	{
+		ArrayList<Integer> free = new ArrayList<Integer>();
 		for(int i=0;i<frequencies.size();i++){	//Search for a free frequency
-			if(frequencies.get(i)==null)		//If no node occupied it
-				return i;						//Return its ID
+			if(frequencies.get(i).get(PRIMARY) == null){		//If no primary node occupied it
+				free.add(i);//return i;
+			}
 		}
-		return NOFREEFREQ;						//Return -1 otherwise
+		if(free.isEmpty())
+			return NOFREEFREQ;						//Return -1 otherwise
+		return free.get(SimulationRunner.uniform.nextIntFromTo(0, free.size()-1));
 	}
 	
 	/**
