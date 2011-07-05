@@ -30,10 +30,6 @@ public class CRBase extends Node{
         this.velocity = 0.0;
         this.frequency_to_be_listen=0;
         this.number_of_freq_per_crnode = number_of_freq_per_crnode;
-        this.frequency_list = new ArrayList<Integer>(SimulationRunner.wc.numberOfFreq());
-        for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
-            frequency_list.add(0);
-        }
     }
     
     public ArrayList<Integer> deploy_freq(){
@@ -46,6 +42,10 @@ public class CRBase extends Node{
     }
     
     public void assignFrequencies(){
+		frequency_list = new ArrayList<Integer>();
+        for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
+            frequency_list.add(0);
+        }
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
             SimulationRunner.crNodes.get(i).setFrequencyList(deploy_freq()); //assigns new freq list for crnode
             //for(int j=0;j<CRBase.number_of_freq_per_crnode;j++){ //updates the frequency_list
