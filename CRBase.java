@@ -11,11 +11,11 @@ public class CRBase extends Node{
     /**
      * the frequency number that crbase starts from it to deploy frequencies to the crnodes.
      */
-    private static int frequency_to_be_listen;
+    private int frequency_to_be_listen;
     /**
      * the list that keeps the number of listener crnodes for each frequency.  
      */
-    private static ArrayList<Integer> frequency_list;
+    private ArrayList<Integer> frequency_list;
     /**
      * The number of frequencies to be listened per crnode
      */
@@ -36,7 +36,7 @@ public class CRBase extends Node{
         }
     }
     
-    public static ArrayList<Integer> deploy_freq(){
+    public ArrayList<Integer> deploy_freq(){
         ArrayList<Integer> freq = new ArrayList<Integer>(number_of_freq_per_crnode);
         for(int i=0;i<number_of_freq_per_crnode;i++){
             freq.set(i, frequency_to_be_listen);
@@ -48,10 +48,10 @@ public class CRBase extends Node{
         return freq;
     }
     
-    public static void assignFrequencies(){
+    public void assignFrequencies(){
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
             ArrayList<Integer> frequencies = new ArrayList<Integer>(CRBase.number_of_freq_per_crnode);
-            frequencies = CRBase.deploy_freq();
+            frequencies = deploy_freq();
             SimulationRunner.crNodes.get(i).setFrequencyList(frequencies); //assigns new freq list for crnode
             for(int j=0;j<CRBase.number_of_freq_per_crnode;j++){ //updates the frequency_list
                 frequency_list.set(frequencies.get(j), (frequency_list.get(frequencies.get(j)) + 1));
@@ -59,7 +59,7 @@ public class CRBase extends Node{
         }
     }
 
-    public static ArrayList<Integer> getFrequency_list() {
+    public ArrayList<Integer> getFrequency_list() {
         return frequency_list;
     }
     

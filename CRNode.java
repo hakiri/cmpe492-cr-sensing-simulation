@@ -18,7 +18,7 @@ public class CRNode extends Node{
     /**
      * List of frequencies assigned to this node with respect to their snr values.
      */
-    private static HashMap<Integer,Double> snrValues;
+    private HashMap<Integer,Double> snrValues;
     /**
      * Writer for the log file.
      */
@@ -83,7 +83,7 @@ public class CRNode extends Node{
      */
     public static void logAverageSnr(int number_of_crnodes, int colomn, double time){
         for(int i=0;i<averageSnr.size();i++){   //calculates the average snr values
-            averageSnr.set(i,(averageSnr.get(i)/CRBase.getFrequency_list().get(i))); // gets the current crnode 
+            averageSnr.set(i,(averageSnr.get(i)/SimulationRunner.crBase.getFrequency_list().get(i))); // gets the current crnode 
                                                                                         //number that listens to this freq.
         }
         
@@ -122,7 +122,7 @@ public class CRNode extends Node{
         pw.close();   
     }
     
-    public static void  setFrequencyList(ArrayList<Integer> frequencies){
+    public void  setFrequencyList(ArrayList<Integer> frequencies){
         snrValues = new HashMap<Integer, Double>();
         for(int i=0;i<frequencies.size();i++){ 
             snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
