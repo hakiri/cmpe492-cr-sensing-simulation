@@ -101,7 +101,7 @@ public class SimulationRunner extends JFrame{
 	private JButton startSimulation;
 	static JButton terminateSimulation;
 	private JTextField noCalls,callDur,unitTime,simDur;
-	private JTextField noFreqs,maxFreq,maxSNR;
+	private JTextField noFreqs,maxSNR;
 	static JProgressBar progressBar;
 	private final static int labelPosLeft = 12;
 	private final static int labelPosRight = 490;
@@ -564,19 +564,6 @@ public class SimulationRunner extends JFrame{
 						noFreqs.setBounds(itemPosRight, 358, 120, 23);
 						noFreqs.setText("10");
 						noFreqs.addKeyListener(keyAdapter);
-					}
-					{
-						label16 = new JLabel();
-						jPanel1.add(label16);
-						label16.setText("Maximum # of Freq. per CR");
-						label16.setBounds(labelPosRight, 398, 165, 16);
-					}
-					{
-						maxFreq = new JTextField();
-						jPanel1.add(maxFreq);
-						maxFreq.setBounds(itemPosRight, 393, 120, 23);
-						maxFreq.setText("4");
-						maxFreq.addKeyListener(keyAdapter);
 					}
 				}
 			}
