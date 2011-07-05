@@ -27,8 +27,8 @@ public class DrawCell implements Runnable{
 	int dmax;
 	int numberOfCrNodes;
 	int numberOfPriNodes;
-	private static int unit = 10;
-	static final int pointRadius = 10;
+	private static int unit = 11;
+	static final int pointRadius = 8;
 	private static DrawArea d;
 	private JFrame frame;
 
@@ -99,7 +99,7 @@ public class DrawCell implements Runnable{
 	 */
 	public static void paintPrimaryNode(Node n, Color c)
 	{
-		PointColor p = new PointColor(n.position, unit/2, c, unit);
+		PointColor p = new PointColor(n.position, pointRadius, c, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintPrimary(n.id, p);
 	}
@@ -110,7 +110,7 @@ public class DrawCell implements Runnable{
 	 */
 	public static void paintCrNode(Node n)
 	{
-		PointColor p = new PointColor(n.position, unit/2, Color.GREEN, unit);
+		PointColor p = new PointColor(n.position, pointRadius, Color.GREEN, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintCR(n.id, p);
 	}
