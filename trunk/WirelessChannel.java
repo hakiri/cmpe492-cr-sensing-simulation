@@ -97,11 +97,12 @@ public class WirelessChannel {
 	 * @param receiver		Node to assign SNR value
 	 * @return snr value at receiver caused by transmitter
 	 */
-	public double generateSNR(Node transmitter, Node receiver)
+	public double generateSINR(Node transmitter, Node receiver, int freq)
 	{
+		double inr = generateSNR(receiver, freq);
 		if(channelModel==SIMPLECH){
 			double distance = transmitter.getPosition().distance(receiver.getPosition());
-			return maxSNR/Math.exp(0.12*distance);							//between occupier and sensor and compute
+			return (maxSNR/Math.exp(0.12*distance))/(inr+1);
 		}
 		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
 			return 0;

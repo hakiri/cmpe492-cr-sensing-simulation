@@ -17,8 +17,8 @@ public class Plot {
 	/**
 	 * Available colors
 	 */
-	private static final String[] colors={"white", "green", "red", "blue", "yellow", "purple", "orange", "magenta"
-											,"pink", "gray20"};
+	private static final String[] colors={ "orange", "green", "magenta", "red", "white", "yellow", "purple"
+											,"pink", "blue"};
 	/**
 	 * Available data point shapes
 	 */
@@ -76,9 +76,8 @@ public class Plot {
 	 * method returns immediately if the frequency is not valid.
 	 * @param title		title of the graph
 	 * @param freq		Frequency to be plotted
-	 * @param simDur	Duration of the simulation. i.e. max x value
 	 */
-	public void plot(String title, int freq, double simDur)
+	public void plot(String title, int freq)
 	{
 		if(freq<0||freq>=y.size())
 			return;
@@ -89,6 +88,7 @@ public class Plot {
         }
 		
 		double max=Collections.max(y.get(freq));
+		double xMax=Collections.max(x);
 		max = (int)(max*10)+1;
 		max/=10.0;
 		pw.println("new_plotter");
@@ -104,8 +104,8 @@ public class Plot {
 		pw.println("yunits");
 		pw.println("dB");
 		pw.println("invisible -0.1 0.0");
-		pw.println("invisible "+simDur+" "+max);
-		pw.println("blue");
+		pw.println("invisible "+xMax+" "+max);
+		pw.println("green");
 		
 		for(int i=0;i<x.size();i++){
 			pw.println("diamond "+x.get(i)+" "+y.get(freq).get(i));
@@ -113,6 +113,11 @@ public class Plot {
 		
 		for(int i=0;i<x.size()-1;i++){
 			pw.println("line "+x.get(i)+" "+y.get(freq).get(i)+" "+x.get(i+1)+" "+y.get(freq).get(i+1));
+		}
+		
+		pw.println("gray20");
+		for(double i=0.1;i<=max;i+=0.1){
+			pw.println("line "+0+" "+i+" "+xMax+" "+i);
 		}
 		
 		pw.println("go");
@@ -126,10 +131,9 @@ public class Plot {
 	 * data point shapes.
 	 * @param title		Title of the graphs
 	 * @param freq		Graphs that will be plotted
-	 * @param simDur	Duration of the simulation. i.e. max x value
 	 * @param names		Names of the graphs
 	 */
-	public void plot(String title, ArrayList<Integer> freq, double simDur, ArrayList<String> names)
+	public void plot(String title, ArrayList<Integer> freq, ArrayList<String> names)
 	{
 		if(Collections.min(freq)<0||Collections.max(freq)>=y.size())
 			return;
@@ -152,6 +156,7 @@ public class Plot {
 			if(max<Collections.max(y.get(freq.get(i))))
 				max=Collections.max(y.get(freq.get(i)));
 		}
+		double xMax=Collections.max(x);
 		max = (int)(max*10)+1;
 		max/=10.0;
 		pw.println("new_plotter");
@@ -167,7 +172,7 @@ public class Plot {
 		pw.println("yunits");
 		pw.println("dB");
 		pw.println("invisible -0.1 0.0");
-		pw.println("invisible "+(simDur+(simDur-xmin)*0.3)+" "+max);
+		pw.println("invisible "+(xMax+(xMax-xmin)*0.3)+" "+max);
 
 		for(int j=0;j<freq.size();j++){
 			pw.println(colors[j%10]);
@@ -179,11 +184,13 @@ public class Plot {
 				pw.println("line "+x.get(i)+" "+y.get(freq.get(j)).get(i)+" "+x.get(i+1)+" "+y.get(freq.get(j)).get(i+1));
 			}
 		}
-		legend(xmin, simDur, min, max, names);
+		pw.println("gray20");
+		for(double i=0.1;i<=max;i+=0.1){
+			pw.println("line "+0+" "+i+" "+xMax+" "+i);
+		}
+		legend(xmin, xMax, min, max, names);
 		pw.println("go");
 		pw.close();
-		String[] argv = {"-t",title};
-		jPlot.main(argv);
     }
 	
 	
@@ -211,17 +218,38 @@ public class Plot {
 	
 	/**
 	 * Plots all available x versus y values onto different graphs on different windows
-	 * @param simDur	Duration of the simulation. i.e. max x value
 	 */
-	public void plotAll(double simDur)
+	public void plotAll()
 	{
 		String[] argv = new String[y.size()+1];
 		argv[0]="-t";
 		for(int i=0;i<y.size();i++){
 			argv[i+1] = String.format("f_%d", i);
-			plot(argv[i+1], i,simDur);
+			plot(argv[i+1], i);
 		}
 		jPlot.main(argv);
 	}
 	
+	/**
+	 * Plots all available x versus y values by grouping given amount of y values into
+	 * one plot.
+	 * @param simDur				Duration of the simulation. i.e. max x value
+	 * @param numberOfGraphsPerPlot	Number of graphs to be plotted on the same window
+	 * @param names					Names of the graphs that will be plotted on the same window
+	 */
+	public void plotAll(int numberOfGraphsPerPlot, ArrayList<String> names)
+	{
+		int numberOfPlots = y.size()/numberOfGraphsPerPlot;
+		String[] argv = new String[numberOfPlots+1];
+		argv[0]="-t";
+		for(int i=0;i<numberOfPlots;i++){
+			argv[i+1] = String.format("f_%d", i);
+			ArrayList<Integer> plotList = new ArrayList<Integer>();
+			for(int j=0;j<numberOfGraphsPerPlot;j++){
+				plotList.add(i*numberOfGraphsPerPlot+j);
+			}
+			plot(argv[i+1], plotList, names);
+		}
+		jPlot.main(argv);
+	}	
 }

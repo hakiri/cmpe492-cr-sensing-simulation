@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Thread responsible for generating an invidual traffic in the wireless channel.
+ * Thread responsible for generating an invidual primary traffic in the wireless channel.
  */
 public class PrimaryTrafficGeneratorThread implements Runnable{
 	/**
@@ -71,11 +71,18 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			} catch (InterruptedException ex) {
 				Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
 			}
-			time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
+			try{
+				time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
+			} catch(ArrayIndexOutOfBoundsException e){
+				PrimaryTrafficGenerator.interArrivalSemaphore.release();
+				continue;
+			}
 			
 			simulationDuration-=time;			//Reduce the simulation time for that amount
-			if(simulationDuration<0)			//If times up
+			if(simulationDuration<0){			//If times up
+				PrimaryTrafficGenerator.interArrivalSemaphore.release();
 				break;                                  //stop simulation
+			}
 			
 			try{
 				Thread.sleep(time);		//Wait for that amount

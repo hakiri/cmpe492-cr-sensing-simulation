@@ -1,5 +1,6 @@
 package firstproject;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -102,7 +103,10 @@ public class CRSensorThread implements Runnable{
 		SimulationRunner.clear();								//Clear data related to simulation
 		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
-		SimulationRunner.plot.plotAll(simulationDur/unitTime);			//Plot the time vs average SNR graphs
+		ArrayList<String> names = new ArrayList<String>();
+		names.add("SNR");
+		names.add("SINR");
+		SimulationRunner.plot.plotAll();			//Plot the time vs average SNR graphs
 		finished=true;											//Set finished as true
 	}
 	

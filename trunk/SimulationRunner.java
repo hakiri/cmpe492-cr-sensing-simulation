@@ -132,440 +132,12 @@ public class SimulationRunner extends JFrame{
 				jPanel1 = new JPanel();
 				getContentPane().add(jPanel1, BorderLayout.CENTER);
 				jPanel1.setLayout(null);
-				/*
-				 * Main Options
-				 */
-				{
-					{
-						label1 = new JLabel();
-						jPanel1.add(label1);
-						label1.setText("Number of CR Nodes");
-						label1.setBounds(labelPosLeft, 15, 165, 16);
-					}
-					{
-						noCrNodes = new JTextField();
-						jPanel1.add(noCrNodes);
-						noCrNodes.setBounds(itemPosLeft, 12, 120, 23);
-						noCrNodes.setText("5");
-						noCrNodes.addKeyListener(keyAdapter);
-					}
-					{
-						label2 = new JLabel();
-						jPanel1.add(label2);
-						label2.setText("Number of Primary Nodes");
-						label2.setBounds(labelPosLeft, 50, 165, 16);
-					}
-					{
-						noPriNodes = new JTextField();
-						jPanel1.add(noPriNodes);
-						noPriNodes.setBounds(itemPosLeft, 47, 120, 23);
-						noPriNodes.setText("10");
-						noPriNodes.addKeyListener(keyAdapter);
-					}
-					{
-						label7 = new JLabel();
-						jPanel1.add(label7);
-						label7.setText("Channel Model");
-						label7.setBounds(labelPosLeft, 85, 165, 16);
-					}
-					{
-						ComboBoxModel channelModelModel = 
-							new DefaultComboBoxModel(
-										new String[] { "Simple Channel", "Lognormal Channel"});
-						channelModel = new JComboBox();
-						jPanel1.add(channelModel);
-						channelModel.setModel(channelModelModel);
-						channelModel.addItemListener(new ItemListener() {
-
-							@Override
-							public void itemStateChanged(ItemEvent e) {
-
-							}
-						});
-						jPanel1.add(channelModel);
-						channelModel.setBounds(itemPosLeft, 82, 120, 23);
-						channelModel.addKeyListener(keyAdapter);
-					}
-					{
-						label12 = new JLabel();
-						jPanel1.add(label12);
-						label12.setText("Simulation Duration (unit time)");
-						label12.setBounds(labelPosLeft, 120, 275, 16);
-					}
-					{
-						simDur = new JTextField();
-						jPanel1.add(simDur);
-						simDur.setBounds(itemPosLeft, 120, 120, 23);
-						simDur.setText("40");
-						simDur.addKeyListener(keyAdapter);
-					}
-					{
-						label17 = new JLabel();
-						jPanel1.add(label17);
-						label17.setText("Max SNR Value (dB)");
-						label17.setBounds(labelPosLeft, 155, 165, 16);
-					}
-					{
-						maxSNR = new JTextField();
-						jPanel1.add(maxSNR);
-						maxSNR.setBounds(itemPosLeft, 155, 120, 23);
-						maxSNR.setText("10");
-						maxSNR.addKeyListener(keyAdapter);
-					}
-					{
-						label21 = new JLabel();
-						jPanel1.add(label21);
-						label21.setText("Seed Model");
-						label21.setBounds(labelPosLeft, 190, 165, 16);
-					}
-					{
-						ComboBoxModel seedModelModel = 
-							new DefaultComboBoxModel(
-										new String[] { "Random Seed", "Constant Seed"});
-						seedModel = new JComboBox();
-						jPanel1.add(seedModel);
-						seedModel.setModel(seedModelModel);
-						seedModel.setSelectedIndex(1);
-						seedModel.addItemListener(new ItemListener() {
-
-							@Override
-							public void itemStateChanged(ItemEvent e) {
-								if(seedModel.getSelectedIndex() == 0){
-									label22.setVisible(false);
-									seedValue.setVisible(false);
-								}
-								else{
-									label22.setVisible(true);
-									seedValue.setVisible(true);
-								}
-							}
-						});
-						jPanel1.add(seedModel);
-						seedModel.setBounds(itemPosLeft, 190, 120, 23);
-						seedModel.addKeyListener(keyAdapter);
-					}
-					{
-						label22 = new JLabel();
-						jPanel1.add(label22);
-						label22.setText("Seed Value");
-						label22.setBounds(labelPosLeft, 225, 165, 16);
-					}
-					{
-						seedValue = new JTextField();
-						jPanel1.add(seedValue);
-						seedValue.setBounds(itemPosLeft, 225, 120, 23);
-						seedValue.setText("111211211");
-						seedValue.addKeyListener(keyAdapter);
-					}
-					{
-						startSimulation = new JButton();
-						jPanel1.add(startSimulation);
-						startSimulation.setText("Start");
-						startSimulation.setBounds(itemPosRight, 498, 120, 23);
-						startSimulation.addMouseListener(new MouseAdapter() {
-
-							@Override
-							public void mouseClicked(MouseEvent e) {
-								startSimulation();
-							}
-
-						});
-						startSimulation.addKeyListener(keyAdapter);
-					}
-					{
-						terminateSimulation = new JButton();
-						jPanel1.add(terminateSimulation);
-						terminateSimulation.setText("Terminate");
-						terminateSimulation.setBounds(labelPosRight, 498, 120, 23);
-						terminateSimulation.addMouseListener(new MouseAdapter() {
-
-							@Override
-							public void mouseClicked(MouseEvent e) {
-								if(crSensor!=null){
-									if(!crSensor.isFinished()){
-										priTrafGen.terminateAllThreads();
-										crSensor.terminate();
-									}
-								}
-							}
-
-						});
-						terminateSimulation.setVisible(false);
-
-					}
-					{
-						progressBar = new JProgressBar();
-						progressBar.setStringPainted(true);
-						jPanel1.add(progressBar);
-						progressBar.setBounds(labelPosLeft, 498, 165, 23);
-						progressBar.setVisible(false);
-					}
-				}
-				/*
-				 * Frame Structure Related Options
-				 */
-				{
-					{
-						label23 = new JLabel();
-						jPanel1.add(label23);
-						label23.setText("Frame Structure Options");
-						label23.setBounds(labelPosLeft, 260, 165, 16);
-					}
-					{
-						label24 = new JLabel();
-						jPanel1.add(label24);
-						label24.setText("Number of Sensing Slots");
-						label24.setBounds(labelPosLeft, 295, 165, 16);
-					}
-					{
-						noSlotField = new JTextField();
-						jPanel1.add(noSlotField);
-						noSlotField.setBounds(itemPosLeft, 295, 120, 23);
-						noSlotField.setText("4");
-						noSlotField.addKeyListener(keyAdapter);
-					}
-					{
-						label25 = new JLabel();
-						jPanel1.add(label25);
-						label25.setText("Sensing Slot Duration (unit time)");
-						label25.setBounds(labelPosLeft, 330, 275, 16);
-					}
-					{
-						slotDurField = new JTextField();
-						jPanel1.add(slotDurField);
-						slotDurField.setBounds(itemPosLeft, 330, 120, 23);
-						slotDurField.setText("0.3");
-						slotDurField.addKeyListener(keyAdapter);
-					}
-					{
-						label26 = new JLabel();
-						jPanel1.add(label26);
-						label26.setText("Dur. of sensing result ack. (unit time)");
-						label26.setBounds(labelPosLeft, 365, 275, 16);
-					}
-					{
-						sensingResultField = new JTextField();
-						jPanel1.add(sensingResultField);
-						sensingResultField.setBounds(itemPosLeft, 365, 120, 23);
-						sensingResultField.setText("0.3");
-						sensingResultField.addKeyListener(keyAdapter);
-					}
-					{
-						label27 = new JLabel();
-						jPanel1.add(label27);
-						label27.setText("Sensing Schedule Advert. Dur. (unit time)");
-						label27.setBounds(labelPosLeft, 400, 275, 16);
-					}
-					{
-						senseScheduleField = new JTextField();
-						jPanel1.add(senseScheduleField);
-						senseScheduleField.setBounds(itemPosLeft, 400, 120, 23);
-						senseScheduleField.setText("0.3");
-						senseScheduleField.addKeyListener(keyAdapter);
-					}
-					{
-						label28 = new JLabel();
-						jPanel1.add(label28);
-						label28.setText("Communication Duration (unit time)");
-						label28.setBounds(labelPosLeft, 435, 275, 16);
-					}
-					{
-						commDurField = new JTextField();
-						jPanel1.add(commDurField);
-						commDurField.setBounds(itemPosLeft, 435, 120, 23);
-						commDurField.setText("1");
-						commDurField.addKeyListener(keyAdapter);
-					}
-					{
-						label29 = new JLabel();
-						jPanel1.add(label29);
-						label29.setText("Communication Schedule Advert. Dur. (unit time)");
-						label29.setBounds(labelPosLeft, 470, 275, 16);
-					}
-					{
-						commScheduleField = new JTextField();
-						jPanel1.add(commScheduleField);
-						commScheduleField.setBounds(itemPosLeft, 470, 120, 23);
-						commScheduleField.setText("0.3");
-						commScheduleField.addKeyListener(keyAdapter);
-					}
-				}
-				/*
-				 * Zone Related Options
-				 */
-				{
-					{
-						label3 = new JLabel();
-						jPanel1.add(label3);
-						label3.setText("Zone");
-						label3.setBounds(labelPosRight, 153, 165, 16);
-					}
-					{
-						label4 = new JLabel();
-						jPanel1.add(label4);
-						label4.setText("Sector Number");
-						label4.setBounds(labelPosRight, 188, 165, 16);
-					}
-					{
-						sectorNo = new JTextField();
-						jPanel1.add(sectorNo);
-						sectorNo.setBounds(itemPosRight, 183, 50, 23);
-						sectorNo.setText("3");
-						sectorNo.addKeyListener(keyAdapter);
-					}
-					{
-						label18 = new JLabel();
-						jPanel1.add(label18);
-						label18.setText("/");
-						label18.setBounds(itemPosRight+59, 183, 18, 23);
-					}
-					{
-						crSectorNo = new JTextField();
-						jPanel1.add(crSectorNo);
-						crSectorNo.setBounds(itemPosRight+70, 183, 50, 23);
-						crSectorNo.setText("0");
-						crSectorNo.addKeyListener(keyAdapter);
-					}
-					{
-						label5 = new JLabel();
-						jPanel1.add(label5);
-						label5.setText("D Number");
-						label5.setBounds(labelPosRight, 223, 165, 16);
-					}
-					{
-						dNo = new JTextField();
-						jPanel1.add(dNo);
-						dNo.setBounds(itemPosRight, 218, 50, 23);
-						dNo.setText("3");
-						dNo.addKeyListener(keyAdapter);
-					}
-					{
-						label19 = new JLabel();
-						jPanel1.add(label19);
-						label19.setText("/");
-						label19.setBounds(itemPosRight+59, 218, 18, 23);
-					}
-					{
-						crDNo = new JTextField();
-						jPanel1.add(crDNo);
-						crDNo.setBounds(itemPosRight+70, 218, 50, 23);
-						crDNo.setText("0");
-						crDNo.addKeyListener(keyAdapter);
-					}
-					{
-						label6 = new JLabel();
-						jPanel1.add(label6);
-						label6.setText("Alpha Number");
-						label6.setBounds(labelPosRight, 258, 165, 16);
-					}
-					{
-						alphaNo = new JTextField();
-						jPanel1.add(alphaNo);
-						alphaNo.setBounds(itemPosRight, 253, 50, 23);
-						alphaNo.setText("4");
-						alphaNo.addKeyListener(keyAdapter);
-					}
-					{
-						label20 = new JLabel();
-						jPanel1.add(label20);
-						label20.setText("/");
-						label20.setBounds(itemPosRight+59, 253, 18, 23);
-					}
-					{
-						crAlphaNo = new JTextField();
-						jPanel1.add(crAlphaNo);
-						crAlphaNo.setBounds(itemPosRight+70, 253, 50, 23);
-						crAlphaNo.setText("0");
-						crAlphaNo.addKeyListener(keyAdapter);
-					}
-					{
-						label13 = new JLabel();
-						jPanel1.add(label13);
-						label13.setText("Radius of Cell (100 m)");
-						label13.setBounds(labelPosRight, 293, 165, 16);
-					}
-					{
-						radiusField = new JTextField();
-						jPanel1.add(radiusField);
-						radiusField.setBounds(itemPosRight, 288, 120, 23);
-						radiusField.setText("30");
-						radiusField.addKeyListener(keyAdapter);
-					}
-				}
-				/*
-				 * Traffic Model Related Options
-				 */
-				{
-					{
-						label8 = new JLabel();
-						jPanel1.add(label8);
-						label8.setText("Traffic Model");
-						label8.setBounds(labelPosRight, 15, 165, 16);
-					}
-					{
-						label9 = new JLabel();
-						jPanel1.add(label9);
-						label9.setText("Number of Calls/unit time");
-						label9.setBounds(labelPosRight, 50, 165, 16);
-					}
-					{
-						noCalls = new JTextField();
-						jPanel1.add(noCalls);
-						noCalls.setBounds(itemPosRight, 50, 120, 23);
-						noCalls.setText("2");
-						noCalls.addKeyListener(keyAdapter);
-					}
-					{
-						label10 = new JLabel();
-						jPanel1.add(label10);
-						label10.setText("Call Duration (unit time)");
-						label10.setBounds(labelPosRight, 85, 165, 16);
-					}
-					{
-						callDur = new JTextField();
-						jPanel1.add(callDur);
-						callDur.setBounds(itemPosRight, 85, 120, 23);
-						callDur.setText("4");
-						callDur.addKeyListener(keyAdapter);
-					}
-					{
-						label11 = new JLabel();
-						jPanel1.add(label11);
-						label11.setText("Unit Time Dur. (msec)");
-						label11.setBounds(labelPosRight, 120, 165, 16);
-					}
-					{
-						unitTime = new JTextField();
-						jPanel1.add(unitTime);
-						unitTime.setBounds(itemPosRight, 120, 120, 23);
-						unitTime.setText("500");
-						unitTime.addKeyListener(keyAdapter);
-					}
-				}
-				/*
-				 * Frequency Related Options
-				 */
-				{
-					{
-						label14 = new JLabel();
-						jPanel1.add(label14);
-						label14.setText("Frequency Options");
-						label14.setBounds(labelPosRight, 328, 165, 16);
-					}
-					{
-						label15 = new JLabel();
-						jPanel1.add(label15);
-						label15.setText("Number of Frequencies");
-						label15.setBounds(labelPosRight, 363, 165, 16);
-					}
-					{
-						noFreqs = new JTextField();
-						jPanel1.add(noFreqs);
-						noFreqs.setBounds(itemPosRight, 358, 120, 23);
-						noFreqs.setText("10");
-						noFreqs.addKeyListener(keyAdapter);
-					}
-				}
+				
+				initMainOptionsGUI();
+				initFrameOptionsGUI();
+				initTrafficOptionsGUI();
+				initZoneOptionsGUI();
+				initFrequencyOptionsGUI();
 			}
 			pack();
 			this.setSize(805, 565);
@@ -574,6 +146,438 @@ public class SimulationRunner extends JFrame{
 		} catch (Exception e) {
 		    //add your error handling code here
 			e.printStackTrace();
+		}
+	}
+	
+	private void initMainOptionsGUI()
+	{
+		/*
+		 * Main Options
+		 */
+		{
+			label1 = new JLabel();
+			jPanel1.add(label1);
+			label1.setText("Number of CR Nodes");
+			label1.setBounds(labelPosLeft, 15, 165, 16);
+		}
+		{
+			noCrNodes = new JTextField();
+			jPanel1.add(noCrNodes);
+			noCrNodes.setBounds(itemPosLeft, 12, 120, 23);
+			noCrNodes.setText("6");
+			noCrNodes.addKeyListener(keyAdapter);
+		}
+		{
+			label2 = new JLabel();
+			jPanel1.add(label2);
+			label2.setText("Number of Primary Nodes");
+			label2.setBounds(labelPosLeft, 50, 165, 16);
+		}
+		{
+			noPriNodes = new JTextField();
+			jPanel1.add(noPriNodes);
+			noPriNodes.setBounds(itemPosLeft, 47, 120, 23);
+			noPriNodes.setText("15");
+			noPriNodes.addKeyListener(keyAdapter);
+		}
+		{
+			label7 = new JLabel();
+			jPanel1.add(label7);
+			label7.setText("Channel Model");
+			label7.setBounds(labelPosLeft, 85, 165, 16);
+		}
+		{
+			ComboBoxModel channelModelModel = 
+				new DefaultComboBoxModel(
+							new String[] { "Simple Channel", "Lognormal Channel"});
+			channelModel = new JComboBox();
+			jPanel1.add(channelModel);
+			channelModel.setModel(channelModelModel);
+			channelModel.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+
+				}
+			});
+			jPanel1.add(channelModel);
+			channelModel.setBounds(itemPosLeft, 82, 120, 23);
+			channelModel.addKeyListener(keyAdapter);
+		}
+		{
+			label12 = new JLabel();
+			jPanel1.add(label12);
+			label12.setText("Simulation Duration (unit time)");
+			label12.setBounds(labelPosLeft, 120, 275, 16);
+		}
+		{
+			simDur = new JTextField();
+			jPanel1.add(simDur);
+			simDur.setBounds(itemPosLeft, 120, 120, 23);
+			simDur.setText("100");
+			simDur.addKeyListener(keyAdapter);
+		}
+		{
+			label17 = new JLabel();
+			jPanel1.add(label17);
+			label17.setText("Max SNR Value (dB)");
+			label17.setBounds(labelPosLeft, 155, 165, 16);
+		}
+		{
+			maxSNR = new JTextField();
+			jPanel1.add(maxSNR);
+			maxSNR.setBounds(itemPosLeft, 155, 120, 23);
+			maxSNR.setText("10");
+			maxSNR.addKeyListener(keyAdapter);
+		}
+		{
+			label21 = new JLabel();
+			jPanel1.add(label21);
+			label21.setText("Seed Model");
+			label21.setBounds(labelPosLeft, 190, 165, 16);
+		}
+		{
+			ComboBoxModel seedModelModel = 
+				new DefaultComboBoxModel(
+							new String[] { "Random Seed", "Constant Seed"});
+			seedModel = new JComboBox();
+			jPanel1.add(seedModel);
+			seedModel.setModel(seedModelModel);
+			seedModel.setSelectedIndex(1);
+			seedModel.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if(seedModel.getSelectedIndex() == 0){
+						label22.setVisible(false);
+						seedValue.setVisible(false);
+					}
+					else{
+						label22.setVisible(true);
+						seedValue.setVisible(true);
+					}
+				}
+			});
+			jPanel1.add(seedModel);
+			seedModel.setBounds(itemPosLeft, 190, 120, 23);
+			seedModel.addKeyListener(keyAdapter);
+		}
+		{
+			label22 = new JLabel();
+			jPanel1.add(label22);
+			label22.setText("Seed Value");
+			label22.setBounds(labelPosLeft, 225, 165, 16);
+		}
+		{
+			seedValue = new JTextField();
+			jPanel1.add(seedValue);
+			seedValue.setBounds(itemPosLeft, 225, 120, 23);
+			seedValue.setText("111211211");
+			seedValue.addKeyListener(keyAdapter);
+		}
+		{
+			startSimulation = new JButton();
+			jPanel1.add(startSimulation);
+			startSimulation.setText("Start");
+			startSimulation.setBounds(itemPosRight, 498, 120, 23);
+			startSimulation.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					startSimulation();
+				}
+
+			});
+			startSimulation.addKeyListener(keyAdapter);
+		}
+		{
+			terminateSimulation = new JButton();
+			jPanel1.add(terminateSimulation);
+			terminateSimulation.setText("Terminate");
+			terminateSimulation.setBounds(labelPosRight, 498, 120, 23);
+			terminateSimulation.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if(crSensor!=null){
+						if(!crSensor.isFinished()){
+							priTrafGen.terminateAllThreads();
+							crSensor.terminate();
+						}
+					}
+				}
+
+			});
+			terminateSimulation.setVisible(false);
+
+		}
+		{
+			progressBar = new JProgressBar();
+			progressBar.setStringPainted(true);
+			jPanel1.add(progressBar);
+			progressBar.setBounds(labelPosLeft, 498, 165, 23);
+			progressBar.setVisible(false);
+		}
+	}
+	
+	private void initFrameOptionsGUI()
+	{
+		{
+			label23 = new JLabel();
+			jPanel1.add(label23);
+			label23.setText("Frame Structure Options");
+			label23.setBounds(labelPosLeft, 260, 165, 16);
+		}
+		{
+			label24 = new JLabel();
+			jPanel1.add(label24);
+			label24.setText("Number of Sensing Slots");
+			label24.setBounds(labelPosLeft, 295, 165, 16);
+		}
+		{
+			noSlotField = new JTextField();
+			jPanel1.add(noSlotField);
+			noSlotField.setBounds(itemPosLeft, 295, 120, 23);
+			noSlotField.setText("4");
+			noSlotField.addKeyListener(keyAdapter);
+		}
+		{
+			label25 = new JLabel();
+			jPanel1.add(label25);
+			label25.setText("Sensing Slot Duration (unit time)");
+			label25.setBounds(labelPosLeft, 330, 275, 16);
+		}
+		{
+			slotDurField = new JTextField();
+			jPanel1.add(slotDurField);
+			slotDurField.setBounds(itemPosLeft, 330, 120, 23);
+			slotDurField.setText("0.2");
+			slotDurField.addKeyListener(keyAdapter);
+		}
+		{
+			label26 = new JLabel();
+			jPanel1.add(label26);
+			label26.setText("Dur. of sensing result ack. (unit time)");
+			label26.setBounds(labelPosLeft, 365, 275, 16);
+		}
+		{
+			sensingResultField = new JTextField();
+			jPanel1.add(sensingResultField);
+			sensingResultField.setBounds(itemPosLeft, 365, 120, 23);
+			sensingResultField.setText("0.2");
+			sensingResultField.addKeyListener(keyAdapter);
+		}
+		{
+			label27 = new JLabel();
+			jPanel1.add(label27);
+			label27.setText("Sensing Schedule Advert. Dur. (unit time)");
+			label27.setBounds(labelPosLeft, 400, 275, 16);
+		}
+		{
+			senseScheduleField = new JTextField();
+			jPanel1.add(senseScheduleField);
+			senseScheduleField.setBounds(itemPosLeft, 400, 120, 23);
+			senseScheduleField.setText("0.2");
+			senseScheduleField.addKeyListener(keyAdapter);
+		}
+		{
+			label28 = new JLabel();
+			jPanel1.add(label28);
+			label28.setText("Communication Duration (unit time)");
+			label28.setBounds(labelPosLeft, 435, 275, 16);
+		}
+		{
+			commDurField = new JTextField();
+			jPanel1.add(commDurField);
+			commDurField.setBounds(itemPosLeft, 435, 120, 23);
+			commDurField.setText("0.7");
+			commDurField.addKeyListener(keyAdapter);
+		}
+		{
+			label29 = new JLabel();
+			jPanel1.add(label29);
+			label29.setText("Communication Schedule Advert. Dur. (unit time)");
+			label29.setBounds(labelPosLeft, 470, 275, 16);
+		}
+		{
+			commScheduleField = new JTextField();
+			jPanel1.add(commScheduleField);
+			commScheduleField.setBounds(itemPosLeft, 470, 120, 23);
+			commScheduleField.setText("0.2");
+			commScheduleField.addKeyListener(keyAdapter);
+		}
+	}
+	
+	private void initZoneOptionsGUI()
+	{
+		{
+			label3 = new JLabel();
+			jPanel1.add(label3);
+			label3.setText("Zone");
+			label3.setBounds(labelPosRight, 153, 165, 16);
+		}
+		{
+			label4 = new JLabel();
+			jPanel1.add(label4);
+			label4.setText("Sector Number");
+			label4.setBounds(labelPosRight, 188, 165, 16);
+		}
+		{
+			sectorNo = new JTextField();
+			jPanel1.add(sectorNo);
+			sectorNo.setBounds(itemPosRight, 183, 50, 23);
+			sectorNo.setText("3");
+			sectorNo.addKeyListener(keyAdapter);
+		}
+		{
+			label18 = new JLabel();
+			jPanel1.add(label18);
+			label18.setText("/");
+			label18.setBounds(itemPosRight+59, 183, 18, 23);
+		}
+		{
+			crSectorNo = new JTextField();
+			jPanel1.add(crSectorNo);
+			crSectorNo.setBounds(itemPosRight+70, 183, 50, 23);
+			crSectorNo.setText("0");
+			crSectorNo.addKeyListener(keyAdapter);
+		}
+		{
+			label5 = new JLabel();
+			jPanel1.add(label5);
+			label5.setText("D Number");
+			label5.setBounds(labelPosRight, 223, 165, 16);
+		}
+		{
+			dNo = new JTextField();
+			jPanel1.add(dNo);
+			dNo.setBounds(itemPosRight, 218, 50, 23);
+			dNo.setText("3");
+			dNo.addKeyListener(keyAdapter);
+		}
+		{
+			label19 = new JLabel();
+			jPanel1.add(label19);
+			label19.setText("/");
+			label19.setBounds(itemPosRight+59, 218, 18, 23);
+		}
+		{
+			crDNo = new JTextField();
+			jPanel1.add(crDNo);
+			crDNo.setBounds(itemPosRight+70, 218, 50, 23);
+			crDNo.setText("0");
+			crDNo.addKeyListener(keyAdapter);
+		}
+		{
+			label6 = new JLabel();
+			jPanel1.add(label6);
+			label6.setText("Alpha Number");
+			label6.setBounds(labelPosRight, 258, 165, 16);
+		}
+		{
+			alphaNo = new JTextField();
+			jPanel1.add(alphaNo);
+			alphaNo.setBounds(itemPosRight, 253, 50, 23);
+			alphaNo.setText("4");
+			alphaNo.addKeyListener(keyAdapter);
+		}
+		{
+			label20 = new JLabel();
+			jPanel1.add(label20);
+			label20.setText("/");
+			label20.setBounds(itemPosRight+59, 253, 18, 23);
+		}
+		{
+			crAlphaNo = new JTextField();
+			jPanel1.add(crAlphaNo);
+			crAlphaNo.setBounds(itemPosRight+70, 253, 50, 23);
+			crAlphaNo.setText("0");
+			crAlphaNo.addKeyListener(keyAdapter);
+		}
+		{
+			label13 = new JLabel();
+			jPanel1.add(label13);
+			label13.setText("Radius of Cell (100 m)");
+			label13.setBounds(labelPosRight, 293, 165, 16);
+		}
+		{
+			radiusField = new JTextField();
+			jPanel1.add(radiusField);
+			radiusField.setBounds(itemPosRight, 288, 120, 23);
+			radiusField.setText("30");
+			radiusField.addKeyListener(keyAdapter);
+		}
+	}
+	
+	private void initTrafficOptionsGUI()
+	{
+		{
+			label8 = new JLabel();
+			jPanel1.add(label8);
+			label8.setText("Traffic Model");
+			label8.setBounds(labelPosRight, 15, 165, 16);
+		}
+		{
+			label9 = new JLabel();
+			jPanel1.add(label9);
+			label9.setText("Number of Calls/unit time");
+			label9.setBounds(labelPosRight, 50, 165, 16);
+		}
+		{
+			noCalls = new JTextField();
+			jPanel1.add(noCalls);
+			noCalls.setBounds(itemPosRight, 50, 120, 23);
+			noCalls.setText("1");
+			noCalls.addKeyListener(keyAdapter);
+		}
+		{
+			label10 = new JLabel();
+			jPanel1.add(label10);
+			label10.setText("Call Duration (unit time)");
+			label10.setBounds(labelPosRight, 85, 165, 16);
+		}
+		{
+			callDur = new JTextField();
+			jPanel1.add(callDur);
+			callDur.setBounds(itemPosRight, 85, 120, 23);
+			callDur.setText("4");
+			callDur.addKeyListener(keyAdapter);
+		}
+		{
+			label11 = new JLabel();
+			jPanel1.add(label11);
+			label11.setText("Unit Time Dur. (msec)");
+			label11.setBounds(labelPosRight, 120, 165, 16);
+		}
+		{
+			unitTime = new JTextField();
+			jPanel1.add(unitTime);
+			unitTime.setBounds(itemPosRight, 120, 120, 23);
+			unitTime.setText("100");
+			unitTime.addKeyListener(keyAdapter);
+		}
+	}
+	
+	private void initFrequencyOptionsGUI()
+	{
+		{
+			label14 = new JLabel();
+			jPanel1.add(label14);
+			label14.setText("Frequency Options");
+			label14.setBounds(labelPosRight, 328, 165, 16);
+		}
+		{
+			label15 = new JLabel();
+			jPanel1.add(label15);
+			label15.setText("Number of Frequencies");
+			label15.setBounds(labelPosRight, 363, 165, 16);
+		}
+		{
+			noFreqs = new JTextField();
+			jPanel1.add(noFreqs);
+			noFreqs.setBounds(itemPosRight, 358, 120, 23);
+			noFreqs.setText("12");
+			noFreqs.addKeyListener(keyAdapter);
 		}
 	}
 	
