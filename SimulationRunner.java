@@ -101,12 +101,12 @@ public class SimulationRunner extends JFrame{
 	private JButton startSimulation;
 	static JButton terminateSimulation;
 	private JTextField noCalls,callDur,unitTime,simDur;
-	private JTextField noFreqs,maxSNR;
+	private JTextField noFreqs,maxSNR,sinrThresholdFied;
 	static JProgressBar progressBar;
 	private final static int labelPosLeft = 12;
 	private final static int labelPosRight = 490;
 	private final static int itemPosLeft = 305;
-	private final static int itemPosRight = 663;
+	private final static int itemPosRight = 783;
 	
 	public SimulationRunner() {
 		super();
@@ -140,7 +140,7 @@ public class SimulationRunner extends JFrame{
 				initFrequencyOptionsGUI();
 			}
 			pack();
-			this.setSize(805, 565);
+			this.setSize(925, 565);
 			this.setResizable(false);
 			this.setTitle("Simulator");
 		} catch (Exception e) {
@@ -231,10 +231,23 @@ public class SimulationRunner extends JFrame{
 			maxSNR.addKeyListener(keyAdapter);
 		}
 		{
+			label16 = new JLabel();
+			jPanel1.add(label16);
+			label16.setText("SINR Threshold Value to Communicate(dB)");
+			label16.setBounds(labelPosLeft, 190, 275, 16);
+		}
+		{
+			sinrThresholdFied = new JTextField();
+			jPanel1.add(sinrThresholdFied);
+			sinrThresholdFied.setBounds(itemPosLeft, 190, 120, 23);
+			sinrThresholdFied.setText("1");
+			sinrThresholdFied.addKeyListener(keyAdapter);
+		}
+		{
 			label21 = new JLabel();
 			jPanel1.add(label21);
 			label21.setText("Seed Model");
-			label21.setBounds(labelPosLeft, 190, 165, 16);
+			label21.setBounds(labelPosLeft, 225, 165, 16);
 		}
 		{
 			ComboBoxModel seedModelModel = 
@@ -259,19 +272,19 @@ public class SimulationRunner extends JFrame{
 				}
 			});
 			jPanel1.add(seedModel);
-			seedModel.setBounds(itemPosLeft, 190, 120, 23);
+			seedModel.setBounds(itemPosLeft, 225, 120, 23);
 			seedModel.addKeyListener(keyAdapter);
 		}
 		{
 			label22 = new JLabel();
 			jPanel1.add(label22);
 			label22.setText("Seed Value");
-			label22.setBounds(labelPosLeft, 225, 165, 16);
+			label22.setBounds(labelPosLeft, 260, 165, 16);
 		}
 		{
 			seedValue = new JTextField();
 			jPanel1.add(seedValue);
-			seedValue.setBounds(itemPosLeft, 225, 120, 23);
+			seedValue.setBounds(itemPosLeft, 260, 120, 23);
 			seedValue.setText("111211211");
 			seedValue.addKeyListener(keyAdapter);
 		}
@@ -326,18 +339,18 @@ public class SimulationRunner extends JFrame{
 			label23 = new JLabel();
 			jPanel1.add(label23);
 			label23.setText("Frame Structure Options");
-			label23.setBounds(labelPosLeft, 260, 165, 16);
+			label23.setBounds(labelPosRight, 15, 165, 16);
 		}
 		{
 			label24 = new JLabel();
 			jPanel1.add(label24);
 			label24.setText("Number of Sensing Slots");
-			label24.setBounds(labelPosLeft, 295, 165, 16);
+			label24.setBounds(labelPosRight, 50, 165, 16);
 		}
 		{
 			noSlotField = new JTextField();
 			jPanel1.add(noSlotField);
-			noSlotField.setBounds(itemPosLeft, 295, 120, 23);
+			noSlotField.setBounds(itemPosRight, 50, 120, 23);
 			noSlotField.setText("4");
 			noSlotField.addKeyListener(keyAdapter);
 		}
@@ -345,12 +358,12 @@ public class SimulationRunner extends JFrame{
 			label25 = new JLabel();
 			jPanel1.add(label25);
 			label25.setText("Sensing Slot Duration (unit time)");
-			label25.setBounds(labelPosLeft, 330, 275, 16);
+			label25.setBounds(labelPosRight, 85, 275, 16);
 		}
 		{
 			slotDurField = new JTextField();
 			jPanel1.add(slotDurField);
-			slotDurField.setBounds(itemPosLeft, 330, 120, 23);
+			slotDurField.setBounds(itemPosRight, 85, 120, 23);
 			slotDurField.setText("0.2");
 			slotDurField.addKeyListener(keyAdapter);
 		}
@@ -358,12 +371,12 @@ public class SimulationRunner extends JFrame{
 			label26 = new JLabel();
 			jPanel1.add(label26);
 			label26.setText("Dur. of sensing result ack. (unit time)");
-			label26.setBounds(labelPosLeft, 365, 275, 16);
+			label26.setBounds(labelPosRight, 120, 275, 16);
 		}
 		{
 			sensingResultField = new JTextField();
 			jPanel1.add(sensingResultField);
-			sensingResultField.setBounds(itemPosLeft, 365, 120, 23);
+			sensingResultField.setBounds(itemPosRight, 120, 120, 23);
 			sensingResultField.setText("0.2");
 			sensingResultField.addKeyListener(keyAdapter);
 		}
@@ -371,12 +384,12 @@ public class SimulationRunner extends JFrame{
 			label27 = new JLabel();
 			jPanel1.add(label27);
 			label27.setText("Sensing Schedule Advert. Dur. (unit time)");
-			label27.setBounds(labelPosLeft, 400, 275, 16);
+			label27.setBounds(labelPosRight, 155, 275, 16);
 		}
 		{
 			senseScheduleField = new JTextField();
 			jPanel1.add(senseScheduleField);
-			senseScheduleField.setBounds(itemPosLeft, 400, 120, 23);
+			senseScheduleField.setBounds(itemPosRight, 155, 120, 23);
 			senseScheduleField.setText("0.2");
 			senseScheduleField.addKeyListener(keyAdapter);
 		}
@@ -384,12 +397,12 @@ public class SimulationRunner extends JFrame{
 			label28 = new JLabel();
 			jPanel1.add(label28);
 			label28.setText("Communication Duration (unit time)");
-			label28.setBounds(labelPosLeft, 435, 275, 16);
+			label28.setBounds(labelPosRight, 190, 275, 16);
 		}
 		{
 			commDurField = new JTextField();
 			jPanel1.add(commDurField);
-			commDurField.setBounds(itemPosLeft, 435, 120, 23);
+			commDurField.setBounds(itemPosRight, 190, 120, 23);
 			commDurField.setText("0.7");
 			commDurField.addKeyListener(keyAdapter);
 		}
@@ -397,12 +410,12 @@ public class SimulationRunner extends JFrame{
 			label29 = new JLabel();
 			jPanel1.add(label29);
 			label29.setText("Communication Schedule Advert. Dur. (unit time)");
-			label29.setBounds(labelPosLeft, 470, 275, 16);
+			label29.setBounds(labelPosRight, 225, 275, 16);
 		}
 		{
 			commScheduleField = new JTextField();
 			jPanel1.add(commScheduleField);
-			commScheduleField.setBounds(itemPosLeft, 470, 120, 23);
+			commScheduleField.setBounds(itemPosRight, 225, 120, 23);
 			commScheduleField.setText("0.2");
 			commScheduleField.addKeyListener(keyAdapter);
 		}
@@ -414,18 +427,18 @@ public class SimulationRunner extends JFrame{
 			label3 = new JLabel();
 			jPanel1.add(label3);
 			label3.setText("Zone");
-			label3.setBounds(labelPosRight, 153, 165, 16);
+			label3.setBounds(labelPosRight, 260, 165, 16);
 		}
 		{
 			label4 = new JLabel();
 			jPanel1.add(label4);
 			label4.setText("Sector Number");
-			label4.setBounds(labelPosRight, 188, 165, 16);
+			label4.setBounds(labelPosRight, 295, 165, 16);
 		}
 		{
 			sectorNo = new JTextField();
 			jPanel1.add(sectorNo);
-			sectorNo.setBounds(itemPosRight, 183, 50, 23);
+			sectorNo.setBounds(itemPosRight, 295, 50, 23);
 			sectorNo.setText("3");
 			sectorNo.addKeyListener(keyAdapter);
 		}
@@ -433,12 +446,12 @@ public class SimulationRunner extends JFrame{
 			label18 = new JLabel();
 			jPanel1.add(label18);
 			label18.setText("/");
-			label18.setBounds(itemPosRight+59, 183, 18, 23);
+			label18.setBounds(itemPosRight+59, 295, 18, 23);
 		}
 		{
 			crSectorNo = new JTextField();
 			jPanel1.add(crSectorNo);
-			crSectorNo.setBounds(itemPosRight+70, 183, 50, 23);
+			crSectorNo.setBounds(itemPosRight+70, 295, 50, 23);
 			crSectorNo.setText("0");
 			crSectorNo.addKeyListener(keyAdapter);
 		}
@@ -446,12 +459,12 @@ public class SimulationRunner extends JFrame{
 			label5 = new JLabel();
 			jPanel1.add(label5);
 			label5.setText("D Number");
-			label5.setBounds(labelPosRight, 223, 165, 16);
+			label5.setBounds(labelPosRight, 330, 165, 16);
 		}
 		{
 			dNo = new JTextField();
 			jPanel1.add(dNo);
-			dNo.setBounds(itemPosRight, 218, 50, 23);
+			dNo.setBounds(itemPosRight, 330, 50, 23);
 			dNo.setText("3");
 			dNo.addKeyListener(keyAdapter);
 		}
@@ -459,12 +472,12 @@ public class SimulationRunner extends JFrame{
 			label19 = new JLabel();
 			jPanel1.add(label19);
 			label19.setText("/");
-			label19.setBounds(itemPosRight+59, 218, 18, 23);
+			label19.setBounds(itemPosRight+59, 330, 18, 23);
 		}
 		{
 			crDNo = new JTextField();
 			jPanel1.add(crDNo);
-			crDNo.setBounds(itemPosRight+70, 218, 50, 23);
+			crDNo.setBounds(itemPosRight+70, 330, 50, 23);
 			crDNo.setText("0");
 			crDNo.addKeyListener(keyAdapter);
 		}
@@ -472,12 +485,12 @@ public class SimulationRunner extends JFrame{
 			label6 = new JLabel();
 			jPanel1.add(label6);
 			label6.setText("Alpha Number");
-			label6.setBounds(labelPosRight, 258, 165, 16);
+			label6.setBounds(labelPosRight, 365, 165, 16);
 		}
 		{
 			alphaNo = new JTextField();
 			jPanel1.add(alphaNo);
-			alphaNo.setBounds(itemPosRight, 253, 50, 23);
+			alphaNo.setBounds(itemPosRight, 365, 50, 23);
 			alphaNo.setText("4");
 			alphaNo.addKeyListener(keyAdapter);
 		}
@@ -485,12 +498,12 @@ public class SimulationRunner extends JFrame{
 			label20 = new JLabel();
 			jPanel1.add(label20);
 			label20.setText("/");
-			label20.setBounds(itemPosRight+59, 253, 18, 23);
+			label20.setBounds(itemPosRight+59, 365, 18, 23);
 		}
 		{
 			crAlphaNo = new JTextField();
 			jPanel1.add(crAlphaNo);
-			crAlphaNo.setBounds(itemPosRight+70, 253, 50, 23);
+			crAlphaNo.setBounds(itemPosRight+70, 365, 50, 23);
 			crAlphaNo.setText("0");
 			crAlphaNo.addKeyListener(keyAdapter);
 		}
@@ -498,12 +511,12 @@ public class SimulationRunner extends JFrame{
 			label13 = new JLabel();
 			jPanel1.add(label13);
 			label13.setText("Radius of Cell (100 m)");
-			label13.setBounds(labelPosRight, 293, 165, 16);
+			label13.setBounds(labelPosRight, 400, 165, 16);
 		}
 		{
 			radiusField = new JTextField();
 			jPanel1.add(radiusField);
-			radiusField.setBounds(itemPosRight, 288, 120, 23);
+			radiusField.setBounds(itemPosRight, 400, 120, 23);
 			radiusField.setText("30");
 			radiusField.addKeyListener(keyAdapter);
 		}
@@ -515,18 +528,18 @@ public class SimulationRunner extends JFrame{
 			label8 = new JLabel();
 			jPanel1.add(label8);
 			label8.setText("Traffic Model");
-			label8.setBounds(labelPosRight, 15, 165, 16);
+			label8.setBounds(labelPosLeft, 295, 165, 16);
 		}
 		{
 			label9 = new JLabel();
 			jPanel1.add(label9);
 			label9.setText("Number of Calls/unit time");
-			label9.setBounds(labelPosRight, 50, 165, 16);
+			label9.setBounds(labelPosLeft, 330, 165, 16);
 		}
 		{
 			noCalls = new JTextField();
 			jPanel1.add(noCalls);
-			noCalls.setBounds(itemPosRight, 50, 120, 23);
+			noCalls.setBounds(itemPosLeft, 330, 120, 23);
 			noCalls.setText("1");
 			noCalls.addKeyListener(keyAdapter);
 		}
@@ -534,12 +547,12 @@ public class SimulationRunner extends JFrame{
 			label10 = new JLabel();
 			jPanel1.add(label10);
 			label10.setText("Call Duration (unit time)");
-			label10.setBounds(labelPosRight, 85, 165, 16);
+			label10.setBounds(labelPosLeft, 365, 165, 16);
 		}
 		{
 			callDur = new JTextField();
 			jPanel1.add(callDur);
-			callDur.setBounds(itemPosRight, 85, 120, 23);
+			callDur.setBounds(itemPosLeft, 365, 120, 23);
 			callDur.setText("4");
 			callDur.addKeyListener(keyAdapter);
 		}
@@ -547,12 +560,12 @@ public class SimulationRunner extends JFrame{
 			label11 = new JLabel();
 			jPanel1.add(label11);
 			label11.setText("Unit Time Dur. (msec)");
-			label11.setBounds(labelPosRight, 120, 165, 16);
+			label11.setBounds(labelPosLeft, 400, 165, 16);
 		}
 		{
 			unitTime = new JTextField();
 			jPanel1.add(unitTime);
-			unitTime.setBounds(itemPosRight, 120, 120, 23);
+			unitTime.setBounds(itemPosLeft, 400, 120, 23);
 			unitTime.setText("100");
 			unitTime.addKeyListener(keyAdapter);
 		}
@@ -564,18 +577,18 @@ public class SimulationRunner extends JFrame{
 			label14 = new JLabel();
 			jPanel1.add(label14);
 			label14.setText("Frequency Options");
-			label14.setBounds(labelPosRight, 328, 165, 16);
+			label14.setBounds(labelPosRight, 435, 165, 16);
 		}
 		{
 			label15 = new JLabel();
 			jPanel1.add(label15);
 			label15.setText("Number of Frequencies");
-			label15.setBounds(labelPosRight, 363, 165, 16);
+			label15.setBounds(labelPosRight, 470, 165, 16);
 		}
 		{
 			noFreqs = new JTextField();
 			jPanel1.add(noFreqs);
-			noFreqs.setBounds(itemPosRight, 358, 120, 23);
+			noFreqs.setBounds(itemPosRight, 470, 120, 23);
 			noFreqs.setText("12");
 			noFreqs.addKeyListener(keyAdapter);
 		}
@@ -605,6 +618,7 @@ public class SimulationRunner extends JFrame{
 		int numberOfFreq = 0;
 		int maxFreqCR = 0;
 		double maxSnr = 0;
+		double sinrThreshold = 0;
 		int crAlpha = 0;
 		int crSector = 0;
 		int crD = 0;
@@ -632,7 +646,8 @@ public class SimulationRunner extends JFrame{
 			uniform = new Uniform(randEngine);			//Create Uniform distribution to select number of frequencies and their values
 			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());	//Get number of frequencies
 			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
-			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr);	//Create a wireless channel
+			sinrThreshold = Double.parseDouble(sinrThresholdFied.getText());
+			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr, sinrThreshold);	//Create a wireless channel
 			sectrNo = Integer.parseInt(sectorNo.getText());			//Get number of sectors in the cell
 			dNumber = Integer.parseInt(dNo.getText());				//Get number of d's
 			alpha = Integer.parseInt(alphaNo.getText());			//Get number of alpha's
