@@ -139,5 +139,5 @@ public class CRNode extends Node{
         this.communication_frequency = communication_frequency;
     }
     
-    
+    //TODO communication(collision var mi diye bakacak bikac kere, snir degerlerini loga yaz.)
 }

@@ -7,10 +7,9 @@ package firstproject;
 import cern.jet.random.Uniform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
+
 
 public class CRBase extends Node{
     /**
@@ -26,7 +25,7 @@ public class CRBase extends Node{
      */
     private static int number_of_freq_per_crnode;
     
-    private ArrayList<Double> last_averageSnr = null;
+    private ArrayList<Double> last_averageSnr = null;   //TODO add last two averagesnr
     
     private ArrayList<FreqSNR> free_frequencies = null;
     
@@ -51,20 +50,20 @@ public class CRBase extends Node{
         Double SNR;
 
         public FreqSNR(Integer freq, Double SNR) {
-        this.freq = freq;
-        this.SNR = SNR;
+            this.freq = freq;
+            this.SNR = SNR;
         }
 
         public FreqSNR() {
         }
 
         public int compare(FreqSNR o1, FreqSNR o2) {
-        double diff=o1.SNR-o2.SNR;
-        if(diff<0)
-        return -1;
-        else if(diff==0)
-        return 0;
-        return 1;
+            double diff=o1.SNR-o2.SNR;
+            if(diff<0)
+                return -1;
+            else if(diff==0)
+                return 0;
+            return 1;
         }
     }
     
@@ -113,7 +112,7 @@ public class CRBase extends Node{
             if(last_averageSnr.get(i) < ((snr_from_base - SimulationRunner.wc.sinrThreshold)/SimulationRunner.wc.sinrThreshold))
                free_frequencies.add(new FreqSNR(i, last_averageSnr.get(i)));
         }
-        Collections.sort(free_frequencies, new FreqSNR()); //descending sorting snr values 
+        Collections.sort(free_frequencies, new FreqSNR()); //descending sorting of snr values 
         
         ArrayList<Integer> crnode_ids = new ArrayList<Integer>();
         for(int j=0;j<SimulationRunner.crNodes.size();j++){
