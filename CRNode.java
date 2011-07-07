@@ -28,7 +28,9 @@ public class CRNode extends Node{
      */
     private static ArrayList<Double> averageSnr = null;
     
-    private ArrayList<Integer> freq_list;
+    private int communication_frequency = -1;
+    
+    private ArrayList<Integer> freq_list_to_listen;
     
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
@@ -43,11 +45,12 @@ public class CRNode extends Node{
     }
     
     /**
-     * Updates all the snr values of the frequencies which are assigned to this CRNode.
+     * Updates the snr value of the frequency.
+     * @param freq Number of the frequency in snrValues list.
      */
     public void sense(int freq){
-        snrValues.put(freq_list.get(freq),SimulationRunner.wc.generateSNR(this, freq_list.get(freq)));
-        averageSnr.set(freq_list.get(freq), (averageSnr.get(freq_list.get(freq))+snrValues.get(freq_list.get(freq))));
+        snrValues.put(freq_list_to_listen.get(freq),SimulationRunner.wc.generateSNR(this, freq_list_to_listen.get(freq)));
+        averageSnr.set(freq_list_to_listen.get(freq), (averageSnr.get(freq_list_to_listen.get(freq))+snrValues.get(freq_list_to_listen.get(freq))));
     }
     
     /**
@@ -87,7 +90,7 @@ public class CRNode extends Node{
             averageSnr.set(i,(averageSnr.get(i)/SimulationRunner.crBase.getFrequency_list().get(i))); // gets the current crnode 
                                                                                         //number that listens to this freq.
         }
-        
+        SimulationRunner.crBase.setLast_averageSnr(averageSnr);
 		SimulationRunner.plot.addPoint(time, averageSnr);
         pw.println("average snr values: " + averageSnr.toString()); //writing to log file
         
@@ -129,6 +132,12 @@ public class CRNode extends Node{
             snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
                                                    //hash table with 0.0 initial snr value
         }
-        freq_list=frequencies;
+        freq_list_to_listen=frequencies;
     }
+
+    public void setCommunication_frequency(int communication_frequency) {
+        this.communication_frequency = communication_frequency;
+    }
+    
+    
 }
