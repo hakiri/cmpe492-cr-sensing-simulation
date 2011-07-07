@@ -37,6 +37,10 @@ public class WirelessChannel {
 	 * Max SNR value of the channel
 	 */
 	double maxSNR;
+	/**
+	 * Minimum SINR threshold to be able to communicate
+	 */
+	double sinrThreshold;
 	
 	/**
 	 * Creates a wireless channel with the given model.
@@ -46,7 +50,7 @@ public class WirelessChannel {
 	 * @param numberOfFrequencies 
 	 * @param maxSNR max SNR value of the channel
 	 */
-	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR)
+	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold)
 	{
 		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
 		frequencies = new HashMap<Integer, ArrayList<Node>>();	//Create a hash table for frequencies with integer keys and 
@@ -59,6 +63,7 @@ public class WirelessChannel {
 		}
 		this.channelModel = channelModel;			//Set channel model
 		this.maxSNR = maxSNR;						//Sets max SNR value
+		this.sinrThreshold = sinrThreshold;
 	}
 	
 	/**
