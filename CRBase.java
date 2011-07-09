@@ -108,7 +108,7 @@ public class CRBase extends Node{
         snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
         
         for(int i=0;i<current_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
-            threshold = SimulationRunner.wc.magTodb(SimulationRunner.wc.dbToMag(SimulationRunner.wc.generateSNR(this, i) - SimulationRunner.wc.sinrThreshold)-1);
+            threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(SimulationRunner.wc.generateSNR(this, i) - SimulationRunner.wc.sinrThreshold)-1);
             if(threshold < 0)
                 threshold = 0;
             if(current_averageSnr.get(i) < threshold)
@@ -134,6 +134,8 @@ public class CRBase extends Node{
     
     public void setLast_averageSnr(ArrayList<Double> current_averageSnr) {
         this.current_averageSnr = new ArrayList<Double>();
+        this.last_averageSnr = new ArrayList<Double>();
+        this.last_averageSnr.addAll(this.current_averageSnr);
         this.current_averageSnr.addAll(current_averageSnr);
     }
     
