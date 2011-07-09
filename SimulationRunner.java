@@ -636,6 +636,27 @@ public class SimulationRunner extends JFrame{
 			commDur = Double.parseDouble(commDurField.getText());
 			senseResultAdvertisement = Double.parseDouble(sensingResultField.getText());
 			
+			sectrNo = Integer.parseInt(sectorNo.getText());			//Get number of sectors in the cell
+			dNumber = Integer.parseInt(dNo.getText());				//Get number of d's
+			alpha = Integer.parseInt(alphaNo.getText());			//Get number of alpha's
+			radius = Double.parseDouble(radiusField.getText());		//Get radius of the cell
+			
+			numberOfFreq = Integer.parseInt(noFreqs.getText());						//Get number of frequencies
+			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
+			sinrThreshold = Double.parseDouble(sinrThresholdFied.getText());
+			
+			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());	//Get number of CR nodes
+			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
+			maxFreqCR = Integer.parseInt(noSlotField.getText());			//Get max number of frequencies a node can sense
+			crAlpha = Integer.parseInt(crAlphaNo.getText());			//Get alpha number CR nodes will be in
+			crSector = Integer.parseInt(crSectorNo.getText());			//Get sector number CR nodes will be in
+			crD = Integer.parseInt(crDNo.getText());					//Get d interval CR nodes will be in
+			
+			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per unit time
+			callDura = Double.parseDouble(callDur.getText());	//Get call duration in terms of unit time
+			timeUnit = Integer.parseInt(unitTime.getText());	//Get unit time duration in terms of milliseconds
+			simDura = Long.parseLong(simDur.getText());			//Get duration of the simulation in terms of unit time
+			
 			if(seedModel.getSelectedIndex()==0){				//If seed model is random
 				randEngine = new MersenneTwister(new Date());	//Give date as seed
 			}
@@ -644,33 +665,32 @@ public class SimulationRunner extends JFrame{
 				randEngine = new MersenneTwister(seed);
 			}
 			uniform = new Uniform(randEngine);			//Create Uniform distribution to select number of frequencies and their values
-			int remainFreq = numberOfFreq = Integer.parseInt(noFreqs.getText());	//Get number of frequencies
-			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
-			sinrThreshold = Double.parseDouble(sinrThresholdFied.getText());
+			
+			int remainFreq = numberOfFreq;				//Get number of frequencies
+			
 			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr, sinrThreshold);	//Create a wireless channel
-			sectrNo = Integer.parseInt(sectorNo.getText());			//Get number of sectors in the cell
-			dNumber = Integer.parseInt(dNo.getText());				//Get number of d's
-			alpha = Integer.parseInt(alphaNo.getText());			//Get number of alpha's
-			radius = Double.parseDouble(radiusField.getText());		//Get radius of the cell
+			
 			alpha = (360/sectrNo)/alpha;							//Evaluate the angle associated to alpha
 			double temp = radius / dNumber;							//Evaluate length of each d as they will be equal
 			double inc = temp;
 			for(int i = 0;i<dNumber;i++,temp+=inc)
 				setOfD.add(temp);									//Create set of d's
+			
 			cell = new Cell(crBase, radius, sectrNo, alpha, setOfD);//Create a cell
 			
-			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());	//Get number of CR nodes
-			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
-			maxFreqCR = Integer.parseInt(noSlotField.getText());			//Get max number of frequencies a node can sense
-			crAlpha = Integer.parseInt(crAlphaNo.getText());			//Get alpha number CR nodes will be in
-			crSector = Integer.parseInt(crSectorNo.getText());			//Get sector number CR nodes will be in
-			crD = Integer.parseInt(crDNo.getText());					//Get d interval CR nodes will be in
 			double dmin;
 			if(crD==0)
 				dmin=0;
 			else
 				dmin = setOfD.get(crD-1);
 			double dmax = setOfD.get(crD);
+			double minSNR = maxSnr/Math.exp(dmax*0.12);
+			if(minSNR<=sinrThreshold){
+				JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR),
+					"Simulation", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+			
 			drawCell = new DrawCell((int)radius, sectrNo, crSector, Integer.parseInt(alphaNo.getText()), crAlpha,
 																(int)dmin, (int)dmax, numberOfCrNodes, numberOfPriNodes);
 			crBase = new CRBase(new Point2D.Double(0, 0),0,maxFreqCR);		//Create a CR base station in the origin
@@ -680,11 +700,9 @@ public class SimulationRunner extends JFrame{
 				DrawCell.paintCrNode(crNodes.get(i));
 			}
 			
-			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per unit time
-			callDura = Double.parseDouble(callDur.getText());	//Get call duration in terms of unit time
-			timeUnit = Integer.parseInt(unitTime.getText());	//Get unit time duration in terms of milliseconds
+			
 			priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit);
-			simDura = Long.parseLong(simDur.getText());			//Get duration of the simulation in terms of unit time
+			
 			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 			numberOFYs.add(numberOfFreq);
 			numberOFYs.add(numberOfFreq);
