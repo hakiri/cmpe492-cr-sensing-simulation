@@ -85,7 +85,7 @@ public class CRNode extends Node{
      * and then resets the average snr values.
      * @param number_of_crnodes Total number of CRNodes.
      */
-    public static void logAverageSnr(int number_of_crnodes, int colomn, double time){
+    public static void logAverageSnr(double time){
         for(int i=0;i<averageSnr.size();i++){   //calculates the average snr values
             averageSnr.set(i,(averageSnr.get(i)/SimulationRunner.crBase.getFrequency_list().get(i))); // gets the current crnode 
                                                                                         //number that listens to this freq.
@@ -140,5 +140,24 @@ public class CRNode extends Node{
         this.communication_frequency = communication_frequency;
     }
     
-    //TODO communication(collision var mi diye bakacak bikac kere, snir degerlerini loga yaz.)
+    //TODO communication(collision var mi diye bakacak bikac kere, snir degerlerini log'a yaz.)
+    public static void communicate(double time){
+        ArrayList<Double> sinr = new ArrayList<Double>();
+        for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
+            sinr.add(0.0);
+        }
+        for(int i=0;i<SimulationRunner.crNodes.size();i++){
+            String collision = "no collision";
+            int freq = SimulationRunner.crNodes.get(i).communication_frequency;
+            if(freq >= 0){
+                sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crNodes.get(i), freq));
+                if(sinr.get(i)<SimulationRunner.wc.sinrThreshold) //checks if collision occured
+                    collision = "collision occured";
+                writeLogFile("time:" + String.format("Time: %.2f", (double)(time)) +"number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(SimulationRunner.crNodes.get(i).communication_frequency) + " -- sinrValue: " + sinr.get(i).toString() + " --- " + collision );
+            }
+        }       
+        SimulationRunner.plot.addPoint(1,time, sinr);
+    }
+    
+    
 }

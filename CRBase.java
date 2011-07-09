@@ -46,6 +46,7 @@ public class CRBase extends Node{
         this.frequency_to_be_listen=0;
         this.number_of_freq_per_crnode = number_of_freq_per_crnode;
         this.uniform = new Uniform(SimulationRunner.randEngine);
+        this.current_averageSnr = new ArrayList<Double>();
     }
     
     private class FreqSNR implements Comparator<FreqSNR> {
@@ -80,7 +81,10 @@ public class CRBase extends Node{
     }
     
     public void assignFrequencies(){
-	frequency_list = new ArrayList<Integer>();
+	for(int i=0;i<SimulationRunner.crNodes.size();i++){ //restarts the comm_freq value for crnodes.
+            SimulationRunner.crNodes.get(i).setCommunication_frequency(-1);
+        }
+        frequency_list = new ArrayList<Integer>();
         for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
             frequency_list.add(0);
         }
@@ -107,12 +111,12 @@ public class CRBase extends Node{
         }
         snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
         
-        for(int i=0;i<current_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
+        for(int i=0;i<last_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
             threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(SimulationRunner.wc.generateSNR(this, i) - SimulationRunner.wc.sinrThreshold)-1);
             if(threshold < 0)
                 threshold = 0;
-            if(current_averageSnr.get(i) < threshold)
-               free_frequencies.add(new FreqSNR(i, current_averageSnr.get(i)));
+            if(last_averageSnr.get(i) <= threshold)
+               free_frequencies.add(new FreqSNR(i, last_averageSnr.get(i)));
         }
         Collections.sort(free_frequencies, new FreqSNR()); //descending sorting of snr values 
         
@@ -133,9 +137,9 @@ public class CRBase extends Node{
     
     
     public void setLast_averageSnr(ArrayList<Double> current_averageSnr) {
-        this.current_averageSnr = new ArrayList<Double>();
         this.last_averageSnr = new ArrayList<Double>();
         this.last_averageSnr.addAll(this.current_averageSnr);
+        this.current_averageSnr = new ArrayList<Double>();
         this.current_averageSnr.addAll(current_averageSnr);
     }
     
