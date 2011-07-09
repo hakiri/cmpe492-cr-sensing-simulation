@@ -106,7 +106,7 @@ public class CRSensorThread implements Runnable{
 		ArrayList<String> names = new ArrayList<String>();
 		names.add("SNR");
 		names.add("SINR");
-		SimulationRunner.plot.plotAllX(0);			//Plot the time vs average SNR graphs
+		SimulationRunner.plot.plotAll(names);			//Plot the time vs average SNR graphs
 		finished=true;											//Set finished as true
 	}
 	
@@ -219,7 +219,7 @@ public class CRSensorThread implements Runnable{
 	private void communicate()
 	{
 		time = System.currentTimeMillis();		//Save current time
-		//TODO Communicate
+		CRNode.communicate((double)(simulationDur-simulationDuration)/unitTime); //TODO Communicate
 		time = (long)commDur - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 		if(time>1){												//unit time if it is greater than 1 milli sec
 			try {												//sleep for that amount
