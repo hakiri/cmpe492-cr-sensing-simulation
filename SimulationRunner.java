@@ -686,7 +686,7 @@ public class SimulationRunner extends JFrame{
 			double dmax = setOfD.get(crD);
 			double minSNR = maxSnr/Math.exp(dmax*0.12);
 			if(minSNR<=sinrThreshold){
-				JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR),
+				JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
 					"Simulation", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
