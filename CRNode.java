@@ -151,9 +151,9 @@ public class CRNode extends Node{
             int freq = SimulationRunner.crNodes.get(i).communication_frequency;
             if(freq >= 0){
                 sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crNodes.get(i), freq));
-                if(sinr.get(i)<SimulationRunner.wc.sinrThreshold) //checks if collision occured
+                if(sinr.get(freq)<SimulationRunner.wc.sinrThreshold) //checks if collision occured
                     collision = "collision occured";
-                writeLogFile("time:" + String.format("Time: %.2f", (double)(time)) +"number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(SimulationRunner.crNodes.get(i).communication_frequency) + " -- sinrValue: " + sinr.get(i).toString() + " --- " + collision );
+                writeLogFile("time:" + String.format("Time: %.2f", (double)(time)) +"number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
             }
         }       
         SimulationRunner.plot.addPoint(1,time, sinr);
