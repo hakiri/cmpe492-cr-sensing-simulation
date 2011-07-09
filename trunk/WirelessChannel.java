@@ -104,10 +104,12 @@ public class WirelessChannel {
 	 */
 	public double generateSINR(Node transmitter, Node receiver, int freq)
 	{
-		double inr = generateSNR(receiver, freq);
+		double inrdb = generateSNR(receiver, freq);
 		if(channelModel==SIMPLECH){
 			double distance = transmitter.getPosition().distance(receiver.getPosition());
-			return (maxSNR/Math.exp(0.12*distance))/(inr+1);
+			double snrdb = maxSNR/Math.exp(0.12*distance);
+			inrdb = magTodb(dbToMag(inrdb)+1);
+			return snrdb - inrdb;
 		}
 		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
 			return 0;
@@ -173,6 +175,16 @@ public class WirelessChannel {
 	public static double dbToMag(double db)
 	{
 		return Math.pow(10, (db/20));
+	}
+	
+	/**
+	 * Computes the dB of a given magnitude
+	 * @param mag Magnitude value to be computed
+	 * @return dB equivalent of mag
+	 */
+	public static double magTodb(double mag)
+	{
+		return 20.0*Math.log10(mag);
 	}
 	
 	/**

@@ -169,7 +169,6 @@ public class CRSensorThread implements Runnable{
 		if(PrimaryTrafficGenerator.readerCount==0)
 			PrimaryTrafficGenerator.writeLock.release();
 		PrimaryTrafficGenerator.x.release();
-		//TODO Correct the time
 		time = (long)slotDur - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 		if(time>1){												//unit time if it is greater than 1 milli sec
 			try {												//sleep for that amount
@@ -206,7 +205,7 @@ public class CRSensorThread implements Runnable{
 	private void commScheduleAdvertise()
 	{
 		time = System.currentTimeMillis();		//Save current time
-		//TODO Communication schedule advertisement
+		SimulationRunner.crBase.communicationScheduleAdvertiser();
 		time = (long)commScheduleAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 		if(time>1){												//unit time if it is greater than 1 milli sec
 			try {												//sleep for that amount
