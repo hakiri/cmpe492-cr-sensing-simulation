@@ -108,6 +108,8 @@ public class WirelessChannel {
 		if(channelModel==SIMPLECH){
 			double distance = transmitter.getPosition().distance(receiver.getPosition());
 			double snrdb = maxSNR/Math.exp(0.12*distance);
+			if(inrdb==0)
+				return snrdb;
 			inrdb = magTodb(dbToMag(inrdb)+1);
 			return snrdb - inrdb;
 		}
