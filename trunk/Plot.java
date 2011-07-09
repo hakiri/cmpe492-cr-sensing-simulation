@@ -26,11 +26,11 @@ public class Plot {
 	/**
 	 * x values of the graphs
 	 */
-	private ArrayList<Double> x;
+	private ArrayList<ArrayList<Double>> x;
 	/**
 	 * y values of the graphs
 	 */
-	private ArrayList<ArrayList<Double>> y;
+	private ArrayList<ArrayList<ArrayList<Double>>> y;
 	/**
      * Writer for the log file.
      */
@@ -39,47 +39,59 @@ public class Plot {
 	/**
 	 * Creates a new plotter object with no x value and y value. It creates a two dimensional
 	 * array whose second dimension is given by parameter.
-	 * @param numberOfFreq	Number of grahps which also number of different y values
+	 * @param numberOfXs	Number of different x values
+	 * @param yPerX			How many y belongs to each x
 	 */
-	public Plot(int numberOfFreq)
+	public Plot(int numberOfXs, ArrayList<Integer> yPerX)
 	{
-		x = new ArrayList<Double>();				//Create an empty array
-		y = new ArrayList<ArrayList<Double>>();		//Create an empty array of array for y values
-		for(int i=0;i<numberOfFreq;i++){
-			y.add(new ArrayList<Double>());			//Then create arrays that will hold y values
+		if(yPerX.isEmpty()){
+			yPerX.add(1);
+		}
+		while(yPerX.size()<numberOfXs){
+			yPerX.add(yPerX.get(yPerX.size()-1));
+		}
+		x = new ArrayList<ArrayList<Double>>();				//Create an empty array
+		y = new ArrayList<ArrayList<ArrayList<Double>>>();		//Create an empty array of array for y values
+		for(int i=0;i<numberOfXs;i++){
+			x.add(new ArrayList<Double>());
+			y.add(new ArrayList<ArrayList<Double>>());
+			for(int j=0;j<yPerX.get(i);j++)
+				y.get(i).add(new ArrayList<Double>());			//Then create arrays that will hold y values
 		}
 	}
 	
 	/**
 	 * Adds an x value and its corresponding y values. This methods insert values
 	 * in a way that will keep x values array always sorted
+	 * @param xPos		Which x value collection the values belong
 	 * @param xVal		x value to be added
 	 * @param yVals		y values to be added
 	 * @return			true if values added false otherwise.
 	 */
-	public boolean addPoint(double xVal, ArrayList<Double> yVals)
+	public boolean addPoint(int xPos, double xVal, ArrayList<Double> yVals)
 	{
-		if(yVals.size()!=y.size())
+		if(yVals.size()!=y.get(xPos).size())
 			return false;
-		int index = Collections.binarySearch(x, xVal);
+		int index = Collections.binarySearch(x.get(xPos), xVal);
 		if(index<0)
 			index = -(index+1);
-		x.add(index, xVal);						//Adds the x value
-		for(int i=0;i<y.size();i++){		//Adds the y values one by one
-			y.get(i).add(index, yVals.get(i));
+		x.get(xPos).add(index, xVal);						//Adds the x value
+		for(int i=0;i<y.get(xPos).size();i++){		//Adds the y values one by one
+			y.get(xPos).get(i).add(index, yVals.get(i));
 		}
 		return true;
 	}
 	
 	/**
-	 * Creates x versus the given y value file to be used to plot its graph. This 
-	 * method returns immediately if the frequency is not valid.
+	 * Creates the given x versus the given y value file to be used to plot its
+	 * graph. This method returns immediately if the y values is not valid.
 	 * @param title		title of the graph
-	 * @param freq		Frequency to be plotted
+	 * @param xPos 		x values to be plotted
+	 * @param yPos		y values to be plotted
 	 */
-	public void plot(String title, int freq)
+	public void plot(String title, int xPos, int yPos)
 	{
-		if(freq<0||freq>=y.size())
+		if(yPos<0||yPos>=y.get(xPos).size())
 			return;
         try {
             pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(title))));
@@ -87,10 +99,13 @@ public class Plot {
             System.err.println("Error during file operations");
         }
 		
-		double max=Collections.max(y.get(freq));
-		double xMax=Collections.max(x);
+		double min=Collections.min(y.get(xPos).get(yPos));
+		double max=Collections.max(y.get(xPos).get(yPos));
+		double xMax=Collections.max(x.get(xPos));
 		max = (int)(max*10)+1;
 		max/=10.0;
+		min = (int)(min*10);
+		min/=10.0;
 		pw.println("new_plotter");
 		pw.println("double double");
 		pw.println("title");
@@ -103,21 +118,24 @@ public class Plot {
 		pw.println("tu");
 		pw.println("yunits");
 		pw.println("dB");
-		pw.println("invisible -0.1 0.0");
+		pw.println("invisible -0.1 "+(min-0.1));
 		pw.println("invisible "+xMax+" "+max);
 		pw.println("green");
 		
-		for(int i=0;i<x.size();i++){
-			pw.println("diamond "+x.get(i)+" "+y.get(freq).get(i));
+		for(int i=0;i<x.get(xPos).size();i++){
+			pw.println("diamond "+x.get(xPos).get(i)+" "+y.get(xPos).get(yPos).get(i));
 		}
 		
-		for(int i=0;i<x.size()-1;i++){
-			pw.println("line "+x.get(i)+" "+y.get(freq).get(i)+" "+x.get(i+1)+" "+y.get(freq).get(i+1));
+		for(int i=0;i<x.get(xPos).size()-1;i++){
+			pw.println("line "+x.get(xPos).get(i)+" "+y.get(xPos).get(yPos).get(i)+" "+x.get(xPos).get(i+1)+" "+y.get(xPos).get(yPos).get(i+1));
 		}
 		
 		pw.println("gray20");
-		for(double i=0.1;i<=max;i+=0.1){
+		for(double i=min;i<=max;){
 			pw.println("line "+0+" "+i+" "+xMax+" "+i);
+			i *= 10;
+			i += 1;
+			i /= 10;
 		}
 		
 		pw.println("go");
@@ -125,40 +143,58 @@ public class Plot {
     }
 	
 	/**
-	 * Plots the specified graph onto the same window. It can plot 40 different graphs 
+	 * Plots the specified graph onto the same window. It can plot 36 different graphs 
 	 * onto the same window. It plots each of the graphs with different colors and data
 	 * point shapes. That is, no two different graphs will have the same color and same
 	 * data point shapes.
 	 * @param title		Title of the graphs
-	 * @param freq		Graphs that will be plotted
+	 * @param xs		x values to plotted
+	 * @param ys		y values to plotted
 	 * @param names		Names of the graphs
 	 */
-	public void plot(String title, ArrayList<Integer> freq, ArrayList<String> names)
+	public void plot(String title, ArrayList<Integer> xs, ArrayList<ArrayList<Integer>> ys, ArrayList<ArrayList<String>> names)
+			throws IndexOutOfBoundsException
 	{
-		if(Collections.min(freq)<0||Collections.max(freq)>=y.size())
-			return;
-		if(freq.size()!=names.size())
-			return;
         try {
             pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(title))));
         } catch (IOException ex) {    
             System.err.println("Error during file operations");
         }
 		
-		double xmin=Collections.min(x);
-		double min=Double.POSITIVE_INFINITY;
-		for(int i=0;i<freq.size();i++){
-			if(min>Collections.min(y.get(freq.get(i))))
-				min=Collections.min(y.get(freq.get(i)));
+		double temp;
+		double xMin=Double.POSITIVE_INFINITY;
+		for(int i=0;i<xs.size();i++){
+			temp = Collections.min(x.get(xs.get(i)));
+			if(xMin > temp)
+				xMin = temp;
 		}
-		double max=Double.NEGATIVE_INFINITY;
-		for(int i=0;i<freq.size();i++){
-			if(max<Collections.max(y.get(freq.get(i))))
-				max=Collections.max(y.get(freq.get(i)));
+		double xMax=Double.NEGATIVE_INFINITY;
+		for(int i=0;i<xs.size();i++){
+			temp = Collections.max(x.get(xs.get(i)));
+			if(xMax < temp)
+				xMax = temp;
 		}
-		double xMax=Collections.max(x);
-		max = (int)(max*10)+1;
-		max/=10.0;
+		
+		double yMin=Double.POSITIVE_INFINITY;
+		for(int i=0;i<xs.size();i++){
+			for(int j=0;j<ys.get(i).size();j++){
+				temp = Collections.min(y.get(xs.get(i)).get(ys.get(i).get(j)));
+				if(yMin > temp)
+					yMin = temp;
+			}
+		}
+		double yMax=Double.NEGATIVE_INFINITY;
+		for(int i=0;i<xs.size();i++){
+			for(int j=0;j<ys.get(i).size();j++){
+				temp = Collections.max(y.get(xs.get(i)).get(ys.get(i).get(j)));
+				if(yMax < temp)
+					yMax = temp;
+			}
+		}
+		yMax = (int)(yMax*10)+1;
+		yMax /= 10.0;
+		yMin = (int)(yMin*10);
+		yMin /= 10;
 		pw.println("new_plotter");
 		pw.println("double double");
 		pw.println("title");
@@ -171,24 +207,34 @@ public class Plot {
 		pw.println("tu");
 		pw.println("yunits");
 		pw.println("dB");
-		pw.println("invisible -0.1 0.0");
-		pw.println("invisible "+(xMax+(xMax-xmin)*0.3)+" "+max);
+		pw.println("invisible -0.1 "+(yMin-0.1));
+		pw.println("invisible "+(xMax+(xMax-xMin)*0.3)+" "+yMax);
 
-		for(int j=0;j<freq.size();j++){
-			pw.println(colors[j%10]);
-			for(int i=0;i<x.size();i++){
-				pw.println(shapes[j/10]+" "+x.get(i)+" "+y.get(freq.get(j)).get(i));
-			}
+		int graphCounter = 0;
+		for(int i=0;i<xs.size();i++){
+			for(int j=0;j<ys.get(i).size();j++){
+				pw.println(colors[graphCounter%colors.length]);
+				for(int q=0;q<x.get(xs.get(i)).size();q++){
+					pw.println(shapes[graphCounter/colors.length]+" "+x.get(xs.get(i)).get(q)+" "+
+							y.get(xs.get(i)).get(ys.get(i).get(j)).get(q));
+				}
 
-			for(int i=0;i<x.size()-1;i++){
-				pw.println("line "+x.get(i)+" "+y.get(freq.get(j)).get(i)+" "+x.get(i+1)+" "+y.get(freq.get(j)).get(i+1));
+				for(int q=0;q<x.get(xs.get(i)).size()-1;q++){
+					pw.println("line "+x.get(xs.get(i)).get(q)+" "+y.get(xs.get(i)).get(ys.get(i).get(j)).get(q)+" "+
+							x.get(xs.get(i)).get(q+1)+" "+y.get(xs.get(i)).get(ys.get(i).get(j)).get(q+1));
+				}
+				graphCounter++;
 			}
 		}
 		pw.println("gray20");
-		for(double i=0.1;i<=max;i+=0.1){
+		double i=0;
+		for(i=yMin;i<=yMax;){
 			pw.println("line "+0+" "+i+" "+xMax+" "+i);
+			i *= 10;
+			i += 1;
+			i /= 10;
 		}
-		legend(xmin, xMax, min, max, names);
+		legend(xMin, xMax, yMin, yMax, names);
 		pw.println("go");
 		pw.close();
     }
@@ -202,17 +248,21 @@ public class Plot {
 	 * @param yMax		Max y value of the graphs
 	 * @param names		Names of the graphs
 	 */
-	private void legend(double xMin, double xMax, double yMin, double yMax, ArrayList<String> names)
+	private void legend(double xMin, double xMax, double yMin, double yMax, ArrayList<ArrayList<String>> names)
 	{
 		double yInc = (yMax-yMin)/60.0;
 		double xInc = (xMax-xMin)/20.0;
+		int graphCounter = 0;
 		for(int i=0;i<names.size();i++){
-			pw.println(colors[i%10]);
-			pw.println(shapes[i/10]+" "+(xMax+xInc)+" "+(yMin+yInc*(2*i+1)));
-			pw.println(shapes[i/10]+" "+(xMax+xInc*2)+" "+(yMin+yInc*(2*i+1)));
-			pw.println(shapes[i/10]+" "+(xMax+xInc*3)+" "+(yMin+yInc*(2*i+1)));
-			pw.println("line "+(xMax+xInc)+" "+(yMin+yInc*(2*i+1))+" "+(xMax+xInc*3)+" "+(yMin+yInc*(2*i+1)));
-			pw.println("rtext "+(xMax+xInc*3)+" "+(yMin+yInc*(2*i+1))+"\n"+names.get(i));
+			for(int j=0;j<names.get(i).size();j++){
+				pw.println(colors[graphCounter%colors.length]);
+				pw.println(shapes[graphCounter/colors.length]+" "+(xMax+xInc)+" "+(yMin+yInc*(2*graphCounter+1)));
+				pw.println(shapes[graphCounter/colors.length]+" "+(xMax+xInc*2)+" "+(yMin+yInc*(2*graphCounter+1)));
+				pw.println(shapes[graphCounter/colors.length]+" "+(xMax+xInc*3)+" "+(yMin+yInc*(2*graphCounter+1)));
+				pw.println("line "+(xMax+xInc)+" "+(yMin+yInc*(2*graphCounter+1))+" "+(xMax+xInc*3)+" "+(yMin+yInc*(2*graphCounter+1)));
+				pw.println("rtext "+(xMax+xInc*3)+" "+(yMin+yInc*(2*graphCounter+1))+"\n"+names.get(i).get(j));
+				graphCounter++;
+			}
 		}
 	}
 	
@@ -221,35 +271,78 @@ public class Plot {
 	 */
 	public void plotAll()
 	{
-		String[] argv = new String[y.size()+1];
-		argv[0]="-t";
-		for(int i=0;i<y.size();i++){
-			argv[i+1] = String.format("f_%d", i);
-			plot(argv[i+1], i);
+		ArrayList<String> arg = new ArrayList<String>();
+		
+		arg.add("-t");
+		int graphCounter = 0;
+		for(int i=0;i<x.size();i++){
+			for(int j=0;j<y.get(i).size();j++){
+				arg.add(String.format("f_%d", graphCounter));
+				plot(arg.get(graphCounter+1), i, j);
+				graphCounter++;
+			}
 		}
+		String[] argv = new String[arg.size()];
+		for(int i=0;i<argv.length;i++)
+			argv[i] = arg.get(i);
+		jPlot.main(argv);
+	}
+	
+	/**
+	 * Plots all available y values belongs to given onto different graphs on different windows
+	 * @param xPos	x value to be plotted
+	 */
+	public void plotAllX(int xPos)
+	{
+		ArrayList<String> arg = new ArrayList<String>();
+		arg.add("-t");
+		int graphCounter = 0;
+		for(int j=0;j<y.get(xPos).size();j++){
+			arg.add(String.format("f_%d", graphCounter));
+			plot(arg.get(graphCounter+1), xPos, j);
+			graphCounter++;
+		}
+		String[] argv = new String[arg.size()];
+		for(int i=0;i<argv.length;i++)
+			argv[i] = arg.get(i);
 		jPlot.main(argv);
 	}
 	
 	/**
 	 * Plots all available x versus y values by grouping given amount of y values into
 	 * one plot.
-	 * @param simDur				Duration of the simulation. i.e. max x value
-	 * @param numberOfGraphsPerPlot	Number of graphs to be plotted on the same window
 	 * @param names					Names of the graphs that will be plotted on the same window
 	 */
-	public void plotAll(int numberOfGraphsPerPlot, ArrayList<String> names)
+	public void plotAll(ArrayList<String> names)
 	{
-		int numberOfPlots = y.size()/numberOfGraphsPerPlot;
-		String[] argv = new String[numberOfPlots+1];
-		argv[0]="-t";
-		for(int i=0;i<numberOfPlots;i++){
-			argv[i+1] = String.format("f_%d", i);
-			ArrayList<Integer> plotList = new ArrayList<Integer>();
-			for(int j=0;j<numberOfGraphsPerPlot;j++){
-				plotList.add(i*numberOfGraphsPerPlot+j);
-			}
-			plot(argv[i+1], plotList, names);
+		int numberOfPlots = 0;
+		for(int i=0;i<x.size();i++){
+			int temp = y.get(i).size();
+			if(temp > numberOfPlots)
+				numberOfPlots = temp;
 		}
+		
+		String[] argv = new String[numberOfPlots+1];
+		argv[0] = "-t";
+		
+		for(int i=0;i<numberOfPlots;i++){
+			ArrayList<Integer> xs = new ArrayList<Integer>();
+			ArrayList<ArrayList<Integer>> ys = new ArrayList<ArrayList<Integer>>();
+			ArrayList<ArrayList<String>> nameList = new ArrayList<ArrayList<String>>();
+			for(int j=0;j<x.size();j++){
+				if(y.get(j).size()>i){
+					xs.add(j);
+					ys.add(new ArrayList<Integer>());
+					ys.get(ys.size()-1).add(i);
+					nameList.add(new ArrayList<String>());
+					nameList.get(nameList.size()-1).add(names.get(j));
+				}
+			}
+			argv[i+1] = String.format("f_%d", i);
+			
+			plot(argv[i+1], xs, ys, nameList);
+		}
+		
 		jPlot.main(argv);
-	}	
+	}
 }

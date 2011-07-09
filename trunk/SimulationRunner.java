@@ -685,7 +685,10 @@ public class SimulationRunner extends JFrame{
 			timeUnit = Integer.parseInt(unitTime.getText());	//Get unit time duration in terms of milliseconds
 			priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit);
 			simDura = Long.parseLong(simDur.getText());			//Get duration of the simulation in terms of unit time
-			plot = new Plot(numberOfFreq);						//Create a new plotter
+			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
+			numberOFYs.add(numberOfFreq);
+			numberOFYs.add(numberOfFreq);
+			plot = new Plot(2, numberOFYs);
 			CRNode.initializeAverageSnr(numberOfFreq);			//Set average SNR values to zero
 			progressBar.setValue(0);							//Initialize progress bar
 			progressBar.setVisible(true);						//Make it visible

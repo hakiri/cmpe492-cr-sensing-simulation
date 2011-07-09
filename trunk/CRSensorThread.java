@@ -106,7 +106,7 @@ public class CRSensorThread implements Runnable{
 		ArrayList<String> names = new ArrayList<String>();
 		names.add("SNR");
 		names.add("SINR");
-		SimulationRunner.plot.plotAll();			//Plot the time vs average SNR graphs
+		SimulationRunner.plot.plotAllX(0);			//Plot the time vs average SNR graphs
 		finished=true;											//Set finished as true
 	}
 	
