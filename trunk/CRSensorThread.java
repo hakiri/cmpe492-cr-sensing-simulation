@@ -189,7 +189,7 @@ public class CRSensorThread implements Runnable{
 			SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
 		}
 		CRNode.logAverageSnr((double)(simulationDur-simulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
-		CRNode.writeLogFile("\n");
+		//CRNode.writeLogFile("\n");
 		time = (long)senseResultAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 		if(time>1){												//unit time if it is greater than 1 milli sec
 			try {												//sleep for that amount
@@ -229,6 +229,7 @@ public class CRSensorThread implements Runnable{
 			}
 		}
 		simulationDuration-=commDur;
+		CRNode.writeLogFile("\n");
 	}
 	
 	/**

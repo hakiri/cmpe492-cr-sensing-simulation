@@ -69,6 +69,11 @@ public class CRBase extends Node{
                 return 0;
             return 1;
         }
+		
+		public String toString()
+		{
+			return "["+String.valueOf(freq)+" "+String.valueOf(SNR)+"]";
+		}
     }
     
     public ArrayList<Integer> deploy_freq(){
@@ -110,16 +115,15 @@ public class CRBase extends Node{
             
         }
         snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
-        
+        threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(snr_from_base - SimulationRunner.wc.sinrThreshold)-1);
+		if(threshold < 0)
+			threshold = 0;
+		
         for(int i=0;i<last_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
-            threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(SimulationRunner.wc.generateSNR(this, i) - SimulationRunner.wc.sinrThreshold)-1);
-            if(threshold < 0)
-                threshold = 0;
             if(last_averageSnr.get(i) <= threshold)
                free_frequencies.add(new FreqSNR(i, last_averageSnr.get(i)));
         }
         Collections.sort(free_frequencies, new FreqSNR()); //descending sorting of snr values 
-        
         ArrayList<Integer> crnode_ids = new ArrayList<Integer>();
         for(int j=0;j<SimulationRunner.crNodes.size();j++){
             crnode_ids.add(j);
@@ -129,7 +133,7 @@ public class CRBase extends Node{
             if(crnode_ids.isEmpty())
                 break;
             int node_id=uniform.nextIntFromTo(0, crnode_ids.size()-1);
-            SimulationRunner.crNodes.get(node_id).setCommunication_frequency(free_frequencies.get(i).freq);
+            SimulationRunner.crNodes.get(crnode_ids.get(node_id)).setCommunication_frequency(free_frequencies.get(i).freq);
             crnode_ids.remove(node_id);
         }
         
