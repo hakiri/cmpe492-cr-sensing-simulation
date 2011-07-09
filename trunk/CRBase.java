@@ -25,7 +25,9 @@ public class CRBase extends Node{
      */
     private static int number_of_freq_per_crnode;
     
-    private ArrayList<Double> last_averageSnr = null;   //TODO add last two averagesnr
+    private ArrayList<Double> current_averageSnr = null;  
+    
+    private ArrayList<Double> last_averageSnr = null;   
     
     private ArrayList<FreqSNR> free_frequencies = null;
     
@@ -77,12 +79,12 @@ public class CRBase extends Node{
     }
     
     public void assignFrequencies(){
-		frequency_list = new ArrayList<Integer>();
+	frequency_list = new ArrayList<Integer>();
         for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
             frequency_list.add(0);
         }
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			ArrayList<Integer> frequencies = deploy_freq();
+            ArrayList<Integer> frequencies = deploy_freq();
             SimulationRunner.crNodes.get(i).setFrequencyList(frequencies); //assigns new freq list for crnode
             for(int j=0;j<CRBase.number_of_freq_per_crnode;j++){ //updates the frequency_list
                 frequency_list.set(frequencies.get(j), (frequency_list.get(frequencies.get(j)) + 1));
@@ -90,13 +92,7 @@ public class CRBase extends Node{
         }
     }
     
-    /**
-     * Returns the frequency_list
-     * @return frequency_list
-     */
-    public ArrayList<Integer> getFrequency_list() {
-        return frequency_list;
-    }
+  
     
     public void communicationScheduleAdvertiser(){
         double max_dist = 0.0;
@@ -108,9 +104,9 @@ public class CRBase extends Node{
                 max_dist = temp;
         }
         snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
-        for(int i=0;i<last_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
-            if(last_averageSnr.get(i) < ((snr_from_base - SimulationRunner.wc.sinrThreshold)/SimulationRunner.wc.sinrThreshold))
-               free_frequencies.add(new FreqSNR(i, last_averageSnr.get(i)));
+        for(int i=0;i<current_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
+            if(current_averageSnr.get(i) < ((snr_from_base - SimulationRunner.wc.sinrThreshold)/SimulationRunner.wc.sinrThreshold))
+               free_frequencies.add(new FreqSNR(i, current_averageSnr.get(i)));
         }
         Collections.sort(free_frequencies, new FreqSNR()); //descending sorting of snr values 
         
@@ -130,15 +126,17 @@ public class CRBase extends Node{
     }
     
     
-    /**
-     * 
-     * @param last_averageSnr 
-     */
-    public void setLast_averageSnr(ArrayList<Double> last_averageSnr) {
-        this.last_averageSnr = new ArrayList<Double>();
-        this.last_averageSnr.addAll(last_averageSnr);
+    public void setLast_averageSnr(ArrayList<Double> current_averageSnr) {
+        this.current_averageSnr = new ArrayList<Double>();
+        this.current_averageSnr.addAll(current_averageSnr);
     }
     
-    
+      /**
+     * Returns the frequency_list
+     * @return frequency_list
+     */
+    public ArrayList<Integer> getFrequency_list() {
+        return frequency_list;
+    }
     
 }
