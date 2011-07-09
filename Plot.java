@@ -17,7 +17,7 @@ public class Plot {
 	/**
 	 * Available colors
 	 */
-	private static final String[] colors={ "orange", "green", "magenta", "red", "white", "yellow", "purple"
+	private static final String[] colors={ "green", "orange", "magenta", "red", "white", "yellow", "purple"
 											,"pink", "blue"};
 	/**
 	 * Available data point shapes
