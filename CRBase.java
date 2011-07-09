@@ -31,7 +31,7 @@ public class CRBase extends Node{
     
     private ArrayList<FreqSNR> free_frequencies = null;
     
-    private static Uniform uniform;
+    private static Uniform uniform ;
     
     /**
      * Creates a CRBase at the given position.
@@ -45,6 +45,7 @@ public class CRBase extends Node{
         this.velocity = 0.0;
         this.frequency_to_be_listen=0;
         this.number_of_freq_per_crnode = number_of_freq_per_crnode;
+        this.uniform = new Uniform(SimulationRunner.randEngine);
     }
     
     private class FreqSNR implements Comparator<FreqSNR> {
@@ -96,16 +97,21 @@ public class CRBase extends Node{
     
     public void communicationScheduleAdvertiser(){
         double max_dist = 0.0;
-        double temp,snr_from_base;
+        double temp,snr_from_base,threshold;
         free_frequencies = new ArrayList<FreqSNR>();
         for(int i=0;i<SimulationRunner.crNodes.size();i++){ //finding the max distance btw crbase and crnodes
             temp = SimulationRunner.crNodes.get(i).position.distance(this.position);
             if(max_dist < temp)
                 max_dist = temp;
+            
         }
         snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
+        
         for(int i=0;i<current_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
-            if(current_averageSnr.get(i) < ((snr_from_base - SimulationRunner.wc.sinrThreshold)/SimulationRunner.wc.sinrThreshold))
+            threshold = SimulationRunner.wc.magTodb(SimulationRunner.wc.dbToMag(SimulationRunner.wc.generateSNR(this, i) - SimulationRunner.wc.sinrThreshold)-1);
+            if(threshold < 0)
+                threshold = 0;
+            if(current_averageSnr.get(i) < threshold)
                free_frequencies.add(new FreqSNR(i, current_averageSnr.get(i)));
         }
         Collections.sort(free_frequencies, new FreqSNR()); //descending sorting of snr values 
