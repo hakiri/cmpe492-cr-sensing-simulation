@@ -90,8 +90,9 @@ public class CRNode extends Node{
             averageSnr.set(i,(averageSnr.get(i)/SimulationRunner.crBase.getFrequency_list().get(i))); // gets the current crnode 
                                                                                         //number that listens to this freq.
         }
+        
         SimulationRunner.crBase.setLast_averageSnr(averageSnr);
-		SimulationRunner.plot.addPoint(0,time, averageSnr);
+	SimulationRunner.plot.addPoint(0,time, averageSnr);
         pw.println("average snr values: " + averageSnr.toString()); //writing to log file
         
         for(int i=0;i<averageSnr.size();i++){ //resets the avarageSnr list.
