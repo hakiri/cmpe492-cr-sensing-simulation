@@ -90,7 +90,7 @@ public class CRSensorThread implements Runnable{
 			if(simulationDuration<=0&&finished)
 				break;
 			
-			communicate();
+			communicate(3);
 			SimulationRunner.progressBar.setValue((((int)simulationDur-(int)simulationDuration)*100)/(int)simulationDur);	//Update progress bar
 		}
 		SimulationRunner.priTrafGen.terminateAllThreads();		//Terminate other thread in case of they did not
@@ -216,19 +216,25 @@ public class CRSensorThread implements Runnable{
 		simulationDuration-=commScheduleAdvertisement;
 	}
 	
-	private void communicate()
+	private void communicate(int numberOfReports)
 	{
-		time = System.currentTimeMillis();		//Save current time
-		CRNode.communicate((double)(simulationDur-simulationDuration)/unitTime); //TODO Communicate
-		time = (long)commDur - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
-		if(time>1){												//unit time if it is greater than 1 milli sec
-			try {												//sleep for that amount
-				Thread.sleep(time);		//Wait for unit time amount
-			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+		if(numberOfReports<1)
+			numberOfReports=1;
+		for(int i=0;i<numberOfReports;i++){
+			time = System.currentTimeMillis();		//Save current time
+			CRNode.communicate((double)(simulationDur-simulationDuration)/unitTime); //TODO Communicate
+			CRNode.writeLogFile("");
+			time = (long)(commDur/numberOfReports) - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
+			if(time>1){												//unit time if it is greater than 1 milli sec
+				try {												//sleep for that amount
+					Thread.sleep(time);		//Wait for unit time amount
+				} catch (InterruptedException ex) {
+					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				}
 			}
+			simulationDuration-=(commDur/numberOfReports);
 		}
-		simulationDuration-=commDur;
+		CRNode.communicate((double)(simulationDur-simulationDuration)/unitTime); //TODO Communicate
 		CRNode.writeLogFile("\n");
 	}
 	
