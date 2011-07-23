@@ -403,7 +403,7 @@ public class SimulationRunner extends JFrame{
 			commDurField = new JTextField();
 			jPanel1.add(commDurField);
 			commDurField.setBounds(itemPosRight, 330, 120, 23);
-			commDurField.setText("0.7");
+			commDurField.setText("0.6");
 			commDurField.addKeyListener(keyAdapter);
 		}
 		{
