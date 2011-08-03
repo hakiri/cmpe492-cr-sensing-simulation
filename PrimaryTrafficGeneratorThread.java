@@ -27,8 +27,8 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	
 	/**
 	 * Creates a primary traffic generator thread associated with node n
-	 * @param n
-	 * @param simulationDuration duration of the simulation in nanoseconds
+	 * @param n						Primary node associated with this thread
+	 * @param simulationDuration	duration of the simulation in nanoseconds
 	 */
 	public PrimaryTrafficGeneratorThread(PrimaryTrafficGeneratorNode n, long simulationDuration)
 	{

@@ -6,8 +6,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
- *
- * @author acar
+ * This class handles the frame structure of the CR nodes.
  */
 public class CRSensorThread implements Runnable{
 
@@ -38,8 +37,14 @@ public class CRSensorThread implements Runnable{
 	
 	/**
 	 * Creates a thread that performs simulation action for CR sensor nodes
-	 * @param simulationDuration	Duration of the simulation in unit time
-	 * @param unitTime				Unit of time in milliseconds
+	 * @param simulationDuration			Duration of the simulation in unit time
+	 * @param unitTime						Unit of time in milliseconds
+	 * @param numberOfSlots					Number of sensing slots in the frame
+	 * @param slotDur						Duration of the sensing slots in terms of unit time
+	 * @param senseScheduleAdvertisement	Duration of the sensing schedule advertisement in terms of unit time
+	 * @param commScheduleAdvertisement		Duration of the communication schedule advertisement in terms of unit time
+	 * @param commDur						Duration of the communication in terms of unit time
+	 * @param senseResultAdvertisement		Duration of the sensing result advertisement in terms of unit time
 	 */
 	public CRSensorThread(double simulationDuration,long unitTime, int numberOfSlots, double slotDur,
 			double senseScheduleAdvertisement, double commScheduleAdvertisement, double commDur,

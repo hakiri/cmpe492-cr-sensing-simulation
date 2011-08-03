@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * This class holds necessary probability distributions and semaphores for primary
+ * traffic generation.
+ */
 public class PrimaryTrafficGenerator {
 	/**
 	 * Semaphore for writing wireless channel frequencies
@@ -53,9 +57,9 @@ public class PrimaryTrafficGenerator {
 	
 	/**
 	 * Creates a primary traffic generator with no node registered to it
-	 * @param alpha number of calls per unit time
-	 * @param meanCallDuration expected value for duration of a call in time units
-	 * @param unit Unit of time in milliseconds
+	 * @param alpha				number of calls per unit time
+	 * @param meanCallDuration	expected value for duration of a call in time units
+	 * @param unit				Unit of time in milliseconds
 	 */
 	public PrimaryTrafficGenerator(double alpha, double meanCallDuration, int unit)
 	{
@@ -67,8 +71,8 @@ public class PrimaryTrafficGenerator {
 	
 	/**
 	 * Registers a node and creates a thread for it to generate traffic
-	 * @param n node to be registered
-	 * @param simulationDuration Duration of simulation in unit times
+	 * @param n						node to be registered
+	 * @param simulationDuration	Duration of simulation in unit times
 	 */
 	public void registerNode(PrimaryTrafficGeneratorNode n, long simulationDuration)
 	{

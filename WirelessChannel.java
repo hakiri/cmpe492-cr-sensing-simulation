@@ -4,9 +4,18 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
+/**
+ * This class handles main channel operations, such as SNR and SINR calculations.
+ * It also provides frequencies to primary and CR nodes.
+ */
 public class WirelessChannel {
+	/**
+	 * Integer value for Primary node
+	 */
 	public static final int PRIMARY = 0;
+	/**
+	 * Integer value for CR node
+	 */
 	public static final int CR = 1;
 	/**
 	 * List of nodes using channel
@@ -46,9 +55,10 @@ public class WirelessChannel {
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequency.
 	 * Initially there is no node in the channel.
-	 * @param channelModel: 0 for Simple ch., 1 for Lognormal ch.
-	 * @param numberOfFrequencies 
-	 * @param maxSNR max SNR value of the channel
+	 * @param channelModel			0 for Simple ch., 1 for Lognormal ch.
+	 * @param numberOfFrequencies	Number of frequencies in the channel
+	 * @param maxSNR				max SNR value of the channel
+	 * @param sinrThreshold			SINR threshold for CR nodes to be able to communicate without collision
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold)
 	{
@@ -77,7 +87,7 @@ public class WirelessChannel {
 	
 	/**
 	 * Finds an snr value according to the channel model.
-	 * @param sensor Node to assign SNR value
+	 * @param sensor	Node to assign SNR value
 	 * @param frequency Frequency to which the sensor senses
 	 * @return snr value
 	 */
@@ -100,6 +110,7 @@ public class WirelessChannel {
 	 * Finds an snr value according to the channel model.
 	 * @param transmitter	Node transmitting the signal
 	 * @param receiver		Node to assign SNR value
+	 * @param freq			Freqency which will be used during the communication between transmitter and receiver
 	 * @return snr value at receiver caused by transmitter
 	 */
 	public double generateSINR(Node transmitter, Node receiver, int freq)
@@ -140,7 +151,8 @@ public class WirelessChannel {
 	/**
 	 * Lets a primary user to release a frequency. That is,
 	 * the primary user finishes transmission.
-	 * @param frequency In which the user transmits
+	 * @param frequency		In which the user transmits
+	 * @param n				Node which releases the frequency
 	 */
 	public void releaseFrequency(int frequency, Node n)
 	{
