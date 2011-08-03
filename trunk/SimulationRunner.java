@@ -25,6 +25,10 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+/**
+ * This is the main class of the software. It instantiates necessary classes and
+ * create GUI for taking input from the user.
+ */
 public class SimulationRunner extends JFrame{
 
 	/**
@@ -108,6 +112,9 @@ public class SimulationRunner extends JFrame{
 	private final static int itemPosLeft = 305;
 	private final static int itemPosRight = 783;
 	
+	/**
+	 * Constructor of the class. This method initializes the GUI.
+	 */
 	public SimulationRunner() {
 		super();
 		initGUI();

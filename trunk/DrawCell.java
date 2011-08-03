@@ -7,6 +7,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 
+/**
+ * This class initiates the animation window. It also provides an interface for
+ * drawing new nodes on the animation window or changing the properties of the
+ * currently existing ones.
+ */
 public class DrawCell implements Runnable{
 	/**
 	 * Runner thread
@@ -16,7 +21,6 @@ public class DrawCell implements Runnable{
 	 * boolean variable to terminate thread
 	 */
 	private boolean finished = false;
-	Integer id;
 	
 	static int radius;
 	int numberOfSectors;
@@ -95,7 +99,7 @@ public class DrawCell implements Runnable{
 	/**
 	 * Adds a Primary node to the cell with given color
 	 * @param n Node to be added
-	 * @param c Nodes color: RED or BLACK
+	 * @param c Nodes color: RED for transmitting or BLACK for sleeping
 	 */
 	public static void paintPrimaryNode(Node n, Color c)
 	{

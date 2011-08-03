@@ -3,7 +3,11 @@ package firstproject;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 
-class PointColor {
+/**
+ * This class holds the position of a node on the animation screen. It also keeps
+ * its color and radius.
+ */
+public class PointColor {
 	int x,y,r;
 	Color c;
 
@@ -37,6 +41,7 @@ class PointColor {
 	
 	/**
 	 * Convert this PointColor object from regular x-y coordinate system to JFrame x-y coordinate system
+	 * @param cellRadius Radius of the cell
 	 * @return Returns this object for cascading
 	 */
 	public PointColor convertCoordinate(int cellRadius)

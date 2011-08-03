@@ -11,7 +11,8 @@ import java.util.Collections;
 
 
 /**
- * This class plots m graphs with the same x values and different y values.
+ * This class plots simple graphs. It can plot all graphs on to same window or
+ * different windows. For plotting it uses jPlot.
  */
 public class Plot {
 	/**
@@ -32,13 +33,12 @@ public class Plot {
 	 */
 	private ArrayList<ArrayList<ArrayList<Double>>> y;
 	/**
-     * Writer for the log file.
+     * Writer for the files.
      */
     private static PrintWriter pw = null;
 	
 	/**
-	 * Creates a new plotter object with no x value and y value. It creates a two dimensional
-	 * array whose second dimension is given by parameter.
+	 * Creates a new plotter object with no x value and y value.
 	 * @param numberOfXs	Number of different x values
 	 * @param yPerX			How many y belongs to each x
 	 */
@@ -143,7 +143,7 @@ public class Plot {
     }
 	
 	/**
-	 * Plots the specified graph onto the same window. It can plot 36 different graphs 
+	 * Plots the specified graphs onto the same window. It can plot 36 different graphs 
 	 * onto the same window. It plots each of the graphs with different colors and data
 	 * point shapes. That is, no two different graphs will have the same color and same
 	 * data point shapes.
@@ -151,6 +151,7 @@ public class Plot {
 	 * @param xs		x values to plotted
 	 * @param ys		y values to plotted
 	 * @param names		Names of the graphs
+	 * @throws IndexOutOfBoundsException
 	 */
 	public void plot(String title, ArrayList<Integer> xs, ArrayList<ArrayList<Integer>> ys, ArrayList<ArrayList<String>> names)
 			throws IndexOutOfBoundsException
@@ -309,8 +310,8 @@ public class Plot {
 	}
 	
 	/**
-	 * Plots all available x versus y values by grouping given amount of y values into
-	 * one plot.
+	 * This method plots corresponding y values of different x values on the same window.
+	 * It plots all possible graphs.
 	 * @param names					Names of the graphs that will be plotted on the same window
 	 */
 	public void plotAll(ArrayList<String> names)

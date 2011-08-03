@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.util.HashMap;
 import javax.swing.JPanel;
 
+/**
+ * This class handles the animation window.
+ */
 public class DrawArea extends JPanel{
 	/**
 	 * Radius multiplied with unit
@@ -13,7 +16,19 @@ public class DrawArea extends JPanel{
 	private int numberOfSectors, sector, numberOfAlpha, alpha, dmin, dmax, numberOfCrNodes, numberOfPriNodes;
 	private HashMap<Integer, PointColor> primaryNodes;
 	private HashMap<Integer, PointColor> crNodes;
-    //--------------------------------------------------------------------------
+    
+	/**
+	 * Creates a animation window.
+	 * @param cellRadius		Radius of the cell
+	 * @param numberOfSectors	Number of sectors in the cell
+	 * @param sector			Sector number in which the CR nodes are located
+	 * @param numberOfAlpha		Number of alpha slices in a sector
+	 * @param alpha				Alpha number in which the CR nodes are located
+	 * @param dmin				Min d value
+	 * @param dmax				Max d value
+	 * @param numberOfCrNodes	Number of CR nodes in the zone
+	 * @param numberOfPriNodes	Number of Primary nodes in the cell
+	 */
     public DrawArea(int cellRadius,int numberOfSectors, int sector, int numberOfAlpha, int alpha, int dmin, int dmax,
 			int numberOfCrNodes, int numberOfPriNodes) {
         super();
@@ -33,7 +48,8 @@ public class DrawArea extends JPanel{
 		for(int i=0;i<numberOfCrNodes;i++)
 			crNodes.put(i, null);
     }
-    //--------------------------------------------------------------------------
+    
+	@Override
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
@@ -74,6 +90,7 @@ public class DrawArea extends JPanel{
 		g.drawArc(cellRadius-dmax, cellRadius-dmax, 2*dmax, 2*dmax, zoneBegDegree, alphaInc);
     }
 
+	@Override
 	public void paint(Graphics g)
 	{
 		super.paint(g);
@@ -93,12 +110,22 @@ public class DrawArea extends JPanel{
 		}
 	}
 	
+	/**
+	 * This method paints a primary node with the given id, position, and color.
+	 * @param id
+	 * @param p 
+	 */
 	public void paintPrimary(Integer id, PointColor p)
 	{
 		primaryNodes.put(id, p);
 		repaint();
 	}
 	
+	/**
+	 * This method paints a CR node with the given id, position, and color.
+	 * @param id
+	 * @param p 
+	 */
 	public void paintCR(Integer id, PointColor p)
 	{
 		crNodes.put(id, p);
