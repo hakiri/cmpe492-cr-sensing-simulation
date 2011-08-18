@@ -3,6 +3,9 @@ package SimulationRunner;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.RandomEngine;
 
+/**
+ * This class implements Pareto distribution by using Uniform distribution class of CERN package.
+ */
 public class ParetoDistribution {
 	private Uniform uniform;
 	private double shapeParameter;
@@ -20,6 +23,13 @@ public class ParetoDistribution {
 		this.minValue = minValue;
 	}
 	
+	/**
+	 * Creates a Pareto distribution with given expected value.
+	 * <p>
+	 * <b>Note:</b> Minimum value of the distribution is assumed to be 1, and so mean value cannot be less than 2.
+	 * @param meanValue 		Expected value of the distribution
+	 * @param randomEngine		Random number generator
+	 */
 	public ParetoDistribution(double meanValue, RandomEngine randomEngine) {
 		this.uniform = new Uniform(randomEngine);
 		this.shapeParameter = meanValue / (meanValue - 1);
