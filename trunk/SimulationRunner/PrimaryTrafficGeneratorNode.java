@@ -7,7 +7,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
 	int numberOfCallAttempts = 0;
 	int numberOfDrops = 0;
 	double comunicationDuration = 0.0;
-	private static double routingRadius = 5.0;
+	private static double routingRadius = 10.0;
     /**
      * Constructor of the PrimaryTrafficGeneratorNode.
      * @param pos Position of the node

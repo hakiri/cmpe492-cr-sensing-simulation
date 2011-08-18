@@ -1026,7 +1026,7 @@ public class SimulationRunner extends JFrame{
 			progressBar.setVisible(true);						//Make it visible
 			CRNode.createLogFile("log.txt");
 			terminateSimulation.setVisible(true);
-			PrimaryTrafficGeneratorNode.setRoutingRadius(5.0);
+			PrimaryTrafficGeneratorNode.setRoutingRadius(10.0);
 			for(int i = 0;i<numberOfPriNodes;i++){
 				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
 				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
