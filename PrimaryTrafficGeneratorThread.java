@@ -74,8 +74,10 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			time = Math.round(PrimaryTrafficGenerator.interArrival.nextDouble());	//Take a random inter arrival time
 			
 			simulationDuration-=time;			//Reduce the simulation time for that amount
-			if(simulationDuration<0)			//If times up
-				break;                                  //stop simulation
+      if(simulationDuration<0){  		//If times up
+				PrimaryTrafficGenerator.interArrivalSemaphore.release();
+        break;                                  //stop simulation
+      }
 			
 			try{
 				Thread.sleep(time);		//Wait for that amount
