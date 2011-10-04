@@ -88,12 +88,12 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		int freq=0;
 		DrawCell.paintPrimaryNode(n, Color.BLACK);
 		while(!finished){
-			interArrival();
+			double previousOffDuration = interArrival();
 			
 			if(finished)
 				break;
 			
-			freq = generateTraffic();
+			freq = generateTraffic(previousOffDuration);
 
 			if(freq == WirelessChannel.NOFREEFREQ)	//If no frequency occupied
 				continue;						//Wait for another inter arrival time
@@ -108,18 +108,20 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		finished=true;
 	}
 	
-	private void interArrival()
+	private double interArrival()
 	{
-		long time = Math.round(nextOffDuration());
+		double previousOffDuration;
+		long time = Math.round(previousOffDuration = nextOffDuration());
 		try{
 			Thread.sleep(time);		//Wait for that amount
 		}
 		catch(InterruptedException ie){
 			Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ie);
 		}
+		return previousOffDuration;
 	}
 	
-	private int generateTraffic()
+	private int generateTraffic(double previousOffDuration)
 	{
 		try {
 			PrimaryTrafficGenerator.y.acquire();
@@ -140,7 +142,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		} catch (InterruptedException ex) {
 			Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ex);
 		}
-		int freq = n.generateTraffic();		//Get a free frequency from the channel
+		int freq = n.generateTraffic(previousOffDuration);		//Get a free frequency from the channel
 		PrimaryTrafficGenerator.writeLock.release();
 		try {
 			PrimaryTrafficGenerator.y.acquire();

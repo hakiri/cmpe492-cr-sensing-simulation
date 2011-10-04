@@ -72,6 +72,7 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	private final static WaitEvent wait = new WaitEvent();
 	
 	private PrimaryTrafficGeneratorNode node;
+	private double previousOffDuration;
 	
 	/**
 	 * Creates a simulation entity for the given node with given probabilistic mean values.
@@ -90,6 +91,7 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	 */
 	public PrimaryTrafficGeneratorSimEnt(PrimaryTrafficGeneratorNode node, double meanOnDuration, double meanOffDuration) {
 		super();
+		previousOffDuration = 0.0;
 		this.node = node;
 		if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON){
 			interArrival = new Exponential(meanOffDuration, SimulationRunner.randEngine);
@@ -120,10 +122,10 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	@Override
 	public void recv(SimEnt src, Event ev) {
 		if(ev instanceof WaitEvent){
-			send(this,commStart,nextOffDuration());
+			send(this,commStart,previousOffDuration = nextOffDuration());
 		}
 		else if(ev instanceof CommunicationStartEvent){
-			int freq = node.generateTraffic();
+			int freq = node.generateTraffic(previousOffDuration);
 			if(freq == WirelessChannel.NOFREEFREQ){
 				send(this, wait, 0.0);
 			}
