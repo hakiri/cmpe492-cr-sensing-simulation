@@ -1,13 +1,41 @@
-#summary One-sentence summary of this page.
+= CR Sensing Simulator Revision 2 Design Document =
 
-= Introduction =
+== Table of Contents ==
+<wiki:toc max_depth="5" />
 
-Add your content here.
+== 1. INTRODUCTION ==
+
+In this project we have implemented basic cell structures and traffic generation classes. This classes provide a basis for our further project which is a simulator to analyze performance of Zone-Based Sensing Scheduling Approach in Cognitive Radio Spectrum Sensing.
+
+The project constructs a cognitive radio cell. In this cell it deploys a given amount of cognitive radio (secondary) users in a specified zone. Finally, it deploys primary users and produces Poisson traffic. Secondary users try to communicate according sensing results of a previous frame and logs SINR values observed during the communication.
 
 
-= Details =
+== 2. DESIGN ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+The project consists of 13 classes which can be grouped into 5 groups. Details of these groups and classes are explained in the following sections.
+
+=== 2.1. Main Class ===
+
+The main class of the project is SimulationRunner class. This class initializes the GUI components of the project. Then it parses the input provided by the user. It instantiates objects of Cell, WirelessChannel, CRBase, PrimaryTrafficGenerator, DrawCell, and Plot classes according to that input. Finally, it registers PrimaryTrafficGeneratorNode objects to PrimaryTrafficGenerator. By doing so it starts the threads which will produce Poisson traffic. Also it creates an object of CRSensorThread and so starts sensing and communication actions of the CR nodes.
+
+=== 2.2. Node Classes ===
+
+These classes concern with primary users, the actual owners of the system, which generate traffic in the wireless channel and cognitive radio users which try to find an available frequency to talk by sensing the channel within assigned time interval, and they sense only assigned frequencies to them.
+
+==== 2.2.1. Node ====
+
+This class is an abstract class that has all common fields of all node classes. It has velocity, position and id fields for nodes, and it has all the get and set functions about these fields.
+
+==== 2.2.2. CRNode ====
+
+This class is an extended version of Node class. It has a “sense” method which simply updates the snr value of a given frequency and helps to compute average snr of that frequency by adding the new snr value to the old record and updates the old record with new one. While updating the SNR value of a frequency, it uses the generateSNR method of the Wireless Channel class by sending the crnode(itself) and the frequency to that method. It has logSnrValues, logAverageSnr and some other methods to save some SNR informations into our log file.
+
+There is another important method in this class, communicate, which checks if there is a collision or not and writes the conclusion to log file in both cases. This method computes sinr values of frequencies and compares them with sinrThreshold value in wireless channel class and then makes a decision about collisions.
+
+==== 2.2.3. PrimaryTrafficGeneratorNode ====
+
+This class is also an extended class of Node class.There is a method, called setRandomPosition, which simply calls deployNodeinCell method of Cell class and then returns a random position in the Cell.
+
+=== 2.3. Traffic Generation and Monitoring Classes ===
+
+These classes are responsible for primary traffic generation and monitoring its effects on the CR nodes. While the primary users produces a specified traffic, CR nodes sense the channels and communicate by using available channels.
