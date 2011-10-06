@@ -68,3 +68,34 @@ There is another method called communicationScheduleAdvertiser, which firstly co
 The basic structure of the cell is as follows:
 
 [http://cmpe492-cr-sensing-simulation.googlecode.com/files/Cell%20Structure.JPG]
+
+In this class, there is a deployNode function which simply takes two angles and two distance values and returns a random position in Cell with respect to these values. Returned position’s angle with crbase should be between the given angles and the same rule is valid for the distance parameter. There are two other methods; deployNodeinCell, deployNodeinZone in this class which use the deployNode method with their specific parameters.
+
+==== 2.4.3. WirelessChannel ====
+
+This class provides available channels to both primary and secondary users. It keeps the information about which frequency is occupied by which node. It calculates SNR value for a CR node for a specified frequency according to whether the frequency is occupied by a primary user or not. It also calculates SINR value between two given CR nodes (one these nodes can CR base station) for a given frequency.
+
+=== 2.5. Animation and Plotting Classes ===
+
+This classes provides an animation interface for sensing simulation and draws plots of SNR and SINR values evaluated during the simulation.
+
+==== 2.5.1. PointColor ====
+
+This class hold information about position of a node on the simulation screen, its color, and radius.
+
+==== 2.5.2. DrawArea ====
+
+This class extend JPanel class by adding additional functionalities for drawing basic cell structure, primary nodes, and secondary nodes.
+
+==== 2.5.3. DrawCell ====
+
+This class creates a JFrame object and adds a DrawArea object to it. Initially it does not put any CR node or primary node in to the cell. It only draws the Cell and the zone in which the CR nodes will be deployed. It provides an interface for adding primary and CR nodes to the cell or changing the properties of currently existing ones.
+
+==== 2.5.4. Plot ====
+
+This class plots a graph with provided x and y values. There can be many x values and associated y values. It can plot all of them on different windows or on the same window. It can also groups different combinations. In this project it is used to draw the plots of SNR and SINR values versus time for each frequency.
+
+== 3. CONCLUSION ==
+As observed from the animation, traffic generation and node deployment is achieved successfully. According to the data collected in the log file, frame structure of CR nodes is achieved successfully. If the number of sensed frequencies is less than number of total frequencies, the program malfunctions.
+
+Moreover, when the mean call duration and number of calls per unit time of primary users is increased, decrease in communication duration of the CR nodes is observed.
