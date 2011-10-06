@@ -9,7 +9,6 @@ In this project we have implemented basic cell structures and traffic generation
 
 The project constructs a cognitive radio cell. In this cell it deploys a given amount of cognitive radio (secondary) users in a specified zone. Finally, it deploys primary users and produces Poisson traffic. Secondary users try to communicate according sensing results of a previous frame and logs SINR values observed during the communication.
 
-
 == 2. DESIGN ==
 
 The project consists of 13 classes which can be grouped into 5 groups. Details of these groups and classes are explained in the following sections.
@@ -39,3 +38,9 @@ This class is also an extended class of Node class.There is a method, called set
 === 2.3. Traffic Generation and Monitoring Classes ===
 
 These classes are responsible for primary traffic generation and monitoring its effects on the CR nodes. While the primary users produces a specified traffic, CR nodes sense the channels and communicate by using available channels.
+
+2.3.1. CRSensorThread
+
+This class handles the frame structure of the CR nodes. The main assumption about this class is all CR nodes are synchronized. It uses CRBase to advertise sensing and communication schedules and uses CRNodes registered to channel to sense the frequencies, advertise sensing results, and communicate. The main frame structure the class provides is as follows:
+
+[cmpe492-cr-sensing-simulation.googlecode.com/files/Frame.jpg]
