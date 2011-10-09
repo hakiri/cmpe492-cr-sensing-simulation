@@ -18,13 +18,21 @@ public class CRBase extends Node{
      * The number of frequencies to be listened per crnode
      */
     private static int number_of_freq_per_crnode;
-    
+    /**
+     * Current average snr values for all of the listened frequencies.
+     */
     private ArrayList<Double> current_averageSnr = null;  
-    
+    /**
+     * Average snr values of the previous reading.
+     */
     private ArrayList<Double> last_averageSnr = null;   
-    
+    /**
+     * List of frequencies which are available to talk.
+     */
     private ArrayList<FreqSNR> free_frequencies = null;
-    
+    /**
+     * Uniform distribution
+     */
     private static Uniform uniform ;
     
     /**
@@ -43,6 +51,9 @@ public class CRBase extends Node{
         this.current_averageSnr = new ArrayList<Double>();
     }
     
+    /**
+     * TODO add javadoc 
+     */
     private class FreqSNR implements Comparable<FreqSNR> {
         Integer freq;
         Double SNR;
@@ -52,23 +63,28 @@ public class CRBase extends Node{
             this.SNR = SNR;
         }
 
-		@Override
-		public int compareTo(FreqSNR o) {
-			double diff=this.SNR-o.SNR;
+	@Override
+	public int compareTo(FreqSNR o) {
+            double diff=this.SNR-o.SNR;
             if(diff<0)
                 return -1;
             else if(diff==0)
                 return 0;
             return 1;
-		}
+	}
 		
-		@Override
-		public String toString()
-		{
-			return "["+String.valueOf(freq)+" "+String.valueOf(SNR)+"]";
-		}
+        @Override
+        public String toString()
+        {
+                return "["+String.valueOf(freq)+" "+String.valueOf(SNR)+"]";
+        }
     }
     
+    /**
+     * Takes number_of_freq_per_crnode frequencies from frequency list by
+     * paying attention to the order of the frequencies.
+     * @return number_of_freq_per_crnode frequencies
+     */
     public ArrayList<Integer> deploy_freq(){
         ArrayList<Integer> freq = new ArrayList<Integer>(number_of_freq_per_crnode);
         for(int i=0;i<number_of_freq_per_crnode;i++){
@@ -78,8 +94,12 @@ public class CRBase extends Node{
         return freq;
     }
     
-    public void assignFrequencies(){
-	for(int i=0;i<SimulationRunner.crNodes.size();i++){ //restarts the comm_freq value for crnodes.
+    /**
+     * Assigns frequencies to the crnodes to be listened in the sensing slots and also
+     * updates frequency list.
+     */
+    public void assignFrequencies(){    //TODO neden comm_freq resetleniyor?
+	for(int i=0;i<SimulationRunner.crNodes.size();i++){ //resets the communication_freq value for crnodes.
             SimulationRunner.crNodes.get(i).setCommunication_frequency(-1);
         }
         frequency_list = new ArrayList<Integer>();
@@ -95,6 +115,11 @@ public class CRBase extends Node{
         }
     }
     
+    /**
+     * First, finds the threshold value for the collision purposes.
+     * Second, finds available(free) frequencies by using threshold value.
+     * Third, deploys these free frequencies to the crnodes to communicate at the next frame.
+     */
     public void communicationScheduleAdvertiser(){
         double max_dist = 0.0;
         double temp,snr_from_base,threshold;
@@ -105,10 +130,12 @@ public class CRBase extends Node{
                 max_dist = temp;
         }
         snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
+        //calculates threshold value
         threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(snr_from_base - SimulationRunner.wc.sinrThreshold)-1);
-		if(threshold < 0)
-			threshold = 0;
-		
+        if(threshold < 0)
+            threshold = 0;
+        //checks averagesnr values of the frequencies and adds frequencies to the free_frequencies list
+        //if there was no collision in the previous measurement 
         for(int i=0;i<last_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
             if(last_averageSnr.get(i) <= threshold)
                free_frequencies.add(new FreqSNR(i, last_averageSnr.get(i)));
@@ -126,10 +153,13 @@ public class CRBase extends Node{
             SimulationRunner.crNodes.get(crnode_ids.get(node_id)).setCommunication_frequency(free_frequencies.get(i).freq);
             crnode_ids.remove(node_id);
         }
-        
     }
     
-    
+    /**
+     * Updates average_snr values. Assigns the previous current_averagesnr
+     * value to the last_averagesnr.
+     * @param current_averageSnr Most up-to-date snr value.
+     */
     public void setLast_averageSnr(ArrayList<Double> current_averageSnr) {
         this.last_averageSnr = new ArrayList<Double>();
         this.last_averageSnr.addAll(this.current_averageSnr);
@@ -137,7 +167,7 @@ public class CRBase extends Node{
         this.current_averageSnr.addAll(current_averageSnr);
     }
     
-      /**
+    /**
      * Returns the frequency_list
      * @return frequency_list
      */
