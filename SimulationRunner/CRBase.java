@@ -98,7 +98,7 @@ public class CRBase extends Node{
      * Assigns frequencies to the crnodes to be listened in the sensing slots and also
      * updates frequency list.
      */
-    public void assignFrequencies(){    //TODO neden comm_freq resetleniyor?
+    public void assignFrequencies(){    
 	for(int i=0;i<SimulationRunner.crNodes.size();i++){ //resets the communication_freq value for crnodes.
             SimulationRunner.crNodes.get(i).setCommunication_frequency(-1);
         }
