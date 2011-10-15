@@ -67,7 +67,7 @@ There is another method called communicationScheduleAdvertiser, which firstly co
 
 The basic structure of the cell is as follows:
 
-[http://cmpe492-cr-sensing-simulation.googlecode.com/files/Cell%20Structure.JPG]
+<img src="http://cmpe492-cr-sensing-simulation.googlecode.com/files/Cell%20Structurev2.JPG" alt="Cell Structure" width="451" height="449" /> 
 
 In this class, there is a deployNode function which simply takes two angles and two distance values and returns a random position in Cell with respect to these values. Returned position’s angle with crbase should be between the given angles and the same rule is valid for the distance parameter. There are two other methods; deployNodeinCell, deployNodeinZone in this class which use the deployNode method with their specific parameters.
 
