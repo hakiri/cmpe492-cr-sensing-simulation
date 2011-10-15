@@ -37,11 +37,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * This is the main class of the software. It instantiates necessary classes and
@@ -119,10 +122,12 @@ public class SimulationRunner extends JFrame{
 		});
 	}
 	
-	private JPanel panel, mainPanel, framePanel, zonePanel, trafficPanel, frequencyPanel;
+	private JPanel panel, tabMainPanel, tabZonePanel, mainPanel, framePanel, zonePanel, trafficPanel, frequencyPanel;
+	private JTabbedPane tabPane;
+	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
 	private JTextField noSlotField,slotDurField,sensingResultField,senseScheduleField,commScheduleField,commDurField,
-					   sectorNo,dNo,alphaNo,crSectorNo,crDNo,crAlphaNo,radiusField,noCrNodes,noPriNodes,seedValue,
-					   noCalls,callDur,unitTime,simDur,noFreqs,maxSNR,sinrThresholdFied;
+					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
+					   maxSNR,sinrThresholdFied,noZones;
 	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,
 				   label14,label15,label16,label17,label18,label19,label20,label21,label22,label23,label24,label25,
 				   label26,label27,label28,label29,label30;
@@ -169,15 +174,30 @@ public class SimulationRunner extends JFrame{
 				getContentPane().add(panel, BorderLayout.CENTER);
 				panel.setLayout(null);
 				
+				tabMainPanel = new JPanel();
+				tabMainPanel.setLayout(null);
+				tabZonePanel = new JPanel();
+				tabZonePanel.setLayout(null);
+				
+				tabPane = new JTabbedPane();
+				panel.add(tabPane);
+				tabPane.setBounds(0, 0, 835, 600);
+				
+				
 				initMainOptionsGUI();
 				initFrameOptionsGUI();
 				initTrafficOptionsGUI();
 				initZoneOptionsGUI();
 				initFrequencyOptionsGUI();
+				addZoneOptinsGUI();
+				
+				tabPane.add("Main", tabMainPanel);
+				tabPane.add("Zone", tabZonePanel);
+				
 				createButtons();
 			}
 			pack();
-			this.setSize(845, 637);
+			this.setSize(845, 670);
 			this.setResizable(false);
 			this.setTitle("Simulator");
 		} catch (Exception e) {
@@ -218,33 +238,33 @@ public class SimulationRunner extends JFrame{
 		mainPanel = new JPanel();
 		mainPanel.setBorder(BorderFactory.createTitledBorder("Main Options"));
 		mainPanel.setLayout(null);
-		{
-			label1 = new JLabel();
-			mainPanel.add(label1);
-			label1.setToolTipText("Number of CR Users in The CR Zone");
-			label1.setText("Number of CR Nodes");
-			label1.setBounds(labelPos, 30, 165, 16);
-		}
-		{
-			noCrNodes = new JTextField();
-			mainPanel.add(noCrNodes);
-			noCrNodes.setToolTipText("Number of CR Users in The CR Zone");
-			noCrNodes.setBounds(itemPos, 30, 120, 23);
-			noCrNodes.setText("6");
-			noCrNodes.addKeyListener(keyAdapter);
-		}
+//		{
+//			label1 = new JLabel();
+//			mainPanel.add(label1);
+//			label1.setToolTipText("Number of CR Users in The CR Zone");
+//			label1.setText("Number of CR Nodes");
+//			label1.setBounds(labelPos, 30, 165, 16);
+//		}
+//		{
+//			noCrNodes = new JTextField();
+//			mainPanel.add(noCrNodes);
+//			noCrNodes.setToolTipText("Number of CR Users in The CR Zone");
+//			noCrNodes.setBounds(itemPos, 30, 120, 23);
+//			noCrNodes.setText("6");
+//			noCrNodes.addKeyListener(keyAdapter);
+//		}
 		{
 			label2 = new JLabel();
 			mainPanel.add(label2);
 			label2.setToolTipText("Number of Primary Users in The CR Cell");
 			label2.setText("Number of Primary Nodes");
-			label2.setBounds(labelPos, 65, 165, 16);
+			label2.setBounds(labelPos, 30, 165, 16);
 		}
 		{
 			noPriNodes = new JTextField();
 			mainPanel.add(noPriNodes);
 			noPriNodes.setToolTipText("Number of Primary Users in The CR Cell");
-			noPriNodes.setBounds(itemPos, 65, 120, 23);
+			noPriNodes.setBounds(itemPos, 30, 120, 23);
 			noPriNodes.setText("15");
 			noPriNodes.addKeyListener(keyAdapter);
 		}
@@ -253,7 +273,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label3);
 			label3.setToolTipText("Model of Wireless Channel");
 			label3.setText("Channel Model");
-			label3.setBounds(labelPos, 100, 165, 16);
+			label3.setBounds(labelPos, 65, 165, 16);
 		}
 		{
 			ComboBoxModel channelModelModel = 
@@ -271,7 +291,7 @@ public class SimulationRunner extends JFrame{
 				}
 			});
 			mainPanel.add(channelModel);
-			channelModel.setBounds(itemPos, 100, 120, 23);
+			channelModel.setBounds(itemPos, 65, 120, 23);
 			channelModel.addKeyListener(keyAdapter);
 		}
 		{
@@ -279,13 +299,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label4);
 			label4.setToolTipText("Duration of Simulation in terms of Unit Time");
 			label4.setText("Simulation Dur. (unit time)");
-			label4.setBounds(labelPos, 135, 240, 16);
+			label4.setBounds(labelPos, 100, 240, 16);
 		}
 		{
 			simDur = new JTextField();
 			mainPanel.add(simDur);
 			simDur.setToolTipText("Duration of Simulation in terms of Unit Time");
-			simDur.setBounds(itemPos, 135, 120, 23);
+			simDur.setBounds(itemPos, 100, 120, 23);
 			simDur.setText("10000");
 			simDur.addKeyListener(keyAdapter);
 		}
@@ -294,13 +314,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label5);
 			label5.setToolTipText("Maximum SNR Value of Transmitter");
 			label5.setText("Max SNR Value (dB)");
-			label5.setBounds(labelPos, 170, 165, 16);
+			label5.setBounds(labelPos, 135, 165, 16);
 		}
 		{
 			maxSNR = new JTextField();
 			mainPanel.add(maxSNR);
 			maxSNR.setToolTipText("Maximum SNR Value of Transmitter");
-			maxSNR.setBounds(itemPos, 170, 120, 23);
+			maxSNR.setBounds(itemPos, 135, 120, 23);
 			maxSNR.setText("10");
 			maxSNR.addKeyListener(keyAdapter);
 		}
@@ -309,13 +329,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label6);
 			label6.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
 			label6.setText("SINR Threshold (dB)");
-			label6.setBounds(labelPos, 205, 165, 16);
+			label6.setBounds(labelPos, 170, 165, 16);
 		}
 		{
 			sinrThresholdFied = new JTextField();
 			mainPanel.add(sinrThresholdFied);
 			sinrThresholdFied.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
-			sinrThresholdFied.setBounds(itemPos, 205, 120, 23);
+			sinrThresholdFied.setBounds(itemPos, 170, 120, 23);
 			sinrThresholdFied.setText("1");
 			sinrThresholdFied.addKeyListener(keyAdapter);
 		}
@@ -323,7 +343,7 @@ public class SimulationRunner extends JFrame{
 			label7 = new JLabel();
 			mainPanel.add(label7);
 			label7.setText("Seed Model");
-			label7.setBounds(labelPos, 240, 165, 16);
+			label7.setBounds(labelPos, 205, 165, 16);
 		}
 		{
 			ComboBoxModel seedModelModel = 
@@ -347,7 +367,7 @@ public class SimulationRunner extends JFrame{
 				}
 			});
 			mainPanel.add(seedModel);
-			seedModel.setBounds(itemPos, 240, 120, 23);
+			seedModel.setBounds(itemPos, 205, 120, 23);
 			seedModel.addKeyListener(keyAdapter);
 		}
 		{
@@ -355,13 +375,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label8);
 			label8.setToolTipText("Seed Value of Random Number Generator");
 			label8.setText("Seed Value");
-			label8.setBounds(labelPos, 275, 165, 16);
+			label8.setBounds(labelPos, 240, 165, 16);
 		}
 		{
 			seedValue = new JTextField();
 			mainPanel.add(seedValue);
 			seedValue.setToolTipText("Seed Value of Random Number Generator");
-			seedValue.setBounds(itemPos, 275, 120, 23);
+			seedValue.setBounds(itemPos, 240, 120, 23);
 			seedValue.setText("111211211");
 			seedValue.addKeyListener(keyAdapter);
 		}
@@ -370,13 +390,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label9);
 			label9.setToolTipText("Run Animation During Simulation");
 			label9.setText("Animation");
-			label9.setBounds(labelPos, 310, 165, 16);
+			label9.setBounds(labelPos, 275, 165, 16);
 			animationOnOff = new ButtonGroup();
 		}
 		{
 			animationOnButton = new JRadioButton("On");
 			mainPanel.add(animationOnButton);
-			animationOnButton.setBounds(itemPos, 310, 50, 23);
+			animationOnButton.setBounds(itemPos, 275, 50, 23);
 			animationOnButton.setSelected(false);
 			animationOnOff.add(animationOnButton);
 			animationOnButton.addItemListener(new ItemListener() {
@@ -393,7 +413,7 @@ public class SimulationRunner extends JFrame{
 		{
 			animationOffButton = new JRadioButton("Off");
 			mainPanel.add(animationOffButton);
-			animationOffButton.setBounds(itemPos+70, 310, 50, 23);
+			animationOffButton.setBounds(itemPos+70, 275, 50, 23);
 			animationOffButton.setSelected(true);
 			animationOnOff.add(animationOffButton);
 			animationOffButton.addItemListener(new ItemListener() {
@@ -412,13 +432,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label10);
 			label10.setToolTipText("Draw Plots at The End of The Simulation");
 			label10.setText("Plot");
-			label10.setBounds(labelPos, 345, 165, 16);
+			label10.setBounds(labelPos, 310, 165, 16);
 			plotOnOff = new ButtonGroup();
 		}
 		{
 			plotOnButton = new JRadioButton("On");
 			mainPanel.add(plotOnButton);
-			plotOnButton.setBounds(itemPos, 345, 50, 23);
+			plotOnButton.setBounds(itemPos, 310, 50, 23);
 			plotOnButton.setSelected(false);
 			plotOnOff.add(plotOnButton);
 			plotOnButton.addKeyListener(keyAdapter);
@@ -426,13 +446,13 @@ public class SimulationRunner extends JFrame{
 		{
 			plotOffButton = new JRadioButton("Off");
 			mainPanel.add(plotOffButton);
-			plotOffButton.setBounds(itemPos+70, 345, 50, 23);
+			plotOffButton.setBounds(itemPos+70, 310, 50, 23);
 			plotOffButton.setSelected(true);
 			plotOnOff.add(plotOffButton);
 			plotOffButton.addKeyListener(keyAdapter);
 		}
-		panel.add(mainPanel);
-		mainPanel.setBounds(panelLeft, 10, panelWidth, 380);
+		tabMainPanel.add(mainPanel);
+		mainPanel.setBounds(panelLeft, 10, panelWidth, 345);
 	}
 	
 	private void initFrameOptionsGUI()
@@ -530,7 +550,7 @@ public class SimulationRunner extends JFrame{
 			commScheduleField.setText("0.2");
 			commScheduleField.addKeyListener(keyAdapter);
 		}
-		panel.add(framePanel);
+		tabMainPanel.add(framePanel);
 		framePanel.setBounds(panelRight,185,panelWidth,240);
 	}
 	
@@ -550,23 +570,9 @@ public class SimulationRunner extends JFrame{
 			sectorNo = new JTextField();
 			zonePanel.add(sectorNo);
 			sectorNo.setToolTipText("Number of Sectors in A Cell");
-			sectorNo.setBounds(itemPos, 30, 50, 23);
+			sectorNo.setBounds(itemPos, 30, 120, 23);
 			sectorNo.setText("3");
 			sectorNo.addKeyListener(keyAdapter);
-		}
-		{
-			label18 = new JLabel();
-			zonePanel.add(label18);
-			label18.setText("/");
-			label18.setBounds(itemPos+59, 30, 18, 23);
-		}
-		{
-			crSectorNo = new JTextField();
-			zonePanel.add(crSectorNo);
-			crSectorNo.setToolTipText("In Which Sector The CR Nodes Located During Simulation");
-			crSectorNo.setBounds(itemPos+70, 30, 50, 23);
-			crSectorNo.setText("0");
-			crSectorNo.addKeyListener(keyAdapter);
 		}
 		{
 			label19 = new JLabel();
@@ -579,23 +585,9 @@ public class SimulationRunner extends JFrame{
 			dNo = new JTextField();
 			zonePanel.add(dNo);
 			dNo.setToolTipText("Number of D Sections Radius is Divided");
-			dNo.setBounds(itemPos, 65, 50, 23);
+			dNo.setBounds(itemPos, 65, 120, 23);
 			dNo.setText("3");
 			dNo.addKeyListener(keyAdapter);
-		}
-		{
-			label20 = new JLabel();
-			zonePanel.add(label20);
-			label20.setText("/");
-			label20.setBounds(itemPos+59, 65, 18, 23);
-		}
-		{
-			crDNo = new JTextField();
-			zonePanel.add(crDNo);
-			crDNo.setToolTipText("In Which D Section The CR Nodes Located During Simulation");
-			crDNo.setBounds(itemPos+70, 65, 50, 23);
-			crDNo.setText("0");
-			crDNo.addKeyListener(keyAdapter);
 		}
 		{
 			label21 = new JLabel();
@@ -608,23 +600,9 @@ public class SimulationRunner extends JFrame{
 			alphaNo = new JTextField();
 			zonePanel.add(alphaNo);
 			alphaNo.setToolTipText("Number of Alpha Sections in A Sector");
-			alphaNo.setBounds(itemPos, 100, 50, 23);
+			alphaNo.setBounds(itemPos, 100, 120, 23);
 			alphaNo.setText("4");
 			alphaNo.addKeyListener(keyAdapter);
-		}
-		{
-			label22 = new JLabel();
-			zonePanel.add(label22);
-			label22.setText("/");
-			label22.setBounds(itemPos+59, 100, 18, 23);
-		}
-		{
-			crAlphaNo = new JTextField();
-			zonePanel.add(crAlphaNo);
-			crAlphaNo.setToolTipText("In Which Alpha Section The CR Nodes Located During Simulation");
-			crAlphaNo.setBounds(itemPos+70, 100, 50, 23);
-			crAlphaNo.setText("0");
-			crAlphaNo.addKeyListener(keyAdapter);
 		}
 		{
 			label23 = new JLabel();
@@ -641,8 +619,91 @@ public class SimulationRunner extends JFrame{
 			radiusField.setText("30");
 			radiusField.addKeyListener(keyAdapter);
 		}
-		panel.add(zonePanel);
-		zonePanel.setBounds(panelLeft, 395, panelWidth, 170);
+		{
+			label22 = new JLabel();
+			zonePanel.add(label22);
+			label22.setToolTipText("Number of Zones to be simulated");
+			label22.setText("Number Of Zones");
+			label22.setBounds(labelPos, 170, 165, 16);
+		}
+		{
+			noZones = new JTextField();
+			zonePanel.add(noZones);
+			noZones.setToolTipText("Number of Zones to be simulated");
+			noZones.setBounds(itemPos, 170, 120, 23);
+			noZones.setText("1");
+			noZones.getDocument().addDocumentListener(new DocumentListener() {
+
+				public void insertUpdate(DocumentEvent e) {
+					if(noZones.getText().isEmpty())
+						return;
+					int i=0;
+					try{
+						i = Integer.parseInt(noZones.getText());
+					}
+					catch(NumberFormatException nfe){
+						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+nfe.getMessage(),
+							"Simulation", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					if(i>34){
+						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+"Number of Zones cannot be greater than 34",
+							"Simulation", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					for(int j=0;j<i;j++){
+						zoneAlphaNos.get(j).setEnabled(true);
+						zoneCRUsers.get(j).setEnabled(true);
+						zoneDNos.get(j).setEnabled(true);
+						zoneSectorNos.get(j).setEnabled(true);
+					}
+					
+					for(int j=i;j<zoneAlphaNos.size();j++){
+						zoneAlphaNos.get(j).setEnabled(false);
+						zoneCRUsers.get(j).setEnabled(false);
+						zoneDNos.get(j).setEnabled(false);
+						zoneSectorNos.get(j).setEnabled(false);
+					}
+				}
+
+				public void removeUpdate(DocumentEvent e) {
+					if(noZones.getText().isEmpty())
+						return;
+					int i=0;
+					try{
+						i = Integer.parseInt(noZones.getText());
+					}
+					catch(NumberFormatException nfe){
+						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+nfe.getMessage(),
+							"Simulation", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					if(i>34){
+						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+"Number of Zones cannot be greater than 34",
+							"Simulation", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					for(int j=0;j<i;j++){
+						zoneAlphaNos.get(i).setEnabled(true);
+						zoneCRUsers.get(i).setEnabled(true);
+						zoneDNos.get(i).setEnabled(true);
+						zoneSectorNos.get(i).setEnabled(true);
+					}
+					
+					for(int j=i;j<zoneAlphaNos.size();j++){
+						zoneAlphaNos.get(i).setEnabled(false);
+						zoneCRUsers.get(i).setEnabled(false);
+						zoneDNos.get(i).setEnabled(false);
+						zoneSectorNos.get(i).setEnabled(false);
+					}
+				}
+
+				public void changedUpdate(DocumentEvent e) {}
+			});
+			noZones.addKeyListener(keyAdapter);
+		}
+		tabMainPanel.add(zonePanel);
+		zonePanel.setBounds(panelLeft, 360, panelWidth, 205);
 	}
 	
 	private void initTrafficOptionsGUI()
@@ -743,7 +804,7 @@ public class SimulationRunner extends JFrame{
 			unitTime.addKeyListener(keyAdapter);
 			unitTime.setEnabled(false);
 		}
-		panel.add(trafficPanel);
+		tabMainPanel.add(trafficPanel);
 		trafficPanel.setBounds(panelRight, 10, panelWidth, 170);
 	}
 	
@@ -767,8 +828,101 @@ public class SimulationRunner extends JFrame{
 			noFreqs.setText("12");
 			noFreqs.addKeyListener(keyAdapter);
 		}
-		panel.add(frequencyPanel);
+		tabMainPanel.add(frequencyPanel);
 		frequencyPanel.setBounds(panelRight, 430, panelWidth, 65);
+	}
+	
+	private void addZoneOptinsGUI()
+	{
+		zoneSectorNos = new ArrayList<JTextField>();
+		zoneDNos = new ArrayList<JTextField>();
+		zoneAlphaNos = new ArrayList<JTextField>();
+		zoneCRUsers = new ArrayList<JTextField>();
+		int id=1;
+		
+		JTextField textField;
+		JPanel []panels = new JPanel[2];
+		for(int j=0; j<2; j++){
+			panels[j] = new JPanel();
+			panels[j].setBorder(BorderFactory.createTitledBorder(""));
+			panels[j].setLayout(null);
+
+			JLabel label = new JLabel();
+			panels[j].add(label);
+			label.setText("ID");
+			label.setBounds(5, 5, 25, 23);
+
+			label = new JLabel();
+			panels[j].add(label);
+			label.setText("Sector No");
+			label.setBounds(66, 5, 60, 23);
+
+			label = new JLabel();
+			panels[j].add(label);
+			label.setText("D No");
+			label.setBounds(162, 5, 30, 23);
+
+			label = new JLabel();
+			panels[j].add(label);
+			label.setText("Alpha No");
+			label.setBounds(228, 5, 60, 23);
+
+			label = new JLabel();
+			panels[j].add(label);
+			label.setText("CR Users");
+			label.setBounds(324, 5, 60, 23);
+
+			for(int i=0;i<17;i++){
+				label = new JLabel();
+				panels[j].add(label);
+				label.setText(String.valueOf(id));
+				label.setBounds(5, 35+i*30, 46, 23);
+				id++;
+				
+				textField = new JTextField();
+				panels[j].add(textField);
+				textField.setToolTipText("In Which Sector The CR Nodes Located During Simulation");
+				textField.setBounds(66, 35+i*30, 81, 23);
+				textField.setText("");
+				textField.addKeyListener(keyAdapter);
+				if(id > 2)
+					textField.setEnabled(false);
+				zoneSectorNos.add(textField);
+
+				textField = new JTextField();
+				panels[j].add(textField);
+				textField.setToolTipText("In Which D Section The CR Nodes Located During Simulation");
+				textField.setBounds(162, 35+i*30, 51, 23);
+				textField.setText("");
+				textField.addKeyListener(keyAdapter);
+				if(id > 2)
+					textField.setEnabled(false);
+				zoneDNos.add(textField);
+
+				textField = new JTextField();
+				panels[j].add(textField);
+				textField.setToolTipText("In Which Alpha Section The CR Nodes Located During Simulation");
+				textField.setBounds(228, 35+i*30, 81, 23);
+				textField.setText("");
+				textField.addKeyListener(keyAdapter);
+				if(id > 2)
+					textField.setEnabled(false);
+				zoneAlphaNos.add(textField);
+
+				textField = new JTextField();
+				panels[j].add(textField);
+				textField.setToolTipText("");
+				textField.setBounds(324, 35+i*30, 81, 23);
+				textField.setText("");
+				textField.addKeyListener(keyAdapter);
+				if(id > 2)
+					textField.setEnabled(false);
+				zoneCRUsers.add(textField);
+			}
+			tabZonePanel.add(panels[j]);
+		}
+		panels[0].setBounds(5,5,410,548);
+		panels[1].setBounds(425,5,410,548);
 	}
 	
 	private void createButtons()
@@ -778,7 +932,7 @@ public class SimulationRunner extends JFrame{
 			panel.add(closeButton);
 			closeButton.setText("CLOSE");
 			closeButton.setMnemonic('c');
-			closeButton.setBounds(panelRight+panelWidth-120, 570, 120, 23);
+			closeButton.setBounds(panelRight+panelWidth-120, 603, 120, 23);
 			closeButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -800,7 +954,7 @@ public class SimulationRunner extends JFrame{
 			panel.add(startSimulation);
 			startSimulation.setText("Start");
 			startSimulation.setMnemonic('s');
-			startSimulation.setBounds(panelRight+panelWidth-120-135, 570, 120, 23);
+			startSimulation.setBounds(panelRight+panelWidth-120-135, 603, 120, 23);
 			startSimulation.addActionListener(new ActionListener() {
 
 				@Override
@@ -837,7 +991,7 @@ public class SimulationRunner extends JFrame{
 			panel.add(terminateSimulation);
 			terminateSimulation.setText("Terminate");
 			terminateSimulation.setMnemonic('t');
-			terminateSimulation.setBounds(panelRight+panelWidth-120-270, 570, 120, 23);
+			terminateSimulation.setBounds(panelRight+panelWidth-120-270, 603, 120, 23);
 			terminateSimulation.addActionListener(new ActionListener() {
 
 				@Override
@@ -878,7 +1032,7 @@ public class SimulationRunner extends JFrame{
 			progressBar = new JProgressBar();
 			progressBar.setStringPainted(true);
 			panel.add(progressBar);
-			progressBar.setBounds(15, 570, 200, 23);
+			progressBar.setBounds(15, 603, 200, 23);
 			progressBar.setVisible(false);
 		}
 	}
@@ -907,6 +1061,7 @@ public class SimulationRunner extends JFrame{
 		int crAlpha = 0;
 		int crSector = 0;
 		int crD = 0;
+		int numberOfZones = 0;
 		
 		double slotDur = 0.0;
 		double senseScheduleAdvertisement = 0.0;
@@ -930,12 +1085,9 @@ public class SimulationRunner extends JFrame{
 			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
 			sinrThreshold = Double.parseDouble(sinrThresholdFied.getText());
 			
-			numberOfCrNodes = Integer.parseInt(noCrNodes.getText());	//Get number of CR nodes
 			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
-			maxFreqCR = Integer.parseInt(noSlotField.getText());			//Get max number of frequencies a node can sense
-			crAlpha = Integer.parseInt(crAlphaNo.getText());			//Get alpha number CR nodes will be in
-			crSector = Integer.parseInt(crSectorNo.getText());			//Get sector number CR nodes will be in
-			crD = Integer.parseInt(crDNo.getText());					//Get d interval CR nodes will be in
+			maxFreqCR = Integer.parseInt(noSlotField.getText());		//Get max number of frequencies a node can sense
+			numberOfZones = Integer.parseInt(noZones.getText());		//Get the number of zones to be simulated
 			
 			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per unit time
 			callDura = Double.parseDouble(callDur.getText());	//Get call duration in terms of unit time
@@ -998,8 +1150,18 @@ public class SimulationRunner extends JFrame{
 			
 			crBase = new CRBase(new Point2D.Double(0, 0),0,maxFreqCR);		//Create a CR base station in the origin
 			Cell.setBaseStation(crBase);
+			numberOfCrNodes = 0;
+			for(int i = 0; i<numberOfZones ; i++){
+				int sectorNumber = Integer.parseInt(zoneSectorNos.get(i).getText());		//Get sector number CR nodes will be in
+				int alphaNumber = Integer.parseInt(zoneAlphaNos.get(i).getText());			//Get alpha number CR nodes will be in
+				int dNmber = Integer.parseInt(zoneDNos.get(i).getText());					//Get d interval CR nodes will be in
+				int numberOfCrUsersInZone = Integer.parseInt(zoneDNos.get(i).getText());	//Get number of CR nodes in zone
+				numberOfCrNodes += numberOfCrUsersInZone;
+				crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
+			}
+			
 			for(int i = 0; i<numberOfCrNodes ;i++){
-				crNodes.add(new CRNode(i,Cell.deployNodeinZone(crSector, crAlpha, crD), 0));
+				crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
 				if(animationOnButton.isSelected())
 					DrawCell.paintCrNode(crNodes.get(i));
