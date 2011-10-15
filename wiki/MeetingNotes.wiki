@@ -1,0 +1,22 @@
+#Meeting Reports
+
+= Report of Meeting 11.10.2011 =
+
+== Issues & Decisions ==
+<dl>
+ <dt>1. Summary of project so far is done.</dt>
+
+ <dt>2. Summary of papers read is done.</dt>
+
+ <dt>3. Assignments for the next meeting is decided:</dt>
+ <dd>3.1. Taking statistics from the point of view of Simulator. These statistics are:</dd>
+ <dd><dl>
+ <dd> 3.1.1. Throughput of both primary users and secondary users.</dd>
+ <dd> 3.1.2. Secondary Drop when primary arrives and no available channel found.</dd>
+ <dd> 3.1.3. Secondary Force Hand-off when primary arrives and another available channel found.</dd>
+ <dd> 3.1.4. Secondary Block when there is no available channel to communicate.</dd>
+ <dd> 3.1.5. Collisions of primary and secondary users.</dd>
+ </dl></dd>
+ <dd>3.2. Unit times will be specified.</dd>
+ <dd>3.3. Documentation, class diagram, and flow chart will be completed.</dd>
+</dl>
