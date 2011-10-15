@@ -113,7 +113,12 @@ public class CRDESScheduler extends SimEnt{
 	 * Number of SINR value reports during communication
 	 */
 	final static int numberOfReports = 3;
-	
+	/**
+	 * Duration of frame
+	 */
+	private double frameDuration;
+        
+        
 	/**
 	 * Creates a DES scheduler that performs frame action for CR sensor nodes
 	 * @param simulationDuration			Duration of the simulation in unit time
@@ -139,9 +144,8 @@ public class CRDESScheduler extends SimEnt{
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
 		finished = false;
 		
-		double frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement +
-																					commScheduleAdvertisement + commDur;
-		CRNode.setTotalNumberOfFrames((int)(simulationDuration / frameDuration));
+		this.frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement + commScheduleAdvertisement + commDur;
+		CRNode.setTotalNumberOfFrames((int)(simulationDuration / this.frameDuration));
 	}
 	
 	/**
@@ -150,6 +154,10 @@ public class CRDESScheduler extends SimEnt{
 	public void start()
 	{
 		send(this, senseScheAdverEvent, 0.0);
+		for(int i=0;i<SimulationRunner.crNodes.size();i++){
+			send(this, SimulationRunner.crNodes.get(i).startCommEvent, SimulationRunner.crNodes.get(i).nextOffDuration(this.frameDuration));
+		}
+                
 	}
 	
 	/**
@@ -194,6 +202,18 @@ public class CRDESScheduler extends SimEnt{
 			else{
 				send(this,commEvent,commDur);
 			}
+		}
+		else if(ev instanceof CRNode.StartCommunicationEvent){
+			CRNode.StartCommunicationEvent sce = (CRNode.StartCommunicationEvent) ev;
+			SimulationRunner.crNodes.get(sce.id).setCommOrNot(true);
+
+			send(this,SimulationRunner.crNodes.get(sce.id).endCommEvent,SimulationRunner.crNodes.get(sce.id).nextOnDuration(this.frameDuration));
+		}
+		else if(ev instanceof CRNode.EndCommunicationEvent){
+			CRNode.EndCommunicationEvent ece = (CRNode.EndCommunicationEvent) ev;
+			SimulationRunner.crNodes.get(ece.id).setCommOrNot(false);
+
+			send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDuration(this.frameDuration));
 		}
 		SimulationRunner.progressBar.setValue((((int)Scheduler.instance().getTime())*100)/(int)simulationDuration);	//Update progress bar
 		if(simulationDuration < Scheduler.instance().getTime()||finished)

@@ -12,8 +12,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Locale;
+import DES.Event;
+import DES.SimEnt;
+import DESSimulation.DESPrimaryTrafficGenerator;
+import cern.jet.random.Exponential;
 
 public class CRNode extends Node{
     
@@ -56,6 +59,23 @@ public class CRNode extends Node{
      * Total number of frames in the simulation.
      */
     private static int totalNumberOfFrames = 0;
+    /**
+     * Boolean value that shows whether this crnode communicates or not
+     */
+    private boolean commOrNot = false;
+    
+    public final StartCommunicationEvent startCommEvent ;
+    
+    public final EndCommunicationEvent endCommEvent ;
+    
+    private static Exponential expoInterarrival;
+    
+    private static Exponential expoCommDuration;
+    
+    private static ParetoDistribution parOnDuration;
+    
+    private static ParetoDistribution parOffDuration;
+    
     
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
@@ -67,6 +87,10 @@ public class CRNode extends Node{
         this.id = id;
         this.position = new Point2D.Double(pos.x, pos.y);
         this.velocity = vel;
+        this.startCommEvent = new StartCommunicationEvent(this.id);
+        this.endCommEvent = new EndCommunicationEvent(this.id);
+        CRNode.expoInterarrival = new Exponential(DESPrimaryTrafficGenerator.meanOffDuration, SimulationRunner.randEngine);
+        CRNode.expoCommDuration = new Exponential((1.0/DESPrimaryTrafficGenerator.meanOnDuration), SimulationRunner.randEngine);
     }
     
     /**
@@ -182,14 +206,18 @@ public class CRNode extends Node{
      * @param lastReport True if it is the last report otherwise false
      */
     public static void communicate(double time, boolean lastReport){
+		
         ArrayList<Double> sinr = new ArrayList<Double>();
         for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
             sinr.add(0.0);
         }
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
+			if(!SimulationRunner.crNodes.get(i).commOrNot)
+				continue;
             String collision = "no collision";
             int freq = SimulationRunner.crNodes.get(i).communication_frequency;
-            if(freq >= 0){  //if freq>0 then crnode has a frequency to talk
+            if(freq >= 0){  //if freq>0 then crnode has a frequency to talk 
+				//TODO commornot a bagli olarak freq kontrolu kaldır
                 sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crNodes.get(i), freq));
                 if(sinr.get(freq)<SimulationRunner.wc.sinrThreshold){ //checks if collision occured
                     collision = "collision occured";
@@ -266,5 +294,77 @@ public class CRNode extends Node{
             data[i][6] = String.format(Locale.US,"%.2f", ((totalNumberOfComm - totalNumberOfCollision)*100.0)/(double)totalNumberOfFrames);
             return data;
     }
+    
+    
+    public static class StartCommunicationEvent implements Event{
+            public int id = 0;
+
+            @Override
+            public void entering(SimEnt locale) {}
+
+            public StartCommunicationEvent(int crnode_id) {
+                this.id = crnode_id;
+            }
+    }
+    
+    public static class EndCommunicationEvent implements Event{
+            public int id = 0;
+
+            @Override
+            public void entering(SimEnt locale) {}
+
+            public EndCommunicationEvent(int crnode_id) {
+                this.id = crnode_id;
+            }
+    }
+    
+    
+    /**
+	 * Finds the next on duration accoriding to the traffic model
+	 * @return	On duration
+	 */
+	public double nextOnDuration(double frameDuration)
+	{
+            
+            //if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON)
+                    double nextDuration = expoCommDuration.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+                    
+					return Math.ceil(nextDuration/frameDuration) * frameDuration;
+					
+					
+	/*	else if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.ON_OFF){
+			double val = onDuration.nextDouble();
+			return val*DESPrimaryTrafficGenerator.unitTime;
+		}
+		else
+			return 0.0;
+         */
+                   
+	}
+	
+	/**
+	 * Finds the next off duration accoriding to the traffic model
+	 * @return	Off duration
+	 */
+	public double nextOffDuration(double frameDuration)
+	{
+		//if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON)
+			double nextOffDur = expoInterarrival.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+            return Math.round(nextOffDur/frameDuration)*frameDuration;            
+			
+			
+	/*	else if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.ON_OFF){
+			double val = offDuration.nextDouble();
+			return val*DESPrimaryTrafficGenerator.unitTime;
+		}
+		else
+			return 0.0;  */
+	}
+
+    public void setCommOrNot(boolean commOrNot) {
+        this.commOrNot = commOrNot;
+    }
+        
+        
     
 }

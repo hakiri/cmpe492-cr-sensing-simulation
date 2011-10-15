@@ -151,7 +151,7 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	}
 	
 	/**
-	 * Finds the next on duration accoriding to the traffic model
+	 * Finds the next on duration according to the traffic model
 	 * @return	On duration
 	 */
 	private double nextOnDuration()

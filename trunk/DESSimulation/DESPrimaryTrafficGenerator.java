@@ -25,7 +25,7 @@ public class DESPrimaryTrafficGenerator{
 	/**
 	 * Model of the traffic generation
 	 */
-	static int trafficModel;
+	public static int trafficModel;
 	/**
 	 * SimEnt objects associated with each primary traffic generator node
 	 */
@@ -34,8 +34,8 @@ public class DESPrimaryTrafficGenerator{
 	 * Time unit
 	 */
 	public static int unitTime;
-	private double meanOnDuration;
-	private double meanOffDuration;
+	public static double meanOnDuration;
+	public static double meanOffDuration;
 	
 	
 	/**

@@ -35,6 +35,12 @@ public class CRBase extends Node{
      */
     private static Uniform uniform ;
     
+    private ArrayList<ArrayList<Integer>> registeredZones;
+    /**
+     * Cumulative total of crnodes in zones.
+     */
+    private ArrayList<Integer> nodesInZone;
+    
     /**
      * Creates a CRBase at the given position.
      * @param pos Position of the Base station
@@ -49,6 +55,7 @@ public class CRBase extends Node{
         CRBase.number_of_freq_per_crnode = number_of_freq_per_crnode;
         CRBase.uniform = new Uniform(SimulationRunner.randEngine);
         this.current_averageSnr = new ArrayList<Double>();
+        this.registeredZones = new ArrayList<ArrayList<Integer>>();
     }
     
     /**
@@ -98,10 +105,7 @@ public class CRBase extends Node{
      * Assigns frequencies to the crnodes to be listened in the sensing slots and also
      * updates frequency list.
      */
-    public void assignFrequencies(){    
-	for(int i=0;i<SimulationRunner.crNodes.size();i++){ //resets the communication_freq value for crnodes.
-            SimulationRunner.crNodes.get(i).setCommunication_frequency(-1);
-        }
+    public void assignFrequencies(){
         frequency_list = new ArrayList<Integer>();
         for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
             frequency_list.add(0);
@@ -136,7 +140,7 @@ public class CRBase extends Node{
             threshold = 0;
         //checks averagesnr values of the frequencies and adds frequencies to the free_frequencies list
         //if there was no collision in the previous measurement 
-        for(int i=0;i<last_averageSnr.size();i++){//collision olmayan freqleri bulup onlari fre_freq'e ekliyor.
+        for(int i=0;i<last_averageSnr.size();i++){//finds collision free frequencies and adds them to fre_freq
             if(last_averageSnr.get(i) <= threshold)
                free_frequencies.add(new FreqSNR(i, last_averageSnr.get(i)));
         }
@@ -175,4 +179,36 @@ public class CRBase extends Node{
         return frequency_list;
     }
     
+	/**
+	 * Takes parameters of a zone and registers this zone into registeredZones
+	 * @param sector Sector of the zone
+	 * @param alpha Alpha number of the zone
+	 * @param d Distance section of the zone
+	 * @param crnodes Total number of crnodes in that zone
+	 */
+    public void registerZone(int sector, int alpha, int d, int crnodes){
+        ArrayList<Integer> zone = new ArrayList<Integer>();
+        zone.add(sector);
+        zone.add(alpha);
+        zone.add(d);
+        registeredZones.add(zone);
+        if(registeredZones.size() > 0)
+            nodesInZone.add(crnodes + nodesInZone.get(nodesInZone.size() - 1));
+        else
+            nodesInZone.add(crnodes);
+    }
+    
+	/**
+	 * Takes id of crnode then finds that crnode's zone, after this, calls deployNodeinZone function
+	 * with the corresponding zone parameters.
+	 * @param id Id of CRNode
+	 * @return Point of the CRNode
+	 */
+    public Point2D.Double deployNodeinZone(int id){
+        for(int i=0;i<nodesInZone.size();i++){
+            if(id <= nodesInZone.get(i))
+				return Cell.deployNodeinZone(registeredZones.get(i).get(0), registeredZones.get(i).get(1), registeredZones.get(i).get(2));
+        }
+		return new Point2D.Double(0.0,0.0);
+    }
 }
