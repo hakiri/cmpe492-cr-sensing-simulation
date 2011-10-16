@@ -35,7 +35,7 @@ public class CRBase extends Node{
      */
     private static Uniform uniform ;
     
-    private ArrayList<ArrayList<Integer>> registeredZones;
+    public ArrayList<ArrayList<Integer>> registeredZones;
     /**
      * Cumulative total of crnodes in zones.
      */
