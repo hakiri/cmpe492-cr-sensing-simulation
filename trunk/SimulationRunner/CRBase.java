@@ -207,7 +207,7 @@ public class CRBase extends Node{
 	 */
     public Point2D.Double deployNodeinZone(int id){
         for(int i=0;i<nodesInZone.size();i++){
-            if(id <= nodesInZone.get(i))
+            if(id < nodesInZone.get(i))
 				return Cell.deployNodeinZone(registeredZones.get(i).get(0), registeredZones.get(i).get(1), registeredZones.get(i).get(2));
         }
 		return new Point2D.Double(0.0,0.0);
