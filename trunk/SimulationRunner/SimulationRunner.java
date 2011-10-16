@@ -1155,7 +1155,7 @@ public class SimulationRunner extends JFrame{
 				int sectorNumber = Integer.parseInt(zoneSectorNos.get(i).getText());		//Get sector number CR nodes will be in
 				int alphaNumber = Integer.parseInt(zoneAlphaNos.get(i).getText());			//Get alpha number CR nodes will be in
 				int dNmber = Integer.parseInt(zoneDNos.get(i).getText());					//Get d interval CR nodes will be in
-				int numberOfCrUsersInZone = Integer.parseInt(zoneDNos.get(i).getText());	//Get number of CR nodes in zone
+				int numberOfCrUsersInZone = Integer.parseInt(zoneCRUsers.get(i).getText());	//Get number of CR nodes in zone
 				numberOfCrNodes += numberOfCrUsersInZone;
 				crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
 			}
