@@ -222,7 +222,7 @@ public class CRNode extends Node{
                 if(sinr.get(freq)<SimulationRunner.wc.sinrThreshold){ //checks if collision occured
                     collision = "collision occured";
                     SimulationRunner.crNodes.get(i).collisionOccured = true;
-		}
+				}
                 writeLogFile(String.format(Locale.US,"Time: %.2f", (double)(time)) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
                 if(lastReport){
                     SimulationRunner.crNodes.get(i).numberOfCommunications++;
@@ -241,7 +241,7 @@ public class CRNode extends Node{
      * @param totalNumberOfFrames Number of Frames
      */
     public static void setTotalNumberOfFrames(int totalNumberOfFrames) {
-            CRNode.totalNumberOfFrames = totalNumberOfFrames;
+		CRNode.totalNumberOfFrames = totalNumberOfFrames;
     }
     
     /**
@@ -249,7 +249,7 @@ public class CRNode extends Node{
      * @return Total number of frames
      */
     public static int getTotalNumberOfFrames() {
-            return totalNumberOfFrames;
+		return totalNumberOfFrames;
     }
     
     /**
