@@ -31,25 +31,9 @@ public class DrawCell implements Runnable{
 	 */
 	int numberOfSectors;
 	/**
-	 * Sector number in which the CR nodes are located
-	 */
-	int sector;
-	/**
 	 * Number of alpha sections in a sector
 	 */
 	int numberOfAlpha;
-	/**
-	 * Alpha number in which the CR nodes are located
-	 */
-	int alpha;
-	/**
-	 * Minimum distance of a CR node to the base station
-	 */
-	int dmin;
-	/**
-	 * Maximum distance of a CR node to the base station
-	 */
-	int dmax;
 	/**
 	 * Number of CR nodes in the zone
 	 */
@@ -68,30 +52,22 @@ public class DrawCell implements Runnable{
 
 	/**
 	 * Constructs a cell structure to paint
-	 * @param radius Radius of the cell
-	 * @param numberOfSectors Number of sectors in the cell
-	 * @param sector Used sector by the CR nodes
-	 * @param numberOfAlpha Number of alpha sections in a sector
-	 * @param alpha Used alpha section by the CR nodes
-	 * @param dmin Min distance from the origin
-	 * @param dmax Max distance from the origin
-	 * @param numberOfCrNodes Number of CR nodes in the zone
-	 * @param numberOfPriNodes Number of primary nodes in the cell
+	 * @param radius			Radius of the cell
+	 * @param numberOfSectors	Number of sectors in the cell
+	 * @param numberOfAlpha		Number of alpha sections in a sector
+	 * @param numberOfDSections Number of distance sections in a alpha slice
+	 * @param numberOfCrNodes	Number of CR nodes in the zone
+	 * @param numberOfPriNodes	Number of primary nodes in the cell
 	 */
-	public DrawCell(int radius, int numberOfSectors, int sector, int numberOfAlpha, int alpha, int dmin, int dmax,
-			int numberOfCrNodes, int numberOfPriNodes) {
+	public DrawCell(int radius, int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
 		this.radius = radius;
 		this.numberOfSectors = numberOfSectors;
-		this.sector = sector;
 		this.numberOfAlpha = numberOfAlpha;
-		this.alpha = alpha;
-		this.dmin = dmin;
-		this.dmax = dmax;
 		this.numberOfCrNodes=numberOfCrNodes;
 		this.numberOfPriNodes=numberOfPriNodes;
 		finished = false;
-	
-		d=new DrawArea(radius*unit, numberOfSectors, sector, numberOfAlpha, alpha, dmin*unit, dmax*unit, numberOfCrNodes, numberOfPriNodes);
+		
+		d = new DrawArea(radius*unit, numberOfSectors, numberOfAlpha, numberOfDSections, numberOfCrNodes, numberOfPriNodes);
 		if(runner==null){
             runner=new Thread(this);            //Create the thread
             runner.start();			//Start the thread: This method will call run method below
@@ -142,9 +118,9 @@ public class DrawCell implements Runnable{
 	 * Adds a CR node to the cell
 	 * @param n Node to be added
 	 */
-	public static void paintCrNode(Node n)
+	public static void paintCrNode(Node n, Color c)
 	{
-		PointColor p = new PointColor(n.getPosition(), pointRadius, Color.GREEN, unit);
+		PointColor p = new PointColor(n.getPosition(), pointRadius, c, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintCR(n.getId(), p);
 	}

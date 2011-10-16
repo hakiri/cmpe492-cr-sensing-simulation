@@ -10,6 +10,7 @@ import MultiThreadedSimulation.CRSensorThread;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -883,40 +884,44 @@ public class SimulationRunner extends JFrame{
 				panels[j].add(textField);
 				textField.setToolTipText("In Which Sector The CR Nodes Located During Simulation");
 				textField.setBounds(66, 35+i*30, 81, 23);
-				textField.setText("");
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
+				else
+					textField.setText("0");
 				zoneSectorNos.add(textField);
 
 				textField = new JTextField();
 				panels[j].add(textField);
 				textField.setToolTipText("In Which D Section The CR Nodes Located During Simulation");
 				textField.setBounds(162, 35+i*30, 51, 23);
-				textField.setText("");
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
+				else
+					textField.setText("0");
 				zoneDNos.add(textField);
 
 				textField = new JTextField();
 				panels[j].add(textField);
 				textField.setToolTipText("In Which Alpha Section The CR Nodes Located During Simulation");
 				textField.setBounds(228, 35+i*30, 81, 23);
-				textField.setText("");
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
+				else
+					textField.setText("0");
 				zoneAlphaNos.add(textField);
 
 				textField = new JTextField();
 				panels[j].add(textField);
 				textField.setToolTipText("");
 				textField.setBounds(324, 35+i*30, 81, 23);
-				textField.setText("");
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
+				else
+					textField.setText("6");
 				zoneCRUsers.add(textField);
 			}
 			tabZonePanel.add(panels[j]);
@@ -1143,8 +1148,8 @@ public class SimulationRunner extends JFrame{
 			}
 			
 			if(animationOnButton.isSelected())
-				drawCell = new DrawCell((int)radius, sectrNo, crSector, Integer.parseInt(alphaNo.getText()), crAlpha,
-																(int)dmin, (int)dmax, numberOfCrNodes, numberOfPriNodes);
+				drawCell = new DrawCell((int)radius, sectrNo, Integer.parseInt(alphaNo.getText()),
+																(int)dNumber, numberOfCrNodes, numberOfPriNodes);
 			else
 				drawCell = null;
 			
@@ -1164,7 +1169,7 @@ public class SimulationRunner extends JFrame{
 				crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
 				if(animationOnButton.isSelected())
-					DrawCell.paintCrNode(crNodes.get(i));
+					DrawCell.paintCrNode(crNodes.get(i), Color.GREEN);
 			}
 			
 			if(animationOnButton.isSelected()){
