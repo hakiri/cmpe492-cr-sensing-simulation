@@ -148,9 +148,9 @@ public class CRNode extends Node{
         }
         
         SimulationRunner.crBase.setLast_averageSnr(averageSnr);
-		//TODO Draw another plot for each other zone
-//		if(SimulationRunner.plotOnButton.isSelected())
-//			SimulationRunner.plot.addPoint(0,time, averageSnr);
+		if(SimulationRunner.plotOnButton.isSelected())
+			for(int i=0;i<averageSnr.size();i++)
+				SimulationRunner.plot.addPoint(i,time, averageSnr.get(i));
         pw.println("average snr values: " + averageSnr.toString()); //writing to log file
         
         for(int i=0;i<averageSnr.size();i++){ //resets the avarageSnr list.
@@ -240,7 +240,7 @@ public class CRNode extends Node{
 			}
         }
 		if(SimulationRunner.plotOnButton.isSelected())
-			SimulationRunner.plot.addPoint(1,time, sinr);
+			SimulationRunner.plot.addPoint(SimulationRunner.crBase.registeredZones.size(),time, sinr);
     }
     
     /**

@@ -840,6 +840,7 @@ public class SimulationRunner extends JFrame{
 		zoneAlphaNos = new ArrayList<JTextField>();
 		zoneCRUsers = new ArrayList<JTextField>();
 		int id=1;
+		int numberOfRows = 17;
 		
 		JTextField textField;
 		JPanel []panels = new JPanel[2];
@@ -873,7 +874,7 @@ public class SimulationRunner extends JFrame{
 			label.setText("CR Users");
 			label.setBounds(324, 5, 60, 23);
 
-			for(int i=0;i<17;i++){
+			for(int i=0;i<numberOfRows;i++){
 				label = new JLabel();
 				panels[j].add(label);
 				label.setText(String.valueOf(id));
@@ -887,8 +888,7 @@ public class SimulationRunner extends JFrame{
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
-				else
-					textField.setText("0");
+				textField.setText(String.valueOf(((id-2)/12)%3));
 				zoneSectorNos.add(textField);
 
 				textField = new JTextField();
@@ -898,8 +898,7 @@ public class SimulationRunner extends JFrame{
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
-				else
-					textField.setText("0");
+				textField.setText(String.valueOf(((id-2)/4)%3));
 				zoneDNos.add(textField);
 
 				textField = new JTextField();
@@ -909,8 +908,7 @@ public class SimulationRunner extends JFrame{
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
-				else
-					textField.setText("0");
+				textField.setText(String.valueOf((id-2)%4));
 				zoneAlphaNos.add(textField);
 
 				textField = new JTextField();
@@ -920,8 +918,7 @@ public class SimulationRunner extends JFrame{
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
-				else
-					textField.setText("6");
+				textField.setText("4");
 				zoneCRUsers.add(textField);
 			}
 			tabZonePanel.add(panels[j]);
@@ -1181,11 +1178,12 @@ public class SimulationRunner extends JFrame{
 				priTrafGenDes = new DESPrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit, trafficModel.getSelectedIndex());
 			}
 			
-			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
-			numberOFYs.add(numberOfFreq);
-			numberOFYs.add(numberOfFreq);
-			if(SimulationRunner.plotOnButton.isSelected())
-				plot = new Plot(2, numberOFYs);
+			if(SimulationRunner.plotOnButton.isSelected()){
+				ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
+				numberOFYs.add(numberOfFreq);
+				numberOFYs.add(numberOfFreq);
+				plot = new Plot(numberOfZones+1, numberOFYs);
+			}
 			else
 				plot = null;
 			CRNode.initializeAverageSnr(numberOfFreq,numberOfZones);			//Set average SNR values to zero

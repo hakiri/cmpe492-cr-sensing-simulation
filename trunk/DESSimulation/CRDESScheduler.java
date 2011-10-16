@@ -237,7 +237,9 @@ public class CRDESScheduler extends SimEnt{
 		SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
-			names.add("SNR");
+			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
+				names.add("SNR of Zone "+i);
+			}
 			names.add("SINR");
 			SimulationRunner.plot.plotAll(names);			//Plot the time vs average SNR graphs
 		}

@@ -118,8 +118,8 @@ public class CRBase extends Node{
 			}
 		
 			int iStart, iEnd;
-			iStart = j==0 ? 0:nodesInZone.get(j);
-			iEnd = j==0 ? nodesInZone.get(0):nodesInZone.get(j+1);
+			iStart = j==0 ? 0:nodesInZone.get(j-1);
+			iEnd = j==0 ? nodesInZone.get(0):nodesInZone.get(j);
 			
 			for(int i=iStart;i<iEnd;i++){
 				ArrayList<Integer> frequencies = deploy_freq(i==iStart);
@@ -140,14 +140,15 @@ public class CRBase extends Node{
 		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
 		ArrayList<Integer> readyToCommInZone = new ArrayList<Integer>();
 		int totalNumberOfReadytoComm = 0;
-		
+		if(last_averageSnr.isEmpty())
+			return;
 		for(int k=0;k<registeredZones.size();k++){
 			double max_dist = 0.0;
 			double temp,snr_from_base,threshold;
 			
 			int iStart, iEnd;
-			iStart = k==0 ? 0:nodesInZone.get(k);
-			iEnd = k==0 ? nodesInZone.get(0):nodesInZone.get(k+1);
+			iStart = k==0 ? 0:nodesInZone.get(k-1);
+			iEnd = k==0 ? nodesInZone.get(0):nodesInZone.get(k);
 			
 			readyToCommInZone.add(0);
 			for(int i=iStart;i<iEnd;i++){ //finding the max distance btw crbase and crnodes
@@ -189,10 +190,11 @@ public class CRBase extends Node{
 				if(free_frequencies.get(lowest).get(0).SNR > free_frequencies.get(j).get(0).SNR)
 					lowest = j;
 			}
-			
+			if(lowest == free_frequencies.size())
+				break;
 			int iStart, iEnd;
-			iStart = lowest==0 ? 0:nodesInZone.get(lowest);
-			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest+1);
+			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
+			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
 			for(int j=iStart;j<iEnd;j++){
 				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
 					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
