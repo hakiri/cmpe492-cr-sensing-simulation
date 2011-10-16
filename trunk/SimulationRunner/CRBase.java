@@ -56,6 +56,7 @@ public class CRBase extends Node{
         CRBase.uniform = new Uniform(SimulationRunner.randEngine);
         this.current_averageSnr = new ArrayList<Double>();
         this.registeredZones = new ArrayList<ArrayList<Integer>>();
+		this.nodesInZone = new ArrayList<Integer>();
     }
     
     /**
