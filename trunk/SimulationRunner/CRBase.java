@@ -193,7 +193,7 @@ public class CRBase extends Node{
         zone.add(alpha);
         zone.add(d);
         registeredZones.add(zone);
-        if(registeredZones.size() > 0)
+        if(nodesInZone.size() > 0)
             nodesInZone.add(crnodes + nodesInZone.get(nodesInZone.size() - 1));
         else
             nodesInZone.add(crnodes);
