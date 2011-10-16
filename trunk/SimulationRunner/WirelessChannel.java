@@ -154,6 +154,11 @@ public class WirelessChannel {
 		}
 	}
 	
+	public boolean isOccupied(int freq, int nodeType)
+	{
+		return frequencies.get(freq).get(nodeType) != null;
+	}
+	
 	/**
 	 * Lets a primary user to release a frequency. That is,
 	 * the primary user finishes transmission.

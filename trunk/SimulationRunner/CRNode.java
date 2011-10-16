@@ -31,7 +31,7 @@ public class CRNode extends Node{
     /**
      * Average snr values of the frequencies.
      */
-    private static ArrayList<Double> averageSnr = null;
+    private static ArrayList<ArrayList<Double>> averageSnr = null;
     /**
      * Communication frequency of the crnode.
      * If the assigned value is lower than zero this means that 
@@ -55,6 +55,7 @@ public class CRNode extends Node{
      * Boolean value that keeps whether a collision happened or not.
      */
     private boolean collisionOccured = false;
+	public int numberOfBlocks = 0;
     /**
      * Total number of frames in the simulation.
      */
@@ -63,6 +64,7 @@ public class CRNode extends Node{
      * Boolean value that shows whether this crnode communicates or not
      */
     private boolean commOrNot = false;
+	private boolean readytoComm = false;
     
     public final StartCommunicationEvent startCommEvent ;
     
@@ -99,7 +101,8 @@ public class CRNode extends Node{
      */
     public void sense(int freq){
         snrValues.put(freq_list_to_listen.get(freq),SimulationRunner.wc.generateSNR(this, freq_list_to_listen.get(freq)));
-        averageSnr.set(freq_list_to_listen.get(freq), (averageSnr.get(freq_list_to_listen.get(freq))+snrValues.get(freq_list_to_listen.get(freq))));
+		int zone = SimulationRunner.crBase.findZone(id);
+        averageSnr.get(zone).set(freq_list_to_listen.get(freq), (averageSnr.get(zone).get(freq_list_to_listen.get(freq))+snrValues.get(freq_list_to_listen.get(freq))));
     }
     
     /**
@@ -114,11 +117,14 @@ public class CRNode extends Node{
      * It creates the averageSnr arraylist and initially add zeros to the elements.
      * @param total_number_of_frequencies Total number of frequencies 
      */
-    public static void initializeAverageSnr(int total_number_of_frequencies){
-        averageSnr = new ArrayList<Double>(total_number_of_frequencies);
-        for(int i=0;i<total_number_of_frequencies;i++){
-            averageSnr.add(0.0);
-        }
+    public static void initializeAverageSnr(int total_number_of_frequencies, int numberOfZones){
+        averageSnr = new ArrayList<ArrayList<Double>>();
+		for(int j=0;j<numberOfZones;j++){
+			averageSnr.add(new ArrayList<Double>());
+			for(int i=0;i<total_number_of_frequencies;i++){
+				averageSnr.get(j).add(0.0);
+			}
+		}
     }
     
     /**
@@ -136,17 +142,20 @@ public class CRNode extends Node{
      */
     public static void logAverageSnr(double time){
         for(int i=0;i<averageSnr.size();i++){   //calculates the average snr values
-            averageSnr.set(i,(averageSnr.get(i)/SimulationRunner.crBase.getFrequency_list().get(i))); // gets the current crnode 
+			for(int j=0;j<averageSnr.get(i).size();j++)
+				averageSnr.get(i).set(j,(averageSnr.get(i).get(j)/SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
                                                                                         //number that listens to this freq.
         }
         
         SimulationRunner.crBase.setLast_averageSnr(averageSnr);
-		if(SimulationRunner.plotOnButton.isSelected())
-			SimulationRunner.plot.addPoint(0,time, averageSnr);
+		//TODO Draw another plot for each other zone
+//		if(SimulationRunner.plotOnButton.isSelected())
+//			SimulationRunner.plot.addPoint(0,time, averageSnr);
         pw.println("average snr values: " + averageSnr.toString()); //writing to log file
         
         for(int i=0;i<averageSnr.size();i++){ //resets the avarageSnr list.
-            averageSnr.set(i,0.0);
+			for(int j=0;j<averageSnr.get(i).size();j++)
+				averageSnr.get(i).set(j,0.0);
         }
     }
     
@@ -216,24 +225,22 @@ public class CRNode extends Node{
 				continue;
             String collision = "no collision";
             int freq = SimulationRunner.crNodes.get(i).communication_frequency;
-            if(freq >= 0){  //if freq>0 then crnode has a frequency to talk 
-				//TODO commornot a bagli olarak freq kontrolu kaldır
-                sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crNodes.get(i), freq));
-                if(sinr.get(freq)<SimulationRunner.wc.sinrThreshold){ //checks if collision occured
-                    collision = "collision occured";
-                    SimulationRunner.crNodes.get(i).collisionOccured = true;
-				}
-                writeLogFile(String.format(Locale.US,"Time: %.2f", (double)(time)) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
-                if(lastReport){
-                    SimulationRunner.crNodes.get(i).numberOfCommunications++;
-                    if(SimulationRunner.crNodes.get(i).collisionOccured)
-                        SimulationRunner.crNodes.get(i).numberOfCollision++;
-                    SimulationRunner.crNodes.get(i).collisionOccured = false;
-                }
-            }
+			
+			sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crNodes.get(i), freq));
+			if(sinr.get(freq)<SimulationRunner.wc.sinrThreshold){ //checks if collision occured
+				collision = "collision occured";
+				SimulationRunner.crNodes.get(i).collisionOccured = true;
+			}
+			writeLogFile(String.format(Locale.US,"Time: %.2f", (double)(time)) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
+			if(lastReport){
+				SimulationRunner.crNodes.get(i).numberOfCommunications++;
+				if(SimulationRunner.crNodes.get(i).collisionOccured)
+					SimulationRunner.crNodes.get(i).numberOfCollision++;
+				SimulationRunner.crNodes.get(i).collisionOccured = false;
+			}
         }
-	if(SimulationRunner.plotOnButton.isSelected())
-		SimulationRunner.plot.addPoint(1,time, sinr);
+		if(SimulationRunner.plotOnButton.isSelected())
+			SimulationRunner.plot.addPoint(1,time, sinr);
     }
     
     /**
@@ -364,7 +371,15 @@ public class CRNode extends Node{
     public void setCommOrNot(boolean commOrNot) {
         this.commOrNot = commOrNot;
     }
-        
+
+	public void setReadytoComm(boolean readytoComm) {
+		this.readytoComm = readytoComm;
+	}
+    
+	public boolean getReadytoComm()
+	{
+		return readytoComm;
+	}
         
     
 }

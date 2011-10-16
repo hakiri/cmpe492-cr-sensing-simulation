@@ -1188,7 +1188,7 @@ public class SimulationRunner extends JFrame{
 				plot = new Plot(2, numberOFYs);
 			else
 				plot = null;
-			CRNode.initializeAverageSnr(numberOfFreq);			//Set average SNR values to zero
+			CRNode.initializeAverageSnr(numberOfFreq,numberOfZones);			//Set average SNR values to zero
 			progressBar.setValue(0);							//Initialize progress bar
 			progressBar.setVisible(true);						//Make it visible
 			CRNode.createLogFile("log.txt");
