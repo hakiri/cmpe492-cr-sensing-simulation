@@ -93,13 +93,13 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 		super();
 		previousOffDuration = 0.0;
 		this.node = node;
-		if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON){
+		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON){
 			interArrival = new Exponential(meanOffDuration, SimulationRunner.randEngine);
 			callDuration = new Exponential(1.0/meanOnDuration, SimulationRunner.randEngine);
 			onDuration = null;
 			offDuration = null;
 		}
-		else if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.ON_OFF){
+		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			interArrival = null;
 			callDuration = null;
 			onDuration = new ParetoDistribution(meanOnDuration, SimulationRunner.randEngine);
@@ -156,9 +156,9 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	 */
 	private double nextOnDuration()
 	{
-		if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON)
+		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
 			return callDuration.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
-		else if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.ON_OFF){
+		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = onDuration.nextDouble();
 			return val*DESPrimaryTrafficGenerator.unitTime;
 		}
@@ -172,9 +172,9 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	 */
 	private double nextOffDuration()
 	{
-		if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON)
+		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
 			return interArrival.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
-		else if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.ON_OFF){
+		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = offDuration.nextDouble();
 			return val*DESPrimaryTrafficGenerator.unitTime;
 		}

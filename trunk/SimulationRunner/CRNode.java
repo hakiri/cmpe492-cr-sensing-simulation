@@ -70,9 +70,9 @@ public class CRNode extends Node{
     
     public final EndCommunicationEvent endCommEvent ;
     
-    private static Exponential expoInterarrival;
+    private Exponential expoInterarrival;
     
-    private static Exponential expoCommDuration;
+    private Exponential expoCommDuration;
     
     private static ParetoDistribution parOnDuration;
     
@@ -91,8 +91,8 @@ public class CRNode extends Node{
         this.velocity = vel;
         this.startCommEvent = new StartCommunicationEvent(this.id);
         this.endCommEvent = new EndCommunicationEvent(this.id);
-        CRNode.expoInterarrival = new Exponential(DESPrimaryTrafficGenerator.meanOffDuration, SimulationRunner.randEngine);
-        CRNode.expoCommDuration = new Exponential((1.0/DESPrimaryTrafficGenerator.meanOnDuration), SimulationRunner.randEngine);
+        this.expoInterarrival = new Exponential(SimulationRunner.wc.getMeanOffDuration(), SimulationRunner.randEngine);
+        this.expoCommDuration = new Exponential((1.0/SimulationRunner.wc.getMeanOnDuration()), SimulationRunner.randEngine);
     }
     
     /**
@@ -327,49 +327,57 @@ public class CRNode extends Node{
     
     
     /**
-	 * Finds the next on duration accoriding to the traffic model
+	 * Finds the next on duration according to the traffic model for DES
+	 * @param frameDuration		Duration of one frame
 	 * @return	On duration
 	 */
-	public double nextOnDuration(double frameDuration)
+	public double nextOnDurationDES(double frameDuration)
 	{
-            
-            //if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON)
-                    double nextDuration = expoCommDuration.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
-                    
-					return Math.ceil(nextDuration/frameDuration) * frameDuration;
-					
-					
-	/*	else if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.ON_OFF){
-			double val = onDuration.nextDouble();
-			return val*DESPrimaryTrafficGenerator.unitTime;
-		}
-		else
-			return 0.0;
-         */
-                   
+		double nextDuration = expoCommDuration.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+		return Math.ceil(nextDuration/frameDuration) * frameDuration;
 	}
 	
 	/**
-	 * Finds the next off duration accoriding to the traffic model
+	 * Finds the next off duration according to the traffic model for DES
+	 * @param frameDuration		Duration of one frame
 	 * @return	Off duration
 	 */
-	public double nextOffDuration(double frameDuration)
+	public double nextOffDurationDES(double frameDuration)
 	{
-		//if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.POISSON)
-			double nextOffDur = expoInterarrival.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
-            return Math.round(nextOffDur/frameDuration)*frameDuration;            
-			
-			
-	/*	else if(DESPrimaryTrafficGenerator.trafficModel == DESPrimaryTrafficGenerator.ON_OFF){
-			double val = offDuration.nextDouble();
-			return val*DESPrimaryTrafficGenerator.unitTime;
-		}
-		else
-			return 0.0;  */
+		double nextOffDur = expoInterarrival.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+		return Math.round(nextOffDur/frameDuration) * frameDuration;
+	}
+	
+	/**
+	 * Finds the next on duration in terms of number of frames according to the
+	 * traffic model for Multithreaded Simulation
+	 * @param frameDuration		Duration of one frame
+	 * @return	On duration
+	 */
+	public int nextOnDuration(double frameDuration)
+	{
+		double nextDuration = expoCommDuration.nextDouble();
+		return (int)Math.ceil(nextDuration/frameDuration);
+	}
+	
+	/**
+	 * Finds the next off duration in terms of number of frames according to the
+	 * traffic model for Multithreaded Simulation
+	 * @param frameDuration		Duration of one frame
+	 * @return	Off duration
+	 */
+	public int nextOffDuration(double frameDuration)
+	{
+		double nextOffDur = expoInterarrival.nextDouble();
+		return (int)Math.round(nextOffDur/frameDuration);
 	}
 
     public void setCommOrNot(boolean commOrNot) {
         this.commOrNot = commOrNot;
+    }
+	
+	public boolean getCommOrNot() {
+        return commOrNot;
     }
 
 	public void setReadytoComm(boolean readytoComm) {
@@ -380,6 +388,4 @@ public class CRNode extends Node{
 	{
 		return readytoComm;
 	}
-        
-    
 }

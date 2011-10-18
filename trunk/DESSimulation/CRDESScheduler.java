@@ -140,7 +140,7 @@ public class CRDESScheduler extends SimEnt{
 		this.slotDur = slotDur*unitTime;
 		this.senseScheduleAdvertisement = senseScheduleAdvertisement*unitTime;
 		this.commScheduleAdvertisement = commScheduleAdvertisement*unitTime;
-		this.commDur = (commDur*unitTime)/(numberOfReports-1);
+		this.commDur = (commDur*unitTime)/(numberOfReports);
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
 		finished = false;
 		
@@ -155,7 +155,7 @@ public class CRDESScheduler extends SimEnt{
 	{
 		send(this, senseScheAdverEvent, 0.0);
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			send(this, SimulationRunner.crNodes.get(i).startCommEvent, SimulationRunner.crNodes.get(i).nextOffDuration(this.frameDuration));
+			send(this, SimulationRunner.crNodes.get(i).startCommEvent, SimulationRunner.crNodes.get(i).nextOffDurationDES(this.frameDuration));
 		}
                 
 	}
@@ -210,7 +210,7 @@ public class CRDESScheduler extends SimEnt{
 		else if(ev instanceof CRNode.EndCommunicationEvent){
 			CRNode.EndCommunicationEvent ece = (CRNode.EndCommunicationEvent) ev;
 			SimulationRunner.crNodes.get(ece.id).setCommOrNot(false);
-			send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDuration(this.frameDuration));
+			send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
 		}
 		SimulationRunner.progressBar.setValue((((int)Scheduler.instance().getTime())*100)/(int)simulationDuration);	//Update progress bar
 		if(simulationDuration < Scheduler.instance().getTime()||finished)
@@ -318,11 +318,11 @@ public class CRDESScheduler extends SimEnt{
 	}
 	
 	public void sendStartCommEvent(int crnode_id){
-		send(this,SimulationRunner.crNodes.get(crnode_id).endCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOnDuration(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
+		send(this,SimulationRunner.crNodes.get(crnode_id).endCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOnDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-(this.commDur*CRDESScheduler.numberOfReports)));
 	}
 	
 	public void sendEndCommEvent(int crnode_id){
-		send(this,SimulationRunner.crNodes.get(crnode_id).startCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOffDuration(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
+		send(this,SimulationRunner.crNodes.get(crnode_id).startCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-(this.commDur*CRDESScheduler.numberOfReports)));
 	}
 	
 }

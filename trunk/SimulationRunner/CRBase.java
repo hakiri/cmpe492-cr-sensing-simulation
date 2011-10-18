@@ -1,6 +1,8 @@
 package SimulationRunner;
 
+import Animation.DrawCell;
 import cern.jet.random.Uniform;
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -199,6 +201,9 @@ public class CRBase extends Node{
 				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
 					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
 					SimulationRunner.crNodes.get(j).setReadytoComm(false);
+					if(SimulationRunner.animationOnButton.isSelected()){
+						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GRAY);
+					}
 					readyToCommInZone.set(lowest, readyToCommInZone.get(lowest)-1);
 					for(int k=0;k<free_frequencies.size();k++){
 						if(!(k==lowest || free_frequencies.get(k).isEmpty())){
@@ -214,7 +219,12 @@ public class CRBase extends Node{
 					SimulationRunner.crNodes.get(j).setCommOrNot(true);
 					if(readyToCommInZone.get(lowest)==0)
 						free_frequencies.get(lowest).clear();
-					SimulationRunner.crDesScheduler.sendStartCommEvent(j);
+					if(SimulationRunner.animationOffButton.isSelected())
+						SimulationRunner.crDesScheduler.sendStartCommEvent(j);
+					else{
+						SimulationRunner.crSensor.setCommunationDuration(j);
+						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
+					}
 					break;
 				}
 			}
@@ -223,7 +233,12 @@ public class CRBase extends Node{
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){			//Send communication start event for the blocked users
 			if(SimulationRunner.crNodes.get(i).getReadytoComm()){
 				SimulationRunner.crNodes.get(i).setReadytoComm(false);
-				SimulationRunner.crDesScheduler.sendStartCommEvent(i);
+				if(SimulationRunner.animationOffButton.isSelected())
+					SimulationRunner.crDesScheduler.sendEndCommEvent(i);
+				else{
+					SimulationRunner.crSensor.setInactiveDuration(i);
+					DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
+				}
 				SimulationRunner.crNodes.get(i).numberOfBlocks++;
 			}
 		}

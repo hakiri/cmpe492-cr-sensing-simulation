@@ -59,13 +59,13 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 */
 	public PrimaryTrafficGeneratorThread(PrimaryTrafficGeneratorNode n, double meanOnDuration, double meanOffDuration)
 	{
-		if(PrimaryTrafficGenerator.trafficModel == PrimaryTrafficGenerator.POISSON){
+		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON){
 			interArrival = new Exponential(meanOffDuration, SimulationRunner.randEngine);
 			callDuration = new Exponential(1.0/meanOnDuration, SimulationRunner.randEngine);
 			onDuration = null;
 			offDuration = null;
 		}
-		else if(PrimaryTrafficGenerator.trafficModel == PrimaryTrafficGenerator.ON_OFF){
+		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			interArrival = null;
 			callDuration = null;
 			onDuration = new ParetoDistribution(meanOnDuration, SimulationRunner.randEngine);
@@ -211,9 +211,9 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	
 	private double nextOnDuration()
 	{
-		if(PrimaryTrafficGenerator.trafficModel == PrimaryTrafficGenerator.POISSON)
+		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
 			return callDuration.nextDouble()*PrimaryTrafficGenerator.unitTime;
-		else if(PrimaryTrafficGenerator.trafficModel == PrimaryTrafficGenerator.ON_OFF){
+		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = onDuration.nextDouble();
 			return val*PrimaryTrafficGenerator.unitTime;
 		}
@@ -223,9 +223,9 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	
 	private double nextOffDuration()
 	{
-		if(PrimaryTrafficGenerator.trafficModel == PrimaryTrafficGenerator.POISSON)
+		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
 			return interArrival.nextDouble()*PrimaryTrafficGenerator.unitTime;
-		else if(PrimaryTrafficGenerator.trafficModel == PrimaryTrafficGenerator.ON_OFF){
+		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = offDuration.nextDouble();
 			return val*PrimaryTrafficGenerator.unitTime;
 		}

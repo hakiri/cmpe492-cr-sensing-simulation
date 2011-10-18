@@ -56,6 +56,18 @@ public class WirelessChannel {
 	 */
 	public Uniform uniform = null;
 	
+	private double meanOnDuration;
+	private double meanOffDuration;
+	private int trafficModel;
+	/**
+	 * Poisson traffic model
+	 */
+	public static final int POISSON = 0;
+	/**
+	 * On-Off traffic model
+	 */
+	public static final int ON_OFF = 1;
+	
 	/**
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequency.
@@ -64,8 +76,20 @@ public class WirelessChannel {
 	 * @param numberOfFrequencies	Number of frequencies in the channel
 	 * @param maxSNR				max SNR value of the channel
 	 * @param sinrThreshold			SINR threshold for CR nodes to be able to communicate without collision
+	 * @param meanOffDuration 	<ul>
+	 *								<li><i>If Poisson traffic model:</i> Mean number of calls per unit time
+	 *								<li><i>If ON-OFF traffic model:</i> Mean OFF period duration of a node in terms of time units
+	 *							</ul>
+	 * @param meanOnDuration	<ul>
+	 *								<li><i>If Poisson traffic model:</i> Expected value for duration of a call
+	 *									in terms of time units
+	 *								<li><i>If ON-OFF traffic model:</i> Expected value for duration of a ON
+	 *									period in terms of time units
+	 *							</ul>
+	 * @param trafficModel		Model for traffic generation
 	 */
-	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold)
+	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold,
+							double meanOffDuration, double meanOnDuration, int trafficModel)
 	{
 		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
 		frequencies = new HashMap<Integer, ArrayList<Node>>();	//Create a hash table for frequencies with integer keys and 
@@ -80,6 +104,9 @@ public class WirelessChannel {
 		this.maxSNR = maxSNR;						//Sets max SNR value
 		this.sinrThreshold = sinrThreshold;
 		uniform = new Uniform(SimulationRunner.randEngine);			//Create Uniform distribution to select number of frequencies and their values
+		this.meanOffDuration = meanOffDuration;
+		this.meanOnDuration = meanOnDuration;
+		this.trafficModel = trafficModel;
 	}
 	
 	/**
@@ -219,5 +246,31 @@ public class WirelessChannel {
 	public int numberOfFreq()
 	{
 		return frequencies.size();
+	}
+
+	/**
+	 * Returns the mean on (active) duration of all (both primary & secondary)
+	 * users.
+	 * @return Mean on duration
+	 */
+	public double getMeanOnDuration() {
+		return meanOnDuration;
+	}
+	
+	/**
+	 * Returns the mean off (inactive) duration of all (both primary & secondary)
+	 * users.
+	 * @return Mean off duration
+	 */
+	public double getMeanOffDuration() {
+		return meanOffDuration;
+	}
+
+	/**
+	 * Returns the traffic model of all (both primary & secondary) users.
+	 * @return Traffic Model
+	 */
+	public int getTrafficModel() {
+		return trafficModel;
 	}
 }

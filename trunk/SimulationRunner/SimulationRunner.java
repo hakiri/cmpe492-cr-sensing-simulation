@@ -913,7 +913,7 @@ public class SimulationRunner extends JFrame{
 
 				textField = new JTextField();
 				panels[j].add(textField);
-				textField.setToolTipText("");
+				textField.setToolTipText("Number of Secondary Users in This Zone");
 				textField.setBounds(324, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
@@ -1119,9 +1119,8 @@ public class SimulationRunner extends JFrame{
 				randEngine = new MersenneTwister(seed);
 			}
 			
-			int remainFreq = numberOfFreq;				//Get number of frequencies
-			
-			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr, sinrThreshold);	//Create a wireless channel
+			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr, sinrThreshold, numberOfCalls,
+													callDura, trafficModel.getSelectedIndex());//Create a wireless channel
 			
 			alpha = (360/sectrNo)/alpha;							//Evaluate the angle associated to alpha
 			double temp = radius / dNumber;							//Evaluate length of each d as they will be equal
@@ -1131,11 +1130,7 @@ public class SimulationRunner extends JFrame{
 			
 			cell = new Cell(null, radius, sectrNo, alpha, setOfD);//Create a cell
 			
-			double dmin;
-			if(crD==0)
-				dmin=0;
-			else
-				dmin = setOfD.get(crD-1);
+			//TODO set crD to farthest zone
 			double dmax = setOfD.get(crD);
 			double minSNR = maxSnr/Math.exp(dmax*0.12);
 			if(minSNR<=sinrThreshold){
@@ -1143,12 +1138,6 @@ public class SimulationRunner extends JFrame{
 					"Simulation", JOptionPane.WARNING_MESSAGE);
 				return;
 			}
-			
-			if(animationOnButton.isSelected())
-				drawCell = new DrawCell((int)radius, sectrNo, Integer.parseInt(alphaNo.getText()),
-																(int)dNumber, numberOfCrNodes, numberOfPriNodes);
-			else
-				drawCell = null;
 			
 			crBase = new CRBase(new Point2D.Double(0, 0),0,maxFreqCR);		//Create a CR base station in the origin
 			Cell.setBaseStation(crBase);
@@ -1162,20 +1151,23 @@ public class SimulationRunner extends JFrame{
 				crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
 			}
 			
+			if(animationOnButton.isSelected()){
+				drawCell = new DrawCell((int)radius, sectrNo, Integer.parseInt(alphaNo.getText()),
+																(int)dNumber, numberOfCrNodes, numberOfPriNodes);
+				priTrafGen = new PrimaryTrafficGenerator(timeUnit);
+				priTrafGenDes = null;
+			}
+			else{
+				drawCell = null;
+				priTrafGen = null;
+				priTrafGenDes = new DESPrimaryTrafficGenerator(timeUnit);
+			}
+			
 			for(int i = 0; i<numberOfCrNodes ;i++){
 				crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
 				wc.registerNode(crNodes.get(i));							//Register CR nodes
 				if(animationOnButton.isSelected())
 					DrawCell.paintCrNode(crNodes.get(i), Color.GREEN);
-			}
-			
-			if(animationOnButton.isSelected()){
-				priTrafGen = new PrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit, trafficModel.getSelectedIndex());
-				priTrafGenDes = null;
-			}
-			else{
-				priTrafGen = null;
-				priTrafGenDes = new DESPrimaryTrafficGenerator(numberOfCalls, callDura, timeUnit, trafficModel.getSelectedIndex());
 			}
 			
 			if(SimulationRunner.plotOnButton.isSelected()){

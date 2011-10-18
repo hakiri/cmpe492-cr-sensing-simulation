@@ -4,6 +4,7 @@ package MultiThreadedSimulation;
 import SimulationRunner.CRNode;
 import SimulationRunner.Node;
 import SimulationRunner.PrimaryTrafficGeneratorNode;
+import SimulationRunner.SimulationRunner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,18 +38,6 @@ public class PrimaryTrafficGenerator {
 	static Semaphore y = new Semaphore(1);
 	static Semaphore z = new Semaphore(1);
 	/**
-	 * Poisson traffic model
-	 */
-	public static final int POISSON = 0;
-	/**
-	 * On-Off traffic model
-	 */
-	public static final int ON_OFF = 1;
-	/**
-	 * Model of the traffic generation
-	 */
-	static int trafficModel;
-	/**
 	 * List of nodes and their associated threads
 	 */
 	private HashMap<PrimaryTrafficGeneratorNode,PrimaryTrafficGeneratorThread> registeredNodes;
@@ -56,31 +45,15 @@ public class PrimaryTrafficGenerator {
 	 * Time unit
 	 */
 	public static int unitTime;
-	private double meanOnDuration;
-	private double meanOffDuration;
 	
 	/**
 	 * Creates a primary traffic generator with no node registered to it
-	 * @param alpha				<ul>
-	 *								<li><i>If Poisson traffic model:</i> Mean number of calls per unit time
-	 *								<li><i>If ON-OFF traffic model:</i> Mean OFF period duration of a node in terms of time units
-	 *							</ul>
-	 * @param meanCallDuration	<ul>
-	 *								<li><i>If Poisson traffic model:</i> Expected value for duration of a call
-	 *									in terms of time units
-	 *								<li><i>If ON-OFF traffic model:</i> Expected value for duration of a ON
-	 *									period in terms of time units
-	 *							</ul>
 	 * @param unit				Unit of time in milliseconds
-	 * @param trafficModel		Model for traffic generation
 	 */
-	public PrimaryTrafficGenerator(double alpha, double meanCallDuration, int unit, int trafficModel)
+	public PrimaryTrafficGenerator(int unit)
 	{
-		meanOffDuration = alpha;
-		meanOnDuration = meanCallDuration;
 		registeredNodes = new HashMap<PrimaryTrafficGeneratorNode, PrimaryTrafficGeneratorThread>();
 		unitTime = unit;
-		this.trafficModel = trafficModel;
 	}
 	
 	/**
@@ -89,7 +62,7 @@ public class PrimaryTrafficGenerator {
 	 */
 	public void registerNode(PrimaryTrafficGeneratorNode n)
 	{
-		registeredNodes.put(n,new PrimaryTrafficGeneratorThread(n, meanOnDuration, meanOffDuration));
+		registeredNodes.put(n,new PrimaryTrafficGeneratorThread(n, SimulationRunner.wc.getMeanOnDuration(), SimulationRunner.wc.getMeanOffDuration()));
 	}
 	
 	/**

@@ -2,6 +2,7 @@ package DESSimulation;
 
 import SimulationRunner.CRNode;
 import SimulationRunner.PrimaryTrafficGeneratorNode;
+import SimulationRunner.SimulationRunner;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,18 +16,6 @@ import java.util.Locale;
  */
 public class DESPrimaryTrafficGenerator{
 	/**
-	 * Poisson traffic model
-	 */
-	public static final int POISSON = 0;
-	/**
-	 * On-Off traffic model
-	 */
-	public static final int ON_OFF = 1;
-	/**
-	 * Model of the traffic generation
-	 */
-	public static int trafficModel;
-	/**
 	 * SimEnt objects associated with each primary traffic generator node
 	 */
 	private HashMap<PrimaryTrafficGeneratorNode,PrimaryTrafficGeneratorSimEnt> registeredNodes;
@@ -34,34 +23,16 @@ public class DESPrimaryTrafficGenerator{
 	 * Time unit
 	 */
 	public static int unitTime;
-	public static double meanOnDuration;
-	public static double meanOffDuration;
-	
 	
 	/**
 	 * Creates a primary traffic generator with no node registered to it and with the
 	 * given model.
-	 * @param alpha				<ul>
-	 *								<li><i>If Poisson traffic model:</i> Mean number of calls per unit time
-	 *								<li><i>If ON-OFF traffic model:</i> Mean OFF period duration of a node in terms of time units
-	 *							</ul>
-	 * @param meanCallDuration	<ul>
-	 *								<li><i>If Poisson traffic model:</i> Expected value for duration of a call
-	 *									in terms of time units
-	 *								<li><i>If ON-OFF traffic model:</i> Expected value for duration of a ON
-	 *									period in terms of time units
-	 *							</ul>
 	 * @param unit				Unit of time in milliseconds
-	 * @param trafficModel		Model for traffic generation
 	 */
-	public DESPrimaryTrafficGenerator(double alpha, double meanCallDuration, int unit, int trafficModel)
+	public DESPrimaryTrafficGenerator(int unit)
 	{
-		meanOnDuration = meanCallDuration;
-		meanOffDuration = alpha;
-
 		unitTime = unit;
 		registeredNodes = new HashMap<PrimaryTrafficGeneratorNode, PrimaryTrafficGeneratorSimEnt>();
-		this.trafficModel = trafficModel;
 	}
 	
 	/**
@@ -70,7 +41,8 @@ public class DESPrimaryTrafficGenerator{
 	 */
 	public void registerNode(PrimaryTrafficGeneratorNode n)
 	{
-		registeredNodes.put(n, new PrimaryTrafficGeneratorSimEnt(n, meanOnDuration, meanOffDuration));
+		registeredNodes.put(n, new PrimaryTrafficGeneratorSimEnt(n, SimulationRunner.wc.getMeanOnDuration(),
+																	SimulationRunner.wc.getMeanOffDuration()));
 	}
 
 	/**

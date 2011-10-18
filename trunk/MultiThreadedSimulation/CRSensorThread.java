@@ -1,8 +1,10 @@
 package MultiThreadedSimulation;
 
+import Animation.DrawCell;
 import Animation.SimulationStatsTable;
 import SimulationRunner.CRNode;
 import SimulationRunner.SimulationRunner;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -34,6 +36,7 @@ public class CRSensorThread implements Runnable{
 	 * Duration of one time unit
 	 */
 	private long unitTime;
+	private double frameDuration;
 	private int numberOfSlots;
 	private double slotDur;
 	private double senseScheduleAdvertisement;
@@ -41,6 +44,9 @@ public class CRSensorThread implements Runnable{
 	private double commDur;
 	private double senseResultAdvertisement;
 	private long time;
+	private final static int numberOfReports = 3;
+	
+	private ArrayList<Integer> commRelatedTimes;
 	
 	/**
 	 * Creates a thread that performs simulation action for CR sensor nodes
@@ -66,9 +72,17 @@ public class CRSensorThread implements Runnable{
 		this.commDur = commDur*unitTime;
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
 		
-		double frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement +
+		frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement +
 																					commScheduleAdvertisement + commDur;
 		CRNode.setTotalNumberOfFrames((int)(simulationDuration / frameDuration));
+		
+		commRelatedTimes = new ArrayList<Integer>();
+		for(int i = 0 ; i<SimulationRunner.crNodes.size() ; i++){
+			int frame = SimulationRunner.crNodes.get(i).nextOffDuration(frameDuration);
+			frame = frame == 0 ? 1:frame;
+			commRelatedTimes.add(frame);
+			DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
+		}
 		
 		finished = false;
 		if(runner==null){
@@ -83,7 +97,22 @@ public class CRSensorThread implements Runnable{
 	@Override
 	public void run() {
 		totalSimulationDuration = remainingSimulationDuration;		//Save initial simulation duration
-		while(remainingSimulationDuration>0&&!finished){		//Until simulation duration is elapsed or thread is terminated
+		for(int frame = 0; remainingSimulationDuration>0&&!finished ; frame++){		//Until simulation duration is elapsed or thread is terminated
+			
+			while(commRelatedTimes.contains(frame)){
+				int cr = commRelatedTimes.indexOf(frame);
+				if(SimulationRunner.crNodes.get(cr).getCommOrNot()){
+					SimulationRunner.crNodes.get(cr).setCommOrNot(false);
+					DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.GRAY);
+					commRelatedTimes.set(cr, commRelatedTimes.get(cr) + SimulationRunner.crNodes.get(cr).nextOffDuration(frameDuration));
+				}
+				else{
+					SimulationRunner.crNodes.get(cr).setReadytoComm(true);
+					DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.ORANGE);
+					commRelatedTimes.set(cr, commRelatedTimes.get(cr) + 1);
+				}
+			}
+			
 			senseScheduleAdvertise();
 			SimulationRunner.progressBar.setValue((((int)totalSimulationDuration-(int)remainingSimulationDuration)*100)/(int)totalSimulationDuration);	//Update progress bar
 			if(remainingSimulationDuration<=0&&finished)
@@ -106,7 +135,7 @@ public class CRSensorThread implements Runnable{
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
-			communicate(3);
+			communicate(numberOfReports);
 			SimulationRunner.progressBar.setValue((((int)totalSimulationDuration-(int)remainingSimulationDuration)*100)/(int)totalSimulationDuration);	//Update progress bar
 		}
 		String[][] crStats = CRNode.logStats();
@@ -290,5 +319,40 @@ public class CRSensorThread implements Runnable{
 	 */
 	public double getSimulationDuration() {
 		return totalSimulationDuration;
+	}
+
+	/**
+	 * Return the ms per unit time
+	 * @return Unit time
+	 */
+	public long getUnitTime() {
+		return unitTime;
+	}
+
+	/**
+	 * Returns the frame duration in terms of unit time
+	 * @return Frame Duration
+	 */
+	public double getFrameDuration() {
+		return frameDuration;
+	}
+	
+	/**
+	 * Sets the ending frame of communication of the given CR node
+	 * @param crnode_id		ID of the CR node
+	 */
+	public void setCommunationDuration(int crnode_id){
+		int onDuration = SimulationRunner.crNodes.get(crnode_id).nextOnDuration(frameDuration) - 1;
+		commRelatedTimes.set(crnode_id, commRelatedTimes.get(crnode_id) + onDuration);
+	}
+	
+	/**
+	 * Sets the starting frame of communication of the given blocked CR node
+	 * @param crnode_id		ID of the CR node
+	 */
+	public void setInactiveDuration(int crnode_id){
+		int offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration) - 1;
+		if(offDuration > 0)
+			commRelatedTimes.set(crnode_id, commRelatedTimes.get(crnode_id) + offDuration);
 	}
 }
