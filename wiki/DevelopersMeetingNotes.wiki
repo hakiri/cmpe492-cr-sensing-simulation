@@ -1,2 +1,18 @@
 #summary Developers' Meeting notes and reports
 #labels Phase-Implementation
+
+= Report of Meeting 18.10.2011 =
+
+== Issues & Decisions ==
+Possion traffic implementation for secondary users at multithreaded simulation module is completed by implementing the followings:
+<dl>
+ <dt>1. An array that holds communication start & communication end times (depending on user's current communication state) of CR user is added to CR sensor thread class.</dt>
+
+ <dt>2. First communication start times for each CR users is found at the beginning of the simulation.</dt>
+
+ <dt>3. If a CR user is currently not communicating the value in the array indicates communication start time for that user. If s/he is currently communicating then the value in the array indicates communication end time.</dt>
+ 
+ <dt>4. After the initial state all random number generations occur at the beginning of the frame loops.</dt>
+
+ <dt><b>PS:</b> All communication and off times of the users are calculated in terms of frames.</dt>
+</dl>
