@@ -41,7 +41,7 @@ public class CRBaseTest extends TestCase {
 		System.out.println("deploy_freq");
 		CRBase instance = null;
 		ArrayList expResult = null;
-		ArrayList result = instance.deploy_freq();
+		ArrayList result = instance.deploy_freq(true);
 		assertEquals(expResult, result);
 		// TODO review the generated test code and remove the default call to fail.
 		fail("The test case is a prototype.");
@@ -74,7 +74,7 @@ public class CRBaseTest extends TestCase {
 	 */
 	public void testSetLast_averageSnr() {
 		System.out.println("setLast_averageSnr");
-		ArrayList<Double> current_averageSnr = null;
+		ArrayList<ArrayList<Double>> current_averageSnr = null;
 		CRBase instance = null;
 		instance.setLast_averageSnr(current_averageSnr);
 		// TODO review the generated test code and remove the default call to fail.

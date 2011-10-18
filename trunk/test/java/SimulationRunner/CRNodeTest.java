@@ -66,7 +66,8 @@ public class CRNodeTest extends TestCase {
 	public void testInitializeAverageSnr() {
 		System.out.println("initializeAverageSnr");
 		int total_number_of_frequencies = 0;
-		CRNode.initializeAverageSnr(total_number_of_frequencies);
+		int total_number_of_zones = 0;
+		CRNode.initializeAverageSnr(total_number_of_frequencies, total_number_of_zones);
 		// TODO review the generated test code and remove the default call to fail.
 		fail("The test case is a prototype.");
 	}
