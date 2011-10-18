@@ -32,7 +32,7 @@ This class is an extended version of Node class. It has a “sense” method whi
 
 There is another important method in this class, communicate, which checks if there is a collision or not and writes the conclusion to log file in both cases. This method computes sinr values of frequencies and compares them with sinrThreshold value in wireless channel class and then makes a decision about collisions.
 
-==== 2.2.3. PrimaryTrafficGeneratorNode ====
+==== 2.2.3. Primary Traffic Generator Node ====
 
 This class is also an extended class of Node class.There is a method, called setRandomPosition, which simply calls deployNodeinCell method of Cell class and then returns a random position in the Cell.
 
@@ -40,17 +40,17 @@ This class is also an extended class of Node class.There is a method, called set
 
 These classes are responsible for primary traffic generation and monitoring its effects on the CR nodes. While the primary users produces a specified traffic, CR nodes sense the channels and communicate by using available channels.
 
-==== 2.3.1. CRSensorThread ====
+==== 2.3.1. CR Sensor Thread ====
 
 This class handles the frame structure of the CR nodes. The main assumption about this class is all CR nodes are synchronized. It uses CRBase to advertise sensing and communication schedules and uses CRNodes registered to channel to sense the frequencies, advertise sensing results, and communicate. The main frame structure the class provides is as follows:
 
 [http://cmpe492-cr-sensing-simulation.googlecode.com/files/Frame.jpg]
 
-==== 2.3.2. PrimaryTrafficGenerator ====
+==== 2.3.2. Primary Traffic Generator ====
 
 This class provides necessary probability distribution classes and semaphores for primary traffic generation by many threads. That is, PrimaryTrafficGenerationThread objects uses fields of this class for traffic generation and necessary critical section processes. Also initiations of these objects are accomplished by registering PrimaryTrafficGenerationNode objects to an instance of this class. This class also provides an interface to terminate all working PrimaryTrafficGenerationThreads.
 
-==== 2.3.3. PrimaryTrafficGeneratorThread ====
+==== 2.3.3. Primary Traffic Generator Thread ====
 
 This class produces a specified traffic model for an individual PrimaryTrafficGenerationNode. For now they can only produce Poisson traffic. All of the threads uses the same random number generator by doing so the overall inter arrival time and call duration of primary users follows exponential distributions. Object of this class simply generates a random number inter arrival time, sleeps for that amount, selects a random free frequency, occupy it, generates a random call duration, sleeps for that amount, and so on.
 
@@ -58,7 +58,7 @@ This class produces a specified traffic model for an individual PrimaryTrafficGe
 
 This classes handles main cell structure of the CR cell and properties of the wireless channel.
 
-==== 2.4.1. CRBase ====
+==== 2.4.1. CR Base ====
 
 This class includes the fields and functions of the base station in the cell. There is a method called deploy_freq in this class which returns frequency list which consists of frequency per crnode number of consecutive frequencies. Also, there is a method named assignFrequencies which assigns new frequencies to crnodes by using deploy_freq and setFrequencyList of CRNode class and it updates the frequency_list which basically keeps the number of listeners(crnodes) for each frequency. 
 
@@ -72,7 +72,7 @@ The basic structure of the cell is as follows:
 
 In this class, there is a deployNode function which simply takes two angles and two distance values and returns a random position in Cell with respect to these values. Returned position’s angle with crbase should be between the given angles and the same rule is valid for the distance parameter. There are two other methods; deployNodeinCell, deployNodeinZone in this class which use the deployNode method with their specific parameters.
 
-==== 2.4.3. WirelessChannel ====
+==== 2.4.3. Wireless Channel ====
 
 This class provides available channels to both primary and secondary users. It keeps the information about which frequency is occupied by which node. It calculates SNR value for a CR node for a specified frequency according to whether the frequency is occupied by a primary user or not. It also calculates SINR value between two given CR nodes (one these nodes can CR base station) for a given frequency.
 
@@ -80,15 +80,15 @@ This class provides available channels to both primary and secondary users. It k
 
 This classes provides an animation interface for sensing simulation and draws plots of SNR and SINR values evaluated during the simulation.
 
-==== 2.5.1. PointColor ====
+==== 2.5.1. Point Color ====
 
 This class hold information about position of a node on the simulation screen, its color, and radius.
 
-==== 2.5.2. DrawArea ====
+==== 2.5.2. Draw Area ====
 
 This class extend JPanel class by adding additional functionalities for drawing basic cell structure, primary nodes, and secondary nodes.
 
-==== 2.5.3. DrawCell ====
+==== 2.5.3. Draw Cell ====
 
 This class creates a JFrame object and adds a DrawArea object to it. Initially it does not put any CR node or primary node in to the cell. It only draws the Cell and the zone in which the CR nodes will be deployed. It provides an interface for adding primary and CR nodes to the cell or changing the properties of currently existing ones.
 
