@@ -38,6 +38,10 @@ public class CRBase extends Node{
     private static Uniform uniform ;
     
     public ArrayList<ArrayList<Integer>> registeredZones;
+	public static final int SECTOR = 0;
+	public static final int ALPHA = 1;
+	public static final int D = 2;
+	public static final int CRNODES = 3;
     /**
      * Cumulative total of crnodes in zones.
      */
@@ -303,5 +307,15 @@ public class CRBase extends Node{
 			if(id<nodesInZone.get(i))
 				return i;
 		return 0;
+	}
+	
+	public double farthestZoneDistance()
+	{
+		int d = 0;
+		for(int i = 0 ; i<registeredZones.size() ; i++){
+			if(registeredZones.get(i).get(D) > d)
+				d = registeredZones.get(i).get(D);
+		}
+		return Cell.set_of_d.get(d);
 	}
 }

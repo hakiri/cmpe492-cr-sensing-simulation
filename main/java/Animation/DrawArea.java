@@ -1,5 +1,5 @@
 package Animation;
- 
+
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.awt.Graphics;
