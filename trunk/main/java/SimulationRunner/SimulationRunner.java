@@ -129,9 +129,9 @@ public class SimulationRunner extends JFrame{
 	private JTextField noSlotField,slotDurField,sensingResultField,senseScheduleField,commScheduleField,commDurField,
 					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
 					   maxSNR,sinrThresholdFied,noZones;
-	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,
-				   label14,label15,label16,label17,label18,label19,label20,label21,label22,label23,label24,label25,
-				   label26,label27,label28,label29,label30;
+	private JLabel label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
+				   label15,label16,label17,label19,label21,label22,label23,label24,label25,label26,label27,label28,
+				   label29,label30;
 	private JComboBox seedModel,channelModel,trafficModel;
 	private JButton startSimulation, closeButton;
 	private ButtonGroup animationOnOff, plotOnOff;
@@ -239,21 +239,6 @@ public class SimulationRunner extends JFrame{
 		mainPanel = new JPanel();
 		mainPanel.setBorder(BorderFactory.createTitledBorder("Main Options"));
 		mainPanel.setLayout(null);
-//		{
-//			label1 = new JLabel();
-//			mainPanel.add(label1);
-//			label1.setToolTipText("Number of CR Users in The CR Zone");
-//			label1.setText("Number of CR Nodes");
-//			label1.setBounds(labelPos, 30, 165, 16);
-//		}
-//		{
-//			noCrNodes = new JTextField();
-//			mainPanel.add(noCrNodes);
-//			noCrNodes.setToolTipText("Number of CR Users in The CR Zone");
-//			noCrNodes.setBounds(itemPos, 30, 120, 23);
-//			noCrNodes.setText("6");
-//			noCrNodes.addKeyListener(keyAdapter);
-//		}
 		{
 			label2 = new JLabel();
 			mainPanel.add(label2);
@@ -1130,15 +1115,6 @@ public class SimulationRunner extends JFrame{
 			
 			cell = new Cell(null, radius, sectrNo, alpha, setOfD);//Create a cell
 			
-			//TODO set crD to farthest zone
-			double dmax = setOfD.get(crD);
-			double minSNR = maxSnr/Math.exp(dmax*0.12);
-			if(minSNR<=sinrThreshold){
-				JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
-					"Simulation", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			
 			crBase = new CRBase(new Point2D.Double(0, 0),0,maxFreqCR);		//Create a CR base station in the origin
 			Cell.setBaseStation(crBase);
 			numberOfCrNodes = 0;
@@ -1149,6 +1125,14 @@ public class SimulationRunner extends JFrame{
 				int numberOfCrUsersInZone = Integer.parseInt(zoneCRUsers.get(i).getText());	//Get number of CR nodes in zone
 				numberOfCrNodes += numberOfCrUsersInZone;
 				crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
+			}
+			
+			double dmax = crBase.farthestZoneDistance();
+			double minSNR = maxSnr/Math.exp(dmax*0.12);
+			if(minSNR<=sinrThreshold){
+				JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
+					"Simulation", JOptionPane.WARNING_MESSAGE);
+				return;
 			}
 			
 			if(animationOnButton.isSelected()){
