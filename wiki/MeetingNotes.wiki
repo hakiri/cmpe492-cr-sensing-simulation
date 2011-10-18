@@ -1,4 +1,4 @@
-#Meeting Reports
+#summary Meeting Reports
 
 = Report of Meeting 11.10.2011 =
 
