@@ -1,3 +1,4 @@
+#summary Design Document of v0.2
 = CR Sensing Simulator Revision 2 Design Document =
 
 == Table of Contents ==
