@@ -46,6 +46,8 @@ public class CRSensorThread implements Runnable{
 	private long time;
 	private final static int numberOfReports = 3;
 	
+	private int frame;
+	
 	private ArrayList<Integer> commRelatedTimes;
 	
 	/**
@@ -97,7 +99,7 @@ public class CRSensorThread implements Runnable{
 	@Override
 	public void run() {
 		totalSimulationDuration = remainingSimulationDuration;		//Save initial simulation duration
-		for(int frame = 0; remainingSimulationDuration>0&&!finished ; frame++){		//Until simulation duration is elapsed or thread is terminated
+		for(frame = 0; remainingSimulationDuration>0&&!finished ; frame++){		//Until simulation duration is elapsed or thread is terminated
 			
 			while(commRelatedTimes.contains(frame)){
 				int cr = commRelatedTimes.indexOf(frame);
@@ -351,9 +353,18 @@ public class CRSensorThread implements Runnable{
 	 * Sets the starting frame of communication of the given blocked CR node
 	 * @param crnode_id		ID of the CR node
 	 */
-	public void setInactiveDuration(int crnode_id){
-		int offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration) - 1;
-		if(offDuration > 0)
-			commRelatedTimes.set(crnode_id, commRelatedTimes.get(crnode_id) + offDuration);
+	public void setInactiveDuration(int crnode_id, boolean dropped){
+		int offDuration;
+		if(dropped){
+			offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration);
+			commRelatedTimes.set(crnode_id, frame + offDuration);
+			SimulationRunner.crNodes.get(crnode_id).setCommOrNot(false);
+		}
+		else{
+			offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration) - 1;
+			if(offDuration > 0)
+				commRelatedTimes.set(crnode_id, commRelatedTimes.get(crnode_id) + offDuration);
+		}
+	
 	}
 }
