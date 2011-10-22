@@ -1,18 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimulationRunner;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-/**
- *
- * @author acar
- */
 public class CRBaseTest extends TestCase {
 	
 	public CRBaseTest(String testName) {
@@ -39,12 +32,11 @@ public class CRBaseTest extends TestCase {
 	 */
 	public void testDeploy_freq() {
 		System.out.println("deploy_freq");
-		CRBase instance = null;
+		CRBase instance = new CRBase(new Point2D.Double(0.0, 0.0), 0, 4);
 		ArrayList expResult = null;
 		ArrayList result = instance.deploy_freq(true);
 		assertEquals(expResult, result);
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 
 	/**
@@ -55,7 +47,6 @@ public class CRBaseTest extends TestCase {
 		CRBase instance = null;
 		instance.assignFrequencies();
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 
 	/**
@@ -66,7 +57,6 @@ public class CRBaseTest extends TestCase {
 		CRBase instance = null;
 		instance.communicationScheduleAdvertiser();
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 
 	/**
@@ -78,7 +68,6 @@ public class CRBaseTest extends TestCase {
 		CRBase instance = null;
 		instance.setLast_averageSnr(current_averageSnr);
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 
 	/**
@@ -91,6 +80,5 @@ public class CRBaseTest extends TestCase {
 		ArrayList result = instance.getFrequency_list();
 		assertEquals(expResult, result);
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 }

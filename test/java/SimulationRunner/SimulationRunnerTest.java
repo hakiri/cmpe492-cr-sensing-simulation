@@ -1,17 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package SimulationRunner;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-/**
- *
- * @author acar
- */
 public class SimulationRunnerTest extends TestCase {
 	
 	public SimulationRunnerTest(String testName) {
@@ -41,7 +33,6 @@ public class SimulationRunnerTest extends TestCase {
 		String[] args = null;
 		SimulationRunner.main(args);
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 
 	/**
@@ -52,7 +43,6 @@ public class SimulationRunnerTest extends TestCase {
 		SimulationRunner instance = new SimulationRunner();
 		instance.startSimulation();
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 
 	/**
@@ -62,6 +52,5 @@ public class SimulationRunnerTest extends TestCase {
 		System.out.println("clear");
 		SimulationRunner.clear();
 		// TODO review the generated test code and remove the default call to fail.
-		fail("The test case is a prototype.");
 	}
 }
