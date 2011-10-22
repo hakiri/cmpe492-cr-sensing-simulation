@@ -84,7 +84,7 @@ public class CRDESScheduler extends SimEnt{
 	/**
 	 * Duration of one time unit
 	 */
-	private long unitTime;
+	private double unitTime;
 	/**
 	 * Number of sensing slots in CR frame
 	 */
@@ -130,7 +130,7 @@ public class CRDESScheduler extends SimEnt{
 	 * @param commDur						Duration of the communication in terms of unit time
 	 * @param senseResultAdvertisement		Duration of the sensing result advertisement in terms of unit time
 	 */
-	public CRDESScheduler(double simulationDuration,long unitTime, int numberOfSlots, double slotDur,
+	public CRDESScheduler(double simulationDuration,double unitTime, int numberOfSlots, double slotDur,
 			double senseScheduleAdvertisement, double commScheduleAdvertisement, double commDur,
 			double senseResultAdvertisement)
 	{
@@ -212,7 +212,7 @@ public class CRDESScheduler extends SimEnt{
 			SimulationRunner.crNodes.get(ece.id).setCommOrNot(false);
 			send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
 		}
-		SimulationRunner.progressBar.setValue((((int)Scheduler.instance().getTime())*100)/(int)simulationDuration);	//Update progress bar
+		SimulationRunner.progressBar.setValue((int)(((Scheduler.instance().getTime())*100)/simulationDuration));	//Update progress bar
 		if(simulationDuration < Scheduler.instance().getTime()||finished)
 			Scheduler.instance().stop();
 	}

@@ -41,19 +41,14 @@ public class PrimaryTrafficGenerator {
 	 * List of nodes and their associated threads
 	 */
 	private HashMap<PrimaryTrafficGeneratorNode,PrimaryTrafficGeneratorThread> registeredNodes;
-	/**
-	 * Time unit
-	 */
-	public static int unitTime;
 	
 	/**
 	 * Creates a primary traffic generator with no node registered to it
 	 * @param unit				Unit of time in milliseconds
 	 */
-	public PrimaryTrafficGenerator(int unit)
+	public PrimaryTrafficGenerator()
 	{
 		registeredNodes = new HashMap<PrimaryTrafficGeneratorNode, PrimaryTrafficGeneratorThread>();
-		unitTime = unit;
 	}
 	
 	/**

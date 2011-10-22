@@ -68,6 +68,8 @@ public class WirelessChannel {
 	 */
 	public static final int ON_OFF = 1;
 	
+	public static double unitTime;
+	
 	/**
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequency.
@@ -89,7 +91,7 @@ public class WirelessChannel {
 	 * @param trafficModel		Model for traffic generation
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold,
-							double meanOffDuration, double meanOnDuration, int trafficModel)
+							double meanOffDuration, double meanOnDuration, int trafficModel, double unitTime)
 	{
 		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
 		frequencies = new HashMap<Integer, ArrayList<Node>>();	//Create a hash table for frequencies with integer keys and 
@@ -107,6 +109,7 @@ public class WirelessChannel {
 		this.meanOffDuration = meanOffDuration;
 		this.meanOnDuration = meanOnDuration;
 		this.trafficModel = trafficModel;
+		WirelessChannel.unitTime = unitTime;
 	}
 	
 	/**

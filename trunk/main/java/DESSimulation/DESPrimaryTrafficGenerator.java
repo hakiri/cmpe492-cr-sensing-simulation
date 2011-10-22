@@ -19,19 +19,14 @@ public class DESPrimaryTrafficGenerator{
 	 * SimEnt objects associated with each primary traffic generator node
 	 */
 	private HashMap<PrimaryTrafficGeneratorNode,PrimaryTrafficGeneratorSimEnt> registeredNodes;
-	/**
-	 * Time unit
-	 */
-	public static int unitTime;
 	
 	/**
 	 * Creates a primary traffic generator with no node registered to it and with the
 	 * given model.
 	 * @param unit				Unit of time in milliseconds
 	 */
-	public DESPrimaryTrafficGenerator(int unit)
+	public DESPrimaryTrafficGenerator()
 	{
-		unitTime = unit;
 		registeredNodes = new HashMap<PrimaryTrafficGeneratorNode, PrimaryTrafficGeneratorSimEnt>();
 	}
 	

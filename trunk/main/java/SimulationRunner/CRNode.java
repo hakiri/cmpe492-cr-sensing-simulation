@@ -341,7 +341,7 @@ public class CRNode extends Node{
 	 */
 	public double nextOnDurationDES(double frameDuration)
 	{
-		double nextDuration = expoCommDuration.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+		double nextDuration = expoCommDuration.nextDouble() * WirelessChannel.unitTime * 60000;
 		return Math.ceil(nextDuration/frameDuration) * frameDuration;
 	}
 	
@@ -352,7 +352,7 @@ public class CRNode extends Node{
 	 */
 	public double nextOffDurationDES(double frameDuration)
 	{
-		double nextOffDur = expoInterarrival.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+		double nextOffDur = expoInterarrival.nextDouble() * WirelessChannel.unitTime * 3600000;
 		return Math.round(nextOffDur/frameDuration) * frameDuration;
 	}
 	
@@ -364,7 +364,7 @@ public class CRNode extends Node{
 	 */
 	public int nextOnDuration(double frameDuration)
 	{
-		double nextDuration = expoCommDuration.nextDouble();
+		double nextDuration = expoCommDuration.nextDouble() * 60000;
 		return (int)Math.ceil(nextDuration/frameDuration);
 	}
 	
@@ -376,7 +376,7 @@ public class CRNode extends Node{
 	 */
 	public int nextOffDuration(double frameDuration)
 	{
-		double nextOffDur = expoInterarrival.nextDouble();
+		double nextOffDur = expoInterarrival.nextDouble() * 3600000;
 		return (int)Math.round(nextOffDur/frameDuration);
 	}
 

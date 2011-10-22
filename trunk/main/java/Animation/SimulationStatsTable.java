@@ -4,6 +4,7 @@ import DESSimulation.DESPrimaryTrafficGenerator;
 import MultiThreadedSimulation.PrimaryTrafficGenerator;
 import SimulationRunner.CRNode;
 import SimulationRunner.SimulationRunner;
+import SimulationRunner.WirelessChannel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -157,10 +158,10 @@ public class SimulationStatsTable extends JFrame{
 		int numberOfFreq = SimulationRunner.wc.numberOfFreq();
 		double simDur = 0;
 		if(SimulationRunner.animationOnButton.isSelected()){
-			simDur = SimulationRunner.crSensor.getSimulationDuration() / PrimaryTrafficGenerator.unitTime;
+			simDur = SimulationRunner.crSensor.getSimulationDuration() / WirelessChannel.unitTime;
 		}
 		else{
-			simDur = SimulationRunner.crDesScheduler.getSimulationDuration() / DESPrimaryTrafficGenerator.unitTime;
+			simDur = SimulationRunner.crDesScheduler.getSimulationDuration() / WirelessChannel.unitTime;
 		}
 		double utilization = (primaryCommDur*100.0)/(simDur*numberOfFreq);
 		priLabel2 = new JLabel(String.format(Locale.US, "Primary Nodes Utilization: %.2f",utilization)+"%");
@@ -257,10 +258,10 @@ public class SimulationStatsTable extends JFrame{
 		int numberOfFreq = SimulationRunner.wc.numberOfFreq();
 		double simDur = 0;
 		if(SimulationRunner.animationOnButton.isSelected()){
-			simDur = SimulationRunner.crSensor.getSimulationDuration() / PrimaryTrafficGenerator.unitTime;
+			simDur = SimulationRunner.crSensor.getSimulationDuration() / WirelessChannel.unitTime;
 		}
 		else{
-			simDur = SimulationRunner.crDesScheduler.getSimulationDuration() / DESPrimaryTrafficGenerator.unitTime;
+			simDur = SimulationRunner.crDesScheduler.getSimulationDuration() / WirelessChannel.unitTime;
 		}
 		double utilization = (primaryCommDur*100.0)/(simDur*numberOfFreq);
 		pw.printf(Locale.US, "Total number of CR Frames:;%d;;;;;;;Primary Node Utilization:;%.2f\n\n",
