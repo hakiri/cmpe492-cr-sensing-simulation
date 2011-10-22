@@ -210,6 +210,7 @@ public class CRDESScheduler extends SimEnt{
 		else if(ev instanceof CRNode.EndCommunicationEvent){
 			CRNode.EndCommunicationEvent ece = (CRNode.EndCommunicationEvent) ev;
 			SimulationRunner.crNodes.get(ece.id).setCommOrNot(false);
+			SimulationRunner.crNodes.get(ece.id).releaseCommunication_frequency();
 			send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
 		}
 		SimulationRunner.progressBar.setValue((int)(((Scheduler.instance().getTime())*100)/simulationDuration));	//Update progress bar
