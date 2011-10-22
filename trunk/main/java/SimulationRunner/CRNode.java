@@ -211,7 +211,17 @@ public class CRNode extends Node{
      */
     public void setCommunication_frequency(int communication_frequency) {
         this.communication_frequency = communication_frequency;
+		SimulationRunner.wc.occupyFrequency(communication_frequency, this);
     }
+	
+	/**
+	 * Releases its communication frequency
+	 */
+	public void releaseCommunication_frequency()
+	{
+		SimulationRunner.wc.releaseFrequency(this.communication_frequency, this);
+		communication_frequency = -1;
+	}
     
     /**
      * Checks whether a collision occured or not if there is an assigned 

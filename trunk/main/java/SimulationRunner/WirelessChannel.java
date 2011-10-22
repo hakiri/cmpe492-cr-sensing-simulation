@@ -197,7 +197,7 @@ public class WirelessChannel {
 	 */
 	public void releaseFrequency(int frequency, Node n)
 	{
-		if(n.getClass().getName().equals("firstproject.CRNode")){
+		if(n instanceof CRNode){
 			frequencies.get(frequency).set(CR, null);		//Release the frequency by deleting its occupier
 		}
 		else{
