@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Locale;
 import DES.Event;
+import DES.Scheduler;
 import DES.SimEnt;
 import DESSimulation.DESPrimaryTrafficGenerator;
 import cern.jet.random.Exponential;
@@ -67,8 +68,10 @@ public class CRNode extends Node{
 	private boolean readytoComm = false;
     
     public final StartCommunicationEvent startCommEvent ;
+	public Scheduler.EventHandle startEventHandle;
     
     public final EndCommunicationEvent endCommEvent ;
+	public Scheduler.EventHandle endEventHandle;
     
     private Exponential expoInterarrival;
     

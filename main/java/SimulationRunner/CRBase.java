@@ -1,6 +1,7 @@
 package SimulationRunner;
 
 import Animation.DrawCell;
+import DES.Scheduler;
 import cern.jet.random.Uniform;
 import java.awt.Color;
 import java.awt.geom.Point2D;
@@ -225,7 +226,7 @@ public class CRBase extends Node{
 					if(collidedInZone.get(lowest)==0)
 						free_frequencies.get(lowest).clear();
 					if(SimulationRunner.animationOffButton.isSelected())
-						SimulationRunner.crDesScheduler.sendStartCommEvent(j);
+						SimulationRunner.crDesScheduler.sendEndCommEvent(j);
 					else{
 						SimulationRunner.crSensor.setCommunationDuration(j);
 						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
@@ -244,12 +245,19 @@ public class CRBase extends Node{
 			
 			if(collidedInZone.get(i) > 0){
 				for(int j=iStart;j<iEnd;j++){
-					if(SimulationRunner.crNodes.get(j).getIsCollided())
+					if(SimulationRunner.crNodes.get(j).getIsCollided()){
 						if(SimulationRunner.crNodes.get(j).getCommunication_frequency() == -1){
 							SimulationRunner.crNodes.get(j).setNumberOfDrops(SimulationRunner.crNodes.get(j).getNumberOfDrops() + 1);
 							SimulationRunner.crNodes.get(j).setCommOrNot(false);
-							//TODO startcommunicationevent should send here
+							if(SimulationRunner.animationOnButton.isSelected()){
+								SimulationRunner.crSensor.setInactiveDuration(j, true);
+							}
+							else{
+								SimulationRunner.crDesScheduler.sendStartCommEvent(j);
+								Scheduler.deregister(SimulationRunner.crNodes.get(j).endEventHandle);
+							}
 						}
+					}
 				}
 			}
 		}
@@ -312,7 +320,7 @@ public class CRBase extends Node{
 					if(readyToCommInZone.get(lowest)==0)
 						free_frequencies.get(lowest).clear();
 					if(SimulationRunner.animationOffButton.isSelected())
-						SimulationRunner.crDesScheduler.sendStartCommEvent(j);
+						SimulationRunner.crDesScheduler.sendEndCommEvent(j);
 					else{
 						SimulationRunner.crSensor.setCommunationDuration(j);
 						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
@@ -326,9 +334,9 @@ public class CRBase extends Node{
 			if(SimulationRunner.crNodes.get(i).getReadytoComm()){
 				SimulationRunner.crNodes.get(i).setReadytoComm(false);
 				if(SimulationRunner.animationOffButton.isSelected())
-					SimulationRunner.crDesScheduler.sendEndCommEvent(i);
+					SimulationRunner.crDesScheduler.sendStartCommEvent(i);
 				else{
-					SimulationRunner.crSensor.setInactiveDuration(i);
+					SimulationRunner.crSensor.setInactiveDuration(i,false);
 					DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
 				}
 				SimulationRunner.crNodes.get(i).numberOfBlocks++;
