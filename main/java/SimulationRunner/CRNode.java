@@ -73,12 +73,18 @@ public class CRNode extends Node{
     private Exponential expoInterarrival;
     
     private Exponential expoCommDuration;
-    
+	
     private static ParetoDistribution parOnDuration;
     
     private static ParetoDistribution parOffDuration;
     
-    
+	private int numberOfDrops = 0;
+	private int numberOfForcedHandoff = 0;
+	/**
+	 * True if the crnode has collided in the previous frame
+	 */
+	private boolean isCollided = false;
+	
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param pos Position of the CRNode
@@ -234,8 +240,10 @@ public class CRNode extends Node{
 			writeLogFile(String.format(Locale.US,"Time: %.2f", (double)(time)) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
 			if(lastReport){
 				SimulationRunner.crNodes.get(i).numberOfCommunications++;
-				if(SimulationRunner.crNodes.get(i).collisionOccured)
+				if(SimulationRunner.crNodes.get(i).collisionOccured){
 					SimulationRunner.crNodes.get(i).numberOfCollision++;
+					SimulationRunner.crNodes.get(i).isCollided = true;
+				}
 				SimulationRunner.crNodes.get(i).collisionOccured = false;
 			}
         }
@@ -388,4 +396,37 @@ public class CRNode extends Node{
 	{
 		return readytoComm;
 	}
+	
+	public boolean getIsCollided() {
+		return isCollided;
+	}
+	
+	public void setIsCollided(boolean iscollided) {
+		this.isCollided = iscollided;
+	}
+
+	public int getNumberOfForcedHandoff() {
+		return numberOfForcedHandoff;
+	}
+
+	public void setNumberOfForcedHandoff(int numberOfForcedHandoff) {
+		this.numberOfForcedHandoff = numberOfForcedHandoff;
+	}
+
+	public int getNumberOfDrops() {
+		return numberOfDrops;
+	}
+
+	public void setNumberOfDrops(int numberOfDrops) {
+		this.numberOfDrops = numberOfDrops;
+	}
+
+	public int getNumberOfBlocks() {
+		return numberOfBlocks;
+	}
+
+	public void setNumberOfBlocks(int numberOfBlocks) {
+		this.numberOfBlocks = numberOfBlocks;
+	}
+	
 }
