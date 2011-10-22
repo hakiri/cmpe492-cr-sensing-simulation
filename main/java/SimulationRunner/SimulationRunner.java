@@ -96,7 +96,7 @@ public class SimulationRunner extends JFrame{
 	/**
 	 * Unit of time in milli seconds
 	 */
-	private static int timeUnit;
+	private static double timeUnit;
 	/**
 	 * Frame to animate cell structure
 	 */
@@ -283,16 +283,16 @@ public class SimulationRunner extends JFrame{
 		{
 			label4 = new JLabel();
 			mainPanel.add(label4);
-			label4.setToolTipText("Duration of Simulation in terms of Unit Time");
-			label4.setText("Simulation Dur. (unit time)");
+			label4.setToolTipText("Duration of Simulation in terms of minutes");
+			label4.setText("Simulation Dur. (min)");
 			label4.setBounds(labelPos, 100, 240, 16);
 		}
 		{
 			simDur = new JTextField();
 			mainPanel.add(simDur);
-			simDur.setToolTipText("Duration of Simulation in terms of Unit Time");
+			simDur.setToolTipText("Duration of Simulation in terms of minutes");
 			simDur.setBounds(itemPos, 100, 120, 23);
-			simDur.setText("10000");
+			simDur.setText("600");
 			simDur.addKeyListener(keyAdapter);
 		}
 		{
@@ -464,76 +464,76 @@ public class SimulationRunner extends JFrame{
 		{
 			label12 = new JLabel();
 			framePanel.add(label12);
-			label12.setToolTipText("Duration of Sensing Slot in terms of Unit Time");
-			label12.setText("Sensing Slot Duration (unit time)");
+			label12.setToolTipText("Duration of Sensing Slot in terms of msec");
+			label12.setText("Sensing Slot Duration (msec)");
 			label12.setBounds(labelPos, 65, 245, 16);
 		}
 		{
 			slotDurField = new JTextField();
 			framePanel.add(slotDurField);
-			slotDurField.setToolTipText("Duration of Sensing Slot in terms of Unit Time");
+			slotDurField.setToolTipText("Duration of Sensing Slot in terms of msec");
 			slotDurField.setBounds(itemPos, 65, 120, 23);
-			slotDurField.setText("0.2");
+			slotDurField.setText("10");
 			slotDurField.addKeyListener(keyAdapter);
 		}
 		{
 			label13 = new JLabel();
 			framePanel.add(label13);
-			label13.setToolTipText("Duration of Sensing Result Advertisement in terms of Unit Time");
-			label13.setText("Dur. of sensing result ack. (unit time)");
+			label13.setToolTipText("Duration of Sensing Result Advertisement in terms of msec");
+			label13.setText("Dur. of sensing result ack. (msec)");
 			label13.setBounds(labelPos, 100, 245, 16);
 		}
 		{
 			sensingResultField = new JTextField();
 			framePanel.add(sensingResultField);
-			sensingResultField.setToolTipText("Duration of Sensing Result Advertisement in terms of Unit Time");
+			sensingResultField.setToolTipText("Duration of Sensing Result Advertisement in terms of msec");
 			sensingResultField.setBounds(itemPos, 100, 120, 23);
-			sensingResultField.setText("0.2");
+			sensingResultField.setText("10");
 			sensingResultField.addKeyListener(keyAdapter);
 		}
 		{
 			label14 = new JLabel();
 			framePanel.add(label14);
-			label14.setToolTipText("Duration of Sensing Schedule Advertisement in terms of Unit Time");
-			label14.setText("Sensing Schedule Advert. Dur. (unit time)");
+			label14.setToolTipText("Duration of Sensing Schedule Advertisement in terms of msec");
+			label14.setText("Sensing Schedule Advert. Dur. (msec)");
 			label14.setBounds(labelPos, 135, 245, 16);
 		}
 		{
 			senseScheduleField = new JTextField();
 			framePanel.add(senseScheduleField);
-			senseScheduleField.setToolTipText("Duration of Sensing Schedule Advertisement in terms of Unit Time");
+			senseScheduleField.setToolTipText("Duration of Sensing Schedule Advertisement in terms of msec");
 			senseScheduleField.setBounds(itemPos, 135, 120, 23);
-			senseScheduleField.setText("0.2");
+			senseScheduleField.setText("10");
 			senseScheduleField.addKeyListener(keyAdapter);
 		}
 		{
 			label15 = new JLabel();
 			framePanel.add(label15);
-			label15.setToolTipText("Duration of Communication in terms of Unit Time");
-			label15.setText("Comm. Duration (unit time)");
+			label15.setToolTipText("Duration of Communication in terms of msec");
+			label15.setText("Comm. Duration (msec)");
 			label15.setBounds(labelPos, 170, 245, 16);
 		}
 		{
 			commDurField = new JTextField();
 			framePanel.add(commDurField);
-			commDurField.setToolTipText("Duration of Communication in terms of Unit Time");
+			commDurField.setToolTipText("Duration of Communication in terms of msec");
 			commDurField.setBounds(itemPos, 170, 120, 23);
-			commDurField.setText("0.6");
+			commDurField.setText("630");
 			commDurField.addKeyListener(keyAdapter);
 		}
 		{
 			label16 = new JLabel();
 			framePanel.add(label16);
-			label16.setToolTipText("Duration of Communication Schedule Advertisement in terms of Unit Time");
-			label16.setText("Comm. Schedule Advert. Dur. (unit time)");
+			label16.setToolTipText("Duration of Communication Schedule Advertisement in terms of msec");
+			label16.setText("Comm. Schedule Advert. Dur. (msec)");
 			label16.setBounds(labelPos, 205, 245, 16);
 		}
 		{
 			commScheduleField = new JTextField();
 			framePanel.add(commScheduleField);
-			commScheduleField.setToolTipText("Duration of Communication Schedule Advertisement in terms of Unit Time");
+			commScheduleField.setToolTipText("Duration of Communication Schedule Advertisement in terms of msec");
 			commScheduleField.setBounds(itemPos, 205, 120, 23);
-			commScheduleField.setText("0.2");
+			commScheduleField.setText("10");
 			commScheduleField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(framePanel);
@@ -721,10 +721,10 @@ public class SimulationRunner extends JFrame{
 					label25.setVisible(!isPoisson);
 					label27.setVisible(!isPoisson);
 					if(isPoisson)
-						noCalls.setText("0.2");
+						noCalls.setText("2");
 					else
-						noCalls.setText("5");
-					callDur.setText("2.11");
+						noCalls.setText("0.5");
+					callDur.setText("4");
 				}
 			});
 			trafficPanel.add(trafficModel);
@@ -736,42 +736,42 @@ public class SimulationRunner extends JFrame{
 			label25 = new JLabel();
 			trafficPanel.add(label25);
 			label25.setToolTipText("Mean of OFF Period duration of a Source");
-			label25.setText("OFF Duration (unit time)");
+			label25.setText("OFF Duration (hour)");
 			label25.setBounds(labelPos, 65, 175, 16);
 			label25.setVisible(false);
 			
 			label26 = new JLabel();
 			trafficPanel.add(label26);
-			label26.setToolTipText("Mean of Number of Calls of a Source per unit time");
-			label26.setText("Number of Calls/unit time");
+			label26.setToolTipText("Mean of Number of Calls of a Source per hour");
+			label26.setText("Number of Calls/hour");
 			label26.setBounds(labelPos, 65, 165, 16);
 		}
 		{
 			noCalls = new JTextField();
 			trafficPanel.add(noCalls);
 			noCalls.setBounds(itemPos, 65, 120, 23);
-			noCalls.setText("0.2");
+			noCalls.setText("2");
 			noCalls.addKeyListener(keyAdapter);
 		}
 		{
 			label27 = new JLabel();
 			trafficPanel.add(label27);
 			label27.setToolTipText("Mean of ON Period duration of a Source");
-			label27.setText("ON Duration (unit time)");
+			label27.setText("ON Duration (min)");
 			label27.setBounds(labelPos, 100, 165, 16);
 			label27.setVisible(false);
 			
 			label28 = new JLabel();
 			trafficPanel.add(label28);
 			label28.setToolTipText("Mean of Call duration of a Source");
-			label28.setText("Call Duration (unit time)");
+			label28.setText("Call Duration (min)");
 			label28.setBounds(labelPos, 100, 165, 16);
 		}
 		{
 			callDur = new JTextField();
 			trafficPanel.add(callDur);
 			callDur.setBounds(itemPos, 100, 120, 23);
-			callDur.setText("2.11");
+			callDur.setText("4");
 			callDur.addKeyListener(keyAdapter);
 		}
 		{
@@ -786,7 +786,7 @@ public class SimulationRunner extends JFrame{
 			trafficPanel.add(unitTime);
 			unitTime.setToolTipText("Duration of a unit time during animation");
 			unitTime.setBounds(itemPos, 135, 120, 23);
-			unitTime.setText("100");
+			unitTime.setText("0.1");
 			unitTime.addKeyListener(keyAdapter);
 			unitTime.setEnabled(false);
 		}
@@ -1076,8 +1076,8 @@ public class SimulationRunner extends JFrame{
 			maxFreqCR = Integer.parseInt(noSlotField.getText());		//Get max number of frequencies a node can sense
 			numberOfZones = Integer.parseInt(noZones.getText());		//Get the number of zones to be simulated
 			
-			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per unit time
-			callDura = Double.parseDouble(callDur.getText());	//Get call duration in terms of unit time
+			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per hour
+			callDura = Double.parseDouble(callDur.getText());	//Get call duration in terms of min
 			
 			if(numberOfCalls<=2 && trafficModel.getSelectedIndex() == 1){
 				JOptionPane.showMessageDialog(this, "Mean Off Period Duration must be greater than 2 time units",
@@ -1091,10 +1091,11 @@ public class SimulationRunner extends JFrame{
 			}
 			
 			if(animationOnButton.isSelected())					//Get unit time duration in terms of milliseconds
-				timeUnit = Integer.parseInt(unitTime.getText());
+				timeUnit = Double.parseDouble(unitTime.getText());
 			else
 				timeUnit = 1;
-			simDura = Long.parseLong(simDur.getText());			//Get duration of the simulation in terms of unit time
+			simDura = Long.parseLong(simDur.getText());			//Get duration of the simulation in terms of min
+			simDura *= 60000;
 			
 			if(seedModel.getSelectedIndex()==0){				//If seed model is random
 				randEngine = new MersenneTwister(new Date());	//Give date as seed
@@ -1105,7 +1106,7 @@ public class SimulationRunner extends JFrame{
 			}
 			
 			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr, sinrThreshold, numberOfCalls,
-													callDura, trafficModel.getSelectedIndex());//Create a wireless channel
+													callDura, trafficModel.getSelectedIndex(),timeUnit);//Create a wireless channel
 			
 			alpha = (360/sectrNo)/alpha;							//Evaluate the angle associated to alpha
 			double temp = radius / dNumber;							//Evaluate length of each d as they will be equal
@@ -1138,13 +1139,13 @@ public class SimulationRunner extends JFrame{
 			if(animationOnButton.isSelected()){
 				drawCell = new DrawCell((int)radius, sectrNo, Integer.parseInt(alphaNo.getText()),
 																(int)dNumber, numberOfCrNodes, numberOfPriNodes);
-				priTrafGen = new PrimaryTrafficGenerator(timeUnit);
+				priTrafGen = new PrimaryTrafficGenerator();
 				priTrafGenDes = null;
 			}
 			else{
 				drawCell = null;
 				priTrafGen = null;
-				priTrafGenDes = new DESPrimaryTrafficGenerator(timeUnit);
+				priTrafGenDes = new DESPrimaryTrafficGenerator();
 			}
 			
 			for(int i = 0; i<numberOfCrNodes ;i++){

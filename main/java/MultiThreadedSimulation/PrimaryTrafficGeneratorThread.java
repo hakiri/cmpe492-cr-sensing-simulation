@@ -164,7 +164,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		if(commDur > remainingDur)
 			commDur = remainingDur;
 		long time = Math.round(commDur);	//Take a random call duration
-		n.incrementTotalCommunicationDuration(commDur/(double)PrimaryTrafficGenerator.unitTime);
+		n.incrementTotalCommunicationDuration(commDur/(double)WirelessChannel.unitTime);
 
 		try{
 			Thread.sleep(time);		//Wait for that amount
@@ -212,10 +212,10 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	private double nextOnDuration()
 	{
 		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
-			return callDuration.nextDouble()*PrimaryTrafficGenerator.unitTime;
+			return callDuration.nextDouble()*WirelessChannel.unitTime*60000;
 		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = onDuration.nextDouble();
-			return val*PrimaryTrafficGenerator.unitTime;
+			return val*WirelessChannel.unitTime*60000;
 		}
 		else
 			return 0.0;
@@ -224,10 +224,10 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	private double nextOffDuration()
 	{
 		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
-			return interArrival.nextDouble()*PrimaryTrafficGenerator.unitTime;
+			return interArrival.nextDouble()*WirelessChannel.unitTime*3600000;
 		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = offDuration.nextDouble();
-			return val*PrimaryTrafficGenerator.unitTime;
+			return val*WirelessChannel.unitTime*3600000;
 		}
 		else
 			return 0.0;

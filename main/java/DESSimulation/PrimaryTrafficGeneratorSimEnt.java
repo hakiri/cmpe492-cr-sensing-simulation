@@ -134,7 +134,7 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 				double remainingDur = SimulationRunner.crDesScheduler.getRemainingSimulationDuration();
 				if(commDur > remainingDur)
 					commDur = remainingDur;
-				node.incrementTotalCommunicationDuration(commDur/(double)DESPrimaryTrafficGenerator.unitTime);
+				node.incrementTotalCommunicationDuration(commDur/(double)WirelessChannel.unitTime);
 				
 				send(this, commEnd, commDur);
 			}
@@ -157,10 +157,10 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	private double nextOnDuration()
 	{
 		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
-			return callDuration.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+			return callDuration.nextDouble()*WirelessChannel.unitTime*60000;
 		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = onDuration.nextDouble();
-			return val*DESPrimaryTrafficGenerator.unitTime;
+			return val*WirelessChannel.unitTime*60000;
 		}
 		else
 			return 0.0;
@@ -173,10 +173,10 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	private double nextOffDuration()
 	{
 		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
-			return interArrival.nextDouble()*DESPrimaryTrafficGenerator.unitTime;
+			return interArrival.nextDouble()*WirelessChannel.unitTime*3600000;
 		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = offDuration.nextDouble();
-			return val*DESPrimaryTrafficGenerator.unitTime;
+			return val*WirelessChannel.unitTime*3600000;
 		}
 		else
 			return 0.0;

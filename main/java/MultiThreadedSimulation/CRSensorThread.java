@@ -35,7 +35,7 @@ public class CRSensorThread implements Runnable{
 	/**
 	 * Duration of one time unit
 	 */
-	private long unitTime;
+	private double unitTime;
 	private double frameDuration;
 	private int numberOfSlots;
 	private double slotDur;
@@ -59,7 +59,7 @@ public class CRSensorThread implements Runnable{
 	 * @param commDur						Duration of the communication in terms of unit time
 	 * @param senseResultAdvertisement		Duration of the sensing result advertisement in terms of unit time
 	 */
-	public CRSensorThread(double simulationDuration,long unitTime, int numberOfSlots, double slotDur,
+	public CRSensorThread(double simulationDuration,double unitTime, int numberOfSlots, double slotDur,
 			double senseScheduleAdvertisement, double commScheduleAdvertisement, double commDur,
 			double senseResultAdvertisement)
 	{
@@ -114,29 +114,29 @@ public class CRSensorThread implements Runnable{
 			}
 			
 			senseScheduleAdvertise();
-			SimulationRunner.progressBar.setValue((((int)totalSimulationDuration-(int)remainingSimulationDuration)*100)/(int)totalSimulationDuration);	//Update progress bar
+			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			for(int j=0;j<numberOfSlots;j++){
 				sensingSlot(j);
-				SimulationRunner.progressBar.setValue((((int)totalSimulationDuration-(int)remainingSimulationDuration)*100)/(int)totalSimulationDuration);	//Update progress bar
+				SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			}
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			senseResultAdvertise();
-			SimulationRunner.progressBar.setValue((((int)totalSimulationDuration-(int)remainingSimulationDuration)*100)/(int)totalSimulationDuration);	//Update progress bar
+			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			commScheduleAdvertise();
-			SimulationRunner.progressBar.setValue((((int)totalSimulationDuration-(int)remainingSimulationDuration)*100)/(int)totalSimulationDuration);	//Update progress bar
+			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			communicate(numberOfReports);
-			SimulationRunner.progressBar.setValue((((int)totalSimulationDuration-(int)remainingSimulationDuration)*100)/(int)totalSimulationDuration);	//Update progress bar
+			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 		}
 		String[][] crStats = CRNode.logStats();
 		String[][] priStats = SimulationRunner.priTrafGen.logStats();
@@ -325,7 +325,7 @@ public class CRSensorThread implements Runnable{
 	 * Return the ms per unit time
 	 * @return Unit time
 	 */
-	public long getUnitTime() {
+	public double getUnitTime() {
 		return unitTime;
 	}
 
