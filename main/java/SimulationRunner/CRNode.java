@@ -213,6 +213,10 @@ public class CRNode extends Node{
         this.communication_frequency = communication_frequency;
 		SimulationRunner.wc.occupyFrequency(communication_frequency, this);
     }
+
+	public int getCommunication_frequency() {
+		return communication_frequency;
+	}
 	
 	/**
 	 * Releases its communication frequency

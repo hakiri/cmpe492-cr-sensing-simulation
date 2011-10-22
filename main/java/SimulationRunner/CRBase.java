@@ -143,29 +143,30 @@ public class CRBase extends Node{
      * Third, deploys these free frequencies to the crnodes to communicate at the next frame.
      */
     public void communicationScheduleAdvertiser(){
-		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
-		ArrayList<Integer> readyToCommInZone = new ArrayList<Integer>();
-		int totalNumberOfReadytoComm = 0;
-		if(last_averageSnr.isEmpty())
-			return;
-		for(int k=0;k<registeredZones.size();k++){
+		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
+		int totalNumberOfCollided = 0;
+		//this loop finds the number of collided crnodes for each zone(and takes their comm_freq),
+		//also finds free frequencies for each zone.
+		for(int i=0;i<registeredZones.size();i++){
 			double max_dist = 0.0;
 			double temp,snr_from_base,threshold;
 			
 			int iStart, iEnd;
-			iStart = k==0 ? 0:nodesInZone.get(k-1);
-			iEnd = k==0 ? nodesInZone.get(0):nodesInZone.get(k);
+			iStart = i==0 ? 0:nodesInZone.get(i-1);
+			iEnd = i==0 ? nodesInZone.get(0):nodesInZone.get(i);
 			
-			readyToCommInZone.add(0);
-			for(int i=iStart;i<iEnd;i++){ //finding the max distance btw crbase and crnodes
+			collidedInZone.add(0);
+			for(int j=iStart;j<iEnd;j++){
 				temp = SimulationRunner.crNodes.get(i).position.distance(this.position);
 				if(max_dist < temp)
 					max_dist = temp;
-				if(SimulationRunner.crNodes.get(i).getReadytoComm()){
-					readyToCommInZone.set(k, readyToCommInZone.get(k) + 1);
-					totalNumberOfReadytoComm++;
+				if(SimulationRunner.crNodes.get(j).getIsCollided()){
+					SimulationRunner.crNodes.get(j).releaseCommunication_frequency(); 
+					collidedInZone.set(i, collidedInZone.get(i) + 1);
+					totalNumberOfCollided ++;
 				}
 			}
+			
 			snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
 			//calculates threshold value
 			threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(snr_from_base - SimulationRunner.wc.sinrThreshold)-1);
@@ -174,12 +175,101 @@ public class CRBase extends Node{
 			//checks averagesnr values of the frequencies and adds frequencies to the free_frequencies list
 			//if there was no collision in the previous measurement 
 			free_frequencies.add(new ArrayList<FreqSNR>());
-			for(int i=0;i<last_averageSnr.get(k).size();i++){//finds collision-free frequencies and adds them to fre_freq
-				if(last_averageSnr.get(k).get(i) <= threshold)
-					if(!SimulationRunner.wc.isOccupied(i, WirelessChannel.CR))
-						free_frequencies.get(k).add(new FreqSNR(i, last_averageSnr.get(k).get(i)));
+			for(int j=0;j<last_averageSnr.get(i).size();j++){//finds collision-free frequencies and adds them to fre_freq
+				if(last_averageSnr.get(i).get(j) <= threshold)
+					if(!SimulationRunner.wc.isOccupied(j, WirelessChannel.CR))
+						free_frequencies.get(i).add(new FreqSNR(j, last_averageSnr.get(i).get(j)));
 			}
-			Collections.sort(free_frequencies.get(k));	 //ascending sorting of snr values
+			Collections.sort(free_frequencies.get(i));	 //ascending sorting of snr values
+		}
+		
+		//this for loop assigns a frequency at each loop for the collided crnodes
+		for(int i=0;i<totalNumberOfCollided;i++){
+			int lowest=0;
+			
+			for(int j=0;j<free_frequencies.size();j++){
+				if(free_frequencies.get(lowest).isEmpty()){
+					lowest++;
+					continue;
+				}
+				if(free_frequencies.get(j).isEmpty())
+					continue;
+				if(free_frequencies.get(lowest).get(0).SNR > free_frequencies.get(j).get(0).SNR)
+					lowest = j;
+			}
+			if(lowest == free_frequencies.size())
+				break;
+			int iStart, iEnd;
+			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
+			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
+			for(int j=iStart;j<iEnd;j++){
+				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
+					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
+					SimulationRunner.crNodes.get(j).setReadytoComm(false);
+					SimulationRunner.crNodes.get(j).setNumberOfForcedHandoff(SimulationRunner.crNodes.get(j).getNumberOfForcedHandoff() + 1);
+					
+					collidedInZone.set(lowest, collidedInZone.get(lowest) - 1);
+					//updates free_frequencies
+					for(int k=0;k<free_frequencies.size();k++){
+						if(!(k==lowest || free_frequencies.get(k).isEmpty())){
+							for(int l=0;l<free_frequencies.get(k).size();l++){
+								if(free_frequencies.get(k).get(l).freq == free_frequencies.get(lowest).get(0).freq){
+									free_frequencies.get(k).remove(l);
+									break;
+								}
+							}
+						}
+					}
+					free_frequencies.get(lowest).remove(0);
+					SimulationRunner.crNodes.get(j).setCommOrNot(true);
+					if(collidedInZone.get(lowest)==0)
+						free_frequencies.get(lowest).clear();
+					if(SimulationRunner.animationOffButton.isSelected())
+						SimulationRunner.crDesScheduler.sendStartCommEvent(j);
+					else{
+						SimulationRunner.crSensor.setCommunationDuration(j);
+						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
+					}
+					break;
+				}
+			}
+		} //end of assigment of the free frequencies to the collided crnodes
+		
+		//this loop is for collided crnodes which cannot find a new comm_freq to talk.
+		//updates number of drops for crnodes, updates commOrNot to false,
+		for(int i=0;i<registeredZones.size();i++){
+			int iStart, iEnd;
+			iStart = i==0 ? 0:nodesInZone.get(i-1);
+			iEnd = i==0 ? nodesInZone.get(0):nodesInZone.get(i);
+			
+			if(collidedInZone.get(i) > 0){
+				for(int j=iStart;j<iEnd;j++){
+					if(SimulationRunner.crNodes.get(j).getIsCollided())
+						if(SimulationRunner.crNodes.get(j).getCommunication_frequency() == -1){
+							SimulationRunner.crNodes.get(j).setNumberOfDrops(SimulationRunner.crNodes.get(j).getNumberOfDrops() + 1);
+							SimulationRunner.crNodes.get(j).setCommOrNot(false);
+							//TODO startcommunicationevent should send here
+						}
+				}
+			}
+		}
+		
+		ArrayList<Integer> readyToCommInZone = new ArrayList<Integer>();
+		int totalNumberOfReadytoComm = 0;
+		if(last_averageSnr.isEmpty())
+			return;
+		for(int k=0;k<registeredZones.size();k++){
+			int iStart, iEnd;
+			iStart = k==0 ? 0:nodesInZone.get(k-1);
+			iEnd = k==0 ? nodesInZone.get(0):nodesInZone.get(k);
+			
+			readyToCommInZone.add(0);
+			for(int i=iStart;i<iEnd;i++){ //finding the max distance btw crbase and crnodes
+				if(SimulationRunner.crNodes.get(i).getReadytoComm()){
+					readyToCommInZone.set(k, readyToCommInZone.get(k) + 1);
+					totalNumberOfReadytoComm++;
+				}
+			}
 		}
 		
 		//this for loop assigns a frequency at each loop
@@ -205,9 +295,7 @@ public class CRBase extends Node{
 				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
 					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
 					SimulationRunner.crNodes.get(j).setReadytoComm(false);
-					if(SimulationRunner.animationOnButton.isSelected()){
-						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GRAY);
-					}
+					
 					readyToCommInZone.set(lowest, readyToCommInZone.get(lowest)-1);
 					for(int k=0;k<free_frequencies.size();k++){
 						if(!(k==lowest || free_frequencies.get(k).isEmpty())){
@@ -245,6 +333,11 @@ public class CRBase extends Node{
 				}
 				SimulationRunner.crNodes.get(i).numberOfBlocks++;
 			}
+		}
+		
+		
+		for(int i=0;i<SimulationRunner.crNodes.size();i++){
+			SimulationRunner.crNodes.get(i).setIsCollided(false);
 		}
     }
     
