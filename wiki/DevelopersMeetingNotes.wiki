@@ -81,3 +81,23 @@ Possion traffic implementation for secondary users at multithreaded simulation m
 
  <dt><b>PS:</b> All communication and off times of the users are calculated in terms of frames.</dt>
 </dl>
+
+
+
+= Report of Meeting 16.10.2011 =
+
+== Issues & Decisions ==
+Necessary changes in communication schedule advertisement and sensing schedule advertisement to simulate more than one zone in the simulation is implemented as follows:
+<dl>
+ <dt>1. The array that holds the average SNR values of the previous frame is implemented as two dimensional array. First dimension represents zones and second dimension represents frequencies. The same approach is also applied for the array which holds the average SNR values of the current frame.</dt>
+
+ <dt>2. Free frequency list is divided for each zone. If there is no node in a zone then no free frequency is assigned to that zone.</dt>
+
+ <dt>3. After free frequencies are decided for each zone, a frequency is assigned to a zone which has the minimum average SNR value for that frequency.</dt>
+
+ <dt>4. When the number of assigned frequencies to a zone becomes equal to the number of secondary users who want to start communication, no more frequencies is assigned to that zone.</dt>
+ 
+ <dt>5. Secondary users who are not given any frequency to communicate are reported as blocked.</dt>
+
+ <dt><b>PS:</b> Note that all these SNR values are due to primary nodes.</dt>
+</dl>
