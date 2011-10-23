@@ -1,6 +1,71 @@
 #summary Developers' Meeting notes and reports
 #labels Phase-Implementation
 
+= Report of Meeting 22.10.2011 =
+
+== Issues & Decisions ==
+In order to keep track of the statistics about secondary users' force handoffs and drops the following is implemented:
+<dl>
+ <dt>1. Variables for force handoff count and drop count are created. A boolean variable that holds information about last frames collision is also created.</dt>
+
+ <dt>2. At the beginning of communication schedule advertisement collided secondary users are given priority over others and tried to be given free frequency. If they can handoff to another available frequency, number of force handoffs is incremented. Otherwise, number of drops is incremented.</dt>
+
+ <dt>3. If secondart user drops, its communication end event is cancelled and a new communication start event is created.</dt>
+
+ <dt><b>PS:</b> The statistics about number of collisions and number of secondary blocks were already implemented.</dt>
+</dl>
+
+Finally unit times is specified as follows:
+
+<table border="1">
+  <tr>
+    <th><b>Events</b></th>
+    <th><b>Frequencies</b></th>
+    <th><b>Default Values</b></th>
+  </tr>
+  <tr>
+    <td>Number of Calls</td>
+    <td># calls per hour</td>
+    <td>2 calls per hour</td>
+  </tr>
+  <tr>
+    <td>Call duration</td>
+    <td># minutes per call</td>
+    <td>4 minutes per call</td>
+  </tr>
+</table>
+<table border="1">
+  <tr>
+    <th colspan="2">Secondary Frame Parameters</th>
+  </tr>
+  <tr>
+    <th>Parameters</th>
+    <th>Default Values</th>
+  </tr>
+  <tr>
+    <td>Sensing Schedule Advertisement</td>
+    <td>10 msec</td>
+  </tr>
+  <tr>
+    <td>Sensing Slots' Duration</td>
+    <td>10 msec</td>
+  </tr>
+  <tr>
+    <td>Sensing Result Acknowledgement</td>
+    <td>10 msec</td>
+  </tr>
+  <tr>
+    <td>Communication Schedule Advertisement</td>
+    <td>10 msec</td>
+  </tr>
+  <tr>
+    <td>Communication Duration</td>
+    <td>630 msec</td>
+  </tr>
+</table>
+
+
+
 = Report of Meeting 18.10.2011 =
 
 == Issues & Decisions ==
