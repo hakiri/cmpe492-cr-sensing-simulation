@@ -144,6 +144,9 @@ public class CRBase extends Node{
      * Third, deploys these free frequencies to the crnodes to communicate at the next frame.
      */
     public void communicationScheduleAdvertiser(){
+		if(last_averageSnr.isEmpty())
+			return;
+		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
 		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
 		int totalNumberOfCollided = 0;
 		//this loop finds the number of collided crnodes for each zone(and takes their comm_freq),
