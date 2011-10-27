@@ -147,6 +147,98 @@ public class CRBase extends Node{
 		if(last_averageSnr.isEmpty())
 			return;
 		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
+		
+		handoffCollidedUsersInZones();
+		
+		ArrayList<Integer> readyToCommInZone = new ArrayList<Integer>();
+		int totalNumberOfReadytoComm = 0;
+		if(last_averageSnr.isEmpty())
+			return;
+		for(int k=0;k<registeredZones.size();k++){
+			int iStart, iEnd;
+			iStart = k==0 ? 0:nodesInZone.get(k-1);
+			iEnd = k==0 ? nodesInZone.get(0):nodesInZone.get(k);
+			
+			readyToCommInZone.add(0);
+			for(int i=iStart;i<iEnd;i++){ //finding the max distance btw crbase and crnodes
+				if(SimulationRunner.crNodes.get(i).getReadytoComm()){
+					readyToCommInZone.set(k, readyToCommInZone.get(k) + 1);
+					totalNumberOfReadytoComm++;
+				}
+			}
+		}
+		
+		//this for loop assigns a frequency at each loop
+		for(int i=0;i<totalNumberOfReadytoComm;i++){
+			int lowest=0;
+			
+			for(int j=0;j<free_frequencies.size();j++){
+				if(free_frequencies.get(lowest).isEmpty()){
+					lowest++;
+					continue;
+				}
+				if(free_frequencies.get(j).isEmpty())
+					continue;
+				if(free_frequencies.get(lowest).get(0).SNR > free_frequencies.get(j).get(0).SNR)
+					lowest = j;
+			}
+			if(lowest == free_frequencies.size())
+				break;
+			int iStart, iEnd;
+			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
+			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
+			for(int j=iStart;j<iEnd;j++){
+				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
+					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
+					SimulationRunner.crNodes.get(j).setReadytoComm(false);
+					
+					readyToCommInZone.set(lowest, readyToCommInZone.get(lowest)-1);
+					for(int k=0;k<free_frequencies.size();k++){
+						if(!(k==lowest || free_frequencies.get(k).isEmpty())){
+							for(int l=0;l<free_frequencies.get(k).size();l++){
+								if(free_frequencies.get(k).get(l).freq == free_frequencies.get(lowest).get(0).freq){
+									free_frequencies.get(k).remove(l);
+									break;
+								}
+							}
+						}
+					}
+					free_frequencies.get(lowest).remove(0);
+					//SimulationRunner.crNodes.get(j).setCommOrNot(true);
+					if(readyToCommInZone.get(lowest)==0)
+						free_frequencies.get(lowest).clear();
+					if(SimulationRunner.animationOffButton.isSelected())
+						SimulationRunner.crDesScheduler.sendEndCommEvent(j);
+					else{
+						SimulationRunner.crSensor.setCommunationDuration(j);
+						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
+					}
+					break;
+				}
+			}
+		}
+		
+		for(int i=0;i<SimulationRunner.crNodes.size();i++){			//Send communication start event for the blocked users
+			if(SimulationRunner.crNodes.get(i).getReadytoComm()){
+				SimulationRunner.crNodes.get(i).setReadytoComm(false);
+				if(SimulationRunner.animationOffButton.isSelected())
+					SimulationRunner.crDesScheduler.sendStartCommEvent(i);
+				else{
+					SimulationRunner.crSensor.setInactiveDuration(i,false);
+					DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
+				}
+				SimulationRunner.crNodes.get(i).numberOfBlocks++;
+			}
+		}
+		
+		
+		for(int i=0;i<SimulationRunner.crNodes.size();i++){
+			SimulationRunner.crNodes.get(i).setIsCollided(false);
+		}
+    }
+    
+	private void handoffCollidedUsersInZones()
+	{
 		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
 		int totalNumberOfCollided = 0;
 		//this loop finds the number of collided crnodes for each zone(and takes their comm_freq),
@@ -207,7 +299,7 @@ public class CRBase extends Node{
 			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
 			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
 			for(int j=iStart;j<iEnd;j++){
-				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
+				if(SimulationRunner.crNodes.get(j).getIsCollided()){
 					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
 					SimulationRunner.crNodes.get(j).setReadytoComm(false);
 					SimulationRunner.crNodes.get(j).setNumberOfForcedHandoff(SimulationRunner.crNodes.get(j).getNumberOfForcedHandoff() + 1);
@@ -225,7 +317,7 @@ public class CRBase extends Node{
 						}
 					}
 					free_frequencies.get(lowest).remove(0);
-					SimulationRunner.crNodes.get(j).setCommOrNot(true);
+					//SimulationRunner.crNodes.get(j).setCommOrNot(true);
 					if(collidedInZone.get(lowest)==0)
 						free_frequencies.get(lowest).clear();
 					if(SimulationRunner.animationOffButton.isSelected())
@@ -251,7 +343,7 @@ public class CRBase extends Node{
 					if(SimulationRunner.crNodes.get(j).getIsCollided()){
 						if(SimulationRunner.crNodes.get(j).getCommunication_frequency() == -1){
 							SimulationRunner.crNodes.get(j).setNumberOfDrops(SimulationRunner.crNodes.get(j).getNumberOfDrops() + 1);
-							SimulationRunner.crNodes.get(j).setCommOrNot(false);
+							//SimulationRunner.crNodes.get(j).setCommOrNot(false);
 							if(SimulationRunner.animationOnButton.isSelected()){
 								SimulationRunner.crSensor.setInactiveDuration(j, true);
 							}
@@ -264,94 +356,8 @@ public class CRBase extends Node{
 				}
 			}
 		}
-		
-		ArrayList<Integer> readyToCommInZone = new ArrayList<Integer>();
-		int totalNumberOfReadytoComm = 0;
-		if(last_averageSnr.isEmpty())
-			return;
-		for(int k=0;k<registeredZones.size();k++){
-			int iStart, iEnd;
-			iStart = k==0 ? 0:nodesInZone.get(k-1);
-			iEnd = k==0 ? nodesInZone.get(0):nodesInZone.get(k);
-			
-			readyToCommInZone.add(0);
-			for(int i=iStart;i<iEnd;i++){ //finding the max distance btw crbase and crnodes
-				if(SimulationRunner.crNodes.get(i).getReadytoComm()){
-					readyToCommInZone.set(k, readyToCommInZone.get(k) + 1);
-					totalNumberOfReadytoComm++;
-				}
-			}
-		}
-		
-		//this for loop assigns a frequency at each loop
-		for(int i=0;i<totalNumberOfReadytoComm;i++){
-			int lowest=0;
-			
-			for(int j=0;j<free_frequencies.size();j++){
-				if(free_frequencies.get(lowest).isEmpty()){
-					lowest++;
-					continue;
-				}
-				if(free_frequencies.get(j).isEmpty())
-					continue;
-				if(free_frequencies.get(lowest).get(0).SNR > free_frequencies.get(j).get(0).SNR)
-					lowest = j;
-			}
-			if(lowest == free_frequencies.size())
-				break;
-			int iStart, iEnd;
-			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
-			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
-			for(int j=iStart;j<iEnd;j++){
-				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
-					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
-					SimulationRunner.crNodes.get(j).setReadytoComm(false);
-					
-					readyToCommInZone.set(lowest, readyToCommInZone.get(lowest)-1);
-					for(int k=0;k<free_frequencies.size();k++){
-						if(!(k==lowest || free_frequencies.get(k).isEmpty())){
-							for(int l=0;l<free_frequencies.get(k).size();l++){
-								if(free_frequencies.get(k).get(l).freq == free_frequencies.get(lowest).get(0).freq){
-									free_frequencies.get(k).remove(l);
-									break;
-								}
-							}
-						}
-					}
-					free_frequencies.get(lowest).remove(0);
-					SimulationRunner.crNodes.get(j).setCommOrNot(true);
-					if(readyToCommInZone.get(lowest)==0)
-						free_frequencies.get(lowest).clear();
-					if(SimulationRunner.animationOffButton.isSelected())
-						SimulationRunner.crDesScheduler.sendEndCommEvent(j);
-					else{
-						SimulationRunner.crSensor.setCommunationDuration(j);
-						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
-					}
-					break;
-				}
-			}
-		}
-		
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){			//Send communication start event for the blocked users
-			if(SimulationRunner.crNodes.get(i).getReadytoComm()){
-				SimulationRunner.crNodes.get(i).setReadytoComm(false);
-				if(SimulationRunner.animationOffButton.isSelected())
-					SimulationRunner.crDesScheduler.sendStartCommEvent(i);
-				else{
-					SimulationRunner.crSensor.setInactiveDuration(i,false);
-					DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
-				}
-				SimulationRunner.crNodes.get(i).numberOfBlocks++;
-			}
-		}
-		
-		
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			SimulationRunner.crNodes.get(i).setIsCollided(false);
-		}
-    }
-    
+	}
+	
     /**
      * Updates average_snr values. Assigns the previous current_averagesnr
      * value to the last_averagesnr.

@@ -214,6 +214,7 @@ public class CRNode extends Node{
      */
     public void setCommunication_frequency(int communication_frequency) {
         this.communication_frequency = communication_frequency;
+		commOrNot = true;
 		SimulationRunner.wc.occupyFrequency(communication_frequency, this);
     }
 
@@ -226,7 +227,10 @@ public class CRNode extends Node{
 	 */
 	public void releaseCommunication_frequency()
 	{
+		if(!commOrNot)
+			return;
 		SimulationRunner.wc.releaseFrequency(this.communication_frequency, this);
+		commOrNot = false;
 		communication_frequency = -1;
 	}
     
@@ -397,9 +401,9 @@ public class CRNode extends Node{
 		return (int)Math.round(nextOffDur/frameDuration);
 	}
 
-    public void setCommOrNot(boolean commOrNot) {
-        this.commOrNot = commOrNot;
-    }
+//    public void setCommOrNot(boolean commOrNot) {
+//        this.commOrNot = commOrNot;
+//    }
 	
 	public boolean getCommOrNot() {
         return commOrNot;
