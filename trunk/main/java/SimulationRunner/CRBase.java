@@ -154,15 +154,15 @@ public class CRBase extends Node{
 		int totalNumberOfReadytoComm = 0;
 		if(last_averageSnr.isEmpty())
 			return;
-		for(int k=0;k<registeredZones.size();k++){
+		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
 			int iStart, iEnd;
-			iStart = k==0 ? 0:nodesInZone.get(k-1);
-			iEnd = k==0 ? nodesInZone.get(0):nodesInZone.get(k);
+			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
+			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
 			
 			readyToCommInZone.add(0);
-			for(int i=iStart;i<iEnd;i++){ //finding the max distance btw crbase and crnodes
-				if(SimulationRunner.crNodes.get(i).getReadytoComm()){
-					readyToCommInZone.set(k, readyToCommInZone.get(k) + 1);
+			for(int crInZone=iStart;crInZone<iEnd;crInZone++){ //finding the max distance btw crbase and crnodes
+				if(SimulationRunner.crNodes.get(crInZone).getReadytoComm()){
+					readyToCommInZone.set(zoneNumber, readyToCommInZone.get(zoneNumber) + 1);
 					totalNumberOfReadytoComm++;
 				}
 			}
@@ -187,10 +187,10 @@ public class CRBase extends Node{
 			int iStart, iEnd;
 			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
 			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
-			for(int j=iStart;j<iEnd;j++){
-				if(SimulationRunner.crNodes.get(j).getReadytoComm()){
-					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
-					SimulationRunner.crNodes.get(j).setReadytoComm(false);
+			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+				if(SimulationRunner.crNodes.get(crInZone).getReadytoComm()){
+					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
+					SimulationRunner.crNodes.get(crInZone).setReadytoComm(false);
 					
 					readyToCommInZone.set(lowest, readyToCommInZone.get(lowest)-1);
 					for(int k=0;k<free_frequencies.size();k++){
@@ -208,10 +208,10 @@ public class CRBase extends Node{
 					if(readyToCommInZone.get(lowest)==0)
 						free_frequencies.get(lowest).clear();
 					if(SimulationRunner.animationOffButton.isSelected())
-						SimulationRunner.crDesScheduler.sendEndCommEvent(j);
+						SimulationRunner.crDesScheduler.sendEndCommEvent(crInZone);
 					else{
-						SimulationRunner.crSensor.setCommunationDuration(j);
-						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
+						SimulationRunner.crSensor.setCommunationDuration(crInZone);
+						DrawCell.paintCrNode(SimulationRunner.crNodes.get(crInZone), Color.GREEN);
 					}
 					break;
 				}
@@ -243,22 +243,22 @@ public class CRBase extends Node{
 		int totalNumberOfCollided = 0;
 		//this loop finds the number of collided crnodes for each zone(and takes their comm_freq),
 		//also finds free frequencies for each zone.
-		for(int i=0;i<registeredZones.size();i++){
+		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
 			double max_dist = 0.0;
 			double temp,snr_from_base,threshold;
 			
 			int iStart, iEnd;
-			iStart = i==0 ? 0:nodesInZone.get(i-1);
-			iEnd = i==0 ? nodesInZone.get(0):nodesInZone.get(i);
+			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
+			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
 			
 			collidedInZone.add(0);
-			for(int j=iStart;j<iEnd;j++){
-				temp = SimulationRunner.crNodes.get(j).position.distance(this.position);
+			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+				temp = SimulationRunner.crNodes.get(crInZone).position.distance(this.position);
 				if(max_dist < temp)
 					max_dist = temp;
-				if(SimulationRunner.crNodes.get(j).getIsCollided()){
-					SimulationRunner.crNodes.get(j).releaseCommunication_frequency(); 
-					collidedInZone.set(i, collidedInZone.get(i) + 1);
+				if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
+					SimulationRunner.crNodes.get(crInZone).releaseCommunication_frequency(); 
+					collidedInZone.set(zoneNumber, collidedInZone.get(zoneNumber) + 1);
 					totalNumberOfCollided ++;
 				}
 			}
@@ -271,12 +271,12 @@ public class CRBase extends Node{
 			//checks averagesnr values of the frequencies and adds frequencies to the free_frequencies list
 			//if there was no collision in the previous measurement 
 			free_frequencies.add(new ArrayList<FreqSNR>());
-			for(int j=0;j<last_averageSnr.get(i).size();j++){//finds collision-free frequencies and adds them to fre_freq
-				if(last_averageSnr.get(i).get(j) <= threshold)
-					if(!SimulationRunner.wc.isOccupied(j, WirelessChannel.CR))
-						free_frequencies.get(i).add(new FreqSNR(j, last_averageSnr.get(i).get(j)));
+			for(int freqInZone=0;freqInZone<last_averageSnr.get(zoneNumber).size();freqInZone++){//finds collision-free frequencies and adds them to fre_freq
+				if(last_averageSnr.get(zoneNumber).get(freqInZone) <= threshold)
+					if(!SimulationRunner.wc.isOccupied(freqInZone, WirelessChannel.CR))
+						free_frequencies.get(zoneNumber).add(new FreqSNR(freqInZone, last_averageSnr.get(zoneNumber).get(freqInZone)));
 			}
-			Collections.sort(free_frequencies.get(i));	 //ascending sorting of snr values
+			Collections.sort(free_frequencies.get(zoneNumber));	 //ascending sorting of snr values
 		}
 		
 		//this for loop assigns a frequency at each loop for the collided crnodes
@@ -320,12 +320,6 @@ public class CRBase extends Node{
 					//SimulationRunner.crNodes.get(j).setCommOrNot(true);
 					if(collidedInZone.get(lowest)==0)
 						free_frequencies.get(lowest).clear();
-					if(SimulationRunner.animationOffButton.isSelected())
-						SimulationRunner.crDesScheduler.sendEndCommEvent(j);
-					else{
-						SimulationRunner.crSensor.setCommunationDuration(j);
-						DrawCell.paintCrNode(SimulationRunner.crNodes.get(j), Color.GREEN);
-					}
 					break;
 				}
 			}
@@ -333,23 +327,23 @@ public class CRBase extends Node{
 		
 		//this loop is for collided crnodes which cannot find a new comm_freq to talk.
 		//updates number of drops for crnodes, updates commOrNot to false,
-		for(int i=0;i<registeredZones.size();i++){
+		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
 			int iStart, iEnd;
-			iStart = i==0 ? 0:nodesInZone.get(i-1);
-			iEnd = i==0 ? nodesInZone.get(0):nodesInZone.get(i);
+			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
+			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
 			
-			if(collidedInZone.get(i) > 0){
-				for(int j=iStart;j<iEnd;j++){
-					if(SimulationRunner.crNodes.get(j).getIsCollided()){
-						if(SimulationRunner.crNodes.get(j).getCommunication_frequency() == -1){
-							SimulationRunner.crNodes.get(j).setNumberOfDrops(SimulationRunner.crNodes.get(j).getNumberOfDrops() + 1);
+			if(collidedInZone.get(zoneNumber) > 0){
+				for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+					if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
+						if(SimulationRunner.crNodes.get(crInZone).getCommunication_frequency() == -1){
+							SimulationRunner.crNodes.get(crInZone).setNumberOfDrops(SimulationRunner.crNodes.get(crInZone).getNumberOfDrops() + 1);
 							//SimulationRunner.crNodes.get(j).setCommOrNot(false);
 							if(SimulationRunner.animationOnButton.isSelected()){
-								SimulationRunner.crSensor.setInactiveDuration(j, true);
+								SimulationRunner.crSensor.setInactiveDuration(crInZone, true);
 							}
 							else{
-								SimulationRunner.crDesScheduler.sendStartCommEvent(j);
-								Scheduler.deregister(SimulationRunner.crNodes.get(j).endEventHandle);
+								SimulationRunner.crDesScheduler.sendStartCommEvent(crInZone);
+								Scheduler.deregister(SimulationRunner.crNodes.get(crInZone).endEventHandle);
 							}
 						}
 					}

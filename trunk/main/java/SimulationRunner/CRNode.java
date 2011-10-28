@@ -18,6 +18,7 @@ import DES.Scheduler;
 import DES.SimEnt;
 import DESSimulation.DESPrimaryTrafficGenerator;
 import cern.jet.random.Exponential;
+import java.io.FileNotFoundException;
 
 public class CRNode extends Node{
     
@@ -88,6 +89,8 @@ public class CRNode extends Node{
 	 */
 	private boolean isCollided = false;
 	
+	PrintWriter writer;
+	
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param pos Position of the CRNode
@@ -95,6 +98,12 @@ public class CRNode extends Node{
      * @param frequencies List of frequencies that are assigned to this node.
      */
     public CRNode(int id, Point2D.Double pos, double vel) {
+		try{
+			writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(String.format("CRNODE %d", id)))));
+		}
+		catch(FileNotFoundException fnfe){
+			//DO NOTHING
+		}
         this.id = id;
         this.position = new Point2D.Double(pos.x, pos.y);
         this.velocity = vel;
@@ -336,7 +345,20 @@ public class CRNode extends Node{
             public int id = 0;
 
             @Override
-            public void entering(SimEnt locale) {}
+            public void entering(SimEnt locale) 
+			{
+				double msec = Scheduler.instance().getTime();
+				int hour = (int)msec / 3600000;
+				msec -= (hour*3600000.0);
+				int min = (int)msec / 60000;
+				msec -= (min*600000.0);
+				int sec = (int)msec / 1000;
+				msec -= (sec*1000.0);
+				
+				SimulationRunner.crNodes.get(id).writer.print("Time "+hour+":"+min+":"+sec+"."+msec);
+				SimulationRunner.crNodes.get(id).writer.print(" ID "+id);
+				SimulationRunner.crNodes.get(id).writer.println(" Start Event");
+			}
 
             public StartCommunicationEvent(int crnode_id) {
                 this.id = crnode_id;
@@ -347,12 +369,31 @@ public class CRNode extends Node{
             public int id = 0;
 
             @Override
-            public void entering(SimEnt locale) {}
+            public void entering(SimEnt locale) 
+			{
+				double msec = Scheduler.instance().getTime();
+				int hour = (int)msec / 3600000;
+				msec -= (hour*3600000.0);
+				int min = (int)msec / 60000;
+				msec -= (min*600000.0);
+				int sec = (int)msec / 1000;
+				msec -= (sec*1000.0);
+				
+				SimulationRunner.crNodes.get(id).writer.print("Time "+hour+":"+min+":"+sec+"."+msec);
+				SimulationRunner.crNodes.get(id).writer.print(" ID "+id);
+				SimulationRunner.crNodes.get(id).writer.println(" End Event\n");
+			}
 
             public EndCommunicationEvent(int crnode_id) {
                 this.id = crnode_id;
             }
     }
+
+	@Override
+	protected void finalize() throws Throwable {
+		super.finalize();
+		writer.close();
+	}
     
     
     /**
@@ -363,6 +404,8 @@ public class CRNode extends Node{
 	public double nextOnDurationDES(double frameDuration)
 	{
 		double nextDuration = expoCommDuration.nextDouble() * WirelessChannel.unitTime * 60000;
+		writer.println("Call DUR \t"+(Math.round(nextDuration/frameDuration) * frameDuration));
+		writer.flush();
 		return Math.ceil(nextDuration/frameDuration) * frameDuration;
 	}
 	
@@ -374,6 +417,8 @@ public class CRNode extends Node{
 	public double nextOffDurationDES(double frameDuration)
 	{
 		double nextOffDur = expoInterarrival.nextDouble() * WirelessChannel.unitTime * 3600000;
+		writer.println("Interarr \t"+(Math.round(nextOffDur/frameDuration) * frameDuration));
+		writer.flush();
 		return Math.round(nextOffDur/frameDuration) * frameDuration;
 	}
 	

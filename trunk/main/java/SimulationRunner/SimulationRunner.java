@@ -251,7 +251,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(noPriNodes);
 			noPriNodes.setToolTipText("Number of Primary Users in The CR Cell");
 			noPriNodes.setBounds(itemPos, 30, 120, 23);
-			noPriNodes.setText("15");
+			noPriNodes.setText("50");
 			noPriNodes.addKeyListener(keyAdapter);
 		}
 		{
@@ -617,7 +617,7 @@ public class SimulationRunner extends JFrame{
 			zonePanel.add(noZones);
 			noZones.setToolTipText("Number of Zones to be simulated");
 			noZones.setBounds(itemPos, 170, 120, 23);
-			noZones.setText("1");
+			noZones.setText("4");
 			noZones.getDocument().addDocumentListener(new DocumentListener() {
 
 				public void insertUpdate(DocumentEvent e) {
