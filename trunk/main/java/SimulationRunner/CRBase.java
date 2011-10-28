@@ -78,15 +78,15 @@ public class CRBase extends Node{
             this.SNR = SNR;
         }
 
-	@Override
-	public int compareTo(FreqSNR o) {
+		@Override
+		public int compareTo(FreqSNR o) {
             double diff=this.SNR-o.SNR;
             if(diff<0)
                 return -1;
             else if(diff==0)
                 return 0;
             return 1;
-	}
+		}
 		
         @Override
         public String toString()
@@ -253,7 +253,7 @@ public class CRBase extends Node{
 			
 			collidedInZone.add(0);
 			for(int j=iStart;j<iEnd;j++){
-				temp = SimulationRunner.crNodes.get(i).position.distance(this.position);
+				temp = SimulationRunner.crNodes.get(j).position.distance(this.position);
 				if(max_dist < temp)
 					max_dist = temp;
 				if(SimulationRunner.crNodes.get(j).getIsCollided()){
@@ -364,10 +364,20 @@ public class CRBase extends Node{
      * @param current_averageSnr Most up-to-date snr value.
      */
     public void setLast_averageSnr(ArrayList<ArrayList<Double>> current_averageSnr) {
-        this.last_averageSnr = new ArrayList<ArrayList<Double>>();
-        this.last_averageSnr.addAll(this.current_averageSnr);
+		this.last_averageSnr = new ArrayList<ArrayList<Double>>();
+		for(int i=0;i<this.current_averageSnr.size();i++){
+			this.last_averageSnr.add(new ArrayList<Double>());
+			for(int j=0;j<this.current_averageSnr.get(i).size();j++){
+				this.last_averageSnr.get(i).add(this.current_averageSnr.get(i).get(j));
+			}
+		}
         this.current_averageSnr = new ArrayList<ArrayList<Double>>();
-        this.current_averageSnr.addAll(current_averageSnr);
+		for(int i=0;i<current_averageSnr.size();i++){
+			this.current_averageSnr.add(new ArrayList<Double>());
+			for(int j=0;j<current_averageSnr.get(i).size();j++){
+				this.current_averageSnr.get(i).add(current_averageSnr.get(i).get(j));
+			}
+		}
     }
     
     /**
