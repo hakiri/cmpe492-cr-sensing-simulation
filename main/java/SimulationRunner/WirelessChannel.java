@@ -276,4 +276,9 @@ public class WirelessChannel {
 	public int getTrafficModel() {
 		return trafficModel;
 	}
+	
+	public ArrayList<Node> getFreq(int freq)
+	{
+		return frequencies.get(freq);
+	}
 }

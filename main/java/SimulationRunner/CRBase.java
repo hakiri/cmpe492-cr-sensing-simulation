@@ -169,11 +169,11 @@ public class CRBase extends Node{
 		}
 		
 		//this for loop assigns a frequency at each loop
-		for(;totalNumberOfReadytoComm > 0;totalNumberOfReadytoComm--){
+		for(;totalNumberOfReadytoComm > 0;){
 			int lowest=0;
 			
 			for(int j=0;j<free_frequencies.size();j++){
-				if(free_frequencies.get(lowest).isEmpty()){
+				if(free_frequencies.get(lowest).isEmpty() || readyToCommInZone.get(lowest) == 0){
 					lowest++;
 					continue;
 				}
@@ -213,6 +213,7 @@ public class CRBase extends Node{
 						SimulationRunner.crSensor.setCommunationDuration(crInZone);
 						DrawCell.paintCrNode(SimulationRunner.crNodes.get(crInZone), Color.GREEN);
 					}
+					totalNumberOfReadytoComm--;
 					break;
 				}
 			}
@@ -272,29 +273,24 @@ public class CRBase extends Node{
 	{
 		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
 		int totalNumberOfCollided = 0;
-		//this loop finds the number of collided crnodes for each zone(and releases their comm_freq),
+		//these loops finds the number of collided crnodes for each zone(and releases their comm_freq),
 		//also finds free frequencies for each zone.
-		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
-			int iStart, iEnd;
-			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
-			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
-			
+		for(int i=0;i<registeredZones.size();i++)
 			collidedInZone.add(0);
-			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
-				if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
-					SimulationRunner.crNodes.get(crInZone).releaseCommunication_frequency(); 
-					collidedInZone.set(zoneNumber, collidedInZone.get(zoneNumber) + 1);
-					totalNumberOfCollided++;
-				}
+		for(int i=0;i<SimulationRunner.crNodes.size();i++){
+			if(SimulationRunner.crNodes.get(i).getIsCollided()){
+				SimulationRunner.crNodes.get(i).releaseCommunication_frequency();
+				collidedInZone.set(findZone(i), collidedInZone.get(findZone(i)) + 1);
+				totalNumberOfCollided++;
 			}
 		}
 		
 		//this for loop assigns a frequency at each loop for the collided crnodes
-		for(;totalNumberOfCollided > 0;totalNumberOfCollided--){
+		for(;totalNumberOfCollided > 0;){
 			int lowest=0;
 			
 			for(int j=0;j<free_frequencies.size();j++){
-				if(free_frequencies.get(lowest).isEmpty()){
+				if(free_frequencies.get(lowest).isEmpty() || collidedInZone.get(lowest) == 0){
 					lowest++;
 					continue;
 				}
@@ -326,9 +322,7 @@ public class CRBase extends Node{
 						}
 					}
 					free_frequencies.get(lowest).remove(0);
-					//SimulationRunner.crNodes.get(j).setCommOrNot(true);
-					if(collidedInZone.get(lowest)==0)
-						free_frequencies.get(lowest).clear();
+					totalNumberOfCollided--;
 					break;
 				}
 			}
@@ -346,7 +340,21 @@ public class CRBase extends Node{
 					if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
 						if(SimulationRunner.crNodes.get(crInZone).getCommunication_frequency() == -1){
 							SimulationRunner.crNodes.get(crInZone).setNumberOfDrops(SimulationRunner.crNodes.get(crInZone).getNumberOfDrops() + 1);
-							//SimulationRunner.crNodes.get(j).setCommOrNot(false);
+							
+							double msec = Scheduler.instance().getTime();
+							int hour = (int)(msec / 3600000.0);
+							msec -= (hour*3600000);
+							int min = (int)(msec / 60000.0);
+							msec -= (min*600000.0);
+							int sec = (int)(msec / 1000.0);
+							msec -= (sec*1000.0);
+
+							SimulationRunner.crNodes.get(crInZone).writer.print("Time "+hour+":"+min+":"+sec+"."+msec);
+							SimulationRunner.crNodes.get(crInZone).writer.print(" ID "+crInZone);
+							SimulationRunner.crNodes.get(crInZone).writer.println(" Dropped\n");
+							
+							CRNode.writeLogFile("Time: " + Scheduler.instance().getTime() + " -- number: " + crInZone + " is dropped");
+							
 							if(SimulationRunner.animationOnButton.isSelected()){
 								SimulationRunner.crSensor.setInactiveDuration(crInZone, true);
 							}
