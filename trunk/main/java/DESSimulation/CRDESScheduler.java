@@ -154,10 +154,8 @@ public class CRDESScheduler extends SimEnt{
 	public void start()
 	{
 		send(this, senseScheAdverEvent, 0.0);
-		System.out.println(SimulationRunner.crNodes.size());
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){
 			double offDuration = SimulationRunner.crNodes.get(i).nextOffDurationDES(this.frameDuration);
-			System.out.println(offDuration);
 			SimulationRunner.crNodes.get(i).startEventHandle = send(this, SimulationRunner.crNodes.get(i).startCommEvent, offDuration);
 		}
 	}

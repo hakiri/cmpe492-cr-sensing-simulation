@@ -169,7 +169,26 @@ public class CRNode extends Node{
 		if(SimulationRunner.plotOnButton.isSelected())
 			for(int i=0;i<averageSnr.size();i++)
 				SimulationRunner.plot.addPoint(i,time, averageSnr.get(i));
-        pw.println("average snr values: " + averageSnr.toString()); //writing to log file
+        pw.println("average snr values: "); //writing to log file
+		for(int i=0;i<averageSnr.size();i++){
+			pw.println(averageSnr.get(i));
+		}
+		for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
+			ArrayList<Node> users = SimulationRunner.wc.getFreq(i);
+			pw.print("Freq: "+i+" ");
+			pw.print("Primary: ");
+			if(users.get(WirelessChannel.PRIMARY) == null)
+				pw.print("null ");
+			else
+				pw.print(users.get(WirelessChannel.PRIMARY).getId()+" ");
+			
+			pw.print("CR: ");
+			if(users.get(WirelessChannel.CR) == null)
+				pw.print("null ");
+			else
+				pw.print(users.get(WirelessChannel.CR).getId()+" ");
+			pw.println();
+		}
         
         for(int i=0;i<averageSnr.size();i++){ //resets the avarageSnr list.
 			for(int j=0;j<averageSnr.get(i).size();j++)
@@ -236,8 +255,8 @@ public class CRNode extends Node{
 	 */
 	public void releaseCommunication_frequency()
 	{
-		if(!commOrNot)
-			return;
+//		if(!commOrNot)
+//			return;
 		SimulationRunner.wc.releaseFrequency(this.communication_frequency, this);
 		commOrNot = false;
 		communication_frequency = -1;
