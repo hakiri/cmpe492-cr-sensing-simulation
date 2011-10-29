@@ -146,7 +146,7 @@ public class CRBase extends Node{
     public void communicationScheduleAdvertiser(){
 		if(last_averageSnr.isEmpty())
 			return;
-		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
+		findFreeFrequencies();
 		
 		handoffCollidedUsersInZones();
 		
@@ -169,7 +169,7 @@ public class CRBase extends Node{
 		}
 		
 		//this for loop assigns a frequency at each loop
-		for(int i=0;i<totalNumberOfReadytoComm;i++){
+		for(;totalNumberOfReadytoComm > 0;totalNumberOfReadytoComm--){
 			int lowest=0;
 			
 			for(int j=0;j<free_frequencies.size();j++){
@@ -237,32 +237,20 @@ public class CRBase extends Node{
 		}
     }
     
-	private void handoffCollidedUsersInZones()
+	private void findFreeFrequencies()
 	{
-		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
-		int totalNumberOfCollided = 0;
-		//this loop finds the number of collided crnodes for each zone(and takes their comm_freq),
-		//also finds free frequencies for each zone.
-		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
+		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
+		for(int zoneNumber = 0 ; zoneNumber < registeredZones.size() ; zoneNumber++){
 			double max_dist = 0.0;
 			double temp,snr_from_base,threshold;
-			
 			int iStart, iEnd;
 			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
 			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
-			
-			collidedInZone.add(0);
 			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
 				temp = SimulationRunner.crNodes.get(crInZone).position.distance(this.position);
 				if(max_dist < temp)
 					max_dist = temp;
-				if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
-					SimulationRunner.crNodes.get(crInZone).releaseCommunication_frequency(); 
-					collidedInZone.set(zoneNumber, collidedInZone.get(zoneNumber) + 1);
-					totalNumberOfCollided ++;
-				}
 			}
-			
 			snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
 			//calculates threshold value
 			threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(snr_from_base - SimulationRunner.wc.sinrThreshold)-1);
@@ -278,9 +266,31 @@ public class CRBase extends Node{
 			}
 			Collections.sort(free_frequencies.get(zoneNumber));	 //ascending sorting of snr values
 		}
+	}
+	
+	private void handoffCollidedUsersInZones()
+	{
+		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
+		int totalNumberOfCollided = 0;
+		//this loop finds the number of collided crnodes for each zone(and releases their comm_freq),
+		//also finds free frequencies for each zone.
+		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
+			int iStart, iEnd;
+			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
+			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
+			
+			collidedInZone.add(0);
+			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+				if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
+					SimulationRunner.crNodes.get(crInZone).releaseCommunication_frequency(); 
+					collidedInZone.set(zoneNumber, collidedInZone.get(zoneNumber) + 1);
+					totalNumberOfCollided++;
+				}
+			}
+		}
 		
 		//this for loop assigns a frequency at each loop for the collided crnodes
-		for(int i=0;i<totalNumberOfCollided;i++){
+		for(;totalNumberOfCollided > 0;totalNumberOfCollided--){
 			int lowest=0;
 			
 			for(int j=0;j<free_frequencies.size();j++){
@@ -298,11 +308,10 @@ public class CRBase extends Node{
 			int iStart, iEnd;
 			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
 			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
-			for(int j=iStart;j<iEnd;j++){
-				if(SimulationRunner.crNodes.get(j).getIsCollided()){
-					SimulationRunner.crNodes.get(j).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
-					SimulationRunner.crNodes.get(j).setReadytoComm(false);
-					SimulationRunner.crNodes.get(j).setNumberOfForcedHandoff(SimulationRunner.crNodes.get(j).getNumberOfForcedHandoff() + 1);
+			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+				if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
+					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
+					SimulationRunner.crNodes.get(crInZone).setNumberOfForcedHandoff(SimulationRunner.crNodes.get(crInZone).getNumberOfForcedHandoff() + 1);
 					
 					collidedInZone.set(lowest, collidedInZone.get(lowest) - 1);
 					//updates free_frequencies
