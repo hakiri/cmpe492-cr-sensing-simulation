@@ -167,7 +167,8 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		n.incrementTotalCommunicationDuration(commDur/(double)WirelessChannel.unitTime);
 
 		try{
-			Thread.sleep(time);		//Wait for that amount
+			if(time > 1)
+				Thread.sleep(time);		//Wait for that amount
 		}
 		catch(InterruptedException ie){
 			Logger.getLogger(PrimaryTrafficGeneratorThread.class.getName()).log(Level.SEVERE, null, ie);
