@@ -341,18 +341,6 @@ public class CRBase extends Node{
 						if(SimulationRunner.crNodes.get(crInZone).getCommunication_frequency() == -1){
 							SimulationRunner.crNodes.get(crInZone).setNumberOfDrops(SimulationRunner.crNodes.get(crInZone).getNumberOfDrops() + 1);
 							
-							double msec = Scheduler.instance().getTime();
-							int hour = (int)(msec / 3600000.0);
-							msec -= (hour*3600000);
-							int min = (int)(msec / 60000.0);
-							msec -= (min*600000.0);
-							int sec = (int)(msec / 1000.0);
-							msec -= (sec*1000.0);
-
-							SimulationRunner.crNodes.get(crInZone).writer.print("Time "+hour+":"+min+":"+sec+"."+msec);
-							SimulationRunner.crNodes.get(crInZone).writer.print(" ID "+crInZone);
-							SimulationRunner.crNodes.get(crInZone).writer.println(" Dropped\n");
-							
 							CRNode.writeLogFile("Time: " + Scheduler.instance().getTime() + " -- number: " + crInZone + " is dropped");
 							
 							if(SimulationRunner.animationOnButton.isSelected()){

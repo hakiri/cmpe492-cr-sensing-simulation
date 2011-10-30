@@ -873,7 +873,7 @@ public class SimulationRunner extends JFrame{
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
-				textField.setText(String.valueOf(((id-2)/12)%3));
+				textField.setText(String.valueOf(((id-2)/4)%3));
 				zoneSectorNos.add(textField);
 
 				textField = new JTextField();
@@ -883,7 +883,7 @@ public class SimulationRunner extends JFrame{
 				textField.addKeyListener(keyAdapter);
 				if(id > 2)
 					textField.setEnabled(false);
-				textField.setText(String.valueOf(((id-2)/4)%3));
+				textField.setText(String.valueOf(((id-2)/12)%3));
 				zoneDNos.add(textField);
 
 				textField = new JTextField();
