@@ -618,6 +618,16 @@ public class SimulationRunner extends JFrame{
 			noZones.setToolTipText("Number of Zones to be simulated");
 			noZones.setBounds(itemPos, 170, 120, 23);
 			noZones.setText("4");
+			noZones.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					super.mouseClicked(e);
+					noZones.selectAll();
+				}
+				
+			});
+			
 			noZones.getDocument().addDocumentListener(new DocumentListener() {
 
 				public void insertUpdate(DocumentEvent e) {
