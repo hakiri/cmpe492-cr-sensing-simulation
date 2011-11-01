@@ -1,9 +1,6 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package SimulationRunner;
+package Nodes;
 
+import CommunicationEnvironment.WirelessChannel;
 import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -16,6 +13,8 @@ import java.util.Locale;
 import DES.Event;
 import DES.Scheduler;
 import DES.SimEnt;
+import SimulationRunner.ParetoDistribution;
+import SimulationRunner.SimulationRunner;
 import cern.jet.random.Exponential;
 
 public class CRNode extends Node{

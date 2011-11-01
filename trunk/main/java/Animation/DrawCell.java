@@ -1,6 +1,6 @@
 package Animation;
 
-import SimulationRunner.Node;
+import Nodes.Node;
 import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;

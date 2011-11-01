@@ -5,7 +5,7 @@ import DES.Event;
 import DES.Scheduler;
 import DES.Scheduler.EventHandle;
 import DES.SimEnt;
-import SimulationRunner.CRNode;
+import Nodes.CRNode;
 import SimulationRunner.SimulationRunner;
 import java.util.ArrayList;
 import java.util.Locale;

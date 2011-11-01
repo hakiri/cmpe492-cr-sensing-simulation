@@ -1,5 +1,9 @@
-package SimulationRunner;
+package CommunicationEnvironment;
 
+import Nodes.CRNode;
+import Nodes.Node;
+import Nodes.PrimaryTrafficGeneratorNode;
+import SimulationRunner.SimulationRunner;
 import cern.jet.random.Uniform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -46,11 +50,11 @@ public class WirelessChannel {
 	/**
 	 * Max SNR value of the channel
 	 */
-	double maxSNR;
+	public double maxSNR;
 	/**
 	 * Minimum SINR threshold to be able to communicate
 	 */
-	double sinrThreshold;
+	public double sinrThreshold;
 	/**
 	 * Uniform distribution to accomplish frequency assignments
 	 */

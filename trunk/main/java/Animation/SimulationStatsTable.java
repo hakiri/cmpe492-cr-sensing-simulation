@@ -1,8 +1,8 @@
 package Animation;
 
-import SimulationRunner.CRNode;
+import CommunicationEnvironment.WirelessChannel;
+import Nodes.CRNode;
 import SimulationRunner.SimulationRunner;
-import SimulationRunner.WirelessChannel;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

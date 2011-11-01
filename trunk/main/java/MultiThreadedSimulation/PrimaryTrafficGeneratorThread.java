@@ -1,10 +1,10 @@
 package MultiThreadedSimulation;
 
 import Animation.DrawCell;
+import CommunicationEnvironment.WirelessChannel;
+import Nodes.PrimaryTrafficGeneratorNode;
 import SimulationRunner.ParetoDistribution;
-import SimulationRunner.PrimaryTrafficGeneratorNode;
 import SimulationRunner.SimulationRunner;
-import SimulationRunner.WirelessChannel;
 import cern.jet.random.Exponential;
 import java.awt.Color;
 import java.util.logging.Level;

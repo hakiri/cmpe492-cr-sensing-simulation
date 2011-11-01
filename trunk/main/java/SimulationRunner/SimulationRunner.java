@@ -2,11 +2,16 @@ package SimulationRunner;
 
 import Animation.DrawCell;
 import Animation.Plot;
+import CommunicationEnvironment.Cell;
+import CommunicationEnvironment.WirelessChannel;
 import DES.Scheduler;
 import DESSimulation.CRDESScheduler;
 import DESSimulation.DESPrimaryTrafficGenerator;
 import MultiThreadedSimulation.PrimaryTrafficGenerator;
 import MultiThreadedSimulation.CRSensorThread;
+import Nodes.CRBase;
+import Nodes.CRNode;
+import Nodes.PrimaryTrafficGeneratorNode;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 import java.awt.BorderLayout;
@@ -115,6 +120,7 @@ public class SimulationRunner extends JFrame{
 	 */
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				runner = new SimulationRunner();
 				runner.setLocationRelativeTo(null);
@@ -630,6 +636,7 @@ public class SimulationRunner extends JFrame{
 			
 			noZones.getDocument().addDocumentListener(new DocumentListener() {
 
+				@Override
 				public void insertUpdate(DocumentEvent e) {
 					if(noZones.getText().isEmpty())
 						return;
@@ -662,6 +669,7 @@ public class SimulationRunner extends JFrame{
 					}
 				}
 
+				@Override
 				public void removeUpdate(DocumentEvent e) {
 					if(noZones.getText().isEmpty())
 						return;
@@ -694,6 +702,7 @@ public class SimulationRunner extends JFrame{
 					}
 				}
 
+				@Override
 				public void changedUpdate(DocumentEvent e) {}
 			});
 			noZones.addKeyListener(keyAdapter);

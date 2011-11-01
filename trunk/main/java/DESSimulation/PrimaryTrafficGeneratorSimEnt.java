@@ -1,12 +1,12 @@
 package DESSimulation;
 
+import CommunicationEnvironment.WirelessChannel;
 import DES.Event;
 import DES.Scheduler.EventHandle;
 import DES.SimEnt;
+import Nodes.PrimaryTrafficGeneratorNode;
 import SimulationRunner.ParetoDistribution;
-import SimulationRunner.PrimaryTrafficGeneratorNode;
 import SimulationRunner.SimulationRunner;
-import SimulationRunner.WirelessChannel;
 import cern.jet.random.Exponential;
 
 /**

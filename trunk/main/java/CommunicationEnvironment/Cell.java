@@ -1,5 +1,8 @@
-package SimulationRunner;
+package CommunicationEnvironment;
 
+import Nodes.CRBase;
+import Nodes.Node;
+import SimulationRunner.SimulationRunner;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import cern.jet.random.Uniform;
@@ -32,7 +35,7 @@ public class Cell {
      * the same sector and have the same angle interval with the baseStation.
      * Distances must be in the ascending order.
      */
-    static ArrayList<Double> set_of_d;
+    public static ArrayList<Double> set_of_d;
     
     /**
      * Constructor of the Cell
@@ -126,15 +129,16 @@ public class Cell {
 	 */
 	public static Point2D.Double deployNodeInRouteCircle(Node node, double routeRadius)
 	{
-		Point2D.Double n = deployNode(0, 360, 0, routeRadius);
-		n.x += node.getPosition().x;
-		n.y += node.getPosition().y;
+		int i = 0;
+		Point2D.Double n;
+		do{
+			n = deployNode(0, 360, 0, routeRadius);
+			n.x += node.getPosition().x;
+			n.y += node.getPosition().y;
+			i++;
+		}while(n.distance(baseStation.getPosition()) > radius && i<2);
 		if(n.distance(baseStation.getPosition()) > radius){
-			double lambda = Math.acos(n.x / n.distance(baseStation.getPosition()));
-			if(n.y < 0)
-				lambda = 2*Math.PI - lambda;
-			n.x = radius * Math.cos(lambda);
-			n.y = radius * Math.sin(lambda);
+			n = deployNodeinCell();
 		}
 		return n;
 	}
