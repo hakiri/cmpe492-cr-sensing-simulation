@@ -7,6 +7,7 @@ import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Locale;
 
 public class CRBase extends Node{
     /**
@@ -341,7 +342,15 @@ public class CRBase extends Node{
 						if(SimulationRunner.crNodes.get(crInZone).getCommunication_frequency() == -1){
 							SimulationRunner.crNodes.get(crInZone).setNumberOfDrops(SimulationRunner.crNodes.get(crInZone).getNumberOfDrops() + 1);
 							
-							CRNode.writeLogFile("Time: " + Scheduler.instance().getTime() + " -- number: " + crInZone + " is dropped");
+							double msec = Scheduler.instance().getTime();
+							int hour = (int)(msec/3600000.0);
+							msec -= hour*3600000.0;
+							int min = (int)(msec/60000.0);
+							msec -= min*60000.0;
+							int sec = (int)(msec/1000.0);
+							msec-= sec*1000.0;
+							
+							CRNode.writeLogFile("Time: " + String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec) + " -- number: " + crInZone + " is dropped");
 							
 							if(SimulationRunner.animationOnButton.isSelected()){
 								SimulationRunner.crSensor.setInactiveDuration(crInZone, true);

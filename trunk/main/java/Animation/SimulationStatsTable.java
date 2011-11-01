@@ -1,7 +1,5 @@
 package Animation;
 
-import DESSimulation.DESPrimaryTrafficGenerator;
-import MultiThreadedSimulation.PrimaryTrafficGenerator;
 import SimulationRunner.CRNode;
 import SimulationRunner.SimulationRunner;
 import SimulationRunner.WirelessChannel;
@@ -101,20 +99,20 @@ public class SimulationStatsTable extends JFrame{
 	
 	private void setStatNames()
 	{
-		crStatNames = new String[7];
+		crStatNames = new String[8];
 		crStatNames[0] = "CR Node";
-		crStatNames[1] = "# of Comm";
-		crStatNames[2] = "# of Coll";
-		crStatNames[3] = "# of Comm w/o Coll";
-		crStatNames[4] = "% of Coll Comm";
-		crStatNames[5] = "% of Frames Comm";
-		crStatNames[6] = "% of Frames Comm w/o Coll";
+		crStatNames[1] = "# of Call Attempts";
+		crStatNames[2] = "# of Calls";
+		crStatNames[3] = "# of Frames Comm";
+		crStatNames[4] = "# of Blocks";
+		crStatNames[5] = "# of Drops";
+		crStatNames[6] = "# of Forced Handoff";
+		crStatNames[7] = "# of Collision";
 		
-		priStatNames = new String[4];
+		priStatNames = new String[3];
 		priStatNames[0] = "Primary Node";
-		priStatNames[1] = "# of Call Attempts";
-		priStatNames[2] = "# of Drops";
-		priStatNames[3] = "Comm Dur";
+		priStatNames[1] = "# of Calls";
+		priStatNames[2] = "Comm Dur";
 	}
 	
 	private void createCrTable()
@@ -139,13 +137,15 @@ public class SimulationStatsTable extends JFrame{
 		for(int i=0;i<crStatNames.length;i++){
 			crStatTable.getColumn(crStatNames[i]).setMinWidth(1);
 		}
-		crStatTable.getColumn("CR Node").setPreferredWidth(60);
-		crStatTable.getColumn("# of Comm").setPreferredWidth(70);
-		crStatTable.getColumn("# of Coll").setPreferredWidth(70);
-		crStatTable.getColumn("# of Comm w/o Coll").setPreferredWidth(130);
-		crStatTable.getColumn("% of Coll Comm").setPreferredWidth(100);
-		crStatTable.getColumn("% of Frames Comm").setPreferredWidth(120);
-		crStatTable.getColumn("% of Frames Comm w/o Coll").setPreferredWidth(170);
+		crStatTable.getColumn("CR Node").setPreferredWidth(50);
+		crStatTable.getColumn("# of Call Attempts").setPreferredWidth(60);
+		crStatTable.getColumn("# of Calls").setPreferredWidth(60);
+		crStatTable.getColumn("# of Frames Comm").setPreferredWidth(60);
+		crStatTable.getColumn("# of Blocks").setPreferredWidth(60);
+		crStatTable.getColumn("# of Drops").setPreferredWidth(60);
+		crStatTable.getColumn("# of Forced Handoff").setPreferredWidth(60);
+		crStatTable.getColumn("# of Collision").setPreferredWidth(60);
+		
 	}
 	
 	private void createPriTable()
@@ -154,7 +154,17 @@ public class SimulationStatsTable extends JFrame{
 		jPanel.add(priLabel);
 		priLabel.setBounds(740, 10, 250, 16);
 		
-		double primaryCommDur = Double.parseDouble(priStats[priStats.length-1][priStatNames.length-1]);
+		double primaryCommDur = Double.parseDouble(priStats[priStats.length-2][priStatNames.length-1]);
+		
+		double msec = primaryCommDur;
+		int hour = (int)(msec/3600000.0);
+		msec -= hour*3600000.0;
+		int min = (int)(msec/60000.0);
+		msec -= min*60000.0;
+		int sec = (int)(msec/1000.0);
+		msec-= sec*1000.0;
+		priStats[priStats.length - 2][priStatNames.length - 1] = String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec);
+		
 		int numberOfFreq = SimulationRunner.wc.numberOfFreq();
 		double simDur = 0;
 		if(SimulationRunner.animationOnButton.isSelected()){
@@ -181,9 +191,8 @@ public class SimulationStatsTable extends JFrame{
 			priStatTable.getColumn(priStatNames[i]).setMinWidth(1);
 		}
 		priStatTable.getColumn("Primary Node").setPreferredWidth(100);
-		priStatTable.getColumn("# of Call Attempts").setPreferredWidth(120);
-		priStatTable.getColumn("# of Drops").setPreferredWidth(70);
-		priStatTable.getColumn("Comm Dur").setPreferredWidth(70);
+		priStatTable.getColumn("# of Calls").setPreferredWidth(120);
+		priStatTable.getColumn("Comm Dur").setPreferredWidth(140);
 	}
 
 	private void createButtons(int length)

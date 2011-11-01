@@ -16,9 +16,7 @@ import java.util.Locale;
 import DES.Event;
 import DES.Scheduler;
 import DES.SimEnt;
-import DESSimulation.DESPrimaryTrafficGenerator;
 import cern.jet.random.Exponential;
-import java.io.FileNotFoundException;
 
 public class CRNode extends Node{
     
@@ -45,9 +43,9 @@ public class CRNode extends Node{
      */
     private ArrayList<Integer> freq_list_to_listen;
     /**
-     * Total number of communications done by crnode in the entire simulation time.
+     * Total number of frames communicated by crnode in the entire simulation time.
      */
-    private int numberOfCommunications = 0;
+    private int numberOfFramesCommunicated = 0;
     /**
      * Total number of collisions between this crnode and primary traffic 
      * generators during the simulation time.
@@ -84,6 +82,7 @@ public class CRNode extends Node{
     
 	private int numberOfDrops = 0;
 	private int numberOfForcedHandoff = 0;
+	private int numberOfCallAttempts = 0;
 	/**
 	 * True if the crnode has collided in the previous frame
 	 */
@@ -276,9 +275,18 @@ public class CRNode extends Node{
 				collision = "collision occured";
 				SimulationRunner.crNodes.get(i).collisionOccured = true;
 			}
-			writeLogFile(String.format(Locale.US,"Time: %.2f", (double)(time)) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
+			
+			double msec = (double)time;
+			int hour = (int)(msec/3600000.0);
+			msec -= hour*3600000.0;
+			int min = (int)(msec/60000.0);
+			msec -= min*60000.0;
+			int sec = (int)(msec/1000.0);
+			msec-= sec*1000.0;
+			
+			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
 			if(lastReport){
-				SimulationRunner.crNodes.get(i).numberOfCommunications++;
+				SimulationRunner.crNodes.get(i).numberOfFramesCommunicated++;
 				if(SimulationRunner.crNodes.get(i).collisionOccured){
 					SimulationRunner.crNodes.get(i).numberOfCollision++;
 					SimulationRunner.crNodes.get(i).isCollided = true;
@@ -313,39 +321,56 @@ public class CRNode extends Node{
     public static String[][] logStats(){
             writeLogFile("-----CR NODE STATS-----");
             writeLogFile(String.format(Locale.US,"Total Number of frames: %d", totalNumberOfFrames));
-            double totalNumberOfComm = 0.0, totalNumberOfCollision = 0.0;
-            String[][] data = new String[SimulationRunner.crNodes.size()+1][7];
+            double totalNumberOfFramesComm = 0.0, totalNumberOfCollision = 0.0, totalNumberOfCallAttempts = 0.0;
+			double totalNumberOfCalls = 0.0, totalNumberOfBlocks = 0.0, totalNumberOfDrops = 0.0, totalNumberOfForcedHandoffs = 0.0;
+            String[][] data = new String[SimulationRunner.crNodes.size()+1][8];
             int i = 0;
             for(; i<SimulationRunner.crNodes.size();i++){
                     CRNode c = SimulationRunner.crNodes.get(i);
-                    writeLogFile(String.format(Locale.US,"CR Node: %d\t\tNumber of Communications: %d\t\tNumber of Collisions: %2d\t\tNumber of Communication w/o Collision: %d\t\tPercentage of Collided Communications: %.2f",
-                            c.id, c.numberOfCommunications, c.numberOfCollision, c.numberOfCommunications - c.numberOfCollision, (c.numberOfCollision*100.0)/(double)c.numberOfCommunications));
-                    totalNumberOfComm += c.numberOfCommunications;
+                    writeLogFile(String.format(Locale.US,"CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d",
+                            c.id, c.numberOfCallAttempts, c.numberOfCallAttempts - c.numberOfBlocks, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision));
+                    totalNumberOfFramesComm += c.numberOfFramesCommunicated;
                     totalNumberOfCollision += c.numberOfCollision;
+					totalNumberOfCallAttempts += c.numberOfCallAttempts;
+					totalNumberOfCalls += (c.numberOfCallAttempts - c.numberOfBlocks);
+					totalNumberOfBlocks += c.numberOfBlocks;
+					totalNumberOfDrops += c.numberOfDrops;
+					totalNumberOfForcedHandoffs += c.numberOfForcedHandoff;
 
                     data[i][0] = String.valueOf(c.id);
-                    data[i][1] = String.valueOf(c.numberOfCommunications);
-                    data[i][2] = String.valueOf(c.numberOfCollision);
-                    data[i][3] = String.valueOf(c.numberOfCommunications - c.numberOfCollision);
-                    data[i][4] = String.format(Locale.US,"%.2f", (c.numberOfCollision*100.0)/(double)c.numberOfCommunications);
-                    data[i][5] = String.format(Locale.US,"%.2f", (c.numberOfCommunications*100.0)/(double)totalNumberOfFrames);
-                    data[i][6] = String.format(Locale.US,"%.2f", ((c.numberOfCommunications - c.numberOfCollision)*100.0)/(double)totalNumberOfFrames);
+                    data[i][1] = String.valueOf(c.numberOfCallAttempts);
+                    data[i][2] = String.valueOf(c.numberOfCallAttempts - c.numberOfBlocks);
+                    data[i][3] = String.valueOf(c.numberOfFramesCommunicated);
+                    data[i][4] = String.valueOf(c.numberOfBlocks);
+                    data[i][5] = String.valueOf(c.numberOfDrops);
+                    data[i][6] = String.valueOf(c.numberOfForcedHandoff);
+					data[i][7] = String.valueOf(c.numberOfCollision);
             }
-            totalNumberOfComm /= SimulationRunner.crNodes.size();
-            totalNumberOfCollision /= SimulationRunner.crNodes.size();
-            writeLogFile(String.format(Locale.US,"\nAverage:\nNumber of CR Nodes\t\t\t\t\t\t\t\t: %d\nNumber of Communications\t\t\t\t\t\t: %.2f\nNumber of Collisions\t\t\t\t\t\t\t: %.2f\nNumber of Communication w/o Collision\t\t\t: %.2f\nPercentage of Collided Communications\t\t\t: %.2f\nPercentage of Frames Communicated\t\t\t\t: %.2f\nPercentage of Frames Communicated w/o Collision\t: %.2f",
-                            SimulationRunner.crNodes.size(), totalNumberOfComm, totalNumberOfCollision,
-                            totalNumberOfComm - totalNumberOfCollision, (totalNumberOfCollision*100.0)/totalNumberOfComm,
-                            (totalNumberOfComm*100.0)/(double)totalNumberOfFrames,
-                            ((totalNumberOfComm - totalNumberOfCollision)*100.0)/(double)totalNumberOfFrames));
+			totalNumberOfFramesComm /= SimulationRunner.crNodes.size();
+			totalNumberOfCollision /= SimulationRunner.crNodes.size();
+			totalNumberOfCallAttempts /= SimulationRunner.crNodes.size();
+			totalNumberOfCalls /= SimulationRunner.crNodes.size();
+			totalNumberOfBlocks /= SimulationRunner.crNodes.size();
+			totalNumberOfDrops /= SimulationRunner.crNodes.size();
+			totalNumberOfForcedHandoffs /= SimulationRunner.crNodes.size();
+			writeLogFile("\nAverage:");
+			writeLogFile(String.format(Locale.US,"Number of CR Nodes\t\t\t\t: %d", SimulationRunner.crNodes.size()));
+			writeLogFile(String.format(Locale.US,"Number of Call Attempts\t\t\t: %.2f", totalNumberOfCallAttempts));
+			writeLogFile(String.format(Locale.US,"Number of Calls\t\t\t\t\t: %.2f", totalNumberOfCalls));
+			writeLogFile(String.format(Locale.US,"Number of Frames Communicated\t: %.2f", totalNumberOfFramesComm));
+			writeLogFile(String.format(Locale.US,"Number of Blocks\t\t\t\t: %.2f", totalNumberOfBlocks));
+			writeLogFile(String.format(Locale.US,"Number of Drops\t\t\t\t\t: %.2f", totalNumberOfDrops));
+			writeLogFile(String.format(Locale.US,"Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
+			writeLogFile(String.format(Locale.US,"Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
 
             data[i][0] = "Average";
-            data[i][1] = String.format(Locale.US,"%.2f", totalNumberOfComm);
-            data[i][2] = String.format(Locale.US,"%.2f", totalNumberOfCollision);
-            data[i][3] = String.format(Locale.US,"%.2f", totalNumberOfComm - totalNumberOfCollision);
-            data[i][4] = String.format(Locale.US,"%.2f", (totalNumberOfCollision*100.0)/(double)totalNumberOfComm);
-            data[i][5] = String.format(Locale.US,"%.2f", (totalNumberOfComm*100.0)/(double)totalNumberOfFrames);
-            data[i][6] = String.format(Locale.US,"%.2f", ((totalNumberOfComm - totalNumberOfCollision)*100.0)/(double)totalNumberOfFrames);
+            data[i][1] = String.format(Locale.US,"%.2f", totalNumberOfCallAttempts);
+            data[i][2] = String.format(Locale.US,"%.2f", totalNumberOfCalls);
+            data[i][3] = String.format(Locale.US,"%.2f", totalNumberOfFramesComm);
+            data[i][4] = String.format(Locale.US,"%.2f", totalNumberOfBlocks);
+            data[i][5] = String.format(Locale.US,"%.2f", totalNumberOfDrops);
+            data[i][6] = String.format(Locale.US,"%.2f", totalNumberOfForcedHandoffs);
+			data[i][7] = String.format(Locale.US,"%.2f", totalNumberOfCollision);
             return data;
     }
     
@@ -427,6 +452,9 @@ public class CRNode extends Node{
     }
 
 	public void setReadytoComm(boolean readytoComm) {
+		if(readytoComm){
+			numberOfCallAttempts++;
+		}
 		this.readytoComm = readytoComm;
 	}
     
