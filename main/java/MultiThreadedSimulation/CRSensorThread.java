@@ -2,7 +2,7 @@ package MultiThreadedSimulation;
 
 import Animation.DrawCell;
 import Animation.SimulationStatsTable;
-import SimulationRunner.CRNode;
+import Nodes.CRNode;
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.util.ArrayList;

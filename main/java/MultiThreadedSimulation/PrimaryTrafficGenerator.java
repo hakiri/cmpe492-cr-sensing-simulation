@@ -1,15 +1,10 @@
 
 package MultiThreadedSimulation;
 
-import SimulationRunner.CRNode;
-import SimulationRunner.Node;
-import SimulationRunner.PrimaryTrafficGeneratorNode;
+import Nodes.Node;
+import Nodes.PrimaryTrafficGeneratorNode;
 import SimulationRunner.SimulationRunner;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.concurrent.Semaphore;
 
 /**

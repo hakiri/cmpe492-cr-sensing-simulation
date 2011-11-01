@@ -1,7 +1,10 @@
-package SimulationRunner;
+package Nodes;
 
 import Animation.DrawCell;
+import CommunicationEnvironment.Cell;
+import CommunicationEnvironment.WirelessChannel;
 import DES.Scheduler;
+import SimulationRunner.SimulationRunner;
 import cern.jet.random.Uniform;
 import java.awt.Color;
 import java.awt.geom.Point2D;

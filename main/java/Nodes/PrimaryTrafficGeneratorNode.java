@@ -1,5 +1,8 @@
-package SimulationRunner;
+package Nodes;
 
+import CommunicationEnvironment.Cell;
+import CommunicationEnvironment.WirelessChannel;
+import SimulationRunner.SimulationRunner;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
