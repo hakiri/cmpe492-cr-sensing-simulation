@@ -55,42 +55,6 @@ public class DESPrimaryTrafficGenerator{
 	 */
 	public String[][] logStats()
 	{
-		int totalCallAttempts = 0, totalDrops = 0;
-		double totalCommDur = 0;
-		CRNode.writeLogFile("\n-----PRIMARY NODE STATS-----");
-		
-		ArrayList<PrimaryTrafficGeneratorNode> list = new ArrayList<PrimaryTrafficGeneratorNode>(registeredNodes.keySet());
-		String[][] data = new String[list.size()+1][4];
-		Collections.sort(list,new Comparator<PrimaryTrafficGeneratorNode>(){
-
-			@Override
-			public int compare(PrimaryTrafficGeneratorNode o1, PrimaryTrafficGeneratorNode o2) {
-				return o1.getId() - o2.getId();
-			}
-			
-		});
-		
-		int i = 0;
-		for (PrimaryTrafficGeneratorNode n : list) {
-			CRNode.writeLogFile(String.format(Locale.US,"Primary Node: %2d\tNumber of Call Attempts: %d\t\tNumber of Drops: %2d\t\tCommunication Duration: %.2f",
-				n.getId(), n.getNumberOfCallAttempts(), n.getNumberOfDrops(), n.getComunicationDuration()));
-			totalCallAttempts += n.getNumberOfCallAttempts();
-			totalCommDur += n.getComunicationDuration();
-			totalDrops += n.getNumberOfDrops();
-			
-			data[i][0] = String.valueOf(n.getId());
-			data[i][1] = String.valueOf(n.getNumberOfCallAttempts());
-			data[i][2] = String.valueOf(n.getNumberOfDrops());
-			data[i][3] = String.format(Locale.US,"%.2f", n.getComunicationDuration());
-			i++;
-		}
-		CRNode.writeLogFile(String.format(Locale.US,"TOTAL\t\t\t\tNumber of Call Attempts: %d\t\tNumber of Drops: %2d\t\tCommunication Duration: %.2f",
-				totalCallAttempts, totalDrops, totalCommDur));
-		
-		data[i][0] = "Total";
-		data[i][1] = String.valueOf(totalCallAttempts);
-		data[i][2] = String.valueOf(totalDrops);
-		data[i][3] = String.format(Locale.US,"%.2f", totalCommDur);
-		return data;
+		return PrimaryTrafficGeneratorNode.logStats(registeredNodes);
 	}
 }

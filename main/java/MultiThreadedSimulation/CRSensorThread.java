@@ -237,7 +237,14 @@ public class CRSensorThread implements Runnable{
 	{
 		time = System.currentTimeMillis();		//Save current time
 		/*Write time to log file*/
-		CRNode.writeLogFile(String.format(Locale.US,"Time: %.2f", (double)(totalSimulationDuration-remainingSimulationDuration)/unitTime));
+		double msec = (double)(totalSimulationDuration-remainingSimulationDuration)/unitTime;
+		int hour = (int)(msec/3600000.0);
+		msec -= hour*3600000.0;
+		int min = (int)(msec/60000.0);
+		msec -= min*60000.0;
+		int sec = (int)(msec/1000.0);
+		msec-= sec*1000.0;
+		CRNode.writeLogFile(String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec));
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){
 			SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
 		}
