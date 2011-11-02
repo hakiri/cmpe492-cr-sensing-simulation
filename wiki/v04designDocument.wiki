@@ -13,10 +13,10 @@
 	The project consists of 19 classes which are grouped into 6 packages. Details of these packages and classes are explained in the following sections.
 === 2.1. Simulation Runner Package ===
 
-This package consists of Simulation Runner class which is the main class in our simulation, and Pareto Distribution class. The forthcoming distributions for the simulation will be implemented in this package.
+        This package consists of Simulation Runner class which is the main class in our simulation, and Pareto Distribution class. The forthcoming distributions for the simulation will be implemented in this package.
 ==== 2.1.1. Simulation Runner ====
 
-The main class of the project is Simulation Runner class. This class initializes the GUI components of the project. Then it parses the input provided by the user. It initiates objects of Cell, Wireless Channel, CR Base, Draw Cell, and Plot classes according to that input. If the animation button is selected then, it starts Cr sensor threads and primary traffic generator threads. Otherwise, it starts CrDes Schedular and priTrafGenDes. If the animation off button is selected, simulation is done in a way of discrete simulation event. In each case, Cr nodes will produce Poisson traffic. 
+        The main class of the project is Simulation Runner class. This class initializes the GUI components of the project. Then it parses the input provided by the user. It initiates objects of Cell, Wireless Channel, CR Base, Draw Cell, and Plot classes according to that input. If the animation button is selected then, it starts Cr sensor threads and primary traffic generator threads. Otherwise, it starts CrDes Schedular and priTrafGenDes. If the animation off button is selected, simulation is done in a way of discrete simulation event. In each case, Cr nodes will produce Poisson traffic. 
 ==== 2.1.2. Pareto Distribution ==== 
 
 	This class concerns with pareto distribution. However, pareto distribution is not usable in the simulation system, for now. 
@@ -25,10 +25,10 @@ The main class of the project is Simulation Runner class. This class initializes
 	This package has classes which are concerning with primary users, the actual owners of the system, which generate traffic in the wireless channel and cognitive radio users which try to find an available frequency to talk by sensing the channel within assigned time interval, and they sense only assigned frequencies to them. Also, this package includes the Cr Base, base station of the cell, class which is also a node.
 ==== 2.2.1. Node ==== 
 
-This class is an abstract class that has all common fields of all node classes. It has velocity, position and id fields for nodes, and it has all the get and set functions about these fields.
+        This class is an abstract class that has all common fields of all node classes. It has velocity, position and id fields for nodes, and it has all the get and set functions about these fields.
 ==== 2.2.2. CR Node ==== 
 
-This class is an extends Node class. It has a “sense” method which simply updates the snr value of a given frequency and helps to compute average snr of that frequency by adding the new snr value to the old record and updates the old record with new one. While updating the snr value of a frequency, it uses the generateSNR method of the Wireless Channel class by sending the crnode(itself) and the frequency to that method. It has logSnrValues, logAverageSnr and some other methods to save some snr informations into our log file.
+        This class is an extends Node class. It has a “sense” method which simply updates the snr value of a given frequency and helps to compute average snr of that frequency by adding the new snr value to the old record and updates the old record with new one. While updating the snr value of a frequency, it uses the generateSNR method of the Wireless Channel class by sending the crnode(itself) and the frequency to that method. It has logSnrValues, logAverageSnr and some other methods to save some snr informations into our log file.
 There is another important method in this class, communicate, which checks if there is a collision or not and writes the conclusion to log file in both cases. This method computes sinr values of frequencies and compares them with sinrThreshold value in wireless channel class and then makes a decision about collisions.
 There are also nextOnDuration/nextOffDuration functions which simply returns the next on/off duration in terms of number of frames according to the traffic model for Multithreaded Simulation. Similarly, it has nextOnDurationDES/ nextOffDurationDES functions which do the same job with the above functions but these are for the discrete event simulation.
 ==== 2.2.3. Primary Traffic Generator Node ==== 
@@ -36,11 +36,11 @@ There are also nextOnDuration/nextOffDuration functions which simply returns the
 	This class is also an extended class of Node class. There is a method, called setRandomPosition, which simply calls deployNodeinCell method of Cell class and then returns a random position in the Cell.
 ==== 2.2.4. CR Base ==== 
 
-This class includes the fields and functions of the base station in the cell. There is a method called deploy_freq in this class which returns frequency list which consists of frequency per crnode number of consecutive frequencies. Also, there is a method named assignFrequencies which assigns new frequencies to crnodes by using deploy_freq and setFrequencyList of CR Node class and it updates the frequency_list which basically keeps the number of listeners(crnodes) for each frequency. 
-There is another method called communicationScheduleAdvertiser. 
-•	Firstly, this method calls findFreeFrequencies method which computes snr value of the base station by computing the max distance between cr nodes and cr base for each zone, after that it computes the threshold value for collision decisions by using magTodb and dbTomag methods of Wireless Channel class. By using threshold value, it finds all available frequencies and adds them to free_freq list , again, for each zone. 
-•	Secondly, it calls handoffCollidedUsersInZones method to make forced handoffs for crnodes which are collided in the previous frame. It releases all of collided crnodes’ communication frequencies to avoid further collisions with the primary nodes which are also use the same frequency to communicate. Then, it tries to find new free frequencies for the collided crnodes and updates numberOfDrops or numberOfForcedHandoff for cr nodes with respect to the result.
-•	Lastly, it finds all of the cr nodes(separate for each zone) which want to communicate and tries to find them available frequencies. It updates numberOfDrops for cr nodes.
+         This class includes the fields and functions of the base station in the cell. There is a method called deploy_freq in this class which returns frequency list which consists of frequency per crnode number of consecutive frequencies. Also, there is a method named assignFrequencies which assigns new frequencies to crnodes by using deploy_freq and setFrequencyList of CR Node class and it updates the frequency_list which basically keeps the number of listeners(crnodes) for each frequency. 
+     There is another method called communicationScheduleAdvertiser. 
+ * Firstly, this method calls findFreeFrequencies method which computes snr value of the base station by computing the max distance between cr nodes and cr base for each zone, after that it computes the threshold value for collision decisions by using magTodb and dbTomag methods of Wireless Channel class. By using threshold value, it finds all available frequencies and adds them to free_freq list , again, for each zone. 
+ * Secondly, it calls handoffCollidedUsersInZones method to make forced handoffs for crnodes which are collided in the previous frame. It releases all of collided crnodes’ communication frequencies to avoid further collisions with the primary nodes which are also use the same frequency to communicate. Then, it tries to find new free frequencies for the collided crnodes and updates numberOfDrops or numberOfForcedHandoff for cr nodes with respect to the result.
+ * Lastly, it finds all of the cr nodes(separate for each zone) which want to communicate and tries to find them available frequencies. It updates numberOfDrops for cr nodes.
 Note: This method, firstly, finds free frequencies for the collided cr nodes and then, finds frequencies for the cr nodes which are just wanted to talk.
 === 2.3. Multi Threaded Simulation Package === 
 
@@ -49,36 +49,41 @@ Note: This method, firstly, finds free frequencies for the collided cr nodes and
 ==== 2.3.1. CR Sensor Thread ==== 
 
 	This class handles the frame structure of the CR nodes. The main assumption about this class is all CR nodes are synchronized. It uses CR Base to advertise sensing and communication schedules and uses CR Nodes registered to channel to sense the frequencies, advertise sensing results, and communicate. The main frame structure the class provides is as follows:
- 
+
+[http://cmpe492-cr-sensing-simulation.googlecode.com/files/Frame.jpg]
+
 ==== 2.3.2. Primary Traffic Generator ==== 
 
 	This class provides necessary probability distribution classes and semaphores for primary traffic generation by many threads. That is, Primary Traffic Generation Thread objects uses fields of this class for traffic generation and necessary critical section processes. Also initiations of these objects are accomplished by registering Primary Traffic Generation Node objects to an instance of this class. This class also provides an interface to terminate all working Primary Traffic Generation Threads.
 ==== 2.3.3. Primary Traffic Generator Thread ==== 
 
-This class produces a specified traffic model for an individual Primary Traffic Generation Node. For now they can only produce Poisson traffic. All of the threads uses the same random number generator by doing so the overall inter arrival time and call duration of primary users follows exponential distributions. Object of this class simply generates a random number inter arrival time, sleeps for that amount, selects a random free frequency, occupy it, generates a random call duration, sleeps for that amount, and so on.
+       This class produces a specified traffic model for an individual Primary Traffic Generation Node. For now they can only produce Poisson traffic. All of the threads uses the same random number generator by doing so the overall inter arrival time and call duration of primary users follows exponential distributions. Object of this class simply generates a random number inter arrival time, sleeps for that amount, selects a random free frequency, occupy it, generates a random call duration, sleeps for that amount, and so on.
 
 === 2.4. Discrete Event Simulation Package === 
 
-These classes are responsible for primary traffic generation and monitoring its effects on the CR nodes when the animationOffButton is selected. While the primary users produce a specified traffic, CR nodes sense the channels and communicate by using available channels.
+      These classes are responsible for primary traffic generation and monitoring its effects on the CR nodes when the animationOffButton is selected. While the primary users produce a specified traffic, CR nodes sense the channels and communicate by using available channels.
 ==== 2.4.1. CR DES Scheduler ==== 
 
-This class handles the frame structure of the CR nodes. Whenever there come an event in the frame structure it does the necessary work and at the end of each part in the frame structure, it calls the next event according to the frame structure.
+       This class handles the frame structure of the CR nodes. Whenever there come an event in the frame structure it does the necessary work and at the end of each part in the frame structure, it calls the next event according to the frame structure.
+
+[http://cmpe492-cr-sensing-simulation.googlecode.com/files/Frame.jpg]
                 
 ==== 2.4.2. DES Primary Traffic Generator ==== 
 
-This class holds primary traffic generation model and registered primary nodes.It also logs and prepares the statistics of the simulation related to primary nodes.
+      This class holds primary traffic generation model and registered primary nodes.It also logs and prepares the statistics of the simulation related to primary nodes.
 ==== 2.4.3. Primary Traffic Generator SimEnt ==== 
 
 	This class handles events related to one primary node's traffic generation. Whenever a primary user starts to talks, it finds the communication duration and sends a communication end event when this time passes. Likewise, if a primary node is stopped talking, it finds next communication time and sends a communication start event  when this time passes. 
 === 2.5. Communication Environment Package === 
 
-This package includes two classes which are basically constructing the communication environment.
+       This package includes two classes which are basically constructing the communication environment.
 
 ==== 2.5.1. Cell ==== 
 
-The basic structure of the cell is as follows:
- 
-In this class, there is a deployNode function which simply takes two angles and two distance values and returns a random position in Cell with respect to these values. Returned position’s angle with cr base should be between the given angles and the same rule is valid for the distance parameter. There are three other methods; deployNodeinCell, deployNodeinZone, deployNodeInRouteCircle in this class which use the deployNode method to assign a new position for nodes with their specific parameters.
+     The basic structure of the cell is as follows:
+
+<img src="http://cmpe492-cr-sensing-simulation.googlecode.com/files/Cell%20Structurev2.JPG" alt="Cell Structure" width="451" height="449" /> 
+     In this class, there is a deployNode function which simply takes two angles and two distance values and returns a random position in Cell with respect to these values. Returned position’s angle with cr base should be between the given angles and the same rule is valid for the distance parameter. There are three other methods; deployNodeinCell, deployNodeinZone, deployNodeInRouteCircle in this class which use the deployNode method to assign a new position for nodes with their specific parameters.
 ==== 2.5.2. Wireless Channel ==== 
 
 This class provides available channels to both primary and secondary users. It keeps the information about which frequency is occupied by which node. It calculates SNR value for a CR node for a specified frequency according to whether the frequency is occupied by a primary user or not. It also calculates SINR value between two given CR nodes (one these nodes can CR base station) for a given frequency.
