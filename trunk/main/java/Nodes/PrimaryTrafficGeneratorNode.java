@@ -38,7 +38,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
     }
 	
 	/**
-	 * Finds a free frequnecy and occupies it. This method is synchronized. That
+	 * Finds a free frequency and occupies it. This method is synchronized. That
 	 * is only one thread at a time can run it
 	 * @param	offDuration Previous off duration
 	 * @return ID of the occupied frequency
@@ -48,7 +48,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
 		numberOfCallAttempts++;
 		communicationFreq = SimulationRunner.wc.freeFrequency();    //Find a free frequency
 		if(communicationFreq==WirelessChannel.NOFREEFREQ){			//If there is no available frequency
-			numberOfDrops++;
+			numberOfDrops++;	//TODO bunun numberofBlocks olmasi gerekmez mi
 			return communicationFreq;								//Return immediately
 		}
 		setRandomPosition(offDuration);

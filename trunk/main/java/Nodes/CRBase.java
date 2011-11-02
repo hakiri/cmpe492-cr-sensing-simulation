@@ -277,8 +277,7 @@ public class CRBase extends Node{
 	{
 		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
 		int totalNumberOfCollided = 0;
-		//these loops finds the number of collided crnodes for each zone(and releases their comm_freq),
-		//also finds free frequencies for each zone.
+		//these loops finds the number of collided crnodes for each zone(and releases their comm_freq)
 		for(int i=0;i<registeredZones.size();i++)
 			collidedInZone.add(0);
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){
