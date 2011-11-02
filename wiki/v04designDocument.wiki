@@ -79,39 +79,31 @@ Note: This method, firstly, finds free frequencies for the collided cr nodes and
 == 3. CONCLUSION == 
 	As observed from the animation, traffic generation and node deployment is achieved successfully. According to the data collected in the log file, frame structure of CR nodes is achieved successfully. Also, according to the stats table, number of blocks, number of collisions, number of drops and number of forced handoffs for cr nodes is achieved, too.
 === 3.1. What's new in this version ===
- * Necessary changes in communication schedule advertisement and sensing schedule advertisement to simulate more than one zone in the simulation is implemented as follows:
+Necessary changes in communication schedule advertisement and sensing schedule advertisement to simulate more than one zone in the simulation is implemented as follows:
 <dl>
  <dt>1. The array that holds the average SNR values of the previous frame is implemented as two dimensional array. First dimension represents zones and second dimension represents frequencies. The same approach is also applied for the array which holds the average SNR values of the current frame.</dt>
-
  <dt>2. Free frequency list is divided for each zone. If there is no node in a zone then no free frequency is assigned to that zone.</dt>
-
  <dt>3. After free frequencies are decided for each zone, a frequency is assigned to a zone which has the minimum average SNR value for that frequency.</dt>
-
  <dt>4. When the number of assigned frequencies to a zone becomes equal to the number of secondary users who want to start communication, no more frequencies is assigned to that zone.</dt>
- 
  <dt>5. Secondary users who are not given any frequency to communicate are reported as blocked.</dt>
 
  <dt><b>PS:</b> Note that all these SNR values are due to primary nodes.</dt>
 </dl>
-
- * Possion traffic implementation for secondary users at multithreaded simulation module is completed by implementing the followings:
+----
+Possion traffic implementation for secondary users at multithreaded simulation module is completed by implementing the followings:
 <dl>
  <dt>1. An array that holds communication start & communication end times (depending on user's current communication state) of CR user is added to CR sensor thread class.</dt>
-
  <dt>2. First communication start times for each CR users is found at the beginning of the simulation.</dt>
-
  <dt>3. If a CR user is currently not communicating the value in the array indicates communication start time for that user. If s/he is currently communicating then the value in the array indicates communication end time.</dt>
- 
  <dt>4. After the initial state all random number generations occur at the beginning of the frame loops.</dt>
 
  <dt><b>PS:</b> All communication and off times of the users are calculated in terms of frames.</dt>
 </dl>
- * In order to keep track of the statistics about secondary users' force handoffs and drops the following is implemented:
+----
+In order to keep track of the statistics about secondary users' force handoffs and drops the following is implemented:
 <dl>
  <dt>1. Variables for force handoff count and drop count are created. A boolean variable that holds information about last frames collision is also created.</dt>
-
  <dt>2. At the beginning of communication schedule advertisement collided secondary users are given priority over others and tried to be given free frequency. If they can handoff to another available frequency, number of force handoffs is incremented. Otherwise, number of drops is incremented.</dt>
-
  <dt>3. If secondart user drops, its communication end event is cancelled and a new communication start event is created.</dt>
 
  <dt><b>PS:</b> The statistics about number of collisions and number of secondary blocks were already implemented.</dt>
