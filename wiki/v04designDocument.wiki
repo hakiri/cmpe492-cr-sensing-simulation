@@ -68,7 +68,7 @@ Note: This method, firstly, finds free frequencies for the collided cr nodes and
 ==== 2.6.1. Draw Area ==== 
      This class extend JPanel class by adding additional functionalities for drawing basic cell structure, primary nodes, and secondary nodes.
 ==== 2.6.2. Draw Cell ==== 
-      This class creates a JFrame object and adds a DrawArea object to it. Initially it does not put any CR node or primary node in to the cell. It only draws the Cell and the zone in which the CR nodes will be deployed. It provides an interface for adding primary and CR nodes to the cell or changing the properties of currently existing ones.
+      This class creates a JFrame object and adds a Draw Area object to it. Initially it does not put any CR node or primary node in to the cell. It only draws the Cell and the zone in which the CR nodes will be deployed. It provides an interface for adding primary and CR nodes to the cell or changing the properties of currently existing ones.
 ==== 2.6.3. Plot ==== 
      This class plots a graph with provided x and y values. There can be many x values and associated y values. It can plot all of them on different windows or on the same window. It can also groups different combinations. In this project it is used to draw the plots of SNR and SINR values versus time for each frequency.
 ==== 2.6.4. Point Color ==== 
@@ -90,7 +90,7 @@ Necessary changes in communication schedule advertisement and sensing schedule a
  <dt><b>PS:</b> Note that all these SNR values are due to primary nodes.</dt>
 </dl>
 ----
-Possion traffic implementation for secondary users at multithreaded simulation module is completed by implementing the followings:
+Possion traffic implementation for secondary users at multi threaded simulation module is completed by implementing the followings:
 <dl>
  <dt>1. An array that holds communication start & communication end times (depending on user's current communication state) of CR user is added to CR sensor thread class.</dt>
  <dt>2. First communication start times for each CR users is found at the beginning of the simulation.</dt>
@@ -104,7 +104,7 @@ In order to keep track of the statistics about secondary users' force handoffs a
 <dl>
  <dt>1. Variables for force handoff count and drop count are created. A boolean variable that holds information about last frames collision is also created.</dt>
  <dt>2. At the beginning of communication schedule advertisement collided secondary users are given priority over others and tried to be given free frequency. If they can handoff to another available frequency, number of force handoffs is incremented. Otherwise, number of drops is incremented.</dt>
- <dt>3. If secondart user drops, its communication end event is cancelled and a new communication start event is created.</dt>
+ <dt>3. If secondary user drops, its communication end event is cancelled and a new communication start event is created.</dt>
 
  <dt><b>PS:</b> The statistics about number of collisions and number of secondary blocks were already implemented.</dt>
 </dl>
