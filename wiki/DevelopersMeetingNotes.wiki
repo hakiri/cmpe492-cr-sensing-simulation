@@ -1,5 +1,5 @@
 #summary Developers' Meeting notes and reports
-#labels Phase-Implementation
+#labels Phase-Implementation,Featured
 
 = Report of Meeting 22.10.2011 =
 
