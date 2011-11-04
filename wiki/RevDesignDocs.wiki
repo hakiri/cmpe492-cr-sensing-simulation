@@ -1,4 +1,5 @@
 #summary Links to design documents of revisions
+#labels Featured
 
 * [http://code.google.com/p/cmpe492-cr-sensing-simulation/wiki/v02Docs?ts=1319861339&updated=v02Docs Revision 0.2]
 
