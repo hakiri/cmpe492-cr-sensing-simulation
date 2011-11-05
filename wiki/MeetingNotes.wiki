@@ -5,16 +5,15 @@
 
 == Issues & Decisions ==
 <dl>
- <dt>1. Summary of the improvements in the project after the last meeting is explained.</dt>
+ <dt>1. Improvements in the project, after the previous meeting, are explained.</dt>
 
- <dt>2. Calculation of the throughput of the simulation is discussed.</dt>
-<dd>2.1. [http://en.wikipedia.org/wiki/Shannon_capacity Shannon's Capacity Formula] is going to be used for throughput calculation.(Assuming that we have 40 channels with 8MHz Bandwidth)</dd>
+ <dt>2. Calculation of the throughput of the simulation is discussed.</dt><dd>2.1. [http://en.wikipedia.org/wiki/Shannon_capacity Shannon's Capacity Formula] is going to be used for throughput calculation.(Assuming that we have 40 channels with 8MHz Bandwidth)</dd>
 
  <dt>3. Assignments for the next meeting is decided:</dt>
  <dd>3.1. Adjusting simulation parameters to observe secondary-primary users relations within an environment which is much closer to the real-world. These changes are:</dd>
  <dd><dl>
- <dd> 3.1.1. Increase the number of channel frequencies and the number of primary-secondary users.</dd>
- <dd> 3.1.2. Observe the drop and block probabilities of the secondary users from the beginning of the simulation and determine the point where these probabilities are stabilized; and ignore all data gathered before this point(warm-up period of the system)</dd>
+ <dd> 3.1.1. Increase the number of frequencies and the number of primary-secondary users.</dd>
+ <dd> 3.1.2. Observe the drop and block probabilities of the secondary users from the beginning of the simulation and determine the point where these probabilities are stabilized; and ignore all of the data gathered before this point(warm-up period of the system)</dd>
  </dl></dd>
  <dd>3.2. Implement sensing for the secondary users.</dd>
  <dd>3.3. Show collisions in the animation(with a time delay)</dd>
