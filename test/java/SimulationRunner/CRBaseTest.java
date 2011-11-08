@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import Nodes.CRBase;
 
 public class CRBaseTest extends TestCase {
 	

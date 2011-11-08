@@ -8,6 +8,7 @@ import java.awt.geom.Point2D.Double;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import Nodes.Node;
 
 /**
  *

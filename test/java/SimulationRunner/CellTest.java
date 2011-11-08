@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import CommunicationEnvironment.Cell;
+import Nodes.CRBase;
+import Nodes.Node;
 
 /**
  *
