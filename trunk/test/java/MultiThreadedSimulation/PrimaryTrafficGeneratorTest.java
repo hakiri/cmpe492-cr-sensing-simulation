@@ -4,7 +4,7 @@
  */
 package MultiThreadedSimulation;
 
-import SimulationRunner.PrimaryTrafficGeneratorNode;
+import Nodes.PrimaryTrafficGeneratorNode;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

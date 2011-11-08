@@ -4,7 +4,7 @@
  */
 package Animation;
 
-import SimulationRunner.Node;
+import Nodes.Node;
 import java.awt.Color;
 import junit.framework.Test;
 import junit.framework.TestCase;
