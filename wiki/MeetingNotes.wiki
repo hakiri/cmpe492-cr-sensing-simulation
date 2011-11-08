@@ -7,7 +7,7 @@
 <dl>
  <dt>1. Improvements in the project, after the previous meeting, are explained.</dt>
 
- <dt>2. Calculation of the throughput of the simulation is discussed.</dt><dd>2.1. [http://en.wikipedia.org/wiki/Shannon_capacity Shannon's Capacity Formula] is going to be used for throughput calculation.(Assuming that we have 40 channels with 8MHz Bandwidth)</dd>
+ <dt>2. Calculation of the throughput of the simulation is discussed:</dt><dd>2.1. [http://en.wikipedia.org/wiki/Shannon_capacity Shannon's Capacity Formula] is going to be used for throughput calculation.(Assuming that we have 40 channels with 8MHz Bandwidth)</dd>
 
  <dt>3. Assignments for the next meeting is decided:</dt>
  <dd>3.1. Adjusting simulation parameters to observe secondary-primary users relations within an environment which is much closer to the real-world. These changes are:</dd>
@@ -20,8 +20,12 @@
  <dd>3.4. While animation is running, also show the related plots and update them instantly. </dd>
  <dd>3.5. Write the progress report regarding what is done so far, and what is next. </dd>
 </dl>
-
-
+== Attendees ==
+   * Mehmet Akif Ersoy _(Developer)_
+   * Bilal Acar _(Developer)_
+   * Tuna Tugcu _(Teacher)_
+   * Birkan Yilmaz _(Assistant)_
+----
 = Report of Meeting 11.10.2011 =
 
 == Issues & Decisions ==
@@ -42,3 +46,8 @@
  <dd>3.2. Unit times will be specified.</dd>
  <dd>3.3. Documentation, class diagram, and flow chart will be completed.</dd>
 </dl>
+== Attendees ==
+   * Mehmet Akif Ersoy _(Developer)_
+   * Bilal Acar _(Developer)_
+   * Tuna Tugcu _(Teacher)_
+   * Birkan Yilmaz _(Assistant)_
