@@ -64,7 +64,7 @@ Finally unit times is specified as follows:
   </tr>
 </table>
 
-
+----
 
 = Report of Meeting 18.10.2011 =
 
@@ -82,7 +82,7 @@ Possion traffic implementation for secondary users at multithreaded simulation m
  <dt><b>PS:</b> All communication and off times of the users are calculated in terms of frames.</dt>
 </dl>
 
-
+----
 
 = Report of Meeting 16.10.2011 =
 
