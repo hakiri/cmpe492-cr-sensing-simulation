@@ -1,6 +1,25 @@
 #summary Developers' Meeting notes and reports
 #labels Phase-Implementation,Featured
 
+= Report of Meeting 01.11.2011 =
+Output statistics that are given at the stats table at the end of the simulation are revised as follows:
+<dl>
+ <dt><b>1. CR Node Statistics:</b></dt>
+  <dd>1.1. Number of call attempts</dd>
+  <dd>1.2. Number of calls</dd>
+  <dd>1.3. Number of frames communicated</dd>
+  <dd>1.4. Number of blocks</dd>
+  <dd>1.5. Number of drops</dd>
+  <dd>1.6. Number of force hand-offs</dd>
+  <dd>1.7. Number of collisions</dd>
+ <dt><b>2. Primary node statistics:</b></dt>
+  <dd>2.1. Utilization</dd>
+  <dd>2.2. Number of calls</dd>
+</dl>
+
+
+----
+
 = Report of Meeting 22.10.2011 =
 
 == Issues & Decisions ==
