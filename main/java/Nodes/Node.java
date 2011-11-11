@@ -2,6 +2,9 @@ package Nodes;
 
 import java.awt.geom.Point2D;
 
+/**
+ * An abstract class that holds general information about both CR and Primary nodes.
+ */
 public abstract class Node {
    
     /**

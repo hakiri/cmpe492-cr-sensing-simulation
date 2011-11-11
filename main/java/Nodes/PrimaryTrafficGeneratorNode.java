@@ -10,6 +10,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
+/**
+ * This class handles basic operations of Primary nodes.
+ */
 public class PrimaryTrafficGeneratorNode extends Node{
 	int communicationFreq;
 	int numberOfCallAttempts = 0;
@@ -17,9 +20,10 @@ public class PrimaryTrafficGeneratorNode extends Node{
 	double comunicationDuration = 0.0;
 	private double routingRadius = 0.0;
     /**
-     * Constructor of the PrimaryTrafficGeneratorNode.
+     * Constructor of the PrimaryTrafficGeneratorNode
      * @param pos Position of the node
-     * @param vel Velocity of the node.
+	 * @param vel Velocity of the node
+	 * @param id  ID of this node
      */
     public PrimaryTrafficGeneratorNode(Point2D.Double pos, double vel,int id) {
        this.position = new Point2D.Double(pos.x, pos.y);
@@ -56,35 +60,60 @@ public class PrimaryTrafficGeneratorNode extends Node{
 		return communicationFreq;									//Return its ID
 	}
 
+	/**
+	 * Returns the current communication frequency of this Primary node
+	 * @return	Communication frequency
+	 */
 	public int getCommunicationFreq() {
 		return communicationFreq;
 	}
 
+	/**
+	 * Returns how many times this Primary node attempted to communicate
+	 * @return	Number of call attempts
+	 */
 	public int getNumberOfCallAttempts() {
 		return numberOfCallAttempts;
 	}
 
+	/**
+	 * Returns how many times this Primary node is dropped
+	 * @return	Number of drops
+	 */
 	public int getNumberOfDrops() {
 		return numberOfDrops;
 	}
 
+	/**
+	 * Returns the total communication duration of this primary node
+	 * @return	Communication duration
+	 */
 	public double getComunicationDuration() {
 		return comunicationDuration;
 	}
 	
+	/**
+	 * Increments communication duration of this Primary node
+	 * @param commDur	Last communication duration
+	 */
 	public void incrementTotalCommunicationDuration(double commDur)
 	{
 		comunicationDuration += commDur;
 	}
-
-	public void setRoutingRadius(double routingRadius) {
-		this.routingRadius = routingRadius;
-	}
-
+	
+	/**
+	 * Returns routing radius of a primary node
+	 * @return	Routing radius
+	 */
 	public double getRoutingRadius() {
 		return routingRadius;
 	}
 	
+	/**
+	 * Logs output statistics of Primary nodes
+	 * @param registeredNodes	List of registered Primary nodes
+	 * @return	Primary node statistics values
+	 */
 	public static String[][] logStats(HashMap registeredNodes)
 	{
 		int totalCallAttempts = 0, totalDrops = 0;

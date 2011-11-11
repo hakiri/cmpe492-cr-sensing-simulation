@@ -18,7 +18,6 @@ public class DESPrimaryTrafficGenerator{
 	/**
 	 * Creates a primary traffic generator with no node registered to it and with the
 	 * given model.
-	 * @param unit				Unit of time in milliseconds
 	 */
 	public DESPrimaryTrafficGenerator()
 	{

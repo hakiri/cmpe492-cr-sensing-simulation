@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
+/**
+ * This class handles basic operation of a CR base station such as sensing schedule
+ * advertisement, communication schedule advertisement, handoff of CR users, etc.
+ * It also keeps information about which CR node belongs which zone
+ */
 public class CRBase extends Node{
     /**
      * the frequency number that crbase starts from it to deploy frequencies to the crnodes.
@@ -42,10 +47,25 @@ public class CRBase extends Node{
      */
     private static Uniform uniform ;
     
-    public ArrayList<ArrayList<Integer>> registeredZones;
+	/**
+	 * Keeps sector number, alpha number, d number, and number of CR nodes of a zone
+	 */
+	public ArrayList<ArrayList<Integer>> registeredZones;
+	/**
+	 * Index of sector number in zone array
+	 */
 	public static final int SECTOR = 0;
+	/**
+	 * Index of alpha number in zone array
+	 */
 	public static final int ALPHA = 1;
+	/**
+	 * Index of d number in zone array
+	 */
 	public static final int D = 2;
+	/**
+	 * Index of number of CR nodes in zone array
+	 */
 	public static final int CRNODES = 3;
     /**
      * Cumulative total of crnodes in zones.
@@ -431,6 +451,11 @@ public class CRBase extends Node{
 		return new Point2D.Double(0.0,0.0);
     }
 	
+	/**
+	 * Finds zone ID of a given CR node
+	 * @param id	ID of CR node
+	 * @return		Zone ID of the given CR node
+	 */
 	public int findZone(int id)
 	{
 		for(int i=0;i<nodesInZone.size();i++)
@@ -439,6 +464,10 @@ public class CRBase extends Node{
 		return 0;
 	}
 	
+	/**
+	 * Finds farthest point of the all registered zones to base station
+	 * @return	Distance of the farthest point
+	 */
 	public double farthestZoneDistance()
 	{
 		int d = 0;

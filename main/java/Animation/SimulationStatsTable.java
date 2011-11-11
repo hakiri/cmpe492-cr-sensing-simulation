@@ -29,6 +29,9 @@ import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+/**
+ * This class displays the output statistics of the simulation.
+ */
 public class SimulationStatsTable extends JFrame{
 
 	private JPanel jPanel;

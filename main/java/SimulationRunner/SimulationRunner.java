@@ -129,6 +129,15 @@ public class SimulationRunner extends JFrame{
 		});
 	}
 	
+	/**
+	 * Button to terminate an ongoing simulation
+	 */
+	public static JButton terminateSimulation;
+	/**
+	 * Progress bar to show progress of the simulation
+	 */
+	public static JProgressBar progressBar;
+	public static JRadioButton animationOnButton, animationOffButton, plotOnButton, plotOffButton;
 	private JPanel panel, tabMainPanel, tabZonePanel, mainPanel, framePanel, zonePanel, trafficPanel, frequencyPanel;
 	private JTabbedPane tabPane;
 	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
@@ -141,9 +150,6 @@ public class SimulationRunner extends JFrame{
 	private JComboBox seedModel,channelModel,trafficModel;
 	private JButton startSimulation, closeButton;
 	private ButtonGroup animationOnOff, plotOnOff;
-	public static JButton terminateSimulation;
-	public static JProgressBar progressBar;
-	public static JRadioButton animationOnButton, animationOffButton, plotOnButton, plotOffButton;
 	
 	private final static int labelPos = 12;
 	private final static int itemPos = 260;

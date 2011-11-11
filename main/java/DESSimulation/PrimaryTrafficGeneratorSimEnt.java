@@ -145,6 +145,10 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 		}
 	}
 
+	/**
+	 * Acknowledge event delivery
+	 * @param h	Handle of the event
+	 */
 	@Override
 	public void deliveryAck(EventHandle h) {
 		//no op
