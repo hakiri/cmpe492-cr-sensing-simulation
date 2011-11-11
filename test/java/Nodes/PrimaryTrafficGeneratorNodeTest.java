@@ -125,18 +125,6 @@ public class PrimaryTrafficGeneratorNodeTest extends TestCase {
 	}
 
 	/**
-	 * Test of setRoutingRadius method, of class PrimaryTrafficGeneratorNode.
-	 */
-	public void testSetRoutingRadius() {
-		System.out.println("setRoutingRadius");
-		double routingRadius = 0.0;
-		PrimaryTrafficGeneratorNode instance = null;
-		instance.setRoutingRadius(routingRadius);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
 	 * Test of getRoutingRadius method, of class PrimaryTrafficGeneratorNode.
 	 */
 	public void testGetRoutingRadius() {
