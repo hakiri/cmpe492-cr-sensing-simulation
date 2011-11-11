@@ -117,6 +117,7 @@ public class DrawCell implements Runnable{
 	/**
 	 * Adds a CR node to the cell
 	 * @param n Node to be added
+	 * @param c Color of the node
 	 */
 	public static void paintCrNode(Node n, Color c)
 	{

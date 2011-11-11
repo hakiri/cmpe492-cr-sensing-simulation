@@ -17,6 +17,11 @@ import SimulationRunner.ParetoDistribution;
 import SimulationRunner.SimulationRunner;
 import cern.jet.random.Exponential;
 
+/**
+ * This class basic operations of a CR node. It also concerns with logging operations
+ * communication events of all CR nodes.
+ * @see Node
+ */
 public class CRNode extends Node{
     
     /**
@@ -54,6 +59,9 @@ public class CRNode extends Node{
      * Boolean value that keeps whether a collision happened or not.
      */
     private boolean collisionOccured = false;
+	/**
+	 * Count of how many times this CR node is blocked
+	 */
 	public int numberOfBlocks = 0;
     /**
      * Total number of frames in the simulation.
@@ -65,10 +73,21 @@ public class CRNode extends Node{
     private boolean commOrNot = false;
 	private boolean readytoComm = false;
     
-    public final StartCommunicationEvent startCommEvent ;
+	/**
+	 * An event to start communication for this CR node
+	 */
+	public final StartCommunicationEvent startCommEvent ;
+	/**
+	 * Handle of the start communication event of this CR node
+	 */
 	public Scheduler.EventHandle startEventHandle;
-    
-    public final EndCommunicationEvent endCommEvent ;
+	/**
+	 * An event to end communication for this CR node
+	 */
+	public final EndCommunicationEvent endCommEvent ;
+	/**
+	 * Handle of the end communication event of this CR node
+	 */
 	public Scheduler.EventHandle endEventHandle;
     
     private Exponential expoInterarrival;
@@ -89,9 +108,9 @@ public class CRNode extends Node{
 	
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
-     * @param pos Position of the CRNode
+	 * @param id ID of this CR node
+	 * @param pos Position of the CRNode
      * @param vel Velocity of the CRNode
-     * @param frequencies List of frequencies that are assigned to this node.
      */
     public CRNode(int id, Point2D.Double pos, double vel) {
         this.id = id;
@@ -123,7 +142,8 @@ public class CRNode extends Node{
     
     /**
      * It creates the averageSnr arraylist and initially add zeros to the elements.
-     * @param total_number_of_frequencies Total number of frequencies 
+	 * @param total_number_of_frequencies	Total number of frequencies
+	 * @param numberOfZones					Number of zones currently simulating
      */
     public static void initializeAverageSnr(int total_number_of_frequencies, int numberOfZones){
         averageSnr = new ArrayList<ArrayList<Double>>();
@@ -146,8 +166,8 @@ public class CRNode extends Node{
     /**
      * Calculates average snr values then writes these values to the log file 
      * and then resets the average snr values.
-     * @param number_of_crnodes Total number of CRNodes.
-     */
+	 * @param time Current time
+	 */
     public static void logAverageSnr(double time){
         for(int i=0;i<averageSnr.size();i++){   //calculates the average snr values
 			for(int j=0;j<averageSnr.get(i).size();j++)
@@ -236,6 +256,10 @@ public class CRNode extends Node{
 		SimulationRunner.wc.occupyFrequency(communication_frequency, this);
     }
 
+	/**
+	 * Returns the current communication frequency of this CR node
+	 * @return	Current communication frequency
+	 */
 	public int getCommunication_frequency() {
 		return communication_frequency;
 	}
@@ -374,26 +398,54 @@ public class CRNode extends Node{
     }
     
     
-    public static class StartCommunicationEvent implements Event{
-            public int id = 0;
+	/**
+	 * Event class to handle communication starts of CR nodes
+	 */
+	public static class StartCommunicationEvent implements Event{
+		/**
+		 * ID of the associated CR node
+		 */
+		public int id = 0;
 
-            @Override
-            public void entering(SimEnt locale){}
+		/**
+		 * Method to handle entering of this event to a simulation entity
+		 * @param locale	Simulation entity that this event entering
+		 */
+		@Override
+		public void entering(SimEnt locale){}
 
-            public StartCommunicationEvent(int crnode_id) {
-                this.id = crnode_id;
-            }
+		/**
+		 * Constructor of this event
+		 * @param crnode_id	ID of the associated CR node
+		 */
+		public StartCommunicationEvent(int crnode_id) {
+			this.id = crnode_id;
+		}
     }
     
-    public static class EndCommunicationEvent implements Event{
-            public int id = 0;
+	/**
+	 * Event class to handle communication end of CR nodes
+	 */
+	public static class EndCommunicationEvent implements Event{
+		/**
+		 * ID of the associated CR node
+		 */
+		public int id = 0;
 
-            @Override
-            public void entering(SimEnt locale){}
+		/**
+		 * Method to handle entering of this event to a simulation entity
+		 * @param locale	Simulation entity that this event entering
+		 */
+		@Override
+		public void entering(SimEnt locale){}
 
-            public EndCommunicationEvent(int crnode_id) {
-                this.id = crnode_id;
-            }
+		/**
+		 * Constructor of this event
+		 * @param crnode_id	ID of the associated CR node
+		 */
+		public EndCommunicationEvent(int crnode_id) {
+			this.id = crnode_id;
+		}
     }
     
     /**
@@ -441,15 +493,22 @@ public class CRNode extends Node{
 		double nextOffDur = expoInterarrival.nextDouble() * 3600000;
 		return (int)Math.round(nextOffDur/frameDuration);
 	}
-
-//    public void setCommOrNot(boolean commOrNot) {
-//        this.commOrNot = commOrNot;
-//    }
 	
+	/**
+	 * Returns whether this CR node is currently communicating or not
+	 * @return <ul>
+	 *			<li> <b><i>True</i></b> if node is currently communicating</li>
+	 *			<li> <b><i>False</i></b> otherwise</li>
+	 *		   </ul>
+	 */
 	public boolean getCommOrNot() {
         return commOrNot;
     }
 
+	/**
+	 * Sets whether this node can start communication in this frame or not
+	 * @param readytoComm	Indicates this node can wants to start communicating in this frame if possible
+	 */
 	public void setReadytoComm(boolean readytoComm) {
 		if(readytoComm){
 			numberOfCallAttempts++;
@@ -457,39 +516,81 @@ public class CRNode extends Node{
 		this.readytoComm = readytoComm;
 	}
     
+	/**
+	 * Returns whether this CR node wants to start communicating in this frame or not
+	 * @return <ul>
+	 *			<li> <b><i>True</i></b> if node wants to start communicating in this frame</li>
+	 *			<li> <b><i>False</i></b> otherwise</li>
+	 *		   </ul>
+	 */
 	public boolean getReadytoComm()
 	{
 		return readytoComm;
 	}
 	
+	/**
+	 * Returns whether this CR node is collided in previous frame or not
+	 * @return <ul>
+	 *			<li> <b><i>True</i></b> if node collided in previous frame</li>
+	 *			<li> <b><i>False</i></b> otherwise</li>
+	 *		   </ul>
+	 */
 	public boolean getIsCollided() {
 		return isCollided;
 	}
 	
+	/**
+	 * Sets whether this node is collided in this frame or not
+	 * @param iscollided Indicates this node collided in this frame or not
+	 */
 	public void setIsCollided(boolean iscollided) {
 		this.isCollided = iscollided;
 	}
 
+	/**
+	 * Returns the number of force handoffs this node has made
+	 * @return	Number of forced handoffs
+	 */
 	public int getNumberOfForcedHandoff() {
 		return numberOfForcedHandoff;
 	}
 
+	/**
+	 * Sets the number of forced handoffs this node has made
+	 * @param numberOfForcedHandoff	Number of forced handoffs
+	 */
 	public void setNumberOfForcedHandoff(int numberOfForcedHandoff) {
 		this.numberOfForcedHandoff = numberOfForcedHandoff;
 	}
 
+	/**
+	 * Returns how many times this node has dropped
+	 * @return	Number of drops
+	 */
 	public int getNumberOfDrops() {
 		return numberOfDrops;
 	}
 
+	/**
+	 * Sets how many times this node dropped
+	 * @param numberOfDrops	Number of drops
+	 */
 	public void setNumberOfDrops(int numberOfDrops) {
 		this.numberOfDrops = numberOfDrops;
 	}
 
+	/**
+	 * Returns how many times this node has blocked
+	 * @return Number of blocks
+	 */
 	public int getNumberOfBlocks() {
 		return numberOfBlocks;
 	}
 
+	/**
+	 * Sets how many times this node blocked
+	 * @param numberOfBlocks Number of blocks
+	 */
 	public void setNumberOfBlocks(int numberOfBlocks) {
 		this.numberOfBlocks = numberOfBlocks;
 	}

@@ -39,7 +39,6 @@ public class PrimaryTrafficGenerator {
 	
 	/**
 	 * Creates a primary traffic generator with no node registered to it
-	 * @param unit				Unit of time in milliseconds
 	 */
 	public PrimaryTrafficGenerator()
 	{

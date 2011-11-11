@@ -7,6 +7,10 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import cern.jet.random.Uniform;
 
+/**
+ * This class handles general cell structure with zone informations. It also handles
+ * deployment of nodes in a specified zone or entire cell.
+ */
 public class Cell {
     /**
      * The CRBase at the center of the cell

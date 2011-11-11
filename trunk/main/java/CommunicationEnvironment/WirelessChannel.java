@@ -72,6 +72,9 @@ public class WirelessChannel {
 	 */
 	public static final int ON_OFF = 1;
 	
+	/**
+	 * Scale of msec during animation
+	 */
 	public static double unitTime;
 	
 	/**
@@ -93,6 +96,7 @@ public class WirelessChannel {
 	 *									period in terms of time units
 	 *							</ul>
 	 * @param trafficModel		Model for traffic generation
+	 * @param unitTime			Scale of msec during animation
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold,
 							double meanOffDuration, double meanOnDuration, int trafficModel, double unitTime)
@@ -188,6 +192,15 @@ public class WirelessChannel {
 		}
 	}
 	
+	/**
+	 * Re turns whether a frequency is occupied by a given type of node
+	 * @param freq		ID of frequency
+	 * @param nodeType	Type node, CR or Primary
+	 * @return			<ul>
+	 *						<li><b><i>True</i></b> if given frequency is occupied by a given type of node</li>
+	 *						<li><b><i>False</i></b> otherwise</li>
+	 *					</ul>
+	 */
 	public boolean isOccupied(int freq, int nodeType)
 	{
 		return frequencies.get(freq).get(nodeType) != null;
@@ -281,6 +294,11 @@ public class WirelessChannel {
 		return trafficModel;
 	}
 	
+	/**
+	 * Returns both CR node and primary node using a given frequency
+	 * @param freq	ID of frequency to find its current users
+	 * @return		Arraylist that contains current users of the given frequency
+	 */
 	public ArrayList<Node> getFreq(int freq)
 	{
 		return frequencies.get(freq);

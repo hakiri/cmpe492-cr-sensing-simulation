@@ -36,18 +36,49 @@ public class CRSensorThread implements Runnable{
 	 * Duration of one time unit
 	 */
 	private double unitTime;
+	/**
+	 * Duration of a frame in terms of msec
+	 */
 	private double frameDuration;
+	/**
+	 * Number of sensing slots in a frame
+	 */
 	private int numberOfSlots;
+	/**
+	 * Duration of a sensing slot
+	 */
 	private double slotDur;
+	/**
+	 * Duration of sensing schedule advertisement
+	 */
 	private double senseScheduleAdvertisement;
+	/**
+	 * Duration of communication schedule advertisement
+	 */
 	private double commScheduleAdvertisement;
+	/**
+	 * Duration of communication
+	 */
 	private double commDur;
+	/**
+	 * Duration of sense schedule advertisement
+	 */
 	private double senseResultAdvertisement;
+	/**
+	 * Current time
+	 */
 	private long time;
+	/**
+	 * Number of checks for primary nodes during communication
+	 */
 	private final static int numberOfReports = 3;
-	
+	/**
+	 * Current frame
+	 */
 	private int frame;
-	
+	/**
+	 * Communication related times of cr users
+	 */
 	private ArrayList<Integer> commRelatedTimes;
 	
 	/**
@@ -340,7 +371,7 @@ public class CRSensorThread implements Runnable{
 	}
 
 	/**
-	 * Returns the frame duration in terms of unit time
+	 * Returns the frame duration in terms of msec
 	 * @return Frame Duration
 	 */
 	public double getFrameDuration() {
@@ -357,8 +388,9 @@ public class CRSensorThread implements Runnable{
 	}
 	
 	/**
-	 * Sets the starting frame of communication of the given blocked CR node
+	 * Sets the starting frame of communication of the given blocked or dropped CR node
 	 * @param crnode_id		ID of the CR node
+	 * @param dropped		Indicates whether the node dropped or not
 	 */
 	public void setInactiveDuration(int crnode_id, boolean dropped){
 		int offDuration;

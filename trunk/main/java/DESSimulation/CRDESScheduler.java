@@ -305,6 +305,10 @@ public class CRDESScheduler extends SimEnt{
 		return finished;
 	}
 	
+	/**
+	 * Acknowledge event delivery
+	 * @param h	Handle of the event
+	 */
 	@Override
 	public void deliveryAck(EventHandle h) {
 		//no op
@@ -326,10 +330,18 @@ public class CRDESScheduler extends SimEnt{
 		return simulationDuration;
 	}
 	
+	/**
+	 * Sends a communication end event for a given CR node
+	 * @param crnode_id	ID of the CR node
+	 */
 	public void sendEndCommEvent(int crnode_id){
 		SimulationRunner.crNodes.get(crnode_id).endEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).endCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOnDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-(this.commDur*CRDESScheduler.numberOfReports)));
 	}
 	
+	/**
+	 * Sends a communication start event for a given CR node
+	 * @param crnode_id	ID of the CR node
+	 */
 	public void sendStartCommEvent(int crnode_id){
 		SimulationRunner.crNodes.get(crnode_id).startEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).startCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-(this.commDur*CRDESScheduler.numberOfReports)));
 	}
