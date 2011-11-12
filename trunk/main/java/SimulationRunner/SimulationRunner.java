@@ -143,10 +143,10 @@ public class SimulationRunner extends JFrame{
 	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
 	private JTextField noSlotField,slotDurField,sensingResultField,senseScheduleField,commScheduleField,commDurField,
 					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
-					   maxSNR,sinrThresholdFied,noZones;
+					   maxSNR,sinrThresholdFied,noZones,channelBandwithField;
 	private JLabel label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
 				   label15,label16,label17,label19,label21,label22,label23,label24,label25,label26,label27,label28,
-				   label29,label30;
+				   label29,label30,label31;
 	private JComboBox seedModel,channelModel,trafficModel;
 	private JButton startSimulation, closeButton;
 	private ButtonGroup animationOnOff, plotOnOff;
@@ -403,6 +403,11 @@ public class SimulationRunner extends JFrame{
 				public void itemStateChanged(ItemEvent e) {
 					if(animationOnButton.isSelected()){
 						unitTime.setEnabled(true);
+						slotDurField.setText("100");
+						senseScheduleField.setText("100");
+						sensingResultField.setText("100");
+						commScheduleField.setText("100");
+						commDurField.setText("6300");
 					}
 				}
 			});
@@ -420,6 +425,11 @@ public class SimulationRunner extends JFrame{
 				public void itemStateChanged(ItemEvent e) {
 					if(animationOffButton.isSelected()){
 						unitTime.setEnabled(false);
+						slotDurField.setText("1");
+						senseScheduleField.setText("1");
+						sensingResultField.setText("1");
+						commScheduleField.setText("1");
+						commDurField.setText("63");
 					}
 				}
 			});
@@ -485,7 +495,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(slotDurField);
 			slotDurField.setToolTipText("Duration of Sensing Slot in terms of msec");
 			slotDurField.setBounds(itemPos, 65, 120, 23);
-			slotDurField.setText("10");
+			slotDurField.setText("1");
 			slotDurField.addKeyListener(keyAdapter);
 		}
 		{
@@ -500,7 +510,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(sensingResultField);
 			sensingResultField.setToolTipText("Duration of Sensing Result Advertisement in terms of msec");
 			sensingResultField.setBounds(itemPos, 100, 120, 23);
-			sensingResultField.setText("10");
+			sensingResultField.setText("1");
 			sensingResultField.addKeyListener(keyAdapter);
 		}
 		{
@@ -515,7 +525,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(senseScheduleField);
 			senseScheduleField.setToolTipText("Duration of Sensing Schedule Advertisement in terms of msec");
 			senseScheduleField.setBounds(itemPos, 135, 120, 23);
-			senseScheduleField.setText("10");
+			senseScheduleField.setText("1");
 			senseScheduleField.addKeyListener(keyAdapter);
 		}
 		{
@@ -530,7 +540,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(commDurField);
 			commDurField.setToolTipText("Duration of Communication in terms of msec");
 			commDurField.setBounds(itemPos, 170, 120, 23);
-			commDurField.setText("630");
+			commDurField.setText("63");
 			commDurField.addKeyListener(keyAdapter);
 		}
 		{
@@ -545,7 +555,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(commScheduleField);
 			commScheduleField.setToolTipText("Duration of Communication Schedule Advertisement in terms of msec");
 			commScheduleField.setBounds(itemPos, 205, 120, 23);
-			commScheduleField.setText("10");
+			commScheduleField.setText("1");
 			commScheduleField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(framePanel);
@@ -614,7 +624,7 @@ public class SimulationRunner extends JFrame{
 			zonePanel.add(radiusField);
 			radiusField.setToolTipText("Radius of CR Cell in terms of 100s of meters");
 			radiusField.setBounds(itemPos, 135, 120, 23);
-			radiusField.setText("30");
+			radiusField.setText("15");
 			radiusField.addKeyListener(keyAdapter);
 		}
 		{
@@ -811,7 +821,7 @@ public class SimulationRunner extends JFrame{
 			trafficPanel.add(unitTime);
 			unitTime.setToolTipText("Duration of a unit time during animation");
 			unitTime.setBounds(itemPos, 135, 120, 23);
-			unitTime.setText("0.1");
+			unitTime.setText("0.01");
 			unitTime.addKeyListener(keyAdapter);
 			unitTime.setEnabled(false);
 		}
@@ -836,11 +846,26 @@ public class SimulationRunner extends JFrame{
 			frequencyPanel.add(noFreqs);
 			noFreqs.setToolTipText("Available Number of Frequencies in the Channel");
 			noFreqs.setBounds(itemPos, 30, 120, 23);
-			noFreqs.setText("12");
+			noFreqs.setText("40");
 			noFreqs.addKeyListener(keyAdapter);
 		}
+		{
+			label31 = new JLabel();
+			frequencyPanel.add(label31);
+			label31.setToolTipText("Channel bandwith of each frequency");
+			label31.setText("Channel Bandwith (KHz)");
+			label31.setBounds(labelPos, 65, 165, 16);
+		}
+		{
+			channelBandwithField = new JTextField();
+			frequencyPanel.add(channelBandwithField);
+			channelBandwithField.setToolTipText("Channel bandwith of each frequency in terms of KHz");
+			channelBandwithField.setBounds(itemPos, 65, 120, 23);
+			channelBandwithField.setText("8000");
+			channelBandwithField.addKeyListener(keyAdapter);
+		}
 		tabMainPanel.add(frequencyPanel);
-		frequencyPanel.setBounds(panelRight, 430, panelWidth, 65);
+		frequencyPanel.setBounds(panelRight, 430, panelWidth, 100);
 	}
 	
 	private void addZoneOptinsGUI()
@@ -1201,7 +1226,7 @@ public class SimulationRunner extends JFrame{
 				else
 					priTrafGenDes.registerNode(priTrafGenNodes.get(i));
 			}
-			if(animationOnButton.isSelected()){
+			if(animationOnButton.isSelected()){	//TODO Resolve racing conditions
 				crSensor = new CRSensorThread((int)simDura, timeUnit, maxFreqCR, slotDur, senseScheduleAdvertisement,
 													commScheduleAdvertisement, commDur, senseResultAdvertisement);
 				crDesScheduler = null;

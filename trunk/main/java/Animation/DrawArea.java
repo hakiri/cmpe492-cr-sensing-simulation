@@ -3,7 +3,14 @@ package Animation;
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Polygon;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /**
@@ -100,12 +107,31 @@ public class DrawArea extends JPanel{
 			g.setColor(p.c);
 			g.fillOval(p.x-p.r/2, p.y-p.r/2, p.r, p.r);
 		}
+		BufferedImage comm = null;
+		BufferedImage idle = null;
+		try {
+			comm = ImageIO.read(new File("comm.JPG"));
+			idle = ImageIO.read(new File("idle.JPG"));
+		} catch (IOException ex) {
+			Logger.getLogger(DrawArea.class.getName()).log(Level.SEVERE, null, ex);
+		}
 		for(Integer i:crNodes.keySet()){
+			
 			PointColor p = crNodes.get(i);
 			if(p==null)
 				continue;
 			g.setColor(p.c);
-			g.fill3DRect(p.x-p.r/2, p.y-p.r/2, p.r, p.r,true);
+
+			if(p.c != Color.GREEN)
+				g.drawImage(idle, (int)(p.x - p.r/2.0), (int)(p.y - p.r/2.0), (int)(p.r), (int)(p.r), null);
+		}
+		for(Integer i:crNodes.keySet()){
+			PointColor p = crNodes.get(i);
+			if(p==null)
+				continue;
+			if(p.c == Color.GREEN){
+				g.drawImage(comm, (int)(p.x - p.r/2.0), (int)(p.y - p.r/2.0), (int)(p.r), (int)(p.r), null);
+			}
 		}
 	}
 	
