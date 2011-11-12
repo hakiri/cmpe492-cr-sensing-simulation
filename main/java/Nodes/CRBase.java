@@ -91,7 +91,8 @@ public class CRBase extends Node{
     }
     
     /**
-     * TODO add javadoc 
+     * An inner class to keep frequency ID and its corresponding average SNR value.
+	 * This class objects are comparable with respect to their SNR values.
      */
     private class FreqSNR implements Comparable<FreqSNR> {
         Integer freq;

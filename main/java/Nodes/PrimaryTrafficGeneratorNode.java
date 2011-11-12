@@ -16,7 +16,7 @@ import java.util.Locale;
 public class PrimaryTrafficGeneratorNode extends Node{
 	int communicationFreq;
 	int numberOfCallAttempts = 0;
-	int numberOfDrops = 0;
+	int numberOfBlocks = 0;
 	double comunicationDuration = 0.0;
 	private double routingRadius = 0.0;
     /**
@@ -52,7 +52,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
 		numberOfCallAttempts++;
 		communicationFreq = SimulationRunner.wc.freeFrequency();    //Find a free frequency
 		if(communicationFreq==WirelessChannel.NOFREEFREQ){			//If there is no available frequency
-			numberOfDrops++;	//TODO bunun numberofBlocks olmasi gerekmez mi
+			numberOfBlocks++;
 			return communicationFreq;								//Return immediately
 		}
 		setRandomPosition(offDuration);
@@ -81,7 +81,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
 	 * @return	Number of drops
 	 */
 	public int getNumberOfDrops() {
-		return numberOfDrops;
+		return numberOfBlocks;
 	}
 
 	/**

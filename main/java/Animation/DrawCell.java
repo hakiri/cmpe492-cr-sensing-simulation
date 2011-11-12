@@ -42,7 +42,7 @@ public class DrawCell implements Runnable{
 	 * Number of primary nodes in the cell
 	 */
 	int numberOfPriNodes;
-	private static int unit = 11;
+	private static int unit = 22;
 	/**
 	 * Radius of a node
 	 */
@@ -109,7 +109,7 @@ public class DrawCell implements Runnable{
 	 */
 	public static void paintPrimaryNode(Node n, Color c)
 	{
-		PointColor p = new PointColor(n.getPosition(), pointRadius, c, unit);
+		PointColor p = new PointColor(n.getPosition(), (int)((pointRadius/4.0)*3.0), c, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintPrimary(n.getId(), p);
 	}
@@ -121,7 +121,7 @@ public class DrawCell implements Runnable{
 	 */
 	public static void paintCrNode(Node n, Color c)
 	{
-		PointColor p = new PointColor(n.getPosition(), pointRadius, c, unit);
+		PointColor p = new PointColor(n.getPosition(), (int)(pointRadius*2), c, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintCR(n.getId(), p);
 	}
