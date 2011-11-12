@@ -23,8 +23,8 @@
 == Attendees ==
    * Mehmet Akif Ersoy _(Developer)_
    * Bilal Acar _(Developer)_
-   * Tuna Tugcu _(Professor)_
-   * Birkan Yilmaz _(Assistant)_
+   * Tuna Tugcu _(Supervisor)_
+   * Birkan Yilmaz _(Assistant Supervisor)_
 ----
 = Report of Meeting 11.10.2011 =
 
@@ -49,5 +49,5 @@
 == Attendees ==
    * Mehmet Akif Ersoy _(Developer)_
    * Bilal Acar _(Developer)_
-   * Tuna Tugcu _(Professor)_
-   * Birkan Yilmaz _(Assistant)_
+   * Tuna Tugcu _(Supervisor)_
+   * Birkan Yilmaz _(Assistant Supervisor)_
