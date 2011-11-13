@@ -263,7 +263,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(noPriNodes);
 			noPriNodes.setToolTipText("Number of Primary Users in The CR Cell");
 			noPriNodes.setBounds(itemPos, 30, 120, 23);
-			noPriNodes.setText("50");
+			noPriNodes.setText("150");
 			noPriNodes.addKeyListener(keyAdapter);
 		}
 		{
@@ -639,7 +639,7 @@ public class SimulationRunner extends JFrame{
 			zonePanel.add(noZones);
 			noZones.setToolTipText("Number of Zones to be simulated");
 			noZones.setBounds(itemPos, 170, 120, 23);
-			noZones.setText("4");
+			noZones.setText("24");
 			noZones.addMouseListener(new MouseAdapter() {
 
 				@Override
@@ -908,6 +908,7 @@ public class SimulationRunner extends JFrame{
 			panels[j].add(label);
 			label.setText("CR Users");
 			label.setBounds(324, 5, 60, 23);
+			int initialNumberOfZones = 24;
 
 			for(int i=0;i<numberOfRows;i++){
 				label = new JLabel();
@@ -921,7 +922,7 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("In Which Sector The CR Nodes Located During Simulation");
 				textField.setBounds(66, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > 2)
+				if(id > initialNumberOfZones + 1)
 					textField.setEnabled(false);
 				textField.setText(String.valueOf(((id-2)/4)%3));
 				zoneSectorNos.add(textField);
@@ -931,7 +932,7 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("In Which D Section The CR Nodes Located During Simulation");
 				textField.setBounds(162, 35+i*30, 51, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > 2)
+				if(id > initialNumberOfZones + 1)
 					textField.setEnabled(false);
 				textField.setText(String.valueOf(((id-2)/12)%3));
 				zoneDNos.add(textField);
@@ -941,7 +942,7 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("In Which Alpha Section The CR Nodes Located During Simulation");
 				textField.setBounds(228, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > 2)
+				if(id > initialNumberOfZones + 1)
 					textField.setEnabled(false);
 				textField.setText(String.valueOf((id-2)%4));
 				zoneAlphaNos.add(textField);
@@ -951,9 +952,9 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("Number of Secondary Users in This Zone");
 				textField.setBounds(324, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > 2)
+				if(id > initialNumberOfZones + 1)
 					textField.setEnabled(false);
-				textField.setText("4");
+				textField.setText("5");
 				zoneCRUsers.add(textField);
 			}
 			tabZonePanel.add(panels[j]);
