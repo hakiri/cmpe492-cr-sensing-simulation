@@ -109,7 +109,7 @@ public class DrawCell implements Runnable{
 	 */
 	public static void paintPrimaryNode(Node n, Color c)
 	{
-		PointColor p = new PointColor(n.getPosition(), (int)((pointRadius/4.0)*3.0), c, unit);
+		PointColor p = new PointColor(n.getPosition(), (int)((pointRadius/8.0)*7.0), c, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintPrimary(n.getId(), p);
 	}
