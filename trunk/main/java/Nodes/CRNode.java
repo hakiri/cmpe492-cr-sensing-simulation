@@ -1,5 +1,6 @@
 package Nodes;
 
+import Animation.DrawCell;
 import CommunicationEnvironment.WirelessChannel;
 import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
@@ -313,6 +314,9 @@ public class CRNode extends Node{
 				if(SimulationRunner.crNodes.get(i).collisionOccured){
 					SimulationRunner.crNodes.get(i).numberOfCollision++;
 					SimulationRunner.crNodes.get(i).isCollided = true;
+					if(SimulationRunner.animationOnButton.isSelected()){
+						SimulationRunner.crSensor.setWarningExpirationFrame(i);
+					}
 				}
 				SimulationRunner.crNodes.get(i).collisionOccured = false;
 			}

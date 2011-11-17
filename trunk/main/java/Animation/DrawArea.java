@@ -3,7 +3,6 @@ package Animation;
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +23,7 @@ public class DrawArea extends JPanel{
 	private int numberOfSectors, numberOfAlpha, numberOfDSections;
 	private HashMap<Integer, PointColor> primaryNodes;
 	private HashMap<Integer, PointColor> crNodes;
+	private HashMap<Integer, PointColor> crNodeCollisionWarning;
     
 	/**
 	 * Creates an animation window.
@@ -45,6 +45,9 @@ public class DrawArea extends JPanel{
 		crNodes = new HashMap<Integer, PointColor>();
 		for(int i=0;i<numberOfCrNodes;i++)
 			crNodes.put(i, null);
+		crNodeCollisionWarning = new HashMap<Integer, PointColor>();
+		for(int i=0;i<numberOfCrNodes;i++)
+			crNodeCollisionWarning.put(i, null);
 		this.numberOfDSections = 3;
     }
     
@@ -133,6 +136,14 @@ public class DrawArea extends JPanel{
 				g.drawImage(comm, (int)(p.x - p.r/2.0), (int)(p.y - p.r/2.0), (int)(p.r), (int)(p.r), null);
 			}
 		}
+		for(Integer i:crNodeCollisionWarning.keySet()){
+			PointColor p = crNodeCollisionWarning.get(i);
+			if(p==null)
+				continue;
+			g.setColor(Color.RED);
+			g.fillOval(p.x-p.r/16, p.y-p.r/2, p.r/8, (p.r*6)/8);
+			g.fillOval(p.x-p.r/16, p.y+(p.r*3)/8, p.r/8, p.r/8);
+		}
 	}
 	
 	/**
@@ -154,6 +165,24 @@ public class DrawArea extends JPanel{
 	public void paintCR(Integer id, PointColor p)
 	{
 		crNodes.put(id, p);
+		repaint();
+	}
+	
+	/**
+	 * This method paints a CR node with the given id, position.
+	 * @param id	ID of the collided CR node
+	 * @param p		Position of the CR node
+	 * @param draw	<ul>
+	 *					<li>If <b><i>True</i></b> draws collision warning</li>
+	 *					<li>If <b><i>False</i></b> erases collision warning</li>
+	 *				</ul>
+	 */
+	public void paintCollision(Integer id, PointColor p, boolean draw)
+	{
+		if(draw)
+			crNodeCollisionWarning.put(id, p);
+		else
+			crNodeCollisionWarning.put(id, null);
 		repaint();
 	}
 }
