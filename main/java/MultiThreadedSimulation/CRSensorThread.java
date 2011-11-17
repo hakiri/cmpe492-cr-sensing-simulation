@@ -6,7 +6,9 @@ import Nodes.CRNode;
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -80,6 +82,7 @@ public class CRSensorThread implements Runnable{
 	 * Communication related times of cr users
 	 */
 	private ArrayList<Integer> commRelatedTimes;
+	private ArrayList<Integer> collisionWarningExpires;
 	
 	/**
 	 * Creates a thread that performs simulation action for CR sensor nodes
@@ -104,13 +107,14 @@ public class CRSensorThread implements Runnable{
 		this.commScheduleAdvertisement = commScheduleAdvertisement*unitTime;
 		this.commDur = commDur*unitTime;
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
-		
+		this.collisionWarningExpires = new ArrayList<Integer>();
 		frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement +
 																					commScheduleAdvertisement + commDur;
 		CRNode.setTotalNumberOfFrames((int)(simulationDuration / frameDuration));
 		
 		commRelatedTimes = new ArrayList<Integer>();
 		for(int i = 0 ; i<SimulationRunner.crNodes.size() ; i++){
+			collisionWarningExpires.add(-1);
 			int offDuration = SimulationRunner.crNodes.get(i).nextOffDuration(frameDuration);
 			offDuration = offDuration == 0 ? 1:offDuration;
 			commRelatedTimes.add(offDuration);
@@ -132,20 +136,9 @@ public class CRSensorThread implements Runnable{
 		totalSimulationDuration = remainingSimulationDuration;		//Save initial simulation duration
 		for(frame = 0; remainingSimulationDuration>0&&!finished ; frame++){		//Until simulation duration is elapsed or thread is terminated
 			
-			while(commRelatedTimes.contains(frame)){
-				int cr = commRelatedTimes.indexOf(frame);
-				if(SimulationRunner.crNodes.get(cr).getCommOrNot()){
-					DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.GRAY);
-					SimulationRunner.crNodes.get(cr).releaseCommunication_frequency();
-					SimulationRunner.crNodes.get(cr).setIsCollided(false);
-					commRelatedTimes.set(cr, frame + SimulationRunner.crNodes.get(cr).nextOffDuration(frameDuration));
-				}
-				else{
-					SimulationRunner.crNodes.get(cr).setReadytoComm(true);
-					DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.ORANGE);
-					commRelatedTimes.set(cr, commRelatedTimes.get(cr) + 1);
-				}
-			}
+			arrangeCommunicationVariables();
+			
+			expireCollisionWarnings();
 			
 			senseScheduleAdvertise();
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
@@ -172,26 +165,7 @@ public class CRSensorThread implements Runnable{
 			communicate(numberOfReports);
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 		}
-		String[][] crStats = CRNode.logStats();
-		String[][] priStats = SimulationRunner.priTrafGen.logStats();
-		SimulationRunner.priTrafGen.terminateAllThreads();		//Terminate other thread in case of they did not
-		if(finished)	//If the thread is terminated
-			JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.INFORMATION_MESSAGE);
-		else			//If simulation duration is elapsed
-			JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.INFORMATION_MESSAGE);
-		SimulationRunner.progressBar.setVisible(false);			//Hide progress bar
-		SimulationRunner.progressBar.setValue(0);				//Set its value to zero
-		SimulationRunner.clear();								//Clear data related to simulation
-		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
-		CRNode.closeLogFile();									//Close log file
-		SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
-		if(SimulationRunner.plotOnButton.isSelected()){
-			ArrayList<String> names = new ArrayList<String>();
-			names.add("SNR");
-			names.add("SINR");
-			SimulationRunner.plot.plotAll(names);			//Plot the time vs average SNR graphs
-		}
-		finished=true;											//Set finished as true
+		finalizeSimulation();
 	}
 	
 	private void senseScheduleAdvertise()
@@ -329,6 +303,30 @@ public class CRSensorThread implements Runnable{
 		CRNode.writeLogFile("\n");
 	}
 	
+	private void finalizeSimulation()
+	{
+		String[][] crStats = CRNode.logStats();
+		String[][] priStats = SimulationRunner.priTrafGen.logStats();
+		SimulationRunner.priTrafGen.terminateAllThreads();		//Terminate other thread in case of they did not
+		if(finished)	//If the thread is terminated
+			JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.INFORMATION_MESSAGE);
+		else			//If simulation duration is elapsed
+			JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.INFORMATION_MESSAGE);
+		SimulationRunner.progressBar.setVisible(false);			//Hide progress bar
+		SimulationRunner.progressBar.setValue(0);				//Set its value to zero
+		SimulationRunner.clear();								//Clear data related to simulation
+		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
+		CRNode.closeLogFile();									//Close log file
+		SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+		if(SimulationRunner.plotOnButton.isSelected()){
+			ArrayList<String> names = new ArrayList<String>();
+			names.add("SNR");
+			names.add("SINR");
+			SimulationRunner.plot.plotAll(names);			//Plot the time vs average SNR graphs
+		}
+		finished=true;											//Set finished as true
+	}
+	
 	/**
 	 * Returns whether the thread is finished or not
 	 * @return finished
@@ -404,6 +402,46 @@ public class CRSensorThread implements Runnable{
 			if(offDuration > 0)
 				commRelatedTimes.set(crnode_id, commRelatedTimes.get(crnode_id) + offDuration);
 		}
+	}
 	
+	/**
+	 * Sets variables associated to communication of a CR node whose communication
+	 * event occurs at the current frame
+	 */
+	public void arrangeCommunicationVariables()
+	{
+		while(commRelatedTimes.contains(frame)){
+			int cr = commRelatedTimes.indexOf(frame);
+			if(SimulationRunner.crNodes.get(cr).getCommOrNot()){
+				DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.GRAY);
+				SimulationRunner.crNodes.get(cr).releaseCommunication_frequency();
+				SimulationRunner.crNodes.get(cr).setIsCollided(false);
+				commRelatedTimes.set(cr, frame + SimulationRunner.crNodes.get(cr).nextOffDuration(frameDuration));
+			}
+			else{
+				SimulationRunner.crNodes.get(cr).setReadytoComm(true);
+				DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.ORANGE);
+				commRelatedTimes.set(cr, commRelatedTimes.get(cr) + 1);
+			}
+		}
+	}
+	
+	/**
+	 * Expire the collision warnigs that should expire at current frame.
+	 */
+	public void expireCollisionWarnings()
+	{
+		while(collisionWarningExpires.contains(frame)){
+			int cr = collisionWarningExpires.indexOf(frame);
+			collisionWarningExpires.set(cr,-1);
+			DrawCell.drawCollision(SimulationRunner.crNodes.get(cr), false);
+		}
+		
+	}
+	
+	public void setWarningExpirationFrame(int crNodeId)
+	{
+		DrawCell.drawCollision(SimulationRunner.crNodes.get(crNodeId), true);
+		collisionWarningExpires.set(crNodeId, frame + (int)((2000.0)/(unitTime*frameDuration)));
 	}
 }

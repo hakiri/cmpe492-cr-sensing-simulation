@@ -127,6 +127,21 @@ public class DrawCell implements Runnable{
 	}
 	
 	/**
+	 * Draws or erases collisin warning for a node.
+	 * @param n		Related node
+	 * @param draw	<ul>
+	 *					<li>If <b><i>True</i></b> draws collision warning</li>
+	 *					<li>If <b><i>False</i></b> erases collision warning</li>
+	 *				</ul>
+	 */
+	public static void drawCollision(Node n, boolean draw)
+	{
+		PointColor p = new PointColor(n.getPosition(), (int)(pointRadius*4), Color.RED, unit);
+		p.convertCoordinate(radius*unit);
+		d.paintCollision(n.getId(), p, draw);
+	}
+	
+	/**
 	 * Returns whether the thread is finished or not
 	 * @return finished
 	 */
