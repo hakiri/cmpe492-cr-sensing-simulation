@@ -263,7 +263,9 @@ public class CRDESScheduler extends SimEnt{
 	
 	private void senseResultAdvertise()
 	{
-		/*Write time to log file*/
+		int totalBlocks=0,totalDrops=0,totalCallAttempts=0;
+        double blockProb, dropProb;
+        /*Write time to log file*/
 		double msec = (double)(Scheduler.instance().getTime())/unitTime;
 		int hour = (int)(msec/3600000.0);
 		msec -= hour*3600000.0;
@@ -272,9 +274,16 @@ public class CRDESScheduler extends SimEnt{
 		int sec = (int)(msec/1000.0);
 		msec-= sec*1000.0;
 		CRNode.writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
+		CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
+        for(int i=0;i<SimulationRunner.crNodes.size();i++){
 			SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
+            totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
+            totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
+            totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
 		}
+        blockProb = (double)totalBlocks/totalCallAttempts;
+        dropProb = (double)totalDrops/totalCallAttempts;
+        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f", blockProb,dropProb));
 		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
 	}
 	

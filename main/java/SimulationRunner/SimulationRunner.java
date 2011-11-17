@@ -1218,6 +1218,7 @@ public class SimulationRunner extends JFrame{
 			progressBar.setValue(0);							//Initialize progress bar
 			progressBar.setVisible(true);						//Make it visible
 			CRNode.createLogFile("log.txt");
+            CRNode.createLogFile_prob("prob.txt");
 			terminateSimulation.setVisible(true);
 			for(int i = 0;i<numberOfPriNodes;i++){
 				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
