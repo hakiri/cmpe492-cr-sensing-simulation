@@ -282,9 +282,9 @@ public class CRDESScheduler extends SimEnt{
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
-            totalCalls += totalCallAttempts - totalBlocks;
             totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
 		}
+        totalCalls = totalCallAttempts - totalBlocks;
 		if(totalCallAttempts == 0){
             blockProb = 0.0;
             dropProb = 0.0;
