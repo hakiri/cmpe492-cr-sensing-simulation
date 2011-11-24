@@ -281,8 +281,13 @@ public class CRDESScheduler extends SimEnt{
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
 		}
-        blockProb = (double)totalBlocks/totalCallAttempts;
-        dropProb = (double)totalDrops/totalCallAttempts;
+        if(totalCallAttempts == 0){
+            blockProb = (double)0;
+            dropProb = (double)0;
+        }else{
+            blockProb = (double)totalBlocks/totalCallAttempts;
+            dropProb = (double)totalDrops/totalCallAttempts;
+        }
         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f", blockProb,dropProb));
 		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
 	}
