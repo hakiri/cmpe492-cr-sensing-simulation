@@ -312,6 +312,33 @@ public class Plot {
 	}
 	
 	/**
+	 * Plots all available y values belongs to given x value onto different
+	 * graphs on different windows
+	 * @param xPos	x value to be plotted
+	 */
+	public void plotAllXWithLegend(String title, int xPos, ArrayList<String> names)
+	{
+		int numberOfPlots = 1;
+		
+		String[] argv = new String[numberOfPlots];
+		
+		ArrayList<Integer> xs = new ArrayList<Integer>();
+		xs.add(xPos);
+		ArrayList<ArrayList<Integer>> ys = new ArrayList<ArrayList<Integer>>();
+		ys.add(new ArrayList<Integer>());
+		ArrayList<ArrayList<String>> nameList = new ArrayList<ArrayList<String>>();
+		nameList.add(names);
+		for(int j=0;j<y.get(xPos).size();j++){
+			ys.get(0).add(j);
+		}
+		argv[0] = title;
+
+		plot(argv[0], xs, ys, nameList);
+		
+		jPlot.main(argv);
+	}
+	
+	/**
 	 * This method plots corresponding y values of different x values on the same window.
 	 * It plots all possible graphs.
 	 * @param names		Names of the graphs that will be plotted on the same window

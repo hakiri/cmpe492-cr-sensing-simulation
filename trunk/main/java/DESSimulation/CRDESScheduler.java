@@ -237,7 +237,13 @@ public class CRDESScheduler extends SimEnt{
 		CRNode.closeLogFile();									//Close log file
 		CRNode.closeLogFileProb();
         SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
-		SimulationRunner.plotProbs.plotAllX(0);
+		ArrayList<Integer> xs = new ArrayList<Integer>();
+		xs.add(0);
+		ArrayList<String> namesList = new ArrayList<String>();
+		namesList.add("Block");
+		namesList.add("Drop");
+		namesList.add("Collision");
+		SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
@@ -297,6 +303,7 @@ public class CRDESScheduler extends SimEnt{
 		ArrayList<Double> probs = new ArrayList<Double>();
 		probs.add(blockProb);
 		probs.add(dropProb);
+		probs.add(collisionProb);
 		SimulationRunner.plotProbs.addPoint(0, Scheduler.instance().getTime(), probs);
          CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
 		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes

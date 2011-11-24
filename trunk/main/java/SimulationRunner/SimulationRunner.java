@@ -1210,7 +1210,7 @@ public class SimulationRunner extends JFrame{
 					DrawCell.paintCrNode(crNodes.get(i), Color.GREEN);
 			}
 			ArrayList<Integer> tempArray = new ArrayList<Integer>();
-			tempArray.add(2);
+			tempArray.add(3);
 			plotProbs = new Plot(1, tempArray);
 			if(SimulationRunner.plotOnButton.isSelected()){
 				ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
