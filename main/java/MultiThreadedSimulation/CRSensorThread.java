@@ -240,6 +240,8 @@ public class CRSensorThread implements Runnable{
 	
 	private void senseResultAdvertise()
 	{
+        int totalBlocks=0,totalDrops=0,totalCallAttempts=0;
+        double blockProb, dropProb;
 		time = System.currentTimeMillis();		//Save current time
 		/*Write time to log file*/
 		double msec = (double)(totalSimulationDuration-remainingSimulationDuration)/unitTime;
@@ -250,9 +252,21 @@ public class CRSensorThread implements Runnable{
 		int sec = (int)(msec/1000.0);
 		msec-= sec*1000.0;
 		CRNode.writeLogFile(String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec));
+        CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){
 			SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
+            totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
+            totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
+            totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
 		}
+		if(totalCallAttempts == 0){
+            blockProb = (double)0;
+            dropProb = (double)0;
+        }else{
+            blockProb = (double)totalBlocks/totalCallAttempts;
+            dropProb = (double)totalDrops/totalCallAttempts;
+        }
+        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f", blockProb,dropProb));
 		CRNode.logAverageSnr((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
 		//CRNode.writeLogFile("\n");
 		time = (long)senseResultAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
@@ -317,7 +331,8 @@ public class CRSensorThread implements Runnable{
 		SimulationRunner.clear();								//Clear data related to simulation
 		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
-		SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+		CRNode.closeLogFileProb();
+        SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
 			names.add("SNR");
