@@ -111,6 +111,10 @@ public class SimulationRunner extends JFrame{
 	 */
 	public static Plot plot = null;
 	/**
+	 * Plots the time versus block and drop probabilities graphs
+	 */
+	public static Plot plotProbs = null;
+	/**
 	 * Currently running SimulationRunner instance
 	 */
 	public static SimulationRunner runner;
@@ -1205,7 +1209,9 @@ public class SimulationRunner extends JFrame{
 				if(animationOnButton.isSelected())
 					DrawCell.paintCrNode(crNodes.get(i), Color.GREEN);
 			}
-			
+			ArrayList<Integer> tempArray = new ArrayList<Integer>();
+			tempArray.add(2);
+			plotProbs = new Plot(1, tempArray);
 			if(SimulationRunner.plotOnButton.isSelected()){
 				ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 				numberOFYs.add(numberOfFreq);
