@@ -245,7 +245,12 @@ public class CRNode extends Node {
     public static void closeLogFile() {
         pw.close();
     }
-
+    
+    public static void closeLogFileProb() {
+        pw_prob.close();
+    }
+    
+    
     /**
      * Sets frequency list to listen in the sensing slots.
      * @param frequencies Frequency list
