@@ -237,6 +237,7 @@ public class CRDESScheduler extends SimEnt{
 		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
 		SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+		SimulationRunner.plotProbs.plotAllX(0);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
@@ -282,12 +283,16 @@ public class CRDESScheduler extends SimEnt{
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
 		}
         if(totalCallAttempts == 0){
-            blockProb = (double)0;
-            dropProb = (double)0;
+            blockProb = 0.0;
+            dropProb = 0.0;
         }else{
             blockProb = (double)totalBlocks/totalCallAttempts;
             dropProb = (double)totalDrops/totalCallAttempts;
         }
+		ArrayList<Double> probs = new ArrayList<Double>();
+		probs.add(blockProb);
+		probs.add(dropProb);
+		SimulationRunner.plotProbs.addPoint(0, Scheduler.instance().getTime(), probs);
         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f", blockProb,dropProb));
 		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
 	}
