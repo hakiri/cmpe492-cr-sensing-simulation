@@ -6,9 +6,7 @@ import Nodes.CRNode;
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -270,6 +268,11 @@ public class CRSensorThread implements Runnable{
             dropProb = (double)totalDrops/totalCalls;
             collisionProb = (double)totalCollisions/totalCalls;
         }
+		ArrayList<Double> probs = new ArrayList<Double>();
+		probs.add(blockProb);
+		probs.add(dropProb);
+		probs.add(collisionProb);
+		SimulationRunner.plotProbs.addPoint(0, (totalSimulationDuration-remainingSimulationDuration)/unitTime, probs);
         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
 		CRNode.logAverageSnr((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
 		//CRNode.writeLogFile("\n");
@@ -337,6 +340,13 @@ public class CRSensorThread implements Runnable{
 		CRNode.closeLogFile();									//Close log file
 		CRNode.closeLogFileProb();
         SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+		ArrayList<Integer> xs = new ArrayList<Integer>();
+		xs.add(0);
+		ArrayList<String> namesList = new ArrayList<String>();
+		namesList.add("Block");
+		namesList.add("Drop");
+		namesList.add("Collision");
+		SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
 			names.add("SNR");
