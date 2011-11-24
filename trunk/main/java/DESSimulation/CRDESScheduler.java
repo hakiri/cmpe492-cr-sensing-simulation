@@ -209,7 +209,6 @@ public class CRDESScheduler extends SimEnt{
 		}
 		else if(ev instanceof CRNode.EndCommunicationEvent){
 			CRNode.EndCommunicationEvent ece = (CRNode.EndCommunicationEvent) ev;
-			//SimulationRunner.crNodes.get(ece.id).setCommOrNot(false);
 			SimulationRunner.crNodes.get(ece.id).releaseCommunication_frequency();
 			SimulationRunner.crNodes.get(ece.id).setIsCollided(false);
 			SimulationRunner.crNodes.get(ece.id).startEventHandle = send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
@@ -236,7 +235,8 @@ public class CRDESScheduler extends SimEnt{
 		SimulationRunner.clear();								//Clear data related to simulation
 		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
-		SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+		CRNode.closeLogFileProb();
+        SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
 		SimulationRunner.plotProbs.plotAllX(0);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
@@ -264,8 +264,8 @@ public class CRDESScheduler extends SimEnt{
 	
 	private void senseResultAdvertise()
 	{
-		int totalBlocks=0,totalDrops=0,totalCallAttempts=0;
-        double blockProb, dropProb;
+		int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0;
+        double blockProb, dropProb,collisionProb;
         /*Write time to log file*/
 		double msec = (double)(Scheduler.instance().getTime())/unitTime;
 		int hour = (int)(msec/3600000.0);
@@ -276,24 +276,29 @@ public class CRDESScheduler extends SimEnt{
 		msec-= sec*1000.0;
 		CRNode.writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 		CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
+        //calculate drop,block and collision probabilities
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
 			SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
+            totalCalls += totalCallAttempts - totalBlocks;
+            totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
 		}
-        if(totalCallAttempts == 0){
+		if(totalCallAttempts == 0){
             blockProb = 0.0;
             dropProb = 0.0;
+            collisionProb = 0.0;
         }else{
             blockProb = (double)totalBlocks/totalCallAttempts;
-            dropProb = (double)totalDrops/totalCallAttempts;
+            dropProb = (double)totalDrops/totalCalls;
+            collisionProb = (double)totalCollisions/totalCalls;
         }
 		ArrayList<Double> probs = new ArrayList<Double>();
 		probs.add(blockProb);
 		probs.add(dropProb);
 		SimulationRunner.plotProbs.addPoint(0, Scheduler.instance().getTime(), probs);
-        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f", blockProb,dropProb));
+         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
 		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
 	}
 	
