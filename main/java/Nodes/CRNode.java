@@ -615,6 +615,11 @@ public class CRNode extends Node {
     public int getNumberOfCallAttempts() {
         return numberOfCallAttempts;
     }
+
+    public int getNumberOfCollision() {
+        return numberOfCollision;
+    }
+    
     
     
 }

@@ -240,8 +240,8 @@ public class CRSensorThread implements Runnable{
 	
 	private void senseResultAdvertise()
 	{
-        int totalBlocks=0,totalDrops=0,totalCallAttempts=0;
-        double blockProb, dropProb;
+        int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0;
+        double blockProb, dropProb,collisionProb;
 		time = System.currentTimeMillis();		//Save current time
 		/*Write time to log file*/
 		double msec = (double)(totalSimulationDuration-remainingSimulationDuration)/unitTime;
@@ -258,15 +258,19 @@ public class CRSensorThread implements Runnable{
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
+            totalCalls += totalCallAttempts - totalBlocks;
+            totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
 		}
 		if(totalCallAttempts == 0){
-            blockProb = (double)0;
-            dropProb = (double)0;
+            blockProb = 0.0;
+            dropProb = 0.0;
+            collisionProb = 0.0;
         }else{
             blockProb = (double)totalBlocks/totalCallAttempts;
-            dropProb = (double)totalDrops/totalCallAttempts;
+            dropProb = (double)totalDrops/totalCalls;
+            collisionProb = (double)totalCollisions/totalCalls;
         }
-        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f", blockProb,dropProb));
+        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
 		CRNode.logAverageSnr((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
 		//CRNode.writeLogFile("\n");
 		time = (long)senseResultAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
