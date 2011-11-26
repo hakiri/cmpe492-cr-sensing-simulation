@@ -1,6 +1,23 @@
 #summary Developers' Meeting notes and reports
 #labels Phase-Implementation,Featured
 
+= Report of Meeting Saturday, Nov 19, 2011 =
+New statistics for CR nodes are calculated:
+<dl>
+ <dt>1. Collision probability of a CR node calculated as total number of collisions over total number of calls.</dt>
+ <dt>2. Drop probability of a CR node calculated as total number of drops over total number of calls.</dt>
+ <dt>3. Block probability of a CR node calculated as total number of blocks over total number of call attempts.</dt>
+</dl>
+
+Some changes are done on the animation screen:
+<dl>
+ <dt>1. Images of CR nodes are changed.</dt>
+ <dt>2. Collisions of CR nodes are demonstrated.</dt>
+</dl>
+
+
+----
+
 = Report of Meeting Sunday, Nov 13, 2011 =
 General design of the project is revised, and progress report is prepared.
 
