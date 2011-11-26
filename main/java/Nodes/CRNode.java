@@ -101,7 +101,11 @@ public class CRNode extends Node {
      * True if the crnode has collided in the previous frame
      */
     private boolean isCollided = false;
-
+    
+    private double last_time;
+    private double last_sinr;
+    private double totalNumberOfBitsTransmitted = 0;
+    
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param id ID of this CR node
@@ -298,8 +302,8 @@ public class CRNode extends Node {
      * @param time Time of the simulation
      * @param lastReport True if it is the last report otherwise false
      */
-    public static void communicate(double time, boolean lastReport) {
-
+    public static void communicate(double time,boolean isRegular, boolean lastReport) {
+        
         ArrayList<Double> sinr = new ArrayList<Double>();
         for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
             sinr.add(0.0);
@@ -316,7 +320,19 @@ public class CRNode extends Node {
 				collision = "collision occured";
 				SimulationRunner.crNodes.get(i).collisionOccured = true;
 			}
-			
+			if(isRegular && !lastReport){   //updates time and sinr value of communicating cr nodes
+                SimulationRunner.crNodes.get(i).last_time = time;
+                SimulationRunner.crNodes.get(i).last_sinr = sinr.get(freq);
+            }
+            if(isRegular && lastReport){
+                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2));
+            }
+            if(!isRegular){
+                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2));
+                SimulationRunner.crNodes.get(i).last_time = time;
+                SimulationRunner.crNodes.get(i).last_sinr = sinr.get(freq);
+            }
+            
 			double msec = (double)time;
 			int hour = (int)(msec/3600000.0);
 			msec -= hour*3600000.0;
@@ -326,7 +342,7 @@ public class CRNode extends Node {
 			msec-= sec*1000.0;
 			
 			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
-			if(lastReport){
+			if(isRegular && lastReport){
 				SimulationRunner.crNodes.get(i).numberOfFramesCommunicated++;
 				if(SimulationRunner.crNodes.get(i).collisionOccured){
 					SimulationRunner.crNodes.get(i).numberOfCollision++;

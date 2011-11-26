@@ -303,12 +303,12 @@ public class CRSensorThread implements Runnable{
 	}
 	
 	private void communicate(int numberOfReports)
-	{
+	{//TODO thread kismini guncelle
 		if(numberOfReports<1)
 			numberOfReports=1;
 		for(int i=0;i<numberOfReports;i++){
 			time = System.currentTimeMillis();		//Save current time
-			CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime, false);
+			CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,false, false);
 			CRNode.writeLogFile("");
 			time = (long)(commDur/numberOfReports) - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 			if(time>1){												//unit time if it is greater than 1 milli sec
@@ -320,7 +320,7 @@ public class CRSensorThread implements Runnable{
 			}
 			remainingSimulationDuration-=(commDur/numberOfReports);
 		}
-		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime, true);
+		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,false ,true);
 		CRNode.writeLogFile("\n");
 	}
 	

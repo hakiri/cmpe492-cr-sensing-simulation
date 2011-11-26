@@ -57,22 +57,32 @@ public class CRDESScheduler extends SimEnt{
 	 * Event class to start communication for CR nodes
 	 */
 	private static class CommunicateEvent implements Event{
-		int numberOfReports = 0;
-		
+		boolean lastReport = false;
+        boolean isReg ;
+        //int numberOfReports = 0;
+
+        public CommunicateEvent(boolean isReg) {
+            this.isReg = isReg;
+        }
+        
 		@Override
 		public void entering(SimEnt locale) {}
+        
+//		public void setNumberOfReports(int numberOfReports) {
+//			this.numberOfReports = numberOfReports;
+//		}
 
-		public void setNumberOfReports(int numberOfReports) {
-			this.numberOfReports = numberOfReports;
-		}
+        public void setLastReport(boolean lastReport) {
+            this.lastReport = lastReport;
+        }
 	}
 	
 	private final static SenseScheduleAdvertiseEvent senseScheAdverEvent = new SenseScheduleAdvertiseEvent();
 	private static SensingSlotEvent senseSlotEvent = new SensingSlotEvent();
 	private final static SenseResultAdvertiseEvent senseResultAdverEvent = new SenseResultAdvertiseEvent();
 	private final static CommunicationScheduleAdvertiseEvent commScheAdverEvent = new CommunicationScheduleAdvertiseEvent();
-	private static CommunicateEvent commEvent = new CommunicateEvent();
-	
+	private static CommunicateEvent regCommEvent = new CommunicateEvent(true);
+	static CommunicateEvent collCommEvent = new CommunicateEvent(false);
 	/**
 	 * Simulation Duration
 	 */
@@ -110,14 +120,10 @@ public class CRDESScheduler extends SimEnt{
 	 */
 	private double senseResultAdvertisement;
 	/**
-	 * Number of SINR value reports during communication
-	 */
-	final static int numberOfReports = 3;
-	/**
 	 * Duration of frame
 	 */
 	private double frameDuration;
-        
+    private boolean isInComm = false;    
         
 	/**
 	 * Creates a DES scheduler that performs frame action for CR sensor nodes
@@ -140,7 +146,7 @@ public class CRDESScheduler extends SimEnt{
 		this.slotDur = slotDur*unitTime;
 		this.senseScheduleAdvertisement = senseScheduleAdvertisement*unitTime;
 		this.commScheduleAdvertisement = commScheduleAdvertisement*unitTime;
-		this.commDur = (commDur*unitTime)/(numberOfReports);
+		this.commDur = (commDur*unitTime);
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
 		finished = false;
 		
@@ -163,7 +169,7 @@ public class CRDESScheduler extends SimEnt{
 	/**
 	 * Main frame operation
 	 * @param src	Source of the event
-	 * @param ev	Occured Event
+	 * @param ev	Occurred Event
 	 */
 	@Override
 	public void recv(SimEnt src, Event ev) {
@@ -187,20 +193,23 @@ public class CRDESScheduler extends SimEnt{
 		}
 		else if(ev instanceof CommunicationScheduleAdvertiseEvent){
 			commScheduleAdvertise();
-			commEvent.setNumberOfReports(0);
-			send(this,commEvent,commScheduleAdvertisement);
+			//commEvent.setNumberOfReports(0);
+			send(this,regCommEvent,commScheduleAdvertisement);
 		}
 		else if(ev instanceof CommunicateEvent){
 			CommunicateEvent ce = (CommunicateEvent)ev;
-			boolean lastReport = ce.numberOfReports==numberOfReports;
-			communicate(lastReport);
-			commEvent.setNumberOfReports(ce.numberOfReports+1);
-			if(lastReport){
+            if(ce.isReg || (!ce.isReg && isInComm))
+                communicate(ce.isReg,ce.lastReport);
+			
+            if(ce.isReg && !(ce.lastReport)){
+                isInComm = true;
+                regCommEvent.setLastReport(true);
+                send(this,regCommEvent,commDur);
+            }
+            else if(ce.isReg && ce.lastReport){
+                isInComm = false;
 				CRNode.writeLogFile("");
 				send(this,senseScheAdverEvent,0.0);
-			}
-			else{
-				send(this,commEvent,commDur);
 			}
 		}
 		else if(ev instanceof CRNode.StartCommunicationEvent){
@@ -314,9 +323,9 @@ public class CRDESScheduler extends SimEnt{
 		SimulationRunner.crBase.communicationScheduleAdvertiser();
 	}
 	
-	private void communicate(boolean lastReport)
+	private void communicate(boolean isRegular, boolean lastReport)
 	{
-		CRNode.communicate((double)(Scheduler.instance().getTime())/unitTime,lastReport);
+		CRNode.communicate((double)(Scheduler.instance().getTime())/unitTime,isRegular,lastReport);
 	}
 
 	/**
@@ -366,7 +375,7 @@ public class CRDESScheduler extends SimEnt{
 	 * @param crnode_id	ID of the CR node
 	 */
 	public void sendEndCommEvent(int crnode_id){
-		SimulationRunner.crNodes.get(crnode_id).endEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).endCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOnDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-(this.commDur*CRDESScheduler.numberOfReports)));
+		SimulationRunner.crNodes.get(crnode_id).endEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).endCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOnDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
 	}
 	
 	/**
@@ -374,7 +383,7 @@ public class CRDESScheduler extends SimEnt{
 	 * @param crnode_id	ID of the CR node
 	 */
 	public void sendStartCommEvent(int crnode_id){
-		SimulationRunner.crNodes.get(crnode_id).startEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).startCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-(this.commDur*CRDESScheduler.numberOfReports)));
+		SimulationRunner.crNodes.get(crnode_id).startEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).startCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
 	}
 	
 }
