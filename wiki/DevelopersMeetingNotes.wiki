@@ -1,12 +1,12 @@
 #summary Developers' Meeting notes and reports
 #labels Phase-Implementation,Featured
 
-= Report of Meeting Nov 13, 2011 =
+= Report of Meeting Sunday, Nov 13, 2011 =
 General design of the project is revised, and progress report is prepared.
 
 ----
 
-= Report of Meeting Nov 1, 2011 =
+= Report of Meeting Tuesday, Nov 1, 2011 =
 Output statistics that are given at the stats table at the end of the simulation are revised as follows:
 <dl>
  <dt><b>1. CR Node Statistics:</b></dt>
@@ -25,7 +25,7 @@ Output statistics that are given at the stats table at the end of the simulation
 
 ----
 
-= Report of Meeting Oct 22, 2011 =
+= Report of Meeting Saturday, Oct 22, 2011 =
 
 == Issues & Decisions ==
 In order to keep track of the statistics about secondary users' force handoffs and drops the following is implemented:
@@ -90,7 +90,7 @@ Finally unit times is specified as follows:
 
 ----
 
-= Report of Meeting Oct 18, 2011 =
+= Report of Meeting Tuesday, Oct 18, 2011 =
 
 == Issues & Decisions ==
 Poisson traffic implementation for secondary users at multithreaded simulation module is completed by implementing the followings:
@@ -108,7 +108,7 @@ Poisson traffic implementation for secondary users at multithreaded simulation m
 
 ----
 
-= Report of Meeting Oct 16, 2011 =
+= Report of Meeting Sunday, Oct 16, 2011 =
 
 == Issues & Decisions ==
 Necessary changes in communication schedule advertisement and sensing schedule advertisement to simulate more than one zone in the simulation is implemented as follows:
