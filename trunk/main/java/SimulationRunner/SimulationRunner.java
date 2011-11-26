@@ -1159,9 +1159,9 @@ public class SimulationRunner extends JFrame{
 				int seed = Integer.parseInt(seedValue.getText());	//Otherwise get seed from user
 				randEngine = new MersenneTwister(seed);
 			}
-			
+			int bandwidth = Integer.parseInt(channelBandwithField.getText())*1000;
 			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr, sinrThreshold, numberOfCalls,
-													callDura, trafficModel.getSelectedIndex(),timeUnit);//Create a wireless channel
+													callDura, trafficModel.getSelectedIndex(),timeUnit,bandwidth);//Create a wireless channel
 			
 			alpha = (360/sectrNo)/alpha;							//Evaluate the angle associated to alpha
 			double temp = radius / dNumber;							//Evaluate length of each d as they will be equal

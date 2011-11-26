@@ -130,6 +130,8 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 				send(this, wait, 0.0);
 			}
 			else{
+                if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.CR) != null)
+                    send(SimulationRunner.crDesScheduler, CRDESScheduler.collCommEvent, 0.0);
 				double commDur = nextOnDuration();
 				double remainingDur = SimulationRunner.crDesScheduler.getRemainingSimulationDuration();
 				if(commDur > remainingDur)

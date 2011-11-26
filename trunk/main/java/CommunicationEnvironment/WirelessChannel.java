@@ -76,6 +76,8 @@ public class WirelessChannel {
 	 * Scale of msec during animation
 	 */
 	public static double unitTime;
+    public static int bandwidth ;
+    
 	
 	/**
 	 * Creates a wireless channel with the given model.
@@ -99,7 +101,7 @@ public class WirelessChannel {
 	 * @param unitTime			Scale of msec during animation
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold,
-							double meanOffDuration, double meanOnDuration, int trafficModel, double unitTime)
+                double meanOffDuration, double meanOnDuration, int trafficModel, double unitTime,int bandwidth)
 	{
 		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
 		frequencies = new HashMap<Integer, ArrayList<Node>>();	//Create a hash table for frequencies with integer keys and 
@@ -118,6 +120,7 @@ public class WirelessChannel {
 		this.meanOnDuration = meanOnDuration;
 		this.trafficModel = trafficModel;
 		WirelessChannel.unitTime = unitTime;
+        WirelessChannel.bandwidth = bandwidth;
 	}
 	
 	/**
