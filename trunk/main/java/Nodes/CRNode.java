@@ -1,6 +1,5 @@
 package Nodes;
 
-import Animation.DrawCell;
 import CommunicationEnvironment.WirelessChannel;
 import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
@@ -17,6 +16,7 @@ import DES.SimEnt;
 import SimulationRunner.ParetoDistribution;
 import SimulationRunner.SimulationRunner;
 import cern.jet.random.Exponential;
+import cern.jet.random.Normal;
 
 /**
  * This class basic operations of a CR node. It also concerns with logging operations
@@ -25,6 +25,8 @@ import cern.jet.random.Exponential;
  */
 public class CRNode extends Node {
 
+	final static double tau = 7;
+	final static int tw = 5;
     /**
      * List of frequencies assigned to this node with respect to their snr values.
      */
@@ -38,6 +40,7 @@ public class CRNode extends Node {
      * Average snr values of the frequencies.
      */
     private static ArrayList<ArrayList<Double>> averageSnr = null;
+	private static ArrayList<ArrayList<Integer>> sensingDecision = null;
     /**
      * Communication frequency of the crnode.
      * If the assigned value is lower than zero this means that 
@@ -130,6 +133,8 @@ public class CRNode extends Node {
         snrValues.put(freq_list_to_listen.get(freq), SimulationRunner.wc.generateSNR(this, freq_list_to_listen.get(freq)));
         int zone = SimulationRunner.crBase.findZone(id);
         averageSnr.get(zone).set(freq_list_to_listen.get(freq), (averageSnr.get(zone).get(freq_list_to_listen.get(freq)) + snrValues.get(freq_list_to_listen.get(freq))));
+		if(tau < generateNonCentralChi(2*tw, 2*WirelessChannel.dbToMag(snrValues.get(freq_list_to_listen.get(freq)))))
+			sensingDecision.get(zone).set(freq_list_to_listen.get(freq), sensingDecision.get(zone).get(freq_list_to_listen.get(freq)) + 1);
     }
 
     /**
@@ -141,16 +146,19 @@ public class CRNode extends Node {
     }
 
     /**
-     * It creates the averageSnr arraylist and initially add zeros to the elements.
+     * It creates the averageSnr ArrayList and initially add zeros to the elements.
      * @param total_number_of_frequencies	Total number of frequencies
      * @param numberOfZones					Number of zones currently simulating
      */
     public static void initializeAverageSnr(int total_number_of_frequencies, int numberOfZones) {
         averageSnr = new ArrayList<ArrayList<Double>>();
+		sensingDecision = new ArrayList<ArrayList<Integer>>();
         for (int j = 0; j < numberOfZones; j++) {
             averageSnr.add(new ArrayList<Double>());
+			sensingDecision.add(new ArrayList<Integer>());
             for (int i = 0; i < total_number_of_frequencies; i++) {
                 averageSnr.get(j).add(0.0);
+				sensingDecision.get(j).add(0);
             }
         }
     }
@@ -164,26 +172,33 @@ public class CRNode extends Node {
     }
 
     /**
-     * Calculates average snr values then writes these values to the log file 
-     * and then resets the average snr values.
+     * Calculates average SNR values then writes these values to the log file 
+     * and then resets the average SNR values.
      * @param time Current time
      */
     public static void logAverageSnr(double time) {
         for (int i = 0; i < averageSnr.size(); i++) {   //calculates the average snr values
             for (int j = 0; j < averageSnr.get(i).size(); j++) {
                 averageSnr.get(i).set(j, (averageSnr.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
-            }                                                                                        //number that listens to this freq.
+			                                                                                        //number that listens to this freq.
+				//If more than half of the CR nodes sensing a channel decides that the channel is busy then it is decided busy
+				if(sensingDecision.get(i).get(j) > SimulationRunner.crBase.getFrequency_list().get(i).get(j) / 2)
+					sensingDecision.get(i).set(j,1);
+				else	//Vacant otherwise
+					sensingDecision.get(i).set(j,0);
+            }
         }
 
-        SimulationRunner.crBase.setLast_averageSnr(averageSnr);
+        SimulationRunner.crBase.setLastSensingResults(averageSnr, sensingDecision);
         if (SimulationRunner.plotOnButton.isSelected()) {
             for (int i = 0; i < averageSnr.size(); i++) {
                 SimulationRunner.plot.addPoint(i, time, averageSnr.get(i));
             }
         }
-        pw.println("average snr values: "); //writing to log file
+        pw.println("average snr values and sensing decisions: "); //writing to log file
         for (int i = 0; i < averageSnr.size(); i++) {
             pw.println(averageSnr.get(i));
+			pw.println(sensingDecision.get(i));
         }
         for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
             ArrayList<Node> users = SimulationRunner.wc.getFreq(i);
@@ -207,6 +222,7 @@ public class CRNode extends Node {
         for (int i = 0; i < averageSnr.size(); i++) { //resets the avarageSnr list.
             for (int j = 0; j < averageSnr.get(i).size(); j++) {
                 averageSnr.get(i).set(j, 0.0);
+				sensingDecision.get(i).set(j, 0);
             }
         }
     }
@@ -636,6 +652,18 @@ public class CRNode extends Node {
         return numberOfCollision;
     }
     
-    
-    
+    public static double generateNonCentralChi(int freedom, double nonCentrality){
+		int stdev = 1;
+		double mu_square = nonCentrality/freedom;
+		double mu = Math.sqrt(mu_square);
+		Normal normal = new Normal(mu, stdev, SimulationRunner.randEngine);
+		
+		double sum = 0;
+		for (int i=0; i<freedom; i++){
+			double temp = normal.nextDouble();
+			sum += (temp*temp);
+		}
+		
+		return sum;	
+	}
 }
