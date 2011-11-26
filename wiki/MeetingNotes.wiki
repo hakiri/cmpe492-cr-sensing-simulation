@@ -1,7 +1,7 @@
 #summary Meeting Reports
 #labels Featured,Phase-Requirements
 
-= Report of Meeting Nov 3, 2011 =
+= Report of Meeting Thursday, Nov 3, 2011 =
 
 == Issues & Decisions ==
 <dl>
@@ -26,7 +26,7 @@
    * Tuna Tugcu _(Supervisor)_
    * Birkan Yilmaz _(Assistant Supervisor)_
 ----
-= Report of Meeting Oct 11, 2011 =
+= Report of Meeting Tuesday, Oct 11, 2011 =
 
 == Issues & Decisions ==
 <dl>
