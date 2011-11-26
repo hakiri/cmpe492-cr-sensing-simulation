@@ -33,11 +33,19 @@ public class CRBase extends Node{
     /**
      * Current average snr values for all of the listened frequencies.
      */
-    private ArrayList<ArrayList<Double>> current_averageSnr = null;  
+    private ArrayList<ArrayList<Double>> current_averageSnr = null;
     /**
      * Average snr values of the previous reading.
      */
-    private ArrayList<ArrayList<Double>> last_averageSnr = null;   
+    private ArrayList<ArrayList<Double>> last_averageSnr = null;
+	/**
+     * Current available or not decision for all of the listened frequencies.
+     */
+    private ArrayList<ArrayList<Integer>> currentSensingDecisions = null;
+    /**
+     * Available or not decision of the previous reading.
+     */
+    private ArrayList<ArrayList<Integer>> lastSensingDecisions = null;
     /**
      * List of frequencies which are available to talk.
      */
@@ -286,7 +294,7 @@ public class CRBase extends Node{
 			//if there was no collision in the previous measurement 
 			free_frequencies.add(new ArrayList<FreqSNR>());
 			for(int freqInZone=0;freqInZone<last_averageSnr.get(zoneNumber).size();freqInZone++){//finds collision-free frequencies and adds them to fre_freq
-				if(last_averageSnr.get(zoneNumber).get(freqInZone) <= threshold)
+				if(lastSensingDecisions.get(zoneNumber).get(freqInZone) == 0)
 					if(!SimulationRunner.wc.isOccupied(freqInZone, WirelessChannel.CR))
 						free_frequencies.get(zoneNumber).add(new FreqSNR(freqInZone, last_averageSnr.get(zoneNumber).get(freqInZone)));
 			}
@@ -394,19 +402,26 @@ public class CRBase extends Node{
      * value to the last_averagesnr.
      * @param current_averageSnr Most up-to-date snr value.
      */
-    public void setLast_averageSnr(ArrayList<ArrayList<Double>> current_averageSnr) {
+    public void setLastSensingResults(ArrayList<ArrayList<Double>> current_averageSnr, 
+										ArrayList<ArrayList<Integer>> currentDecisions) {
 		this.last_averageSnr = new ArrayList<ArrayList<Double>>();
+		this.lastSensingDecisions = new ArrayList<ArrayList<Integer>>();
 		for(int i=0;i<this.current_averageSnr.size();i++){
 			this.last_averageSnr.add(new ArrayList<Double>());
+			this.lastSensingDecisions.add(new ArrayList<Integer>());
 			for(int j=0;j<this.current_averageSnr.get(i).size();j++){
 				this.last_averageSnr.get(i).add(this.current_averageSnr.get(i).get(j));
+				this.lastSensingDecisions.get(i).add(this.currentSensingDecisions.get(i).get(j));
 			}
 		}
         this.current_averageSnr = new ArrayList<ArrayList<Double>>();
+		this.currentSensingDecisions = new ArrayList<ArrayList<Integer>>();
 		for(int i=0;i<current_averageSnr.size();i++){
 			this.current_averageSnr.add(new ArrayList<Double>());
+			this.currentSensingDecisions.add(new ArrayList<Integer>());
 			for(int j=0;j<current_averageSnr.get(i).size();j++){
 				this.current_averageSnr.get(i).add(current_averageSnr.get(i).get(j));
+				this.currentSensingDecisions.get(i).add(currentDecisions.get(i).get(j));
 			}
 		}
     }
