@@ -308,7 +308,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(simDur);
 			simDur.setToolTipText("Duration of Simulation in terms of minutes");
 			simDur.setBounds(itemPos, 100, 120, 23);
-			simDur.setText("600");
+			simDur.setText("120");
 			simDur.addKeyListener(keyAdapter);
 		}
 		{
@@ -484,7 +484,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(noSlotField);
 			noSlotField.setToolTipText("Number Of Sensing Slot in CR Frame");
 			noSlotField.setBounds(itemPos, 30, 120, 23);
-			noSlotField.setText("4");
+			noSlotField.setText("20");
 			noSlotField.addKeyListener(keyAdapter);
 		}
 		{
@@ -499,7 +499,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(slotDurField);
 			slotDurField.setToolTipText("Duration of Sensing Slot in terms of msec");
 			slotDurField.setBounds(itemPos, 65, 120, 23);
-			slotDurField.setText("1");
+			slotDurField.setText("100");
 			slotDurField.addKeyListener(keyAdapter);
 		}
 		{
@@ -514,7 +514,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(sensingResultField);
 			sensingResultField.setToolTipText("Duration of Sensing Result Advertisement in terms of msec");
 			sensingResultField.setBounds(itemPos, 100, 120, 23);
-			sensingResultField.setText("1");
+			sensingResultField.setText("100");
 			sensingResultField.addKeyListener(keyAdapter);
 		}
 		{
@@ -529,7 +529,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(senseScheduleField);
 			senseScheduleField.setToolTipText("Duration of Sensing Schedule Advertisement in terms of msec");
 			senseScheduleField.setBounds(itemPos, 135, 120, 23);
-			senseScheduleField.setText("1");
+			senseScheduleField.setText("100");
 			senseScheduleField.addKeyListener(keyAdapter);
 		}
 		{
@@ -544,7 +544,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(commDurField);
 			commDurField.setToolTipText("Duration of Communication in terms of msec");
 			commDurField.setBounds(itemPos, 170, 120, 23);
-			commDurField.setText("63");
+			commDurField.setText("6300");
 			commDurField.addKeyListener(keyAdapter);
 		}
 		{
@@ -559,7 +559,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(commScheduleField);
 			commScheduleField.setToolTipText("Duration of Communication Schedule Advertisement in terms of msec");
 			commScheduleField.setBounds(itemPos, 205, 120, 23);
-			commScheduleField.setText("1");
+			commScheduleField.setText("100");
 			commScheduleField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(framePanel);
@@ -850,7 +850,7 @@ public class SimulationRunner extends JFrame{
 			frequencyPanel.add(noFreqs);
 			noFreqs.setToolTipText("Available Number of Frequencies in the Channel");
 			noFreqs.setBounds(itemPos, 30, 120, 23);
-			noFreqs.setText("40");
+			noFreqs.setText("20");
 			noFreqs.addKeyListener(keyAdapter);
 		}
 		{
