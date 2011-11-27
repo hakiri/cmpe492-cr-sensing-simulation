@@ -275,21 +275,21 @@ public class CRBase extends Node{
 	{
 		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
 		for(int zoneNumber = 0 ; zoneNumber < registeredZones.size() ; zoneNumber++){
-			double max_dist = 0.0;
-			double temp,snr_from_base,threshold;
-			int iStart, iEnd;
-			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
-			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
-			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
-				temp = SimulationRunner.crNodes.get(crInZone).position.distance(this.position);
-				if(max_dist < temp)
-					max_dist = temp;
-			}
-			snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
-			//calculates threshold value
-			threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(snr_from_base - SimulationRunner.wc.sinrThreshold)-1);
-			if(threshold < 0)
-				threshold = 0;
+//			double max_dist = 0.0;
+//			double temp,snr_from_base,threshold;
+//			int iStart, iEnd;
+//			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
+//			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
+//			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+//				temp = SimulationRunner.crNodes.get(crInZone).position.distance(this.position);
+//				if(max_dist < temp)
+//					max_dist = temp;
+//			}
+//			snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
+//			//calculates threshold value
+//			threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(snr_from_base - SimulationRunner.wc.sinrThreshold)-1);
+//			if(threshold < 0)
+//				threshold = 0;
 			//checks averagesnr values of the frequencies and adds frequencies to the free_frequencies list
 			//if there was no collision in the previous measurement 
 			free_frequencies.add(new ArrayList<FreqSNR>());

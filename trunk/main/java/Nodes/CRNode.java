@@ -25,7 +25,7 @@ import cern.jet.random.Normal;
  */
 public class CRNode extends Node {
 
-	final static double tau = 7;
+	final static double tau = 1;
 	final static int tw = 5;
     /**
      * List of frequencies assigned to this node with respect to their snr values.
@@ -126,15 +126,17 @@ public class CRNode extends Node {
     }
 
     /**
-     * Updates the snr value of the frequency.
-     * @param freq Number of the frequency in snrValues list.
+     * Updates the snr value of the frequency that is sensed during current slot.
+     * @param sensingSlot	Current sensing slot of the CR frame.
      */
-    public void sense(int freq) {
-        snrValues.put(freq_list_to_listen.get(freq), SimulationRunner.wc.generateSNR(this, freq_list_to_listen.get(freq)));
+    public void sense(int sensingSlot) {
+		int frequency = freq_list_to_listen.get(sensingSlot);
+		double snrValue = SimulationRunner.wc.generateSNR(this, frequency);
+        snrValues.put(frequency, snrValue);
         int zone = SimulationRunner.crBase.findZone(id);
-        averageSnr.get(zone).set(freq_list_to_listen.get(freq), (averageSnr.get(zone).get(freq_list_to_listen.get(freq)) + snrValues.get(freq_list_to_listen.get(freq))));
-		if(tau < generateNonCentralChi(2*tw, 2*WirelessChannel.dbToMag(snrValues.get(freq_list_to_listen.get(freq)))))
-			sensingDecision.get(zone).set(freq_list_to_listen.get(freq), sensingDecision.get(zone).get(freq_list_to_listen.get(freq)) + 1);
+        averageSnr.get(zone).set(frequency, (averageSnr.get(zone).get(frequency) + snrValue));
+		if(tau < generateNonCentralChi(2*tw, 2*WirelessChannel.dbToMag(snrValue)))
+			sensingDecision.get(zone).set(frequency, sensingDecision.get(zone).get(frequency) + 1);
     }
 
     /**
@@ -168,7 +170,7 @@ public class CRNode extends Node {
      * to the log file, respectively.
      */
     public void logSnrValues() {
-        pw.println("number: " + String.valueOf(id) + " -- position: " + position.toString() + " -- snrValues: " + snrValues.toString());
+        pw.println("number: " + String.valueOf(id) + " -- position: " + point2DtoString(position) + " -- snrValues: " + hashMapToString(snrValues));
     }
 
     /**
@@ -178,15 +180,19 @@ public class CRNode extends Node {
      */
     public static void logAverageSnr(double time) {
         for (int i = 0; i < averageSnr.size(); i++) {   //calculates the average snr values
+			//System.out.println(sensingDecision.get(i));
             for (int j = 0; j < averageSnr.get(i).size(); j++) {
                 averageSnr.get(i).set(j, (averageSnr.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
 			                                                                                        //number that listens to this freq.
 				//If more than half of the CR nodes sensing a channel decides that the channel is busy then it is decided busy
+				//TODO DO SOME LOGGING HERE sensingDecision
+				
 				if(sensingDecision.get(i).get(j) > SimulationRunner.crBase.getFrequency_list().get(i).get(j) / 2)
 					sensingDecision.get(i).set(j,1);
 				else	//Vacant otherwise
 					sensingDecision.get(i).set(j,0);
             }
+			//System.out.println(sensingDecision.get(i)+"\n");
         }
 
         SimulationRunner.crBase.setLastSensingResults(averageSnr, sensingDecision);
@@ -197,7 +203,7 @@ public class CRNode extends Node {
         }
         pw.println("average snr values and sensing decisions: "); //writing to log file
         for (int i = 0; i < averageSnr.size(); i++) {
-            pw.println(averageSnr.get(i));
+            pw.println(arrayListToString(averageSnr.get(i)));
 			pw.println(sensingDecision.get(i));
         }
         for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
@@ -665,5 +671,37 @@ public class CRNode extends Node {
 		}
 		
 		return sum;	
+	}
+	
+	public static String point2DtoString(Point2D.Double param)
+	{
+		return String.format(Locale.US, "Point2D.Double[%.4f, %.4f]", param.x, param.y);
+	}
+	
+	public static String hashMapToString(HashMap<Integer, Double> param)
+	{
+		String res = "{";
+		for(Integer i : param.keySet()){
+			if(param.get(i) != 0.0)
+				res = res.concat(String.format(Locale.US, "%d=%.4f, ", i, param.get(i)));
+			else
+				res = res.concat(String.format(Locale.US, "%d=%.1f, ", i, param.get(i)));
+		}
+		res = res.concat("}");
+		return res;
+	}
+	
+	public static String arrayListToString(ArrayList<Double> param)
+	{
+		String res = String.format(Locale.US, "[%.1f", param.get(0));
+		
+		for(int i = 1; i<param.size() ; i++){
+			if(param.get(i) != 0.0)
+				res = res.concat(String.format(Locale.US, ", %.4f", param.get(i)));
+			else
+				res = res.concat(String.format(Locale.US, ", %.1f", param.get(i)));
+		}
+		res = res.concat("]");
+		return res;
 	}
 }
