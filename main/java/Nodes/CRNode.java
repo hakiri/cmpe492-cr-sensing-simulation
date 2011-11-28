@@ -25,7 +25,7 @@ import cern.jet.random.Normal;
  */
 public class CRNode extends Node {
 
-	final static double tau = 1;
+	final static double tau = 10;
 	final static int tw = 5;
     /**
      * List of frequencies assigned to this node with respect to their snr values.
@@ -195,7 +195,7 @@ public class CRNode extends Node {
 			//System.out.println(sensingDecision.get(i)+"\n");
         }
 
-        SimulationRunner.crBase.setLastSensingResults(averageSnr, sensingDecision);
+        SimulationRunner.crBase.setLastSensingResults(sensingDecision);
         if (SimulationRunner.plotOnButton.isSelected()) {
             for (int i = 0; i < averageSnr.size(); i++) {
                 SimulationRunner.plot.addPoint(i, time, averageSnr.get(i));
