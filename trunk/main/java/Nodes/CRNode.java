@@ -67,7 +67,7 @@ public class CRNode extends Node {
     /**
      * Count of how many times this CR node is blocked
      */
-    public int numberOfBlocks = 0;
+    private int numberOfBlocks = 0;
     /**
      * Total number of frames in the simulation.
      */
@@ -100,6 +100,7 @@ public class CRNode extends Node {
     private int numberOfDrops = 0;
     private int numberOfForcedHandoff = 0;
     private int numberOfCallAttempts = 0;
+    private int numberOfCalls = 0;
     /**
      * True if the crnode has collided in the previous frame
      */
@@ -245,6 +246,10 @@ public class CRNode extends Node {
         }
     }
 
+    /**
+     * 
+     * @param file_name
+     */
     public static void createLogFile_prob(String file_name) {
         try {
             pw_prob = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
@@ -261,6 +266,10 @@ public class CRNode extends Node {
         pw.println(log_string);
     }
 
+    /**
+     * 
+     * @param log_string
+     */
     public static void writeLogFileProb(String log_string) {
         pw_prob.println(log_string);
     }
@@ -272,6 +281,9 @@ public class CRNode extends Node {
         pw.close();
     }
     
+    /**
+     * 
+     */
     public static void closeLogFileProb() {
         pw_prob.close();
     }
@@ -313,8 +325,9 @@ public class CRNode extends Node {
      */
     public void releaseCommunication_frequency() {
         SimulationRunner.wc.releaseFrequency(this.communication_frequency, this);
-        commOrNot = false;
-        communication_frequency = -1;
+        this.commOrNot = false;
+        this.communication_frequency = -1;
+        this.numberOfCalls++;
     }
 
     /**
@@ -322,6 +335,7 @@ public class CRNode extends Node {
      * frequency to the crnode for that frame and resets the collision value
      * if it is the last report. 
      * @param time Time of the simulation
+     * @param isRegular False if this function called because of a collision event.
      * @param lastReport True if it is the last report otherwise false
      */
     public static void communicate(double time,boolean isRegular, boolean lastReport) {
@@ -404,29 +418,36 @@ public class CRNode extends Node {
         writeLogFile("-----CR NODE STATS-----");
         writeLogFile(String.format(Locale.US, "Total Number of frames: %d", totalNumberOfFrames));
         double totalNumberOfFramesComm = 0.0, totalNumberOfCollision = 0.0, totalNumberOfCallAttempts = 0.0;
-        double totalNumberOfCalls = 0.0, totalNumberOfBlocks = 0.0, totalNumberOfDrops = 0.0, totalNumberOfForcedHandoffs = 0.0;
+        double totalNumberOfCalls = 0.0, totalNumberOfBlocks = 0.0, totalNumberOfDrops = 0.0, totalNumberOfForcedHandoffs = 0.0, totalThroughput = 0.0;
         String[][] data = new String[SimulationRunner.crNodes.size() + 1][8];
+        int throughput = 0;
         int i = 0;
         for (; i < SimulationRunner.crNodes.size(); i++) {
             CRNode c = SimulationRunner.crNodes.get(i);
-            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d",
-                    c.id, c.numberOfCallAttempts, c.numberOfCallAttempts - c.numberOfBlocks, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision));
+            if(SimulationRunner.animationOnButton.isSelected())
+                throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime());
+            else if(SimulationRunner.animationOffButton.isSelected())
+                throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crDesScheduler.getCommDur());
+            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %d",
+                    c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, throughput));
             totalNumberOfFramesComm += c.numberOfFramesCommunicated;
             totalNumberOfCollision += c.numberOfCollision;
             totalNumberOfCallAttempts += c.numberOfCallAttempts;
-            totalNumberOfCalls += (c.numberOfCallAttempts - c.numberOfBlocks);
+            totalNumberOfCalls += c.numberOfCalls;
             totalNumberOfBlocks += c.numberOfBlocks;
             totalNumberOfDrops += c.numberOfDrops;
             totalNumberOfForcedHandoffs += c.numberOfForcedHandoff;
-
+            totalThroughput += throughput;
+            //TODO throughput will be added to stats table
             data[i][0] = String.valueOf(c.id);
             data[i][1] = String.valueOf(c.numberOfCallAttempts);
-            data[i][2] = String.valueOf(c.numberOfCallAttempts - c.numberOfBlocks);
+            data[i][2] = String.valueOf(c.numberOfCalls);
             data[i][3] = String.valueOf(c.numberOfFramesCommunicated);
             data[i][4] = String.valueOf(c.numberOfBlocks);
             data[i][5] = String.valueOf(c.numberOfDrops);
             data[i][6] = String.valueOf(c.numberOfForcedHandoff);
             data[i][7] = String.valueOf(c.numberOfCollision);
+            //data[i][8] = String.valueOf(throughput);
         }
         totalNumberOfFramesComm /= SimulationRunner.crNodes.size();
         totalNumberOfCollision /= SimulationRunner.crNodes.size();
@@ -435,6 +456,7 @@ public class CRNode extends Node {
         totalNumberOfBlocks /= SimulationRunner.crNodes.size();
         totalNumberOfDrops /= SimulationRunner.crNodes.size();
         totalNumberOfForcedHandoffs /= SimulationRunner.crNodes.size();
+        totalThroughput /= SimulationRunner.crNodes.size();
         writeLogFile("\nAverage:");
         writeLogFile(String.format(Locale.US, "Number of CR Nodes\t\t\t\t: %d", SimulationRunner.crNodes.size()));
         writeLogFile(String.format(Locale.US, "Number of Call Attempts\t\t\t: %.2f", totalNumberOfCallAttempts));
@@ -444,6 +466,7 @@ public class CRNode extends Node {
         writeLogFile(String.format(Locale.US, "Number of Drops\t\t\t\t\t: %.2f", totalNumberOfDrops));
         writeLogFile(String.format(Locale.US, "Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
         writeLogFile(String.format(Locale.US, "Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
+        writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f", totalNumberOfCollision));
 
         data[i][0] = "Average";
         data[i][1] = String.format(Locale.US, "%.2f", totalNumberOfCallAttempts);
@@ -453,6 +476,8 @@ public class CRNode extends Node {
         data[i][5] = String.format(Locale.US, "%.2f", totalNumberOfDrops);
         data[i][6] = String.format(Locale.US, "%.2f", totalNumberOfForcedHandoffs);
         data[i][7] = String.format(Locale.US, "%.2f", totalNumberOfCollision);
+        //data[i][8] = String.format(Locale.US, "%.2f", totalThroughput);
+        
         return data;
     }
 
@@ -652,14 +677,44 @@ public class CRNode extends Node {
         this.numberOfBlocks = numberOfBlocks;
     }
 
+    /**
+     * 
+     * @return
+     */
+    public int getNumberOfCalls() {
+        return numberOfCalls;
+    }
+
+    /**
+     * 
+     * @param numberOfCalls
+     */
+    public void setNumberOfCalls(int numberOfCalls) {
+        this.numberOfCalls = numberOfCalls;
+    }
+
+    /**
+     * 
+     * @return
+     */
     public int getNumberOfCallAttempts() {
         return numberOfCallAttempts;
     }
 
+    /**
+     * 
+     * @return
+     */
     public int getNumberOfCollision() {
         return numberOfCollision;
     }
     
+    /**
+     * 
+     * @param freedom
+     * @param nonCentrality
+     * @return
+     */
     public static double generateNonCentralChi(int freedom, double nonCentrality){
 		int stdev = 1;
 		double mu_square = nonCentrality/freedom;
@@ -675,12 +730,22 @@ public class CRNode extends Node {
 		return sum;	
 	}
 	
-	public static String point2DtoString(Point2D.Double param)
+    /**
+     * 
+     * @param param
+     * @return
+     */
+    public static String point2DtoString(Point2D.Double param)
 	{
 		return String.format(Locale.US, "Point2D.Double[%.4f, %.4f]", param.x, param.y);
 	}
 	
-	public static String hashMapToString(HashMap<Integer, Double> param)
+    /**
+     * 
+     * @param param
+     * @return
+     */
+    public static String hashMapToString(HashMap<Integer, Double> param)
 	{
 		String res = "{";
 		for(Integer i : param.keySet()){
@@ -693,7 +758,12 @@ public class CRNode extends Node {
 		return res;
 	}
 	
-	public static String arrayListToString(ArrayList<Double> param)
+    /**
+     * 
+     * @param param
+     * @return
+     */
+    public static String arrayListToString(ArrayList<Double> param)
 	{
 		String res = String.format(Locale.US, "[%.1f", param.get(0));
 		
@@ -707,7 +777,11 @@ public class CRNode extends Node {
 		return res;
 	}
 
-	public int getNumberOfFramesCommunicated() {
+    /**
+     * 
+     * @return
+     */
+    public int getNumberOfFramesCommunicated() {
 		return numberOfFramesCommunicated;
 	}
 }
