@@ -31,14 +31,6 @@ public class CRBase extends Node{
      */
     private static int number_of_freq_per_crnode;
     /**
-     * Current average snr values for all of the listened frequencies.
-     */
-    private ArrayList<ArrayList<Double>> current_averageSnr = null;
-    /**
-     * Average snr values of the previous reading.
-     */
-    private ArrayList<ArrayList<Double>> last_averageSnr = null;
-	/**
      * Current available or not decision for all of the listened frequencies.
      */
     private ArrayList<ArrayList<Integer>> currentSensingDecisions = null;
@@ -49,7 +41,7 @@ public class CRBase extends Node{
     /**
      * List of frequencies which are available to talk.
      */
-    private ArrayList<ArrayList<FreqSNR>> free_frequencies = null;
+    private ArrayList<ArrayList<Integer>> free_frequencies = null;
     /**
      * Uniform distribution
      */
@@ -93,7 +85,7 @@ public class CRBase extends Node{
         this.frequency_to_be_listen=0;
         CRBase.number_of_freq_per_crnode = number_of_freq_per_crnode;
         CRBase.uniform = new Uniform(SimulationRunner.randEngine);
-        this.current_averageSnr = new ArrayList<ArrayList<Double>>();
+		this.currentSensingDecisions = new ArrayList<ArrayList<Integer>>();
         this.registeredZones = new ArrayList<ArrayList<Integer>>();
 		this.nodesInZone = new ArrayList<Integer>();
     }
@@ -177,7 +169,7 @@ public class CRBase extends Node{
      * Third, deploys these free frequencies to the crnodes to communicate at the next frame.
      */
     public void communicationScheduleAdvertiser(){
-		if(last_averageSnr.isEmpty())
+		if(lastSensingDecisions.isEmpty())
 			return;
 		findFreeFrequencies();
 		
@@ -185,8 +177,6 @@ public class CRBase extends Node{
 		
 		ArrayList<Integer> readyToCommInZone = new ArrayList<Integer>();
 		int totalNumberOfReadytoComm = 0;
-		if(last_averageSnr.isEmpty())
-			return;
 		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
 			int iStart, iEnd;
 			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
@@ -202,44 +192,31 @@ public class CRBase extends Node{
 		}
 		
 		//this for loop assigns a frequency at each loop
-		for(;totalNumberOfReadytoComm > 0;){
-			int lowest=0;
-			
-			for(int j=0;j<free_frequencies.size();j++){
-				if(free_frequencies.get(lowest).isEmpty() || readyToCommInZone.get(lowest) == 0){
-					lowest++;
-					continue;
-				}
-				if(free_frequencies.get(j).isEmpty())
-					continue;
-				if(free_frequencies.get(lowest).get(0).SNR > free_frequencies.get(j).get(0).SNR)
-					lowest = j;
-			}
-			if(lowest == free_frequencies.size())
-				break;
+		while(totalNumberOfReadytoComm > 0){
+			int zone=getAZone();
 			int iStart, iEnd;
-			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
-			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
+			iStart = zone==0 ? 0:nodesInZone.get(zone-1);
+			iEnd = zone==0 ? nodesInZone.get(0):nodesInZone.get(zone);
 			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
 				if(SimulationRunner.crNodes.get(crInZone).getReadytoComm()){
-					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
+					int randomFreq = getARandomIndex(free_frequencies.get(zone));
+					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
 					SimulationRunner.crNodes.get(crInZone).setReadytoComm(false);
 					
-					readyToCommInZone.set(lowest, readyToCommInZone.get(lowest)-1);
+					readyToCommInZone.set(zone, readyToCommInZone.get(zone)-1);
 					for(int k=0;k<free_frequencies.size();k++){
-						if(!(k==lowest || free_frequencies.get(k).isEmpty())){
+						if(!(k==zone || free_frequencies.get(k).isEmpty())){
 							for(int l=0;l<free_frequencies.get(k).size();l++){
-								if(free_frequencies.get(k).get(l).freq == free_frequencies.get(lowest).get(0).freq){
+								if(free_frequencies.get(k).get(l) == free_frequencies.get(zone).get(randomFreq)){
 									free_frequencies.get(k).remove(l);
 									break;
 								}
 							}
 						}
 					}
-					free_frequencies.get(lowest).remove(0);
-					//SimulationRunner.crNodes.get(j).setCommOrNot(true);
-					if(readyToCommInZone.get(lowest)==0)
-						free_frequencies.get(lowest).clear();
+					free_frequencies.get(zone).remove(randomFreq);
+					if(readyToCommInZone.get(zone)==0)
+						free_frequencies.get(zone).clear();
 					if(SimulationRunner.animationOffButton.isSelected())
 						SimulationRunner.crDesScheduler.sendEndCommEvent(crInZone);
 					else{
@@ -273,33 +250,33 @@ public class CRBase extends Node{
     
 	private void findFreeFrequencies()
 	{
-		free_frequencies = new ArrayList<ArrayList<FreqSNR>>();
+		free_frequencies = new ArrayList<ArrayList<Integer>>();
 		for(int zoneNumber = 0 ; zoneNumber < registeredZones.size() ; zoneNumber++){
-//			double max_dist = 0.0;
-//			double temp,snr_from_base,threshold;
-//			int iStart, iEnd;
-//			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
-//			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
-//			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
-//				temp = SimulationRunner.crNodes.get(crInZone).position.distance(this.position);
-//				if(max_dist < temp)
-//					max_dist = temp;
-//			}
-//			snr_from_base = SimulationRunner.wc.maxSNR/Math.exp(0.12*max_dist);
-//			//calculates threshold value
-//			threshold = WirelessChannel.magTodb(WirelessChannel.dbToMag(snr_from_base - SimulationRunner.wc.sinrThreshold)-1);
-//			if(threshold < 0)
-//				threshold = 0;
 			//checks averagesnr values of the frequencies and adds frequencies to the free_frequencies list
 			//if there was no collision in the previous measurement 
-			free_frequencies.add(new ArrayList<FreqSNR>());
-			for(int freqInZone=0;freqInZone<last_averageSnr.get(zoneNumber).size();freqInZone++){//finds collision-free frequencies and adds them to fre_freq
+			free_frequencies.add(new ArrayList<Integer>());
+			for(int freqInZone=0;freqInZone<lastSensingDecisions.get(zoneNumber).size();freqInZone++){//finds collision-free frequencies and adds them to fre_freq
 				if(lastSensingDecisions.get(zoneNumber).get(freqInZone) == 0)
 					if(!SimulationRunner.wc.isOccupied(freqInZone, WirelessChannel.CR))
-						free_frequencies.get(zoneNumber).add(new FreqSNR(freqInZone, last_averageSnr.get(zoneNumber).get(freqInZone)));
+						free_frequencies.get(zoneNumber).add(freqInZone);
 			}
-			Collections.sort(free_frequencies.get(zoneNumber));	 //ascending sorting of snr values
 		}
+	}
+	
+	private int getAZone()
+	{
+		ArrayList<Integer> availableZones = new ArrayList<Integer>();
+		for(int i=0;i<free_frequencies.size();i++)
+			if(!free_frequencies.get(i).isEmpty())
+				availableZones.add(i);
+		if(availableZones.isEmpty())
+			return -1;
+		return availableZones.get(uniform.nextIntFromTo(0, availableZones.size() - 1));
+	}
+	
+	private int getARandomIndex(ArrayList<Integer> param)
+	{
+		return uniform.nextIntFromTo(0, param.size() - 1);
 	}
 	
 	private void handoffCollidedUsersInZones()
@@ -318,42 +295,32 @@ public class CRBase extends Node{
 		}
 		
 		//this for loop assigns a frequency at each loop for the collided crnodes
-		for(;totalNumberOfCollided > 0;){
-			int lowest=0;
-			
-			for(int j=0;j<free_frequencies.size();j++){
-				if(free_frequencies.get(lowest).isEmpty() || collidedInZone.get(lowest) == 0){
-					lowest++;
-					continue;
-				}
-				if(free_frequencies.get(j).isEmpty())
-					continue;
-				if(free_frequencies.get(lowest).get(0).SNR > free_frequencies.get(j).get(0).SNR)
-					lowest = j;
-			}
-			if(lowest == free_frequencies.size())
+		while(totalNumberOfCollided > 0){
+			int zone = getAZone();
+			if(zone == -1)
 				break;
 			int iStart, iEnd;
-			iStart = lowest==0 ? 0:nodesInZone.get(lowest-1);
-			iEnd = lowest==0 ? nodesInZone.get(0):nodesInZone.get(lowest);
+			iStart = zone==0 ? 0:nodesInZone.get(zone-1);
+			iEnd = zone==0 ? nodesInZone.get(0):nodesInZone.get(zone);
 			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
 				if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
-					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(lowest).get(0).freq);
+					int randomFreq = getARandomIndex(free_frequencies.get(zone));
+					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
 					SimulationRunner.crNodes.get(crInZone).setNumberOfForcedHandoff(SimulationRunner.crNodes.get(crInZone).getNumberOfForcedHandoff() + 1);
 					
-					collidedInZone.set(lowest, collidedInZone.get(lowest) - 1);
+					collidedInZone.set(zone, collidedInZone.get(zone) - 1);
 					//updates free_frequencies
 					for(int k=0;k<free_frequencies.size();k++){
-						if(!(k==lowest || free_frequencies.get(k).isEmpty())){
+						if(!(k==zone || free_frequencies.get(k).isEmpty())){
 							for(int l=0;l<free_frequencies.get(k).size();l++){
-								if(free_frequencies.get(k).get(l).freq == free_frequencies.get(lowest).get(0).freq){
+								if(free_frequencies.get(k).get(l) == free_frequencies.get(zone).get(randomFreq)){
 									free_frequencies.get(k).remove(l);
 									break;
 								}
 							}
 						}
 					}
-					free_frequencies.get(lowest).remove(0);
+					free_frequencies.get(zone).remove(randomFreq);
 					totalNumberOfCollided--;
 					break;
 				}
@@ -402,25 +369,18 @@ public class CRBase extends Node{
      * value to the last_averagesnr.
      * @param current_averageSnr Most up-to-date snr value.
      */
-    public void setLastSensingResults(ArrayList<ArrayList<Double>> current_averageSnr, 
-										ArrayList<ArrayList<Integer>> currentDecisions) {
-		this.last_averageSnr = new ArrayList<ArrayList<Double>>();
+    public void setLastSensingResults(ArrayList<ArrayList<Integer>> currentDecisions) {
 		this.lastSensingDecisions = new ArrayList<ArrayList<Integer>>();
-		for(int i=0;i<this.current_averageSnr.size();i++){
-			this.last_averageSnr.add(new ArrayList<Double>());
+		for(int i=0;i<this.currentSensingDecisions.size();i++){
 			this.lastSensingDecisions.add(new ArrayList<Integer>());
-			for(int j=0;j<this.current_averageSnr.get(i).size();j++){
-				this.last_averageSnr.get(i).add(this.current_averageSnr.get(i).get(j));
+			for(int j=0;j<this.currentSensingDecisions.get(i).size();j++){
 				this.lastSensingDecisions.get(i).add(this.currentSensingDecisions.get(i).get(j));
 			}
 		}
-        this.current_averageSnr = new ArrayList<ArrayList<Double>>();
 		this.currentSensingDecisions = new ArrayList<ArrayList<Integer>>();
-		for(int i=0;i<current_averageSnr.size();i++){
-			this.current_averageSnr.add(new ArrayList<Double>());
+		for(int i=0;i<currentDecisions.size();i++){
 			this.currentSensingDecisions.add(new ArrayList<Integer>());
-			for(int j=0;j<current_averageSnr.get(i).size();j++){
-				this.current_averageSnr.get(i).add(current_averageSnr.get(i).get(j));
+			for(int j=0;j<currentDecisions.get(i).size();j++){
 				this.currentSensingDecisions.get(i).add(currentDecisions.get(i).get(j));
 			}
 		}
