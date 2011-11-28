@@ -466,7 +466,7 @@ public class CRNode extends Node {
         writeLogFile(String.format(Locale.US, "Number of Drops\t\t\t\t\t: %.2f", totalNumberOfDrops));
         writeLogFile(String.format(Locale.US, "Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
         writeLogFile(String.format(Locale.US, "Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
-        writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f", totalNumberOfCollision));
+        writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f", totalThroughput));
 
         data[i][0] = "Average";
         data[i][1] = String.format(Locale.US, "%.2f", totalNumberOfCallAttempts);
