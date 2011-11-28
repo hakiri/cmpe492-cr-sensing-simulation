@@ -704,4 +704,8 @@ public class CRNode extends Node {
 		res = res.concat("]");
 		return res;
 	}
+
+	public int getNumberOfFramesCommunicated() {
+		return numberOfFramesCommunicated;
+	}
 }

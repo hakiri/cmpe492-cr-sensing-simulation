@@ -193,7 +193,9 @@ public class CRBase extends Node{
 		
 		//this for loop assigns a frequency at each loop
 		while(totalNumberOfReadytoComm > 0){
-			int zone=getAZone();
+			int zone=getAZone(readyToCommInZone);
+			if(zone == -1)
+				break;
 			int iStart, iEnd;
 			iStart = zone==0 ? 0:nodesInZone.get(zone-1);
 			iEnd = zone==0 ? nodesInZone.get(0):nodesInZone.get(zone);
@@ -263,11 +265,11 @@ public class CRBase extends Node{
 		}
 	}
 	
-	private int getAZone()
+	private int getAZone(ArrayList<Integer> numberOfCollidedOrReadyToCommCRNodes)
 	{
 		ArrayList<Integer> availableZones = new ArrayList<Integer>();
 		for(int i=0;i<free_frequencies.size();i++)
-			if(!free_frequencies.get(i).isEmpty())
+			if(!free_frequencies.get(i).isEmpty() && numberOfCollidedOrReadyToCommCRNodes.get(i) != 0)
 				availableZones.add(i);
 		if(availableZones.isEmpty())
 			return -1;
@@ -296,7 +298,7 @@ public class CRBase extends Node{
 		
 		//this for loop assigns a frequency at each loop for the collided crnodes
 		while(totalNumberOfCollided > 0){
-			int zone = getAZone();
+			int zone = getAZone(collidedInZone);
 			if(zone == -1)
 				break;
 			int iStart, iEnd;

@@ -194,19 +194,20 @@ public class CRDESScheduler extends SimEnt{
 		else if(ev instanceof CommunicationScheduleAdvertiseEvent){
 			commScheduleAdvertise();
 			//commEvent.setNumberOfReports(0);
+			regCommEvent.lastReport = false;
 			send(this,regCommEvent,commScheduleAdvertisement);
 		}
 		else if(ev instanceof CommunicateEvent){
 			CommunicateEvent ce = (CommunicateEvent)ev;
-            if(ce.isReg || (!ce.isReg && isInComm))
+            if(ce == regCommEvent || (!ce.isReg && isInComm))
                 communicate(ce.isReg,ce.lastReport);
 			
-            if(ce.isReg && !(ce.lastReport)){
+            if(ce == regCommEvent && !(ce.lastReport)){
                 isInComm = true;
                 regCommEvent.setLastReport(true);
                 send(this,regCommEvent,commDur);
             }
-            else if(ce.isReg && ce.lastReport){
+            else if(ce == regCommEvent && ce.lastReport){
                 isInComm = false;
 				CRNode.writeLogFile("");
 				send(this,senseScheAdverEvent,0.0);
@@ -218,9 +219,11 @@ public class CRDESScheduler extends SimEnt{
 		}
 		else if(ev instanceof CRNode.EndCommunicationEvent){
 			CRNode.EndCommunicationEvent ece = (CRNode.EndCommunicationEvent) ev;
-			SimulationRunner.crNodes.get(ece.id).releaseCommunication_frequency();
-			SimulationRunner.crNodes.get(ece.id).setIsCollided(false);
-			SimulationRunner.crNodes.get(ece.id).startEventHandle = send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
+			if(SimulationRunner.crNodes.get(ece.id).getCommunication_frequency() != -1){
+				SimulationRunner.crNodes.get(ece.id).releaseCommunication_frequency();
+				SimulationRunner.crNodes.get(ece.id).setIsCollided(false);
+				SimulationRunner.crNodes.get(ece.id).startEventHandle = send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
+			}
 		}
 		SimulationRunner.progressBar.setValue((int)(((Scheduler.instance().getTime())*100)/simulationDuration));	//Update progress bar
 		if(simulationDuration < Scheduler.instance().getTime()||finished)
@@ -279,7 +282,7 @@ public class CRDESScheduler extends SimEnt{
 	
 	private void senseResultAdvertise()
 	{
-		int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0;
+		int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0;
         double blockProb, dropProb,collisionProb;
         /*Write time to log file*/
 		double msec = (double)(Scheduler.instance().getTime())/unitTime;
@@ -298,17 +301,27 @@ public class CRDESScheduler extends SimEnt{
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
             totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
+			totalFrames += SimulationRunner.crNodes.get(i).getNumberOfFramesCommunicated();
 		}
         totalCalls = totalCallAttempts - totalBlocks;
 		if(totalCallAttempts == 0){
             blockProb = 0.0;
-            dropProb = 0.0;
-            collisionProb = 0.0;
         }else{
             blockProb = (double)totalBlocks/totalCallAttempts;
-            dropProb = (double)totalDrops/totalCalls;
-            collisionProb = (double)totalCollisions/totalCalls;
         }
+		
+		if(totalCalls == 0){
+			dropProb = 0.0;
+		}
+		else{
+			dropProb = (double)totalDrops/totalCalls;
+		}
+		if(totalFrames == 0){
+			collisionProb = 0.0;
+		}
+		else{
+			collisionProb = (double)totalCollisions/totalFrames;
+		}
 		ArrayList<Double> probs = new ArrayList<Double>();
 		probs.add(blockProb);
 		probs.add(dropProb);
