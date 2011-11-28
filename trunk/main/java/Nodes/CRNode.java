@@ -376,6 +376,8 @@ public class CRNode extends Node {
 				SimulationRunner.crNodes.get(i).collisionOccured = false;
 			}
         }
+		if(SimulationRunner.plotOnButton.isSelected())
+			SimulationRunner.plot.addPoint(SimulationRunner.crBase.registeredZones.size(),time, sinr);
     }
 
     /**

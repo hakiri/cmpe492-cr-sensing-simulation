@@ -327,7 +327,8 @@ public class CRDESScheduler extends SimEnt{
 		probs.add(dropProb);
 		probs.add(collisionProb);
 		SimulationRunner.plotProbs.addPoint(0, Scheduler.instance().getTime(), probs);
-         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
+		CRNode.writeLogFileProb(String.format(Locale.US,"Total number of Call Attempts: %d --- Total number of calls: %d --- Total number of drops: %d", totalCallAttempts,totalCalls,totalDrops));
+        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
 		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
 	}
 	
