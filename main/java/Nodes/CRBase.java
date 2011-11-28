@@ -240,7 +240,7 @@ public class CRBase extends Node{
 					SimulationRunner.crSensor.setInactiveDuration(i,false);
 					DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
 				}
-				SimulationRunner.crNodes.get(i).numberOfBlocks++;
+				SimulationRunner.crNodes.get(i).setNumberOfBlocks(SimulationRunner.crNodes.get(i).getNumberOfBlocks()+1);
 			}
 		}
 		

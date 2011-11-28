@@ -300,16 +300,15 @@ public class CRDESScheduler extends SimEnt{
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
+            totalCalls += SimulationRunner.crNodes.get(i).getNumberOfCalls();
             totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
 			totalFrames += SimulationRunner.crNodes.get(i).getNumberOfFramesCommunicated();
 		}
-        totalCalls = totalCallAttempts - totalBlocks;
 		if(totalCallAttempts == 0){
             blockProb = 0.0;
         }else{
             blockProb = (double)totalBlocks/totalCallAttempts;
         }
-		
 		if(totalCalls == 0){
 			dropProb = 0.0;
 		}
@@ -384,6 +383,14 @@ public class CRDESScheduler extends SimEnt{
 		return simulationDuration;
 	}
 	
+    public double getCommDur() {
+        return commDur;
+    }
+
+    public void setCommDur(double commDur) {
+        this.commDur = commDur;
+    }
+
 	/**
 	 * Sends a communication end event for a given CR node
 	 * @param crnode_id	ID of the CR node

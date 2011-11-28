@@ -238,7 +238,7 @@ public class CRSensorThread implements Runnable{
 	
 	private void senseResultAdvertise()
 	{
-        int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0;
+        int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0;
         double blockProb, dropProb,collisionProb;
 		time = System.currentTimeMillis();		//Save current time
 		/*Write time to log file*/
@@ -257,17 +257,26 @@ public class CRSensorThread implements Runnable{
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
             totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
+            totalCalls += SimulationRunner.crNodes.get(i).getNumberOfCalls();
+            totalFrames += SimulationRunner.crNodes.get(i).getNumberOfFramesCommunicated();
 		}
-        totalCalls = totalCallAttempts - totalBlocks;
 		if(totalCallAttempts == 0){
             blockProb = 0.0;
-            dropProb = 0.0;
-            collisionProb = 0.0;
         }else{
             blockProb = (double)totalBlocks/totalCallAttempts;
-            dropProb = (double)totalDrops/totalCalls;
-            collisionProb = (double)totalCollisions/totalCalls;
         }
+		if(totalCalls == 0){
+			dropProb = 0.0;
+		}
+		else{
+			dropProb = (double)totalDrops/totalCalls;
+		}
+		if(totalFrames == 0){
+			collisionProb = 0.0;
+		}
+		else{
+			collisionProb = (double)totalCollisions/totalFrames;
+		}
 		ArrayList<Double> probs = new ArrayList<Double>();
 		probs.add(blockProb);
 		probs.add(dropProb);
@@ -388,7 +397,11 @@ public class CRSensorThread implements Runnable{
 	public double getSimulationDuration() {
 		return totalSimulationDuration;
 	}
-
+    
+    public double getCommDurationInTermsOfUnitTime(){
+        return commDur/unitTime;
+    }
+    
 	/**
 	 * Return the ms per unit time
 	 * @return Unit time
