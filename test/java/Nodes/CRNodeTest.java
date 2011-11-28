@@ -181,7 +181,8 @@ public class CRNodeTest extends TestCase {
 		System.out.println("communicate");
 		double time = 0.0;
 		boolean lastReport = false;
-		CRNode.communicate(time, lastReport);
+        boolean isReg = false;
+		CRNode.communicate(time,isReg ,lastReport);
 		// TODO review the generated test code and remove the default call to fail.
 		
 	}
