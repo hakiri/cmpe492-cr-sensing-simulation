@@ -447,6 +447,7 @@ public class CRNode extends Node {
             data[i][5] = String.valueOf(c.numberOfDrops);
             data[i][6] = String.valueOf(c.numberOfForcedHandoff);
             data[i][7] = String.valueOf(c.numberOfCollision);
+			data[i][8] = String.format(Locale.US, "%.2f Kbits/sec", throughput/1024.0);
         }
         totalNumberOfFramesComm /= SimulationRunner.crNodes.size();
         totalNumberOfCollision /= SimulationRunner.crNodes.size();
@@ -465,6 +466,7 @@ public class CRNode extends Node {
         writeLogFile(String.format(Locale.US, "Number of Drops\t\t\t\t\t: %.2f", totalNumberOfDrops));
         writeLogFile(String.format(Locale.US, "Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
         writeLogFile(String.format(Locale.US, "Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
+		writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f Kbits", totalThroughput/1024.0));
 
         data[i][0] = "Average";
         data[i][1] = String.format(Locale.US, "%.2f", totalNumberOfCallAttempts);
