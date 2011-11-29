@@ -100,7 +100,11 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			
 			if(finished)
 				break;
-			
+			if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.CR) != null){
+				synchronized(SimulationRunner.crSensor){
+//					SimulationRunner.crSensor.getRunner().interrupt();
+				}
+			}
 			communicate();
 			
 			releaseFreq(freq);

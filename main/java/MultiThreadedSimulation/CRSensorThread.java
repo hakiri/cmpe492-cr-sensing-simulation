@@ -69,10 +69,6 @@ public class CRSensorThread implements Runnable{
 	 */
 	private long time;
 	/**
-	 * Number of checks for primary nodes during communication
-	 */
-	private final static int numberOfReports = 3;
-	/**
 	 * Current frame
 	 */
 	private int frame;
@@ -126,6 +122,16 @@ public class CRSensorThread implements Runnable{
         }
 	}
 	
+	int numberofcommunicators()
+	{
+		int res = 0;
+		for (CRNode node : SimulationRunner.crNodes) {
+			if(node.getCommOrNot())
+				res++;
+		}
+		return res;
+	}
+	
 	/**
 	 * Main thread operation
 	 */
@@ -137,6 +143,8 @@ public class CRSensorThread implements Runnable{
 			arrangeCommunicationVariables();
 			
 			expireCollisionWarnings();
+			
+			System.out.println(numberofcommunicators());
 			
 			senseScheduleAdvertise();
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
@@ -160,7 +168,7 @@ public class CRSensorThread implements Runnable{
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
-			communicate(numberOfReports);
+			communicate();
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 		}
 		finalizeSimulation();
@@ -171,11 +179,14 @@ public class CRSensorThread implements Runnable{
 		time = System.currentTimeMillis();		//Save current time
 		SimulationRunner.crBase.assignFrequencies();
 		time = (long)senseScheduleAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
-		if(time>1){												//unit time if it is greater than 1 milli sec
-			try {												//sleep for that amount
+		while(time>1){												//unit time if it is greater than 1 milli sec sleep for that amount
+			long sleepStartTime = System.currentTimeMillis();
+			try {
 				Thread.sleep(time);		//Wait for unit time amount
+				time = 0;
 			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				long sleepDuration = System.currentTimeMillis() - sleepStartTime;
+				time -= sleepDuration;
 			}
 		}
 		remainingSimulationDuration-=senseScheduleAdvertisement;
@@ -226,11 +237,14 @@ public class CRSensorThread implements Runnable{
 			PrimaryTrafficGenerator.writeLock.release();
 		PrimaryTrafficGenerator.x.release();
 		time = (long)slotDur - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
-		if(time>1){												//unit time if it is greater than 1 milli sec
-			try {												//sleep for that amount
+		while(time>1){												//unit time if it is greater than 1 milli sec sleep for that amount
+			long sleepStartTime = System.currentTimeMillis();
+			try {
 				Thread.sleep(time);		//Wait for unit time amount
+				time = 0;
 			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				long sleepDuration = System.currentTimeMillis() - sleepStartTime;
+				time -= sleepDuration;
 			}
 		}
 		remainingSimulationDuration-=slotDur;
@@ -286,11 +300,14 @@ public class CRSensorThread implements Runnable{
 		CRNode.logAverageSnr((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
 		//CRNode.writeLogFile("\n");
 		time = (long)senseResultAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
-		if(time>1){												//unit time if it is greater than 1 milli sec
-			try {												//sleep for that amount
+		while(time>1){												//unit time if it is greater than 1 milli sec sleep for that amount
+			long sleepStartTime = System.currentTimeMillis();
+			try {
 				Thread.sleep(time);		//Wait for unit time amount
+				time = 0;
 			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				long sleepDuration = System.currentTimeMillis() - sleepStartTime;
+				time -= sleepDuration;
 			}
 		}
 		remainingSimulationDuration-=senseResultAdvertisement;
@@ -301,35 +318,40 @@ public class CRSensorThread implements Runnable{
 		time = System.currentTimeMillis();		//Save current time
 		SimulationRunner.crBase.communicationScheduleAdvertiser();
 		time = (long)commScheduleAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
-		if(time>1){												//unit time if it is greater than 1 milli sec
-			try {												//sleep for that amount
+		while(time>1){												//unit time if it is greater than 1 milli sec sleep for that amount
+			long sleepStartTime = System.currentTimeMillis();
+			try {
 				Thread.sleep(time);		//Wait for unit time amount
+				time = 0;
 			} catch (InterruptedException ex) {
-				Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
+				long sleepDuration = System.currentTimeMillis() - sleepStartTime;
+				time -= sleepDuration;
 			}
 		}
 		remainingSimulationDuration-=commScheduleAdvertisement;
 	}
 	
-	private void communicate(int numberOfReports)
+	private void communicate()
 	{//TODO thread kismini guncelle
-		if(numberOfReports<1)
-			numberOfReports=1;
-		for(int i=0;i<numberOfReports;i++){
-			time = System.currentTimeMillis();		//Save current time
-			CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,false, false);
-			CRNode.writeLogFile("");
-			time = (long)(commDur/numberOfReports) - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
-			if(time>1){												//unit time if it is greater than 1 milli sec
-				try {												//sleep for that amount
-					Thread.sleep(time);		//Wait for unit time amount
-				} catch (InterruptedException ex) {
-					Logger.getLogger(CRSensorThread.class.getName()).log(Level.SEVERE, null, ex);
-				}
+		time = System.currentTimeMillis();		//Save current time
+		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,true, false);
+		CRNode.writeLogFile("");
+		double endRemainingSimulationDuration = remainingSimulationDuration - commDur;
+		time = (long)(commDur) - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
+		while(time>1){												//unit time if it is greater than 1 milli sec
+			long sleepStartTime = System.currentTimeMillis();
+			try {												//sleep for that amount
+				Thread.sleep(time);		//Wait for unit time amount
+				time = 0;
+			} catch (InterruptedException ex) {
+				long sleepDuration = System.currentTimeMillis() - sleepStartTime;
+				remainingSimulationDuration -= sleepDuration;
+				CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,false ,false);
+				time -= sleepDuration;
 			}
-			remainingSimulationDuration-=(commDur/numberOfReports);
 		}
-		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,false ,true);
+		remainingSimulationDuration = endRemainingSimulationDuration;
+		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,true ,true);
 		CRNode.writeLogFile("\n");
 	}
 	
@@ -358,7 +380,9 @@ public class CRSensorThread implements Runnable{
 		SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
-			names.add("SNR");
+			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
+				names.add("SNR of Zone "+i);
+			}
 			names.add("SINR");
 			SimulationRunner.plot.plotAll(names);			//Plot the time vs average SNR graphs
 		}
@@ -437,6 +461,9 @@ public class CRSensorThread implements Runnable{
 		if(dropped){
 			offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration);
 			commRelatedTimes.set(crnode_id, frame + offDuration);
+			if(SimulationRunner.animationOnButton.isSelected()){
+				DrawCell.paintCrNode(SimulationRunner.crNodes.get(crnode_id), Color.GRAY);
+			}
 			//SimulationRunner.crNodes.get(crnode_id).setCommOrNot(false);
 		}
 		else{
@@ -485,5 +512,9 @@ public class CRSensorThread implements Runnable{
 	{
 		DrawCell.drawCollision(SimulationRunner.crNodes.get(crNodeId), true);
 		collisionWarningExpires.set(crNodeId, frame + (int)((2000.0)/(unitTime*frameDuration)));
+	}
+
+	public Thread getRunner() {
+		return runner;
 	}
 }
