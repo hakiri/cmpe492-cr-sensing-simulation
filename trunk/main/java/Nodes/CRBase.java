@@ -9,7 +9,6 @@ import cern.jet.random.Uniform;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Locale;
 
 /**

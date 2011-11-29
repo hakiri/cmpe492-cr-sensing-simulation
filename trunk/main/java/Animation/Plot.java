@@ -241,6 +241,92 @@ public class Plot {
 		pw.close();
     }
 	
+	/**
+	 * Plots the specified graphs onto the same window. It can plot 36 different graphs 
+	 * onto the same window. It plots each of the graphs with different colors and data
+	 * point shapes. That is, no two different graphs will have the same color and same
+	 * data point shapes.
+	 * @param title		Title of the graphs
+	 * @param xs		x values to plotted
+	 * @param ys		y values to plotted
+	 * @param names		Names of the graphs
+	 * @throws IndexOutOfBoundsException
+	 */
+	public void plot(String title, ArrayList<Integer> xs, ArrayList<ArrayList<Integer>> ys, ArrayList<ArrayList<String>> names, double xMin, double xMax)
+			throws IndexOutOfBoundsException
+	{
+        try {
+            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(title))));
+        } catch (IOException ex) {    
+            System.err.println("Error during file operations");
+        }
+		
+		double temp;
+		
+		double yMin=Double.POSITIVE_INFINITY;
+		for(int i=0;i<xs.size();i++){
+			for(int j=0;j<ys.get(i).size();j++){
+				temp = Collections.min(y.get(xs.get(i)).get(ys.get(i).get(j)));
+				if(yMin > temp)
+					yMin = temp;
+			}
+		}
+		double yMax=Double.NEGATIVE_INFINITY;
+		for(int i=0;i<xs.size();i++){
+			for(int j=0;j<ys.get(i).size();j++){
+				temp = Collections.max(y.get(xs.get(i)).get(ys.get(i).get(j)));
+				if(yMax < temp)
+					yMax = temp;
+			}
+		}
+		yMax = (int)(yMax*10)+1;
+		yMax /= 10.0;
+		yMin = (int)(yMin*10);
+		yMin /= 10;
+		pw.println("new_plotter");
+		pw.println("double double");
+		pw.println("title");
+		pw.println(title);
+		pw.println("xlabel");
+		pw.println("time");
+		pw.println("ylabel");
+		pw.println("Average SNR");
+		pw.println("xunits");
+		pw.println("tu");
+		pw.println("yunits");
+		pw.println("dB");
+		pw.println("invisible -0.1 "+(yMin-0.1));
+		pw.println("invisible "+(xMax+(xMax-xMin)*0.3)+" "+yMax);
+
+		int graphCounter = 0;
+		for(int i=0;i<xs.size();i++){
+			for(int j=0;j<ys.get(i).size();j++){
+				pw.println(colors[graphCounter%colors.length]);
+				for(int q=0;q<x.get(xs.get(i)).size();q++){
+					pw.println(shapes[graphCounter/colors.length]+" "+x.get(xs.get(i)).get(q)+" "+
+							y.get(xs.get(i)).get(ys.get(i).get(j)).get(q));
+				}
+
+				for(int q=0;q<x.get(xs.get(i)).size()-1;q++){
+					pw.println("line "+x.get(xs.get(i)).get(q)+" "+y.get(xs.get(i)).get(ys.get(i).get(j)).get(q)+" "+
+							x.get(xs.get(i)).get(q+1)+" "+y.get(xs.get(i)).get(ys.get(i).get(j)).get(q+1));
+				}
+				graphCounter++;
+			}
+		}
+		pw.println("gray20");
+		double i=0;
+		for(i=yMin;i<=yMax;){
+			pw.println("line "+0+" "+i+" "+xMax+" "+i);
+			i *= 10;
+			i += 1;
+			i /= 10;
+		}
+		legend(xMin, xMax, yMin, yMax, names);
+		pw.println("go");
+		pw.close();
+    }
+	
 	
 	/**
 	 * Prepares a legend for the graph with the given names
@@ -374,5 +460,9 @@ public class Plot {
 		}
 		
 		jPlot.main(argv);
+	}
+
+	public ArrayList<ArrayList<ArrayList<Double>>> getY() {
+		return y;
 	}
 }
