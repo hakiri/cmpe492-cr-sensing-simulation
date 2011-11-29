@@ -59,7 +59,6 @@ public class CRDESScheduler extends SimEnt{
 	private static class CommunicateEvent implements Event{
 		boolean lastReport = false;
         boolean isReg ;
-        //int numberOfReports = 0;
 
         public CommunicateEvent(boolean isReg) {
             this.isReg = isReg;
@@ -68,10 +67,6 @@ public class CRDESScheduler extends SimEnt{
 		@Override
 		public void entering(SimEnt locale) {}
         
-//		public void setNumberOfReports(int numberOfReports) {
-//			this.numberOfReports = numberOfReports;
-//		}
-
         public void setLastReport(boolean lastReport) {
             this.lastReport = lastReport;
         }
@@ -383,11 +378,19 @@ public class CRDESScheduler extends SimEnt{
 		return simulationDuration;
 	}
 	
-    public double getCommDur() {
+	/**
+	 * Returns duration of a communication segment in a frame
+	 * @return	Duration of communication segment
+	 */
+	public double getCommDur() {
         return commDur;
     }
 
-    public void setCommDur(double commDur) {
+	/**
+	 * Sets duration of a communication segment in a frame
+	 * @param commDur	Duration of communication segment
+	 */
+	public void setCommDur(double commDur) {
         this.commDur = commDur;
     }
 

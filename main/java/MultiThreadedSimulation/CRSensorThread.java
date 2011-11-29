@@ -326,7 +326,7 @@ public class CRSensorThread implements Runnable{
 	}
 	
 	private void communicate()
-	{//TODO thread kismini guncelle
+	{
 		time = System.currentTimeMillis();		//Save current time
 		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,true, false);
 		CRNode.writeLogFile("");
@@ -411,7 +411,12 @@ public class CRSensorThread implements Runnable{
 		return totalSimulationDuration;
 	}
     
-    public double getCommDurationInTermsOfUnitTime(){
+	/**
+	 * Returns the duration of a communication segment in a frame in terms of
+	 * unit time (i.e. msec)
+	 * @return	Duration of communication segment
+	 */
+	public double getCommDurationInTermsOfUnitTime(){
         return commDur/unitTime;
     }
     
@@ -497,12 +502,20 @@ public class CRSensorThread implements Runnable{
 		
 	}
 	
+	/**
+	 * Sets end time of collision warning of a given CR node
+	 * @param crNodeId	ID of a CR node
+	 */
 	public void setWarningExpirationFrame(int crNodeId)
 	{
 		DrawCell.drawCollision(SimulationRunner.crNodes.get(crNodeId), true);
 		collisionWarningExpires.set(crNodeId, frame + (int)((2000.0)/(unitTime*frameDuration)));
 	}
 
+	/**
+	 * Returns the runner thread object associated
+	 * @return	Runner thread
+	 */
 	public Thread getRunner() {
 		return runner;
 	}

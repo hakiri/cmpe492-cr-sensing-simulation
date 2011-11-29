@@ -76,7 +76,10 @@ public class WirelessChannel {
 	 * Scale of msec during animation
 	 */
 	public static double unitTime;
-    public static int bandwidth ;
+	/**
+	 * Bandwidth of each of the available channels 
+	 */
+	public static int bandwidth ;
     
 	
 	/**
@@ -99,6 +102,7 @@ public class WirelessChannel {
 	 *							</ul>
 	 * @param trafficModel		Model for traffic generation
 	 * @param unitTime			Scale of msec during animation
+	 * @param bandwidth			Bandwidth of each of the available channels 
 	 */
 	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold,
                 double meanOffDuration, double meanOnDuration, int trafficModel, double unitTime,int bandwidth)

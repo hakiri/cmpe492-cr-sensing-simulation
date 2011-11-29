@@ -250,6 +250,8 @@ public class Plot {
 	 * @param xs		x values to plotted
 	 * @param ys		y values to plotted
 	 * @param names		Names of the graphs
+	 * @param xMin		Minimum x value on the graph
+	 * @param xMax		Maximum x value on the graph
 	 * @throws IndexOutOfBoundsException
 	 */
 	public void plot(String title, ArrayList<Integer> xs, ArrayList<ArrayList<Integer>> ys, ArrayList<ArrayList<String>> names, double xMin, double xMax)
@@ -400,7 +402,9 @@ public class Plot {
 	/**
 	 * Plots all available y values belongs to given x value onto different
 	 * graphs on different windows
+	 * @param title Title of the graph
 	 * @param xPos	x value to be plotted
+	 * @param names Legend of plots
 	 */
 	public void plotAllXWithLegend(String title, int xPos, ArrayList<String> names)
 	{
@@ -462,6 +466,10 @@ public class Plot {
 		jPlot.main(argv);
 	}
 
+	/**
+	 * Returns the accumulated y values.
+	 * @return	y values
+	 */
 	public ArrayList<ArrayList<ArrayList<Double>>> getY() {
 		return y;
 	}
