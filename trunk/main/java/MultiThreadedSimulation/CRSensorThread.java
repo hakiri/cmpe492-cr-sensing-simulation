@@ -122,16 +122,6 @@ public class CRSensorThread implements Runnable{
         }
 	}
 	
-	int numberofcommunicators()
-	{
-		int res = 0;
-		for (CRNode node : SimulationRunner.crNodes) {
-			if(node.getCommOrNot())
-				res++;
-		}
-		return res;
-	}
-	
 	/**
 	 * Main thread operation
 	 */
@@ -143,8 +133,6 @@ public class CRSensorThread implements Runnable{
 			arrangeCommunicationVariables();
 			
 			expireCollisionWarnings();
-			
-			System.out.println(numberofcommunicators());
 			
 			senseScheduleAdvertise();
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
