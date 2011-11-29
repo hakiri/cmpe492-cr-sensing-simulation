@@ -361,10 +361,10 @@ public class CRNode extends Node {
                 SimulationRunner.crNodes.get(i).last_sinr = sinr.get(freq);
             }
             if(isRegular && lastReport){
-                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2));
+                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2))*0.001;
             }
             if(!isRegular){
-                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2));
+                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2))*0.001;
                 SimulationRunner.crNodes.get(i).last_time = time;
                 SimulationRunner.crNodes.get(i).last_sinr = sinr.get(freq);
             }
@@ -428,8 +428,8 @@ public class CRNode extends Node {
                 throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime());
             else if(SimulationRunner.animationOffButton.isSelected())
                 throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crDesScheduler.getCommDur());
-            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %d",
-                    c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, throughput));
+            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %.2f Kbits",
+                    c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, (throughput/1024.0)));
             totalNumberOfFramesComm += c.numberOfFramesCommunicated;
             totalNumberOfCollision += c.numberOfCollision;
             totalNumberOfCallAttempts += c.numberOfCallAttempts;
@@ -466,7 +466,7 @@ public class CRNode extends Node {
         writeLogFile(String.format(Locale.US, "Number of Drops\t\t\t\t\t: %.2f", totalNumberOfDrops));
         writeLogFile(String.format(Locale.US, "Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
         writeLogFile(String.format(Locale.US, "Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
-        writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f", totalThroughput));
+        writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f Kbits", totalThroughput/1024.0));
 
         data[i][0] = "Average";
         data[i][1] = String.format(Locale.US, "%.2f", totalNumberOfCallAttempts);
