@@ -81,7 +81,7 @@ public class SimulationStatsTable extends JFrame{
 		createButtons(length);
 		
 		pack();
-		int width = 1115;
+		int width = 1175;
 		int height = 26*length+157;
 		this.setSize(width, height);
 		this.setLocationRelativeTo(parent);
@@ -102,7 +102,7 @@ public class SimulationStatsTable extends JFrame{
 	
 	private void setStatNames()
 	{
-		crStatNames = new String[8];
+		crStatNames = new String[9];
 		crStatNames[0] = "CR Node";
 		crStatNames[1] = "# of Call Attempts";
 		crStatNames[2] = "# of Calls";
@@ -111,6 +111,7 @@ public class SimulationStatsTable extends JFrame{
 		crStatNames[5] = "# of Drops";
 		crStatNames[6] = "# of Forced Handoff";
 		crStatNames[7] = "# of Collision";
+		crStatNames[8] = "Throughput";
 		
 		priStatNames = new String[3];
 		priStatNames[0] = "Primary Node";
@@ -132,22 +133,23 @@ public class SimulationStatsTable extends JFrame{
 		crScrollPane = new JScrollPane(crStatTable);
 		jPanel.add(crScrollPane);
 		if(crStats.length < 21)
-			crScrollPane.setBounds(10, 60, 720, 26*crStats.length+28);
+			crScrollPane.setBounds(10, 60, 780, 26*crStats.length+28);
 		else
-			crScrollPane.setBounds(10, 60, 720, 26*21+28);
+			crScrollPane.setBounds(10, 60, 780, 26*21+28);
 		crStatTable.setRowHeight(crStatTable.getRowHeight()+10);
 		crStatTable.setEnabled(false);
 		for(int i=0;i<crStatNames.length;i++){
 			crStatTable.getColumn(crStatNames[i]).setMinWidth(1);
 		}
-		crStatTable.getColumn("CR Node").setPreferredWidth(50);
+		crStatTable.getColumn("CR Node").setPreferredWidth(40);
 		crStatTable.getColumn("# of Call Attempts").setPreferredWidth(60);
-		crStatTable.getColumn("# of Calls").setPreferredWidth(60);
+		crStatTable.getColumn("# of Calls").setPreferredWidth(50);
 		crStatTable.getColumn("# of Frames Comm").setPreferredWidth(60);
-		crStatTable.getColumn("# of Blocks").setPreferredWidth(60);
+		crStatTable.getColumn("# of Blocks").setPreferredWidth(50);
 		crStatTable.getColumn("# of Drops").setPreferredWidth(60);
 		crStatTable.getColumn("# of Forced Handoff").setPreferredWidth(60);
 		crStatTable.getColumn("# of Collision").setPreferredWidth(60);
+		crStatTable.getColumn("Throughput").setPreferredWidth(90);
 		
 	}
 	
@@ -155,7 +157,7 @@ public class SimulationStatsTable extends JFrame{
 	{
 		priLabel = new JLabel("Primary Nodes Simulation Statistics:");
 		jPanel.add(priLabel);
-		priLabel.setBounds(740, 10, 250, 16);
+		priLabel.setBounds(800, 10, 250, 16);
 		
 		double primaryCommDur = Double.parseDouble(priStats[priStats.length-2][priStatNames.length-1]);
 		
@@ -179,15 +181,15 @@ public class SimulationStatsTable extends JFrame{
 		double utilization = (primaryCommDur*100.0)/(simDur*numberOfFreq);
 		priLabel2 = new JLabel(String.format(Locale.US, "Primary Nodes Utilization: %.2f",utilization)+"%");
 		jPanel.add(priLabel2);
-		priLabel2.setBounds(740, 35, 360, 16);
+		priLabel2.setBounds(800, 35, 360, 16);
 		
 		priStatTable = new JTable(priStats, priStatNames);
 		priScrollPane = new JScrollPane(priStatTable);
 		jPanel.add(priScrollPane);
 		if(priStats.length < 21)
-			priScrollPane.setBounds(740, 60, 360, 26*priStats.length+28);
+			priScrollPane.setBounds(800, 60, 360, 26*priStats.length+28);
 		else
-			priScrollPane.setBounds(740, 60, 360, 26*21+28);
+			priScrollPane.setBounds(800, 60, 360, 26*21+28);
 		priStatTable.setRowHeight(priStatTable.getRowHeight()+10);
 		priStatTable.setEnabled(false);
 		for(int i=0;i<priStatNames.length;i++){
@@ -205,7 +207,7 @@ public class SimulationStatsTable extends JFrame{
 			jPanel.add(saveButton);
 			saveButton.setText("SAVE");
 			saveButton.setMnemonic('s');
-			saveButton.setBounds(840, 26*length+89, 120, 23);
+			saveButton.setBounds(900, 26*length+89, 120, 23);
 			saveButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -227,7 +229,7 @@ public class SimulationStatsTable extends JFrame{
 			jPanel.add(closeButton);
 			closeButton.setText("CLOSE");
 			closeButton.setMnemonic('c');
-			closeButton.setBounds(980, 26*length+89, 120, 23);
+			closeButton.setBounds(1040, 26*length+89, 120, 23);
 			closeButton.addActionListener(new ActionListener() {
 
 				@Override
