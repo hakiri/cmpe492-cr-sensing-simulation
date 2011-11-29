@@ -128,6 +128,10 @@ public class CRSensorThread implements Runnable{
 	@Override
 	public void run() {
 		totalSimulationDuration = remainingSimulationDuration;		//Save initial simulation duration
+		ArrayList<String> namesList = new ArrayList<String>();
+		namesList.add("Block");
+		namesList.add("Drop");
+		namesList.add("Collision");
 		for(frame = 0; remainingSimulationDuration>0&&!finished ; frame++){		//Until simulation duration is elapsed or thread is terminated
 			
 			arrangeCommunicationVariables();
@@ -158,6 +162,8 @@ public class CRSensorThread implements Runnable{
 			
 			communicate();
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
+		
+			SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList,totalSimulationDuration/unitTime);
 		}
 		finalizeSimulation();
 	}
@@ -360,12 +366,7 @@ public class CRSensorThread implements Runnable{
 		CRNode.closeLogFileProb();
         SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
 		ArrayList<Integer> xs = new ArrayList<Integer>();
-		xs.add(0);
-		ArrayList<String> namesList = new ArrayList<String>();
-		namesList.add("Block");
-		namesList.add("Drop");
-		namesList.add("Collision");
-		SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList);
+		xs.add(0);		
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){

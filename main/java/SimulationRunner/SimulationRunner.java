@@ -2,6 +2,7 @@ package SimulationRunner;
 
 import Animation.DrawCell;
 import Animation.Plot;
+import Animation.SimultaneousPlot;
 import CommunicationEnvironment.Cell;
 import CommunicationEnvironment.WirelessChannel;
 import DES.Scheduler;
@@ -113,7 +114,7 @@ public class SimulationRunner extends JFrame{
 	/**
 	 * Plots the time versus block and drop probabilities graphs
 	 */
-	public static Plot plotProbs = null;
+	public static SimultaneousPlot plotProbs = null;
 	/**
 	 * Currently running SimulationRunner instance
 	 */
@@ -1211,7 +1212,7 @@ public class SimulationRunner extends JFrame{
 			}
 			ArrayList<Integer> tempArray = new ArrayList<Integer>();
 			tempArray.add(3);
-			plotProbs = new Plot(1, tempArray);
+			plotProbs = new SimultaneousPlot(1, tempArray);
 			if(SimulationRunner.plotOnButton.isSelected()){
 				ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 				numberOFYs.add(numberOfFreq);
