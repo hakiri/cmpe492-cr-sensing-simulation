@@ -186,7 +186,6 @@ public class CRNode extends Node {
                 averageSnr.get(i).set(j, (averageSnr.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
 			                                                                                        //number that listens to this freq.
 				//If more than half of the CR nodes sensing a channel decides that the channel is busy then it is decided busy
-				//TODO DO SOME LOGGING HERE sensingDecision
 				
 				if(sensingDecision.get(i).get(j) > SimulationRunner.crBase.getFrequency_list().get(i).get(j) / 2)
 					sensingDecision.get(i).set(j,1);

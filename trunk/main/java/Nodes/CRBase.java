@@ -368,7 +368,7 @@ public class CRBase extends Node{
     /**
      * Updates average_snr values. Assigns the previous current_averagesnr
      * value to the last_averagesnr.
-     * @param current_averageSnr Most up-to-date snr value.
+	 * @param currentDecisions	Current channel state decisions for all frequencies
      */
     public void setLastSensingResults(ArrayList<ArrayList<Integer>> currentDecisions) {
 		this.lastSensingDecisions = new ArrayList<ArrayList<Integer>>();
