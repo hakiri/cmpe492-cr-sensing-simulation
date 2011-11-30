@@ -17,7 +17,7 @@
  </dl></dd>
  <dd>3.2. Implement sensing for the secondary users.</dd>
  <dd>3.3. Show collisions in the animation(with a time delay)</dd>
- <dd>3.4. While animation is running, also show the related plots and update them instantly. </dd>
+ <dd>3.4. While animation is running, also show the related plots and update them simultaneously. </dd>
  <dd>3.5. Write the progress report regarding what is done so far, and what is next. </dd>
 </dl>
 == Attendees ==
