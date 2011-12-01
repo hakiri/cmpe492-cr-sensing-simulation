@@ -17,8 +17,8 @@
    * Bilal Acar _(Developer)_
    * Mehmet Akif Ersoy _(Developer)_
    * Tuna Tugcu _(Supervisor)_
-   * Birkan Yilmaz _(Assistant Supervisor)_
    * Salim Eryigit _(Assistant Supervisor)_
+   * Birkan Yilmaz _(Assistant Supervisor)_
 ----
 
 
@@ -42,8 +42,8 @@
  <dd>3.5. Write the progress report regarding what is done so far, and what is next. </dd>
 </dl>
 == Attendees ==
-   * Mehmet Akif Ersoy _(Developer)_
    * Bilal Acar _(Developer)_
+   * Mehmet Akif Ersoy _(Developer)_
    * Tuna Tugcu _(Supervisor)_
    * Birkan Yilmaz _(Assistant Supervisor)_
 ----
@@ -68,7 +68,7 @@
  <dd>3.3. Documentation, class diagram, and flow chart will be completed.</dd>
 </dl>
 == Attendees ==
-   * Mehmet Akif Ersoy _(Developer)_
    * Bilal Acar _(Developer)_
+   * Mehmet Akif Ersoy _(Developer)_
    * Tuna Tugcu _(Supervisor)_
    * Birkan Yilmaz _(Assistant Supervisor)_
