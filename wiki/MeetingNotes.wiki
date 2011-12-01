@@ -1,13 +1,34 @@
 #summary Meeting Reports
 #labels Featured,Phase-Requirements
 
+= Report of Meeting Thursday, Dec 1, 2011 =
+
+== Issues & Decisions ==
+<dl>
+ <dt>1. Improvements in the project, after the previous meeting, are explained.</dt>
+
+ <dt>2. From now on making weekly meetings at Thursday between 1pm and 2pm is decided.</dt>
+
+ <dt>3. Assignments for the next meeting is decided:</dt><dd>3.1. Implementing batch mode run from console without using GUI.</dd><dd>3.2. Changing collision detection time. Make collision detection according to sensing decision at communication scheduling.</dd><dd>3.3. P<sub>F</sub> and P<sub>M</sub> calculation for each frequency zone by zone.</dd><dd>3.4. Diverse likelihood of primary communication frequency selection.</dd>
+
+ <dt>4. Making optimization over choosing which frequency to sense at each sensing slot is decided.</dt>
+</dl>
+== Attendees ==
+   * Bilal Acar _(Developer)_
+   * Mehmet Akif Ersoy _(Developer)_
+   * Tuna Tugcu _(Supervisor)_
+   * Birkan Yilmaz _(Assistant Supervisor)_
+   * Salim Eryigit _(Assistant Supervisor)_
+----
+
+
 = Report of Meeting Thursday, Nov 3, 2011 =
 
 == Issues & Decisions ==
 <dl>
  <dt>1. Improvements in the project, after the previous meeting, are explained.</dt>
 
- <dt>2. Calculation of the throughput of the simulation is discussed:</dt><dd>2.1. [http://en.wikipedia.org/wiki/Shannon_capacity Shannon's Capacity Formula] is going to be used for throughput calculation.(Assuming that we have 40 channels with 8MHz Bandwidth)</dd>
+ <dt>2. Calculation of the throughput of CR users in the simulation is discussed:</dt><dd>2.1. [http://en.wikipedia.org/wiki/Shannon_capacity Shannon's Capacity Formula] is going to be used for throughput calculation.(Assuming that we have 40 channels with 8MHz Bandwidth)</dd>
 
  <dt>3. Assignments for the next meeting is decided:</dt>
  <dd>3.1. Adjusting simulation parameters to observe secondary-primary users relations within an environment which is much closer to the real-world. These changes are:</dd>
