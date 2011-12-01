@@ -1,6 +1,24 @@
 #summary Developers' Meeting notes and reports
 #labels Phase-Implementation,Featured
 
+= Report of Meeting Saturday, Nov 26, 2011 =
+Sensing functionality for CR users is added:
+<dl>
+ <dt>After retrieving SNR value from wireless channel CR nodes computes a random energy value from Chi Square distribution with degree of freedom TW and noncentralality SNR. Then by comparing this value with a threshold they decide whether the channel is vacant or not.</dt>
+</dl>
+
+Throughput calculation of CR nodes is implemented:
+<dl>
+ <dt>First of we implemented accurate detection of the time of a collision and its reporting. We removed periodic reporting of SINR values of communicated channels. For DES module accurate detection of collision time is implemented as:</dt>
+  <dd>1. At the beginning of the communicate just store current SINR value and time</dd>
+  <dd>2. If anywhere else compute the time elapsed since the last report and channel capacity with last SINR value. Then compute the bits transmitted during that duration and accumulate that bits. Finally, update current SINR value and time.</dd>
+  <dd>3. At the end of simulation divide total number of bits transmitted with total communication duration.</dd>
+</dl>
+
+
+----
+
+
 = Report of Meeting Saturday, Nov 19, 2011 =
 New statistics for CR nodes are calculated:
 <dl>
