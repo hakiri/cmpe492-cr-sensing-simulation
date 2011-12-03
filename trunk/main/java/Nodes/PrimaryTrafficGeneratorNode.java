@@ -57,6 +57,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
 		}
 		setRandomPosition(offDuration);
 		SimulationRunner.wc.occupyFrequency(communicationFreq, this);	//Occupy the frequency
+        SimulationRunner.wc.usageOfFreqs.set(communicationFreq, SimulationRunner.wc.usageOfFreqs.get(communicationFreq)+1);
 		return communicationFreq;									//Return its ID
 	}
 
@@ -162,7 +163,7 @@ public class PrimaryTrafficGeneratorNode extends Node{
 		msec -= min*60000.0;
 		int sec = (int)(msec/1000.0);
 		msec-= sec*1000.0;
-		
+        
 		CRNode.writeLogFile(String.format(Locale.US,"TOTAL\t\t\t\tNumber of Calls: %d\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
 				totalCallAttempts - totalDrops, hour,min,sec,msec));
 		
@@ -177,6 +178,23 @@ public class PrimaryTrafficGeneratorNode extends Node{
 		CRNode.writeLogFile(String.format(Locale.US,"Average\t\t\t\tNumber of Calls: %.2f\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
 				(double)(totalCallAttempts - totalDrops) / (double)list.size(), hour,min,sec,msec));
 		
+        double totalUsageOfFreq = 0.0;
+        CRNode.writeLogFile("");
+        for(int j=0;j<SimulationRunner.wc.numberOfFreq();j++){
+            CRNode.writeLogFile(String.format(Locale.US, "Freq# %d used %d times, by primary users", j,SimulationRunner.wc.usageOfFreqs.get(j)));
+        }
+        CRNode.writeLogFile("");
+        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
+            totalUsageOfFreq += SimulationRunner.wc.usageOfFreqsInIntervals.get(j);
+        }
+        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
+            CRNode.writeLogFile(String.format(Locale.US, "Total usage of %d. freq interval is %d (which is %.2f percentage in total)",j,SimulationRunner.wc.usageOfFreqsInIntervals.get(j),SimulationRunner.wc.usageOfFreqsInIntervals.get(j)/totalUsageOfFreq));
+        }
+        CRNode.writeLogFile("");
+        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
+            CRNode.writeLogFile(String.format(Locale.US, "Last index of %d. freq interval is %d",j,SimulationRunner.wc.indexesOfFreqIntervals.get(j)-1));
+        }
+        
 		data[i][0] = "Total";
 		data[i][1] = String.valueOf(totalCallAttempts - totalDrops);
 		data[i][2] = String.format(Locale.US,"%f", totalCommDur);

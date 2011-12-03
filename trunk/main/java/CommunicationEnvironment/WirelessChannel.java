@@ -81,7 +81,10 @@ public class WirelessChannel {
 	 */
 	public static int bandwidth ;
     
-	
+    public ArrayList<Double> probsOfFreqIntervals = null;
+	public ArrayList<Integer> indexesOfFreqIntervals = null;
+    public ArrayList<Integer> usageOfFreqs = new ArrayList<Integer>();
+    public ArrayList<Integer> usageOfFreqsInIntervals = new ArrayList<Integer>();
 	/**
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequency.
@@ -115,6 +118,7 @@ public class WirelessChannel {
 			temp.add(null);
 			temp.add(null);
 			frequencies.put(i, temp);				//Create frequencies
+            usageOfFreqs.add(0);
 		}
 		this.channelModel = channelModel;			//Set channel model
 		this.maxSNR = maxSNR;						//Sets max SNR value
@@ -125,6 +129,7 @@ public class WirelessChannel {
 		this.trafficModel = trafficModel;
 		WirelessChannel.unitTime = unitTime;
         WirelessChannel.bandwidth = bandwidth;
+        initializeFreqIntervals();
 	}
 	
 	/**
@@ -236,16 +241,83 @@ public class WirelessChannel {
 	public int freeFrequency()
 	{
 		ArrayList<Integer> free = new ArrayList<Integer>();
-		for(int i=0;i<frequencies.size();i++){	//Search for a free frequency
-			if(frequencies.get(i).get(PRIMARY) == null){		//If no primary node occupied it
-				free.add(i);//return i;
-			}
-		}
-		if(free.isEmpty())
-			return NOFREEFREQ;						//Return -1 otherwise
-		return free.get(uniform.nextIntFromTo(0, free.size()-1));
+		ArrayList<Integer> indexes = freqInterval();
+        if(indexes.get(0) == -1)
+            return NOFREEFREQ;
+        else{
+            for(int i=indexes.get(0);i<indexes.get(1);i++){	//Search for a free frequency
+                if(frequencies.get(i).get(PRIMARY) == null){		//If no primary node occupied it
+                    free.add(i);//return i;
+                }
+            }
+            return free.get(uniform.nextIntFromTo(0, free.size()-1));
+        }
 	}
 	
+    public ArrayList<Integer> freqInterval(){
+        ArrayList<Integer> freqInterval = new ArrayList<Integer>();
+        ArrayList<Integer> availableFreqIntervals = new ArrayList<Integer>();
+        ArrayList<Double> cumulativeProbsOfFreq = new ArrayList<Double>();
+        int temp=0,iStart=-1,iEnd=-1; 
+        double totalProb=0.0,expandCoeff,cumProb=0.0,random;
+        
+        for(int i=0;i<probsOfFreqIntervals.size();i++){
+            for(int j=temp;j<indexesOfFreqIntervals.get(i);j++){
+                if(frequencies.get(j).get(PRIMARY) == null){
+                    totalProb+=probsOfFreqIntervals.get(i);
+                    availableFreqIntervals.add(i);
+                    break;
+                }
+            }
+            temp = indexesOfFreqIntervals.get(i);
+        }
+        if(totalProb == 0.0){
+            freqInterval.add(iStart);
+            freqInterval.add(iEnd);
+            return freqInterval;
+        }
+        else{
+            expandCoeff = 1/totalProb;
+            for(int i=0;i<availableFreqIntervals.size();i++){
+                cumProb += probsOfFreqIntervals.get(availableFreqIntervals.get(i))*expandCoeff;
+                cumulativeProbsOfFreq.add(cumProb);
+            }
+            random = uniform.nextDouble();
+            for(int i=0;i<cumulativeProbsOfFreq.size();i++){
+                if(random < cumulativeProbsOfFreq.get(i)){
+                    usageOfFreqsInIntervals.set(availableFreqIntervals.get(i), usageOfFreqsInIntervals.get(availableFreqIntervals.get(i))+1);
+                    if(availableFreqIntervals.get(i) == 0)
+                        iStart = 0;
+                    else
+                        iStart = indexesOfFreqIntervals.get(availableFreqIntervals.get(i)-1);
+                    iEnd = indexesOfFreqIntervals.get(availableFreqIntervals.get(i));
+                    freqInterval.add(iStart);
+                    freqInterval.add(iEnd);
+                    return freqInterval;
+                }
+            }
+        }
+        freqInterval.add(iStart);
+        freqInterval.add(iEnd);
+        return freqInterval;
+    }
+    
+    public void initializeFreqIntervals(){
+        int temp=0;
+        probsOfFreqIntervals = new ArrayList<Double>();
+        indexesOfFreqIntervals = new ArrayList<Integer>();
+        probsOfFreqIntervals.add(0.2);
+        probsOfFreqIntervals.add(0.6);
+        probsOfFreqIntervals.add(0.2);
+        temp = (int)(frequencies.size()/probsOfFreqIntervals.size());
+        for(int i=0;i<probsOfFreqIntervals.size()-1;i++){
+            indexesOfFreqIntervals.add(temp*i+temp);
+            usageOfFreqsInIntervals.add(0);
+        }
+        indexesOfFreqIntervals.add(frequencies.size());
+        usageOfFreqsInIntervals.add(0);
+    }
+    
 	/**
 	 * Computes the magnitude of a given dB
 	 * @param db dB value to be computed
