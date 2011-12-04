@@ -218,7 +218,7 @@ public class CRBase extends Node{
 					free_frequencies.get(zone).remove(randomFreq);
 					if(readyToCommInZone.get(zone)==0)
 						free_frequencies.get(zone).clear();
-					if(SimulationRunner.animationOffButton.isSelected())
+					if(!SimulationRunner.args.isAnimationOn())
 						SimulationRunner.crDesScheduler.sendEndCommEvent(crInZone);
 					else{
 						SimulationRunner.crSensor.setCommunationDuration(crInZone);
@@ -233,7 +233,7 @@ public class CRBase extends Node{
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){			//Send communication start event for the blocked users
 			if(SimulationRunner.crNodes.get(i).getReadytoComm()){
 				SimulationRunner.crNodes.get(i).setReadytoComm(false);
-				if(SimulationRunner.animationOffButton.isSelected())
+				if(!SimulationRunner.args.isAnimationOn())
 					SimulationRunner.crDesScheduler.sendStartCommEvent(i);
 				else{
 					SimulationRunner.crSensor.setInactiveDuration(i,false);
@@ -351,7 +351,7 @@ public class CRBase extends Node{
 							
 							CRNode.writeLogFile("Time: " + String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec) + " -- number: " + crInZone + " is dropped");
 							
-							if(SimulationRunner.animationOnButton.isSelected()){
+							if(SimulationRunner.args.isAnimationOn()){
 								SimulationRunner.crSensor.setInactiveDuration(crInZone, true);
 							}
 							else{

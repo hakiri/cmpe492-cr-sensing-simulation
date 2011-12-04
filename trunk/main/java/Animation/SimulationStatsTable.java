@@ -172,7 +172,7 @@ public class SimulationStatsTable extends JFrame{
 		
 		int numberOfFreq = SimulationRunner.wc.numberOfFreq();
 		double simDur = 0;
-		if(SimulationRunner.animationOnButton.isSelected()){
+		if(SimulationRunner.args.isAnimationOn()){
 			simDur = SimulationRunner.crSensor.getSimulationDuration() / WirelessChannel.unitTime;
 		}
 		else{
@@ -271,7 +271,7 @@ public class SimulationStatsTable extends JFrame{
 		double primaryCommDur = Double.parseDouble(priStats[priStats.length-1][priStatNames.length-1]);
 		int numberOfFreq = SimulationRunner.wc.numberOfFreq();
 		double simDur = 0;
-		if(SimulationRunner.animationOnButton.isSelected()){
+		if(SimulationRunner.args.isAnimationOn()){
 			simDur = SimulationRunner.crSensor.getSimulationDuration() / WirelessChannel.unitTime;
 		}
 		else{

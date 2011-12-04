@@ -28,7 +28,7 @@ public class CRNode extends Node {
 	final static double tau = 10;
 	final static int tw = 5;
     /**
-     * List of frequencies assigned to this node with respect to their snr values.
+     * List of frequencies assigned to this node with respect to their SNR values.
      */
     private HashMap<Integer, Double> snrValues;
     /**
@@ -37,14 +37,14 @@ public class CRNode extends Node {
     private static PrintWriter pw = null;
     private static PrintWriter pw_prob = null;
     /**
-     * Average snr values of the frequencies.
+     * Average SNR values of the frequencies.
      */
     private static ArrayList<ArrayList<Double>> averageSnr = null;
 	private static ArrayList<ArrayList<Integer>> sensingDecision = null;
     /**
-     * Communication frequency of the crnode.
+     * Communication frequency of the CR node.
      * If the assigned value is lower than zero this means that 
-     * there will be no communication for the crnode. 
+     * there will be no communication for the CR node. 
      */
     private int communication_frequency = -1;
     /**
@@ -52,11 +52,11 @@ public class CRNode extends Node {
      */
     private ArrayList<Integer> freq_list_to_listen;
     /**
-     * Total number of frames communicated by crnode in the entire simulation time.
+     * Total number of frames communicated by CR node in the entire simulation time.
      */
     private int numberOfFramesCommunicated = 0;
     /**
-     * Total number of collisions between this crnode and primary traffic 
+     * Total number of collisions between this CR node and primary traffic 
      * generators during the simulation time.
      */
     private int numberOfCollision = 0;
@@ -73,7 +73,7 @@ public class CRNode extends Node {
      */
     private static int totalNumberOfFrames = 0;
     /**
-     * Boolean value that shows whether this crnode communicates or not
+     * Boolean value that shows whether this CR node communicates or not
      */
     private boolean commOrNot = false;
     private boolean readytoComm = false;
@@ -102,7 +102,7 @@ public class CRNode extends Node {
     private int numberOfCallAttempts = 0;
     private int numberOfCalls = 0;
     /**
-     * True if the crnode has collided in the previous frame
+     * True if the CR node has collided in the previous frame
      */
     private boolean isCollided = false;
     
@@ -127,7 +127,7 @@ public class CRNode extends Node {
     }
 
     /**
-     * Updates the snr value of the frequency that is sensed during current slot.
+     * Updates the SNR value of the frequency that is sensed during current slot.
      * @param sensingSlot	Current sensing slot of the CR frame.
      */
     public void sense(int sensingSlot) {
@@ -141,8 +141,8 @@ public class CRNode extends Node {
     }
 
     /**
-     * 
-     * @return Snr values of each frequencies which are assigned to this node.
+     * Returns SNR values of each frequencies which are assigned to this node.
+     * @return SNR values of each frequencies which are assigned to this node.
      */
     public HashMap<Integer, Double> getSnrValues() {
         return snrValues;
@@ -181,7 +181,6 @@ public class CRNode extends Node {
      */
     public static void logAverageSnr(double time) {
         for (int i = 0; i < averageSnr.size(); i++) {   //calculates the average snr values
-			//System.out.println(sensingDecision.get(i));
             for (int j = 0; j < averageSnr.get(i).size(); j++) {
                 averageSnr.get(i).set(j, (averageSnr.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
 			                                                                                        //number that listens to this freq.
@@ -192,11 +191,10 @@ public class CRNode extends Node {
 				else	//Vacant otherwise
 					sensingDecision.get(i).set(j,0);
             }
-			//System.out.println(sensingDecision.get(i)+"\n");
         }
 
         SimulationRunner.crBase.setLastSensingResults(sensingDecision);
-        if (SimulationRunner.plotOnButton.isSelected()) {
+        if (SimulationRunner.args.isPlotOn()) {
             for (int i = 0; i < averageSnr.size(); i++) {
                 SimulationRunner.plot.addPoint(i, time, averageSnr.get(i));
             }
@@ -249,7 +247,7 @@ public class CRNode extends Node {
      * 
      * @param file_name
      */
-    public static void createLogFile_prob(String file_name) {
+    public static void createProbLogFile(String file_name) {
         try {
             pw_prob = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
         } catch (IOException ex) {
@@ -382,14 +380,14 @@ public class CRNode extends Node {
 				if(SimulationRunner.crNodes.get(i).collisionOccured){
 					SimulationRunner.crNodes.get(i).numberOfCollision++;
 					SimulationRunner.crNodes.get(i).isCollided = true;
-					if(SimulationRunner.animationOnButton.isSelected()){
+					if(SimulationRunner.args.isAnimationOn()){
 						SimulationRunner.crSensor.setWarningExpirationFrame(i);
 					}
 				}
 				SimulationRunner.crNodes.get(i).collisionOccured = false;
 			}
         }
-		if(SimulationRunner.plotOnButton.isSelected())
+		if(SimulationRunner.args.isPlotOn())
 			SimulationRunner.plot.addPoint(SimulationRunner.crBase.registeredZones.size(),time, sinr);
     }
 
@@ -423,9 +421,9 @@ public class CRNode extends Node {
         int i = 0;
         for (; i < SimulationRunner.crNodes.size(); i++) {
             CRNode c = SimulationRunner.crNodes.get(i);
-            if(SimulationRunner.animationOnButton.isSelected())
+            if(SimulationRunner.args.isAnimationOn())
                 throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime());
-            else if(SimulationRunner.animationOffButton.isSelected())
+            else if(!SimulationRunner.args.isAnimationOn())
                 throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crDesScheduler.getCommDur());
             writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %.2f Kbits",
                     c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, (throughput/1024.0)));
@@ -437,7 +435,7 @@ public class CRNode extends Node {
             totalNumberOfDrops += c.numberOfDrops;
             totalNumberOfForcedHandoffs += c.numberOfForcedHandoff;
             totalThroughput += throughput;
-            //TODO throughput will be added to stats table
+            
             data[i][0] = String.valueOf(c.id);
             data[i][1] = String.valueOf(c.numberOfCallAttempts);
             data[i][2] = String.valueOf(c.numberOfCalls);
@@ -556,7 +554,7 @@ public class CRNode extends Node {
 
     /**
      * Finds the next on duration in terms of number of frames according to the
-     * traffic model for Multithreaded Simulation
+     * traffic model for Multi threaded Simulation
      * @param frameDuration		Duration of one frame
      * @return	On duration
      */
@@ -567,7 +565,7 @@ public class CRNode extends Node {
 
     /**
      * Finds the next off duration in terms of number of frames according to the
-     * traffic model for Multithreaded Simulation
+     * traffic model for Multi threaded Simulation
      * @param frameDuration		Duration of one frame
      * @return	Off duration
      */

@@ -260,7 +260,8 @@ public class CRSensorThread implements Runnable{
 		CRNode.writeLogFile(String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec));
         CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
+			//TODO Remove logging of CR SNR measures
+			//SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
@@ -289,10 +290,10 @@ public class CRSensorThread implements Runnable{
 		probs.add(blockProb);
 		probs.add(dropProb);
 		probs.add(collisionProb);
-		SimulationRunner.plotProbs.addPoint(0, (totalSimulationDuration-remainingSimulationDuration)/unitTime, probs);
+		SimulationRunner.plotProbs.addPoint((totalSimulationDuration-remainingSimulationDuration)/unitTime, probs);
         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
 		CRNode.logAverageSnr((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
-		//CRNode.writeLogFile("\n");
+		
 		time = (long)senseResultAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 		while(time>1){												//unit time if it is greater than 1 milli sec sleep for that amount
 			long sleepStartTime = System.currentTimeMillis();
@@ -364,10 +365,12 @@ public class CRSensorThread implements Runnable{
 		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
 		CRNode.closeLogFileProb();
-        SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+		SimulationStatsTable sst;
+		if(!SimulationRunner.args.isBatchMode())
+			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
 		ArrayList<Integer> xs = new ArrayList<Integer>();
 		xs.add(0);		
-		if(SimulationRunner.plotOnButton.isSelected()){
+		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
 				names.add("SNR of Zone "+i);
@@ -455,10 +458,9 @@ public class CRSensorThread implements Runnable{
 		if(dropped){
 			offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration);
 			commRelatedTimes.set(crnode_id, frame + offDuration);
-			if(SimulationRunner.animationOnButton.isSelected()){
+			if(SimulationRunner.args.isAnimationOn()){
 				DrawCell.paintCrNode(SimulationRunner.crNodes.get(crnode_id), Color.GRAY);
 			}
-			//SimulationRunner.crNodes.get(crnode_id).setCommOrNot(false);
 		}
 		else{
 			offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration) - 1;

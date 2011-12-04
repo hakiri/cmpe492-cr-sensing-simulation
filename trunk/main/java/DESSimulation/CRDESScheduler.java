@@ -220,7 +220,7 @@ public class CRDESScheduler extends SimEnt{
 				SimulationRunner.crNodes.get(ece.id).startEventHandle = send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
 			}
 		}
-		SimulationRunner.progressBar.setValue((int)(((Scheduler.instance().getTime())*100)/simulationDuration));	//Update progress bar
+		SimulationRunner.args.setProgress((int)(((Scheduler.instance().getTime())*100)/simulationDuration));	//Update progress bar
 		if(simulationDuration < Scheduler.instance().getTime()||finished)
 			Scheduler.instance().stop();
 	}
@@ -233,17 +233,27 @@ public class CRDESScheduler extends SimEnt{
 		super.destructor();
 		String[][] crStats = CRNode.logStats();
 		String[][] priStats = SimulationRunner.priTrafGenDes.logStats();
-		if(finished)	//If the thread is terminated
-			JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.INFORMATION_MESSAGE);
-		else			//If simulation duration is elapsed
-			JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.INFORMATION_MESSAGE);
-		SimulationRunner.progressBar.setVisible(false);			//Hide progress bar
-		SimulationRunner.progressBar.setValue(0);				//Set its value to zero
+		if(finished){	//If the thread is terminated
+			if(SimulationRunner.args.isBatchMode())
+				System.out.println("Simulation Terminated");
+			else
+				JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.INFORMATION_MESSAGE);
+		}
+		else{			//If simulation duration is elapsed
+			if(SimulationRunner.args.isBatchMode())
+				System.out.println("Simulation Completed");
+			else
+				JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.INFORMATION_MESSAGE);
+		}
+		SimulationRunner.args.setProgress(-1);
 		SimulationRunner.clear();								//Clear data related to simulation
-		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
+		if(!SimulationRunner.args.isBatchMode())
+			SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
 		CRNode.closeLogFileProb();
-        SimulationStatsTable sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+		SimulationStatsTable sst;
+		if(!SimulationRunner.args.isBatchMode())
+			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
 		ArrayList<Integer> xs = new ArrayList<Integer>();
 		xs.add(0);
 		ArrayList<String> namesList = new ArrayList<String>();
@@ -251,7 +261,7 @@ public class CRDESScheduler extends SimEnt{
 		namesList.add("Drop");
 		namesList.add("Collision");
 		SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList,-1);
-		if(SimulationRunner.plotOnButton.isSelected()){
+		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
 				names.add("SNR of Zone "+i);
@@ -291,7 +301,8 @@ public class CRDESScheduler extends SimEnt{
 		CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
         //calculate drop,block and collision probabilities
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
+			//TODO Remove logging of CR SNR measures
+			//SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
@@ -320,7 +331,7 @@ public class CRDESScheduler extends SimEnt{
 		probs.add(blockProb);
 		probs.add(dropProb);
 		probs.add(collisionProb);
-		SimulationRunner.plotProbs.addPoint(0, Scheduler.instance().getTime(), probs);
+		SimulationRunner.plotProbs.addPoint(Scheduler.instance().getTime(), probs);
 		CRNode.writeLogFileProb(String.format(Locale.US,"Total number of Call Attempts: %d --- Total number of calls: %d --- Total number of drops: %d", totalCallAttempts,totalCalls,totalDrops));
         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
 		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
