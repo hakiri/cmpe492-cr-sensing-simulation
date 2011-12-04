@@ -1,5 +1,6 @@
 package Animation;
 
+import SimulationRunner.SimulationRunner;
 import jPlot.jPlot;
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -37,13 +38,17 @@ public class Plot {
      * Writer for the files.
      */
     private static PrintWriter pw = null;
+	private String xLabel;
+	private String yLabel;
+	private String xUnit;
+	private String yUnit;
 	
 	/**
 	 * Creates a new plotter object with no x value and y value.
 	 * @param numberOfXs	Number of different x values
 	 * @param yPerX			How many y belongs to each x
 	 */
-	public Plot(int numberOfXs, ArrayList<Integer> yPerX)
+	public Plot(int numberOfXs, ArrayList<Integer> yPerX, String xLabel, String yLabel, String xUnit, String yUnit)
 	{
 		if(yPerX.isEmpty()){
 			yPerX.add(1);
@@ -59,6 +64,10 @@ public class Plot {
 			for(int j=0;j<yPerX.get(i);j++)
 				y.get(i).add(new ArrayList<Double>());			//Then create arrays that will hold y values
 		}
+		this.xLabel = xLabel;
+		this.yLabel = yLabel;
+		this.xUnit = xUnit;
+		this.yUnit = yUnit;
 	}
 	
 	/**
@@ -112,13 +121,13 @@ public class Plot {
 		pw.println("title");
 		pw.println("Frequency "+title);
 		pw.println("xlabel");
-		pw.println("time");
+		pw.println(xLabel);
 		pw.println("ylabel");
-		pw.println("Average SNR");
+		pw.println(yLabel);
 		pw.println("xunits");
-		pw.println("tu");
+		pw.println(xUnit);
 		pw.println("yunits");
-		pw.println("dB");
+		pw.println(yUnit);
 		pw.println("invisible -0.1 "+(min-0.1));
 		pw.println("invisible "+xMax+" "+max);
 		pw.println("green");
@@ -202,13 +211,13 @@ public class Plot {
 		pw.println("title");
 		pw.println(title);
 		pw.println("xlabel");
-		pw.println("time");
+		pw.println(xLabel);
 		pw.println("ylabel");
-		pw.println("Average SNR");
+		pw.println(yLabel);
 		pw.println("xunits");
-		pw.println("tu");
+		pw.println(xUnit);
 		pw.println("yunits");
-		pw.println("dB");
+		pw.println(yUnit);
 		pw.println("invisible -0.1 "+(yMin-0.1));
 		pw.println("invisible "+(xMax+(xMax-xMin)*0.3)+" "+yMax);
 
@@ -290,13 +299,13 @@ public class Plot {
 		pw.println("title");
 		pw.println(title);
 		pw.println("xlabel");
-		pw.println("time");
+		pw.println(xLabel);
 		pw.println("ylabel");
-		pw.println("Average SNR");
+		pw.println(yLabel);
 		pw.println("xunits");
-		pw.println("tu");
+		pw.println(xUnit);
 		pw.println("yunits");
-		pw.println("dB");
+		pw.println(yUnit);
 		pw.println("invisible -0.1 "+(yMin-0.1));
 		pw.println("invisible "+(xMax+(xMax-xMin)*0.3)+" "+yMax);
 
@@ -375,7 +384,8 @@ public class Plot {
 		String[] argv = new String[arg.size()];
 		for(int i=0;i<argv.length;i++)
 			argv[i] = arg.get(i);
-		jPlot.main(argv);
+		if(!SimulationRunner.args.isBatchMode())
+			jPlot.main(argv);
 	}
 	
 	/**
@@ -396,7 +406,8 @@ public class Plot {
 		String[] argv = new String[arg.size()];
 		for(int i=0;i<argv.length;i++)
 			argv[i] = arg.get(i);
-		jPlot.main(argv);
+		if(!SimulationRunner.args.isBatchMode())
+			jPlot.main(argv);
 	}
 	
 	/**
@@ -425,7 +436,8 @@ public class Plot {
 
 		plot(argv[0], xs, ys, nameList);
 		
-		jPlot.main(argv);
+		if(!SimulationRunner.args.isBatchMode())
+			jPlot.main(argv);
 	}
 	
 	/**
@@ -463,7 +475,8 @@ public class Plot {
 			plot(argv[i+1], xs, ys, nameList);
 		}
 		
-		jPlot.main(argv);
+		if(!SimulationRunner.args.isBatchMode())
+			jPlot.main(argv);
 	}
 
 	/**

@@ -100,10 +100,6 @@ public class SimulationRunner extends JFrame{
 	 */
 	public static RandomEngine randEngine = null;
 	/**
-	 * Unit of time in milli seconds
-	 */
-	private static double timeUnit;
-	/**
 	 * Frame to animate cell structure
 	 */
 	private static DrawCell drawCell;
@@ -116,6 +112,10 @@ public class SimulationRunner extends JFrame{
 	 */
 	public static SimultaneousPlot plotProbs = null;
 	/**
+	 * Collection of all of the arguments necessary to run the simulation.
+	 */
+	public static Arguments args = null;
+	/**
 	 * Currently running SimulationRunner instance
 	 */
 	public static SimulationRunner runner;
@@ -124,6 +124,15 @@ public class SimulationRunner extends JFrame{
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
+		if(args.length > 0){
+			SimulationRunner.args = new Arguments();
+			if(!SimulationRunner.args.parseArguments(args[0])){
+				return;
+			}
+			runner = new SimulationRunner(true);
+			runner.startSimulationInBatchMode();
+			return;
+		}
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -168,6 +177,13 @@ public class SimulationRunner extends JFrame{
 	public SimulationRunner() {
 		super();
 		initGUI();
+	}
+
+	/**
+	 * Initializes the simulation runner object for batch mode.
+	 * @param batchMode
+	 */
+	public SimulationRunner(boolean batchMode) {
 	}
 	
 	private class SimulationKeyAdapter extends KeyAdapter{
@@ -219,7 +235,6 @@ public class SimulationRunner extends JFrame{
 			this.setResizable(false);
 			this.setTitle("Simulator");
 		} catch (Exception e) {
-		    //add your error handling code here
 			e.printStackTrace();
 		}
 	}
@@ -500,7 +515,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(slotDurField);
 			slotDurField.setToolTipText("Duration of Sensing Slot in terms of msec");
 			slotDurField.setBounds(itemPos, 65, 120, 23);
-			slotDurField.setText("100");
+			slotDurField.setText("10");
 			slotDurField.addKeyListener(keyAdapter);
 		}
 		{
@@ -515,7 +530,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(sensingResultField);
 			sensingResultField.setToolTipText("Duration of Sensing Result Advertisement in terms of msec");
 			sensingResultField.setBounds(itemPos, 100, 120, 23);
-			sensingResultField.setText("100");
+			sensingResultField.setText("10");
 			sensingResultField.addKeyListener(keyAdapter);
 		}
 		{
@@ -530,7 +545,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(senseScheduleField);
 			senseScheduleField.setToolTipText("Duration of Sensing Schedule Advertisement in terms of msec");
 			senseScheduleField.setBounds(itemPos, 135, 120, 23);
-			senseScheduleField.setText("100");
+			senseScheduleField.setText("10");
 			senseScheduleField.addKeyListener(keyAdapter);
 		}
 		{
@@ -545,7 +560,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(commDurField);
 			commDurField.setToolTipText("Duration of Communication in terms of msec");
 			commDurField.setBounds(itemPos, 170, 120, 23);
-			commDurField.setText("6300");
+			commDurField.setText("630");
 			commDurField.addKeyListener(keyAdapter);
 		}
 		{
@@ -560,7 +575,7 @@ public class SimulationRunner extends JFrame{
 			framePanel.add(commScheduleField);
 			commScheduleField.setToolTipText("Duration of Communication Schedule Advertisement in terms of msec");
 			commScheduleField.setBounds(itemPos, 205, 120, 23);
-			commScheduleField.setText("100");
+			commScheduleField.setText("10");
 			commScheduleField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(framePanel);
@@ -1085,178 +1100,208 @@ public class SimulationRunner extends JFrame{
 	 */
 	public void startSimulation()
 	{
-		int sectrNo = 0;
-		double dNumber = 0;
-		int alpha = 0;
-		double radius = 0;
-		
-		int numberOfCrNodes = 0;
-		int numberOfPriNodes = 0;
-		
-		double numberOfCalls = 0;
-		double callDura = 0;
-		long simDura = 0;
-		
-		int numberOfFreq = 0;
-		int maxFreqCR = 0;
-		double maxSnr = 0;
-		double sinrThreshold = 0;
-		int crAlpha = 0;
-		int crSector = 0;
-		int crD = 0;
-		int numberOfZones = 0;
-		
-		double slotDur = 0.0;
-		double senseScheduleAdvertisement = 0.0;
-		double commScheduleAdvertisement = 0.0;
-		double commDur = 0.0;
-		double senseResultAdvertisement = 0.0;
-		ArrayList<Double> setOfD = new ArrayList<Double>();
-		try{
-			slotDur = Double.parseDouble(slotDurField.getText());
-			senseScheduleAdvertisement = Double.parseDouble(senseScheduleField.getText());
-			commScheduleAdvertisement = Double.parseDouble(commScheduleField.getText());
-			commDur = Double.parseDouble(commDurField.getText());
-			senseResultAdvertisement = Double.parseDouble(sensingResultField.getText());
-			
-			sectrNo = Integer.parseInt(sectorNo.getText());			//Get number of sectors in the cell
-			dNumber = Integer.parseInt(dNo.getText());				//Get number of d's
-			alpha = Integer.parseInt(alphaNo.getText());			//Get number of alpha's
-			radius = Double.parseDouble(radiusField.getText());		//Get radius of the cell
-			
-			numberOfFreq = Integer.parseInt(noFreqs.getText());						//Get number of frequencies
-			maxSnr = Double.parseDouble(maxSNR.getText());							//Get max SNR value
-			sinrThreshold = Double.parseDouble(sinrThresholdFied.getText());
-			
-			numberOfPriNodes = Integer.parseInt(noPriNodes.getText());	//Get number of primary nodes
-			maxFreqCR = Integer.parseInt(noSlotField.getText());		//Get max number of frequencies a node can sense
-			numberOfZones = Integer.parseInt(noZones.getText());		//Get the number of zones to be simulated
-			
-			numberOfCalls = Double.parseDouble(noCalls.getText());	//Get number of calls per hour
-			callDura = Double.parseDouble(callDur.getText());	//Get call duration in terms of min
-			
-			if(numberOfCalls<=2 && trafficModel.getSelectedIndex() == 1){
-				JOptionPane.showMessageDialog(this, "Mean Off Period Duration must be greater than 2 time units",
-					"Simulation", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			if(callDura<=2 && trafficModel.getSelectedIndex() == 1){
-				JOptionPane.showMessageDialog(this, "Mean On Period Duration must be greater than 2 time units",
-					"Simulation", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			
-			if(animationOnButton.isSelected())					//Get unit time duration in terms of milliseconds
-				timeUnit = Double.parseDouble(unitTime.getText());
-			else
-				timeUnit = 1;
-			simDura = Long.parseLong(simDur.getText());			//Get duration of the simulation in terms of min
-			simDura *= 60000;
-			
-			if(seedModel.getSelectedIndex()==0){				//If seed model is random
-				randEngine = new MersenneTwister(new Date());	//Give date as seed
-			}
-			else{
-				int seed = Integer.parseInt(seedValue.getText());	//Otherwise get seed from user
-				randEngine = new MersenneTwister(seed);
-			}
-			int bandwidth = Integer.parseInt(channelBandwithField.getText())*1000;
-			wc = new WirelessChannel(channelModel.getSelectedIndex(), numberOfFreq, maxSnr, sinrThreshold, numberOfCalls,
-													callDura, trafficModel.getSelectedIndex(),timeUnit,bandwidth);//Create a wireless channel
-			
-			alpha = (360/sectrNo)/alpha;							//Evaluate the angle associated to alpha
-			double temp = radius / dNumber;							//Evaluate length of each d as they will be equal
-			double inc = temp;
-			for(int i = 0;i<dNumber;i++,temp+=inc)
-				setOfD.add(temp);									//Create set of d's
-			
-			cell = new Cell(null, radius, sectrNo, alpha, setOfD);//Create a cell
-			
-			crBase = new CRBase(new Point2D.Double(0, 0),0,maxFreqCR);		//Create a CR base station in the origin
-			Cell.setBaseStation(crBase);
-			numberOfCrNodes = 0;
-			for(int i = 0; i<numberOfZones ; i++){
-				int sectorNumber = Integer.parseInt(zoneSectorNos.get(i).getText());		//Get sector number CR nodes will be in
-				int alphaNumber = Integer.parseInt(zoneAlphaNos.get(i).getText());			//Get alpha number CR nodes will be in
-				int dNmber = Integer.parseInt(zoneDNos.get(i).getText());					//Get d interval CR nodes will be in
-				int numberOfCrUsersInZone = Integer.parseInt(zoneCRUsers.get(i).getText());	//Get number of CR nodes in zone
-				numberOfCrNodes += numberOfCrUsersInZone;
-				crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
-			}
-			
-			double dmax = crBase.farthestZoneDistance();
-			double minSNR = maxSnr/Math.exp(dmax*0.12);
-			if(minSNR<=sinrThreshold){
-				JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
-					"Simulation", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-			
-			if(animationOnButton.isSelected()){
-				drawCell = new DrawCell((int)radius, sectrNo, Integer.parseInt(alphaNo.getText()),
-																(int)dNumber, numberOfCrNodes, numberOfPriNodes);
-				priTrafGen = new PrimaryTrafficGenerator();
-				priTrafGenDes = null;
-			}
-			else{
-				drawCell = null;
-				priTrafGen = null;
-				priTrafGenDes = new DESPrimaryTrafficGenerator();
-			}
-			
-			for(int i = 0; i<numberOfCrNodes ;i++){
-				crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
-				wc.registerNode(crNodes.get(i));							//Register CR nodes
-				if(animationOnButton.isSelected())
-					DrawCell.paintCrNode(crNodes.get(i), Color.GREEN);
-			}
-			ArrayList<Integer> tempArray = new ArrayList<Integer>();
-			tempArray.add(3);
-			plotProbs = new SimultaneousPlot(1, tempArray);
-			if(SimulationRunner.plotOnButton.isSelected()){
-				ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
-				numberOFYs.add(numberOfFreq);
-				numberOFYs.add(numberOfFreq);
-				plot = new Plot(numberOfZones+1, numberOFYs);
-			}
-			else
-				plot = null;
-			CRNode.initializeAverageSnr(numberOfFreq,numberOfZones);			//Set average SNR values to zero
-			progressBar.setValue(0);							//Initialize progress bar
-			progressBar.setVisible(true);						//Make it visible
-			CRNode.createLogFile("log.txt");
-            CRNode.createLogFile_prob("prob.txt");
-			terminateSimulation.setVisible(true);
-			for(int i = 0;i<numberOfPriNodes;i++){
-				priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
-				wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
-				if(animationOnButton.isSelected())
-					priTrafGen.registerNode(priTrafGenNodes.get(i));	//and create threads for each of them
-				else
-					priTrafGenDes.registerNode(priTrafGenNodes.get(i));
-			}
-			if(animationOnButton.isSelected()){	//TODO Resolve racing conditions
-				crSensor = new CRSensorThread((int)simDura, timeUnit, maxFreqCR, slotDur, senseScheduleAdvertisement,
-													commScheduleAdvertisement, commDur, senseResultAdvertisement);
-				crDesScheduler = null;
-			}
-			else{
-				crSensor = null;
-				crDesScheduler = new CRDESScheduler((int)simDura, timeUnit, maxFreqCR, slotDur, senseScheduleAdvertisement,
-													commScheduleAdvertisement, commDur, senseResultAdvertisement);
-			}
-			
-			if(animationOffButton.isSelected()){
-				crDesScheduler.start();
-				priTrafGenDes.start();
-				Thread t = new Thread(Scheduler.instance());
-				t.start();
-			}
-			
-		}catch(NumberFormatException nfe){
-			JOptionPane.showMessageDialog(this, "Invalid argument:\n"+nfe.getMessage(),
-					"Simulation", JOptionPane.WARNING_MESSAGE);
+		args = new Arguments();
+		if(!args.parseArguments(this)){
+			return;
 		}
+		
+		if(args.getNumberOfCalls()<=2 && trafficModel.getSelectedIndex() == 1){
+			JOptionPane.showMessageDialog(this, "Mean Off Period Duration must be greater than 2 time units",
+				"Simulation", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+		if(args.getCallDura()<=2 && trafficModel.getSelectedIndex() == 1){
+			JOptionPane.showMessageDialog(this, "Mean On Period Duration must be greater than 2 time units",
+				"Simulation", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if(args.getSeedModel() == 0){				//If seed model is random
+			randEngine = new MersenneTwister(new Date());	//Give date as seed
+		}
+		else{
+			randEngine = new MersenneTwister(args.getSeed());			//Otherwise get seed from user
+		}
+
+		wc = new WirelessChannel(args.getChannelModel(), args.getNumberOfFreq(), args.getMaxSnr(), args.getSinrThreshold(),
+								 args.getNumberOfCalls(), args.getCallDura(), args.getTrafficModel(), args.getTimeUnit(),
+								 args.getBandwidth());//Create a wireless channel
+
+		cell = new Cell(null, args.getRadius(), args.getSectrNo(), args.getAlphaInDegrees(), args.getSetOfD());//Create a cell
+
+		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getMaxFreqCR()); //Create a CR base station in the origin
+		Cell.setBaseStation(crBase);
+		for(int i = 0; i<args.getNumberOfZones() ; i++){
+			int sectorNumber = args.getSectorNumbers().get(i);		//Get sector number CR nodes will be in
+			int alphaNumber = args.getAlphaNumbers().get(i);		//Get alpha number CR nodes will be in
+			int dNmber = args.getdNumbers().get(i);					//Get d interval CR nodes will be in
+			int numberOfCrUsersInZone = args.getNumbersOfCrUsersInZone().get(i);	//Get number of CR nodes in zone
+			//TODO add multiple zone registration
+			crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
+		}
+
+		double dmax = crBase.farthestZoneDistance();
+		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
+		if(minSNR<=args.getSinrThreshold()){
+			JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
+				"Simulation", JOptionPane.WARNING_MESSAGE);
+			return;
+		}
+
+		if(animationOnButton.isSelected()){
+			drawCell = new DrawCell((int)args.getRadius(), args.getSectrNo(), args.getAlpha(), (int)args.getdNumber(),
+									args.getNumberOfCrNodes(), args.getNumberOfPriNodes());
+			priTrafGen = new PrimaryTrafficGenerator();
+			priTrafGenDes = null;
+		}
+		else{
+			drawCell = null;
+			priTrafGen = null;
+			priTrafGenDes = new DESPrimaryTrafficGenerator();
+		}
+
+		for(int i = 0; i<args.getNumberOfCrNodes() ;i++){
+			crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
+			wc.registerNode(crNodes.get(i));							//Register CR nodes
+			if(animationOnButton.isSelected())
+				DrawCell.paintCrNode(crNodes.get(i), Color.GRAY);
+		}
+//		ArrayList<Integer> tempArray = new ArrayList<Integer>();
+//		tempArray.add(3);
+//		plotProbs = new SimultaneousPlot(1, tempArray);
+		ArrayList<Integer> tempArray = new ArrayList<Integer>();
+		tempArray.add(1);
+		tempArray.add(1);
+		tempArray.add(1);
+		plotProbs = new SimultaneousPlot(3, tempArray);
+		if(SimulationRunner.plotOnButton.isSelected()){
+			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
+			numberOFYs.add(args.getNumberOfFreq());
+			numberOFYs.add(args.getNumberOfFreq());
+			plot = new Plot(args.getNumberOfZones()+1, numberOFYs, "Time", "Average SNR", "msec", "dB");
+		}
+		else
+			plot = null;
+		CRNode.initializeAverageSnr(args.getNumberOfFreq(),args.getNumberOfZones());			//Set average SNR values to zero
+		progressBar.setValue(0);							//Initialize progress bar
+		progressBar.setVisible(true);						//Make it visible
+		CRNode.createLogFile("log.txt");
+		CRNode.createProbLogFile("prob.txt");
+		terminateSimulation.setVisible(true);
+		for(int i = 0;i<args.getNumberOfPriNodes();i++){
+			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
+			wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
+			if(animationOnButton.isSelected())
+				priTrafGen.registerNode(priTrafGenNodes.get(i));	//and create threads for each of them
+			else
+				priTrafGenDes.registerNode(priTrafGenNodes.get(i));
+		}
+		if(animationOnButton.isSelected()){	//TODO Resolve racing conditions
+			crSensor = new CRSensorThread((int)args.getSimDura(), args.getTimeUnit(), args.getMaxFreqCR(), args.getSlotDur(),
+										  args.getSenseScheduleAdvertisement(), args.getCommScheduleAdvertisement(),
+										  args.getCommDur(), args.getSenseResultAdvertisement());
+			crDesScheduler = null;
+		}
+		else{
+			crSensor = null;
+			crDesScheduler = new CRDESScheduler((int)args.getSimDura(), args.getTimeUnit(), args.getMaxFreqCR(), args.getSlotDur(),
+												args.getSenseScheduleAdvertisement(), args.getCommScheduleAdvertisement(),
+												args.getCommDur(), args.getSenseResultAdvertisement());
+		}
+
+		if(animationOffButton.isSelected()){
+			crDesScheduler.start();
+			priTrafGenDes.start();
+			Thread t = new Thread(Scheduler.instance());
+			t.start();
+		}
+	}
+	
+	/**
+	 * Initializes the main simulation schedulers for batch mode
+	 */
+	public void startSimulationInBatchMode()
+	{
+		if(args.getNumberOfCalls()<=2 && args.getTrafficModel() == 1){
+			System.err.println("Mean Off Period Duration must be greater than 2 time units");
+			return;
+		}
+		if(args.getCallDura()<=2 && args.getTrafficModel() == 1){
+			System.err.println("Mean On Period Duration must be greater than 2 time units");
+			return;
+		}
+
+		if(args.getSeedModel() == 0){				//If seed model is random
+			randEngine = new MersenneTwister(new Date());	//Give date as seed
+		}
+		else{
+			randEngine = new MersenneTwister(args.getSeed());			//Otherwise get seed from user
+		}
+
+		wc = new WirelessChannel(args.getChannelModel(), args.getNumberOfFreq(), args.getMaxSnr(), args.getSinrThreshold(),
+								 args.getNumberOfCalls(), args.getCallDura(), args.getTrafficModel(), args.getTimeUnit(),
+								 args.getBandwidth());//Create a wireless channel
+
+		cell = new Cell(null, args.getRadius(), args.getSectrNo(), args.getAlphaInDegrees(), args.getSetOfD());//Create a cell
+
+		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getMaxFreqCR()); //Create a CR base station in the origin
+		Cell.setBaseStation(crBase);
+		for(int i = 0; i<args.getNumberOfZones() ; i++){
+			int sectorNumber = args.getSectorNumbers().get(i);		//Get sector number CR nodes will be in
+			int alphaNumber = args.getAlphaNumbers().get(i);		//Get alpha number CR nodes will be in
+			int dNmber = args.getdNumbers().get(i);					//Get d interval CR nodes will be in
+			int numberOfCrUsersInZone = args.getNumbersOfCrUsersInZone().get(i);	//Get number of CR nodes in zone
+			//TODO add multiple zone registration
+			crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
+		}
+
+		double dmax = crBase.farthestZoneDistance();
+		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
+		if(minSNR<=args.getSinrThreshold()){
+			System.err.println("SINR threshold must be less than possible\nminimum SNR value: "+minSNR+"dB");
+			return;
+		}
+
+		
+		drawCell = null;
+		priTrafGen = null;
+		priTrafGenDes = new DESPrimaryTrafficGenerator();
+
+		for(int i = 0; i<args.getNumberOfCrNodes() ;i++){
+			crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
+			wc.registerNode(crNodes.get(i));							//Register CR nodes
+		}
+		ArrayList<Integer> tempArray = new ArrayList<Integer>();
+		tempArray.add(1);
+		tempArray.add(1);
+		tempArray.add(1);
+		plotProbs = new SimultaneousPlot(3, tempArray);
+		if(SimulationRunner.args.isPlotOn()){
+			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
+			numberOFYs.add(args.getNumberOfFreq());
+			numberOFYs.add(args.getNumberOfFreq());
+			plot = new Plot(args.getNumberOfZones()+1, numberOFYs, "Time", "Average SNR", "msec", "dB");
+		}
+		else
+			plot = null;
+		CRNode.initializeAverageSnr(args.getNumberOfFreq(),args.getNumberOfZones());			//Set average SNR values to zero
+		CRNode.createLogFile("log.txt");
+		CRNode.createProbLogFile("prob.txt");
+		for(int i = 0;i<args.getNumberOfPriNodes();i++){
+			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
+			wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
+			priTrafGenDes.registerNode(priTrafGenNodes.get(i));
+		}
+		
+		crSensor = null;
+		crDesScheduler = new CRDESScheduler((int)args.getSimDura(), args.getTimeUnit(), args.getMaxFreqCR(), args.getSlotDur(),
+											args.getSenseScheduleAdvertisement(), args.getCommScheduleAdvertisement(),
+											args.getCommDur(), args.getSenseResultAdvertisement());
+		
+		crDesScheduler.start();
+		priTrafGenDes.start();
+		Thread t = new Thread(Scheduler.instance());
+		t.start();
 	}
 	
 	/**
@@ -1266,7 +1311,7 @@ public class SimulationRunner extends JFrame{
 	{
 		crNodes.clear();			//Delete CR nodes
 		priTrafGenNodes.clear();	//Delete primary nodes
-		if(SimulationRunner.animationOnButton.isSelected())
+		if(SimulationRunner.args.isAnimationOn())
 			drawCell.terminate();
 	}
 	
@@ -1282,5 +1327,229 @@ public class SimulationRunner extends JFrame{
 		
 		WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
 		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
+	}
+
+	/**
+	 * Returns the text field that holds number of alphas
+	 * @return The text field that holds number of alphas
+	 */
+	public JTextField getAlphaNo() {
+		return alphaNo;
+	}
+
+	/**
+	 * Returns the text field that holds call duration
+	 * @return The text field that holds call duration
+	 */
+	public JTextField getCallDur() {
+		return callDur;
+	}
+
+	/**
+	 * Returns the text field that holds channel bandwidth
+	 * @return The text field that holds channel bandwidth
+	 */
+	public JTextField getChannelBandwithField() {
+		return channelBandwithField;
+	}
+
+	/**
+	 * Returns the text field that holds communication duration in a frame
+	 * @return The text field that holds communication duration in a frame
+	 */
+	public JTextField getCommDurField() {
+		return commDurField;
+	}
+
+	/**
+	 * Returns the text field that holds communication schedule advertisement duration in a frame
+	 * @return The text field that holds communication schedule advertisement duration in a frame
+	 */
+	public JTextField getCommScheduleField() {
+		return commScheduleField;
+	}
+
+	/**
+	 * Returns the text field that holds number of ds in a slice
+	 * @return The text field that holds number of ds in a slice
+	 */
+	public JTextField getdNo() {
+		return dNo;
+	}
+
+	/**
+	 * Returns the text field that holds max SNR value
+	 * @return The text field that holds max SNR value
+	 */
+	public JTextField getMaxSNR() {
+		return maxSNR;
+	}
+
+	/**
+	 * Returns the text field that holds number of calls
+	 * @return The text field that holds number of calls
+	 */
+	public JTextField getNoCalls() {
+		return noCalls;
+	}
+
+	/**
+	 * Returns the text field that holds number of frequencies
+	 * @return The text field that holds number of frequencies
+	 */
+	public JTextField getNoFreqs() {
+		return noFreqs;
+	}
+
+	/**
+	 * Returns the text field that holds number of primary nodes
+	 * @return The text field that holds number of frequencies
+	 */
+	public JTextField getNoPriNodes() {
+		return noPriNodes;
+	}
+
+	/**
+	 * Returns the text field that holds number of sensing slots
+	 * @return The text field that holds number of sensing slots
+	 */
+	public JTextField getNoSlotField() {
+		return noSlotField;
+	}
+
+	/**
+	 * Returns the text field that holds number of zones to be simulated
+	 * @return The text field that holds number of zones to be simulated
+	 */
+	public JTextField getNoZones() {
+		return noZones;
+	}
+
+	/**
+	 * Returns the text field that holds radius of the cell
+	 * @return The text field that holds radius of the cell
+	 */
+	public JTextField getRadiusField() {
+		return radiusField;
+	}
+
+	/**
+	 * Returns the text field that holds number of sectors
+	 * @return The text field that holds number of sectors
+	 */
+	public JTextField getSectorNo() {
+		return sectorNo;
+	}
+
+	/**
+	 * Returns the text field that holds seed value
+	 * @return The text field that holds seed value
+	 */
+	public JTextField getSeedValue() {
+		return seedValue;
+	}
+
+	/**
+	 * Returns the combo box that holds seed model
+	 * @return The combo box that holds seed model
+	 */
+	public JComboBox getSeedModel() {
+		return seedModel;
+	}
+	
+	/**
+	 * Returns the text field that holds duration of sense schedule advertisement
+	 * @return The text field that holds duration of sense schedule advertisement
+	 */
+	public JTextField getSenseScheduleField() {
+		return senseScheduleField;
+	}
+
+	/**
+	 * Returns the text field that holds duration of sensing result reporting
+	 * @return The text field that holds duration of sensing result reporting
+	 */
+	public JTextField getSensingResultField() {
+		return sensingResultField;
+	}
+
+	/**
+	 * Returns the text field that holds simulation duration
+	 * @return The text field that holds simulation duration
+	 */
+	public JTextField getSimDur() {
+		return simDur;
+	}
+
+	/**
+	 * Returns the text field that holds SINR threshold value
+	 * @return The text field that holds SINR threshold value
+	 */
+	public JTextField getSinrThresholdFied() {
+		return sinrThresholdFied;
+	}
+
+	/**
+	 * Returns the text field that holds sensing slot duration
+	 * @return The text field that holds sensing slot duration
+	 */
+	public JTextField getSlotDurField() {
+		return slotDurField;
+	}
+
+	/**
+	 * Returns the text field that holds unit time
+	 * @return The text field that holds unit time
+	 */
+	public JTextField getUnitTime() {
+		return unitTime;
+	}
+	
+	/**
+	 * Returns the array of text fields that holds alpha slice of a zone
+	 * @return The array of text fields that holds alpha slice of a zone
+	 */
+	public ArrayList<JTextField> getZoneAlphaNos() {
+		return zoneAlphaNos;
+	}
+
+	/**
+	 * Returns the array of text fields that holds number of CR users in a zone
+	 * @return The array of text fields that holds number of CR users in a zone
+	 */
+	public ArrayList<JTextField> getZoneCRUsers() {
+		return zoneCRUsers;
+	}
+
+	/**
+	 * Returns the array of text fields that holds d number of a zone
+	 * @return The array of text fields that holds d number of a zone
+	 */
+	public ArrayList<JTextField> getZoneDNos() {
+		return zoneDNos;
+	}
+
+	/**
+	 * Returns the array of text fields that holds sector number of a zone
+	 * @return The array of text fields that holds sector number of a zone
+	 */
+	public ArrayList<JTextField> getZoneSectorNos() {
+		return zoneSectorNos;
+	}
+
+	/**
+	 * Returns the combo box that holds channel model
+	 * @return The combo box that holds channel model
+	 */
+	public JComboBox getChannelModel() {
+		return channelModel;
+	}
+
+	/**
+	 * Returns the combo box that holds traffic model
+	 * @return The combo box that holds traffic model
+	 */
+	public JComboBox getTrafficModel() {
+		return trafficModel;
 	}
 }

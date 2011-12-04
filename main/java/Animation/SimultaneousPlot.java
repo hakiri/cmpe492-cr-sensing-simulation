@@ -1,5 +1,6 @@
 package Animation;
 
+import SimulationRunner.SimulationRunner;
 import jPlot.ApplicationFrame;
 import jPlot.Constant;
 import jPlot.jPlot;
@@ -15,6 +16,7 @@ public class SimultaneousPlot {
 	ApplicationFrame ApplicationFrame;
 	Plot plot;
 	boolean plotted;
+	int xs;
 	
 	/**
 	 * Creates a new plotter object with no x value and y value.
@@ -23,7 +25,8 @@ public class SimultaneousPlot {
 	 */
 	public SimultaneousPlot(int xs, ArrayList<Integer> yPerX)
 	{
-		plot = new Plot(xs, yPerX);
+		this.xs = xs;
+		plot = new Plot(xs, yPerX, "Time", "Probability", "msec", "");
 		plotted = false;
 	}
 	
@@ -41,15 +44,19 @@ public class SimultaneousPlot {
 	 * @param xVal		x value to be added
 	 * @param yVals		y values to be added
 	 */
-	public void addPoint(int xPos, double xVal, ArrayList<Double> yVals)
+	public void addPoint(double xVal, ArrayList<Double> yVals)
 	{
-		plot.addPoint(xPos, xVal, yVals);
+		for(int i = 0; i < xs ; i++){
+			ArrayList<Double> temp = new ArrayList<Double>();
+			temp.add(yVals.get(i));
+			plot.addPoint(i, xVal, temp);
+		}
 	}
 	
 	/**
 	 * Plots all available y values belongs to given x value onto different
 	 * graphs on different windows when first called. In following calls it
-	 * just resyncronizes the plot with newly added data.
+	 * just resynchronizes the plot with newly added data.
 	 * @param title					Title of the graph
 	 * @param xPos					x value to be plotted
 	 * @param names					Legend of plots
@@ -57,20 +64,24 @@ public class SimultaneousPlot {
 	 */
 	public void plotAllXWithLegend(String title, int xPos, ArrayList<String> names, double simulationDuration)
 	{
-		ArrayList<Integer> xs = new ArrayList<Integer>();
-		xs.add(xPos);
+		ArrayList<Integer> xes = new ArrayList<Integer>();
 		ArrayList<ArrayList<Integer>> ys = new ArrayList<ArrayList<Integer>>();
-		ys.add(new ArrayList<Integer>());
 		ArrayList<ArrayList<String>> nameList = new ArrayList<ArrayList<String>>();
-		nameList.add(names);
-		for(int j=0;j<plot.getY().get(xPos).size();j++){
-			ys.get(0).add(j);
+		for(int i=0;i<xs;i++){
+			ys.add(new ArrayList<Integer>());
+			nameList.add(new ArrayList<String>());
+			ys.get(i).add(0);
+			nameList.get(i).add(names.get(i));
+			xes.add(i);
 		}
-
+		
 		if(simulationDuration > 0)
-			plot.plot(title, xs, ys, nameList,0.0,simulationDuration);
+			plot.plot(title, xes, ys, nameList,0.0,simulationDuration);
 		else
-			plot.plot(title, xs, ys, nameList);
+			plot.plot(title, xes, ys, nameList);
+		
+		if(SimulationRunner.args.isBatchMode())
+			return;
 		
 		if(plotted){
 			resynch();

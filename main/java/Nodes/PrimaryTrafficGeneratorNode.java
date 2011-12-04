@@ -151,7 +151,6 @@ public class PrimaryTrafficGeneratorNode extends Node{
 			data[i][0] = String.valueOf(n.getId());
 			data[i][1] = String.valueOf(n.getNumberOfCallAttempts() - n.getNumberOfDrops());
 			
-			//data[i][2] = String.format(Locale.US,"%.2f", n.getComunicationDuration());
 			data[i][2] = String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec);
 			i++;
 		}

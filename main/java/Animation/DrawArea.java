@@ -185,4 +185,16 @@ public class DrawArea extends JPanel{
 			crNodeCollisionWarning.put(id, null);
 		repaint();
 	}
+
+	public HashMap<Integer, PointColor> getCrNodeCollisionWarning() {
+		return crNodeCollisionWarning;
+	}
+
+	public HashMap<Integer, PointColor> getCrNodes() {
+		return crNodes;
+	}
+
+	public HashMap<Integer, PointColor> getPrimaryNodes() {
+		return primaryNodes;
+	}
 }
