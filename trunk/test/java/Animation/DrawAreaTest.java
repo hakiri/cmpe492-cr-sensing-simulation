@@ -4,7 +4,7 @@
  */
 package Animation;
 
-import java.awt.Graphics;
+import java.awt.Color;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -35,37 +35,16 @@ public class DrawAreaTest extends TestCase {
 	}
 
 	/**
-	 * Test of paintComponent method, of class DrawArea.
-	 */
-	public void testPaintComponent() {
-		System.out.println("paintComponent");
-		Graphics g = null;
-		DrawArea instance = null;
-		instance.paintComponent(g);
-		// TODO review the generated test code and remove the default call to fail.
-	}
-
-	/**
-	 * Test of paint method, of class DrawArea.
-	 */
-	public void testPaint() {
-		System.out.println("paint");
-		Graphics g = null;
-		DrawArea instance = null;
-		instance.paint(g);
-		// TODO review the generated test code and remove the default call to fail.
-	}
-
-	/**
 	 * Test of paintPrimary method, of class DrawArea.
 	 */
 	public void testPaintPrimary() {
 		System.out.println("paintPrimary");
-		Integer id = null;
-		PointColor p = null;
-		DrawArea instance = null;
+		Integer id = 0;
+		PointColor p = new PointColor(0, 0, 8, Color.red);
+		DrawArea instance = new DrawArea(15, 3, 4, 3, 5, 10);
 		instance.paintPrimary(id, p);
-		// TODO review the generated test code and remove the default call to fail.
+		PointColor p2 = instance.getPrimaryNodes().get(id);
+		assertEquals(p, p2);
 	}
 
 	/**
@@ -73,10 +52,10 @@ public class DrawAreaTest extends TestCase {
 	 */
 	public void testPaintCR() {
 		System.out.println("paintCR");
-		Integer id = null;
-		PointColor p = null;
-		DrawArea instance = null;
+		Integer id = 1;
+		PointColor p = new PointColor(3, 5, 8, Color.GREEN);
+		DrawArea instance = new DrawArea(15, 3, 4, 3, 5, 10);
 		instance.paintCR(id, p);
-		// TODO review the generated test code and remove the default call to fail.
+		assertEquals(p, instance.getCrNodes().get(id));
 	}
 }
