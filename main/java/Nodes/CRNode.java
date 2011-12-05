@@ -307,6 +307,8 @@ public class CRNode extends Node {
         this.communication_frequency = communication_frequency;
         commOrNot = true;
         SimulationRunner.wc.occupyFrequency(communication_frequency, this);
+        if(!this.isCollided)    //when a call starts
+            this.numberOfCalls++;
     }
 
     /**
@@ -324,7 +326,6 @@ public class CRNode extends Node {
         SimulationRunner.wc.releaseFrequency(this.communication_frequency, this);
         this.commOrNot = false;
         this.communication_frequency = -1;
-        this.numberOfCalls++;
     }
 
     /**
