@@ -131,7 +131,8 @@ public class CRSensorThread implements Runnable{
 		ArrayList<String> namesList = new ArrayList<String>();
 		namesList.add("Block");
 		namesList.add("Drop");
-		namesList.add("Collision");
+		namesList.add("Real Collision");
+		namesList.add("Measured Collision");
 		for(frame = 0; remainingSimulationDuration>0&&!finished ; frame++){		//Until simulation duration is elapsed or thread is terminated
 			
 			arrangeCommunicationVariables();
