@@ -350,7 +350,6 @@ public class CRBase extends Node{
 							msec-= sec*1000.0;
 							
 							CRNode.writeLogFile("Time: " + String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec) + " -- number: " + crInZone + " is dropped");
-							
 							if(SimulationRunner.args.isAnimationOn()){
 								SimulationRunner.crSensor.setInactiveDuration(crInZone, true);
 							}

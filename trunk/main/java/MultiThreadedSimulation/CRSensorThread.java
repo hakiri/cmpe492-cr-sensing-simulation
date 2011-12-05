@@ -479,8 +479,8 @@ public class CRSensorThread implements Runnable{
 			int cr = commRelatedTimes.indexOf(frame);
 			if(SimulationRunner.crNodes.get(cr).getCommOrNot()){
 				DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.GRAY);
-				SimulationRunner.crNodes.get(cr).releaseCommunication_frequency();
 				SimulationRunner.crNodes.get(cr).setIsCollided(false);
+				SimulationRunner.crNodes.get(cr).releaseCommunication_frequency();
 				commRelatedTimes.set(cr, frame + SimulationRunner.crNodes.get(cr).nextOffDuration(frameDuration));
 			}
 			else{
