@@ -247,8 +247,8 @@ public class CRSensorThread implements Runnable{
 	
 	private void senseResultAdvertise()
 	{
-        int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0;
-        double blockProb, dropProb,collisionProb;
+        int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
+        double blockProb, dropProb,collisionProb,estimatedCollisionProb;
 		time = System.currentTimeMillis();		//Save current time
 		/*Write time to log file*/
 		double msec = (double)(totalSimulationDuration-remainingSimulationDuration)/unitTime;
@@ -269,6 +269,7 @@ public class CRSensorThread implements Runnable{
             totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
             totalCalls += SimulationRunner.crNodes.get(i).getNumberOfCalls();
             totalFrames += SimulationRunner.crNodes.get(i).getNumberOfFramesCommunicated();
+            totalEstimatedCollisions += SimulationRunner.crNodes.get(i).getEstimatedNumberOfCollison();
 		}
 		if(totalCallAttempts == 0){
             blockProb = 0.0;
@@ -283,16 +284,19 @@ public class CRSensorThread implements Runnable{
 		}
 		if(totalFrames == 0){
 			collisionProb = 0.0;
+            estimatedCollisionProb = 0.0;
 		}
 		else{
 			collisionProb = (double)totalCollisions/totalFrames;
+            estimatedCollisionProb = (double)totalEstimatedCollisions/totalFrames;
 		}
 		ArrayList<Double> probs = new ArrayList<Double>();
 		probs.add(blockProb);
 		probs.add(dropProb);
 		probs.add(collisionProb);
+        probs.add(estimatedCollisionProb);
 		SimulationRunner.plotProbs.addPoint((totalSimulationDuration-remainingSimulationDuration)/unitTime, probs);
-        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f", blockProb,dropProb,collisionProb));
+        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f --- Estimated Collision prob: %.4f", blockProb,dropProb,collisionProb,estimatedCollisionProb));
 		CRNode.logAverageSnr((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
 		
 		time = (long)senseResultAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from

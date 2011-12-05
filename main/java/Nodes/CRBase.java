@@ -257,9 +257,22 @@ public class CRBase extends Node{
 			//if there was no collision in the previous measurement 
 			free_frequencies.add(new ArrayList<Integer>());
 			for(int freqInZone=0;freqInZone<lastSensingDecisions.get(zoneNumber).size();freqInZone++){//finds collision-free frequencies and adds them to fre_freq
-				if(lastSensingDecisions.get(zoneNumber).get(freqInZone) == 0)
+				if(lastSensingDecisions.get(zoneNumber).get(freqInZone) == 0){
 					if(!SimulationRunner.wc.isOccupied(freqInZone, WirelessChannel.CR))
 						free_frequencies.get(zoneNumber).add(freqInZone);
+                }
+                else{
+                    CRNode n = (CRNode)SimulationRunner.wc.getFreq(freqInZone).get(WirelessChannel.CR);
+                    if(n != null){
+                        if(findZone(n.getId()) == zoneNumber){
+                            n.setIsCollided(true);
+                            if(SimulationRunner.args.isAnimationOn()){
+                            	SimulationRunner.crSensor.setWarningExpirationFrame(n.getId());
+                        	}
+                            n.incrementEstimatedNumberOfCollision();
+                        }
+                    }
+                }
 			}
 		}
 	}

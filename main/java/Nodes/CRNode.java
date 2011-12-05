@@ -60,6 +60,7 @@ public class CRNode extends Node {
      * generators during the simulation time.
      */
     private int numberOfCollision = 0;
+    private int estimatedNumberOfCollison = 0;
     /**
      * Boolean value that keeps whether a collision happened or not.
      */
@@ -309,6 +310,7 @@ public class CRNode extends Node {
         SimulationRunner.wc.occupyFrequency(communication_frequency, this);
         if(!this.isCollided)    //when a call starts
             this.numberOfCalls++;
+        isCollided=false;
     }
 
     /**
@@ -380,10 +382,6 @@ public class CRNode extends Node {
 				SimulationRunner.crNodes.get(i).numberOfFramesCommunicated++;
 				if(SimulationRunner.crNodes.get(i).collisionOccured){
 					SimulationRunner.crNodes.get(i).numberOfCollision++;
-					SimulationRunner.crNodes.get(i).isCollided = true;
-					if(SimulationRunner.args.isAnimationOn()){
-						SimulationRunner.crSensor.setWarningExpirationFrame(i);
-					}
 				}
 				SimulationRunner.crNodes.get(i).collisionOccured = false;
 			}
@@ -782,4 +780,17 @@ public class CRNode extends Node {
     public int getNumberOfFramesCommunicated() {
 		return numberOfFramesCommunicated;
 	}
+
+    public int getEstimatedNumberOfCollison() {
+        return estimatedNumberOfCollison;
+    }
+    
+    public void incrementEstimatedNumberOfCollision() {
+        estimatedNumberOfCollison++;
+    }
+
+    public void setEstimatedNumberOfCollison(int estimatedNumberOfCollison) {
+        this.estimatedNumberOfCollison = estimatedNumberOfCollison;
+    }
+    
 }
