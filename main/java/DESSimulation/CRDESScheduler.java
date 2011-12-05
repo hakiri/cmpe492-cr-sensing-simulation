@@ -259,7 +259,8 @@ public class CRDESScheduler extends SimEnt{
 		ArrayList<String> namesList = new ArrayList<String>();
 		namesList.add("Block");
 		namesList.add("Drop");
-		namesList.add("Collision");
+		namesList.add("Real Collision");
+		namesList.add("Measured Collision");
 		SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList,-1);
 		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<String> names = new ArrayList<String>();

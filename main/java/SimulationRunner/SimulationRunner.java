@@ -1173,7 +1173,8 @@ public class SimulationRunner extends JFrame{
 		tempArray.add(1);
 		tempArray.add(1);
 		tempArray.add(1);
-		plotProbs = new SimultaneousPlot(3, tempArray);
+		tempArray.add(1);
+		plotProbs = new SimultaneousPlot(4, tempArray);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 			numberOFYs.add(args.getNumberOfFreq());
@@ -1275,7 +1276,8 @@ public class SimulationRunner extends JFrame{
 		tempArray.add(1);
 		tempArray.add(1);
 		tempArray.add(1);
-		plotProbs = new SimultaneousPlot(3, tempArray);
+		tempArray.add(1);
+		plotProbs = new SimultaneousPlot(4, tempArray);
 		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 			numberOFYs.add(args.getNumberOfFreq());
