@@ -43,6 +43,7 @@ public class SimulationStatsTable extends JFrame{
 	private JButton saveButton, closeButton;
 	private JFileChooser jfc;
 	private JFrame parentFrame;
+	private double primaryUtilization;
 	
 	/**
 	 * Creates a statistic table for the simulation results. It displays two tables
@@ -178,8 +179,8 @@ public class SimulationStatsTable extends JFrame{
 		else{
 			simDur = SimulationRunner.crDesScheduler.getSimulationDuration() / WirelessChannel.unitTime;
 		}
-		double utilization = (primaryCommDur*100.0)/(simDur*numberOfFreq);
-		priLabel2 = new JLabel(String.format(Locale.US, "Primary Nodes Utilization: %.2f",utilization)+"%");
+		primaryUtilization = (primaryCommDur*100.0)/(simDur*numberOfFreq);
+		priLabel2 = new JLabel(String.format(Locale.US, "Primary Nodes Utilization: %.2f",primaryUtilization)+"%");
 		jPanel.add(priLabel2);
 		priLabel2.setBounds(800, 35, 360, 16);
 		
@@ -268,18 +269,8 @@ public class SimulationStatsTable extends JFrame{
 			JOptionPane.showMessageDialog(this, "An error is occured while openning file!!!", "Save", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		double primaryCommDur = Double.parseDouble(priStats[priStats.length-1][priStatNames.length-1]);
-		int numberOfFreq = SimulationRunner.wc.numberOfFreq();
-		double simDur = 0;
-		if(SimulationRunner.args.isAnimationOn()){
-			simDur = SimulationRunner.crSensor.getSimulationDuration() / WirelessChannel.unitTime;
-		}
-		else{
-			simDur = SimulationRunner.crDesScheduler.getSimulationDuration() / WirelessChannel.unitTime;
-		}
-		double utilization = (primaryCommDur*100.0)/(simDur*numberOfFreq);
-		pw.printf(Locale.US, "Total number of CR Frames:;%d;;;;;;;Primary Node Utilization:;%.2f\n\n",
-				CRNode.getTotalNumberOfFrames(),utilization);
+		pw.printf(Locale.US, "Total number of CR Frames:;%d;;;;;;;;;Primary Node Utilization:;%.2f\n\n",
+				CRNode.getTotalNumberOfFrames(),primaryUtilization);
 		for(int i=0; i<crStatNames.length;i++){
 			pw.print(crStatNames[i]+";");
 		}
