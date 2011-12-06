@@ -1187,11 +1187,11 @@ public class SimulationRunner extends JFrame{
 		tempArray.add(1);
 		tempArray.add(1);
 		tempArray.add(1);
-		plotProbs = new SimultaneousPlot(4, tempArray);
+		plotProbs = new SimultaneousPlot(4, tempArray, "Time", "Probabilities", "msec", "");
 		tempArray = new ArrayList<Integer>();
 		tempArray.add(1);
 		tempArray.add(1);
-		plotSensingProbs = new SimultaneousPlot(2, tempArray);
+		plotSensingProbs = new SimultaneousPlot(2, tempArray, "Time", "Probabilities", "Frame", "");
 		if(args.isPlotOn()){
 			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 			numberOFYs.add(args.getNumberOfFreq());

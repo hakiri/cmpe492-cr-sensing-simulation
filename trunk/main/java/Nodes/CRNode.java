@@ -208,7 +208,7 @@ public class CRNode implements Node {
             totalMissDetection += SimulationRunner.crBase.getMissDetection(i);
         }
         if(SimulationRunner.args.isAnimationOn()){
-            frame = (double)(SimulationRunner.crSensor.getFrame());
+            frame = (double)(SimulationRunner.crSensor.getFrame()) + 1;
         }
         else{
             frame = SimulationRunner.crDesScheduler.getCurrentFrame();

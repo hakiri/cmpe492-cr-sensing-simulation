@@ -23,10 +23,10 @@ public class SimultaneousPlot {
 	 * @param xs	Number of different x values
 	 * @param yPerX	How many y belongs to each x
 	 */
-	public SimultaneousPlot(int xs, ArrayList<Integer> yPerX)
+	public SimultaneousPlot(int xs, ArrayList<Integer> yPerX, String xLabel, String yLabel, String xUnits, String yUnits)
 	{
 		this.xs = xs;
-		plot = new Plot(xs, yPerX, "Time", "Probability", "msec", "");
+		plot = new Plot(xs, yPerX, xLabel, yLabel, xUnits, yUnits);
 		plotted = false;
 	}
 	
