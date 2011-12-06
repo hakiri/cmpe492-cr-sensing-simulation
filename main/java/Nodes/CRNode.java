@@ -202,8 +202,8 @@ public class CRNode extends Node {
         else{
             frame = SimulationRunner.crDesScheduler.getCurrentFrame();
         }
-        averageFalseAlarm = ((totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getMaxFreqCR();
-        averageMissDetection = ((totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getMaxFreqCR();
+        averageFalseAlarm = ((totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
+        averageMissDetection = ((totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
 		//TODO Add those probs to plot object
 		ArrayList<Double> probs = new ArrayList<Double>();
 		probs.add(averageFalseAlarm);
