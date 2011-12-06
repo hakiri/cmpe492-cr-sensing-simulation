@@ -25,7 +25,7 @@ import cern.jet.random.Normal;
  */
 public class CRNode extends Node {
 
-	final static double tau = 10;
+	final static double tau = 15.987;
 	final static int tw = 5;
     /**
      * List of frequencies assigned to this node with respect to their SNR values.
@@ -174,7 +174,37 @@ public class CRNode extends Node {
     public void logSnrValues() {
         pw.println("number: " + String.valueOf(id) + " -- position: " + point2DtoString(position) + " -- snrValues: " + hashMapToString(snrValues));
     }
-
+    
+    private static void calculate_Pf_Pm()
+    {
+        double totalFalseAlarm=0.0,totalMissDetection=0.0,frame;
+        double threshold,averageFalseAlarm,averageMissDetection;
+        for (int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+            for(int j=0;j<SimulationRunner.args.getNumberOfFreq();j++){
+                threshold = SimulationRunner.wc.getInrThreshold(i);
+                if((averageSnr.get(i).get(j) <= threshold)&&(sensingDecision.get(i).get(j) == 1)){
+                    SimulationRunner.crBase.incrementFalseAlarm(i);
+                }
+                else if((averageSnr.get(i).get(j) > threshold)&&(sensingDecision.get(i).get(j) == 0)){
+                    SimulationRunner.crBase.incrementMissDetection(i);
+                }
+            }
+        }
+        //TODO Simultaneous probability of Pm and Pf will be calculated, will be sent to corresponding object.
+        for (int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+            totalFalseAlarm += SimulationRunner.crBase.getFalseAlarm(i);
+            totalMissDetection += SimulationRunner.crBase.getMissDetection(i);
+        }
+//        if(SimulationRunner.args.isAnimationOn()){
+//            frame = (double)(SimulationRunner.crSensor.getFrame());
+//        }
+//        else{
+//            frame = SimulationRunner.crDesScheduler.
+//        }
+//        averageFalseAlarm = (totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame;
+//        averageMissDetection = (totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame;
+    }
+    
     /**
      * Calculates average SNR values then writes these values to the log file 
      * and then resets the average SNR values.
@@ -193,7 +223,7 @@ public class CRNode extends Node {
 					sensingDecision.get(i).set(j,0);
             }
         }
-
+        calculate_Pf_Pm();
         SimulationRunner.crBase.setLastSensingResults(sensingDecision);
         if (SimulationRunner.args.isPlotOn()) {
             for (int i = 0; i < averageSnr.size(); i++) {
@@ -231,7 +261,7 @@ public class CRNode extends Node {
             }
         }
     }
-
+    
     /**
      * Creates the log file.
      * @param file_name Name of the log file
@@ -463,7 +493,7 @@ public class CRNode extends Node {
         writeLogFile(String.format(Locale.US, "Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
         writeLogFile(String.format(Locale.US, "Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
 		writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f Kbits", totalThroughput/1024.0));
-
+        
         data[i][0] = "Average";
         data[i][1] = String.format(Locale.US, "%.2f", totalNumberOfCallAttempts);
         data[i][2] = String.format(Locale.US, "%.2f", totalNumberOfCalls);
@@ -473,7 +503,14 @@ public class CRNode extends Node {
         data[i][6] = String.format(Locale.US, "%.2f", totalNumberOfForcedHandoffs);
         data[i][7] = String.format(Locale.US, "%.2f", totalNumberOfCollision);
 		data[i][8] = String.format(Locale.US, "%.2f Kbits/sec", totalThroughput/1024.0);
-        
+        writeLogFile("\n\nProbabilities of False Alarm");
+        for(int j=0;j<SimulationRunner.args.getNumberOfZones();j++){
+            writeLogFile(String.format(Locale.US, "%d. Zone : %f --- total false alarm: %f", j, (double)(SimulationRunner.crBase.getFalseAlarm(j)/totalNumberOfFrames),SimulationRunner.crBase.getFalseAlarm(j)));
+        }
+        writeLogFile("\n\nProbabilities of Miss Detection");
+        for(int j=0;j<SimulationRunner.args.getNumberOfZones();j++){
+            writeLogFile(String.format(Locale.US, "%d. Zone : %f --- total miss detection: %f", j, (double)(SimulationRunner.crBase.getMissDetection(j)/totalNumberOfFrames),SimulationRunner.crBase.getMissDetection(j)));
+        }
         return data;
     }
 

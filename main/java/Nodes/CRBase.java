@@ -70,6 +70,8 @@ public class CRBase extends Node{
      * Cumulative total of crnodes in zones.
      */
     private ArrayList<Integer> nodesInZone;
+    private ArrayList<Double> falseAlarm;
+    private ArrayList<Double> missDetection;
     
     /**
      * Creates a CRBase at the given position.
@@ -87,6 +89,8 @@ public class CRBase extends Node{
 		this.currentSensingDecisions = new ArrayList<ArrayList<Integer>>();
         this.registeredZones = new ArrayList<ArrayList<Integer>>();
 		this.nodesInZone = new ArrayList<Integer>();
+        this.falseAlarm = new ArrayList<Double>();
+        this.missDetection = new ArrayList<Double>();
     }
     
     /**
@@ -420,6 +424,8 @@ public class CRBase extends Node{
         zone.add(alpha);
         zone.add(d);
         registeredZones.add(zone);
+        missDetection.add(0.0);
+        falseAlarm.add(0.0);
         if(nodesInZone.size() > 0)
             nodesInZone.add(crnodes + nodesInZone.get(nodesInZone.size() - 1));
         else
@@ -466,4 +472,41 @@ public class CRBase extends Node{
 		}
 		return Cell.set_of_d.get(d);
 	}
+    
+    /**
+     * Returns the farthest distance from a CR node to base station for a given zone.
+     * @param zoneId Id of zone
+     * @return Farthest distance between a CR node and the base station
+     */
+    public double  farthestDistanceInZone(int zoneId)
+    {
+        int iStart,iEnd;
+        double distance=0.0,temp_dist;
+        if(zoneId == 0)
+            iStart=0;
+        else
+            iStart = nodesInZone.get(zoneId-1);
+        iEnd = nodesInZone.get(zoneId);
+        for(int i=iStart;i<iEnd;i++){
+            temp_dist = SimulationRunner.crNodes.get(i).getPosition().distance(position);
+            if(temp_dist>distance)
+                distance = temp_dist;
+        }
+        return distance;
+    }
+
+    public double  getFalseAlarm(int zoneId) {
+        return falseAlarm.get(zoneId);
+    }
+
+    public double getMissDetection(int zoneId) {
+        return missDetection.get(zoneId);
+    }
+    
+    public void incrementFalseAlarm(int zoneId) {
+        falseAlarm.set(zoneId, falseAlarm.get(zoneId)+1);
+    }
+    public void incrementMissDetection(int zoneId) {
+        missDetection.set(zoneId, missDetection.get(zoneId)+1);
+    }
 }
