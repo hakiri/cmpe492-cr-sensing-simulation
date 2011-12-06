@@ -142,10 +142,10 @@ public class WirelessChannel {
 	}
 	
 	/**
-	 * Finds an snr value according to the channel model.
+	 * Finds an SNR value according to the channel model.
 	 * @param sensor	Node to assign SNR value
 	 * @param frequency Frequency to which the sensor senses
-	 * @return snr value
+	 * @return SNR value
 	 */
 	public double generateSNR(Node sensor, int frequency)
 	{
@@ -161,13 +161,33 @@ public class WirelessChannel {
 		}
 		return 0;
 	}
+    
+    /**
+     * Finds an SNR value according to the channel model for a given distance.
+     * @param distance Distance between the nodes.
+     * @return SNR value of the signal transmitted by transmitter node.
+     */
+    public double generateSNR(double distance)
+    {
+        return maxSNR/Math.exp(0.12*distance);
+    }
+    
+    /**
+     * Finds an INR threshold value according to the SNR value for a zone.
+     * @param zoneId Id of zone
+     * @return INR threshold
+     */
+    public double getInrThreshold(int zoneId){
+        double tr = WirelessChannel.magTodb(WirelessChannel.dbToMag(SimulationRunner.wc.generateSNR(SimulationRunner.crBase.farthestDistanceInZone(zoneId)) - SimulationRunner.wc.sinrThreshold)-1);
+        return tr < 0.0 ? 0.0 : tr;
+    }
 	
 	/**
-	 * Finds an snr value according to the channel model.
+	 * Finds an SNR value according to the channel model.
 	 * @param transmitter	Node transmitting the signal
 	 * @param receiver		Node to assign SNR value
-	 * @param freq			Freqency which will be used during the communication between transmitter and receiver
-	 * @return snr value at receiver caused by transmitter
+	 * @param freq			Frequency which will be used during the communication between transmitter and receiver
+	 * @return SNR value at receiver caused by transmitter
 	 */
 	public double generateSINR(Node transmitter, Node receiver, int freq)
 	{
@@ -302,14 +322,14 @@ public class WirelessChannel {
         return freqInterval;
     }
     
-    public void initializeFreqIntervals(){
+    public final void initializeFreqIntervals(){
         int temp=0;
         probsOfFreqIntervals = new ArrayList<Double>();
         indexesOfFreqIntervals = new ArrayList<Integer>();
         probsOfFreqIntervals.add(0.2);
         probsOfFreqIntervals.add(0.6);
         probsOfFreqIntervals.add(0.2);
-        temp = (int)(frequencies.size()/probsOfFreqIntervals.size());
+        temp = (int)Math.ceil(frequencies.size()/probsOfFreqIntervals.size());
         for(int i=0;i<probsOfFreqIntervals.size()-1;i++){
             indexesOfFreqIntervals.add(temp*i+temp);
             usageOfFreqsInIntervals.add(0);

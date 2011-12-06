@@ -526,4 +526,10 @@ public class CRSensorThread implements Runnable{
 	public Thread getRunner() {
 		return runner;
 	}
+
+    public int getFrame() {
+        return frame;
+    }
+    
+    
 }
