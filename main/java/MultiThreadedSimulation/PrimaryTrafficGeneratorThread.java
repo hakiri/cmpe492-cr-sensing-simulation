@@ -42,6 +42,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 * Distribution for ON-OFF traffic on durations
 	 */
 	private ParetoDistribution onDuration;
+	private double remainingSimulationDuration;
 	
 	/**
 	 * Creates a primary traffic generator thread associated with node n
@@ -57,8 +58,9 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 *								<li><i>If ON-OFF traffic model:</i> Mean OFF period duration of a node in terms of time units
 	 *							</ul>
 	 */
-	public PrimaryTrafficGeneratorThread(PrimaryTrafficGeneratorNode n, double meanOnDuration, double meanOffDuration)
+	public PrimaryTrafficGeneratorThread(PrimaryTrafficGeneratorNode n, double meanOnDuration, double meanOffDuration, double simulationDuration)
 	{
+		remainingSimulationDuration = simulationDuration*SimulationRunner.args.getTimeUnit();
 		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON){
 			interArrival = new Exponential(meanOffDuration, SimulationRunner.randEngine);
 			callDuration = new Exponential(1.0/meanOnDuration, SimulationRunner.randEngine);
@@ -87,7 +89,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		long time = 0;
 		int freq=0;
 		DrawCell.paintPrimaryNode(n, Color.BLACK);
-		while(!finished){
+		while(!finished && remainingSimulationDuration > 0.0){
 			double previousOffDuration = interArrival();
 			
 			if(finished)
@@ -113,6 +115,9 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	{
 		double previousOffDuration;
 		long time = Math.round(previousOffDuration = nextOffDuration());
+		remainingSimulationDuration -= time;
+		if(remainingSimulationDuration <= 0)
+			finished = true;
 		try{
 			Thread.sleep(time);		//Wait for that amount
 		}
@@ -161,9 +166,14 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	{
 		DrawCell.paintPrimaryNode(n, Color.RED);
 		double commDur = nextOnDuration();
-		double remainingDur = SimulationRunner.crSensor.getRemainingSimulationDuration();
-		if(commDur > remainingDur)
-			commDur = remainingDur;
+		if(commDur > remainingSimulationDuration){
+			commDur = remainingSimulationDuration;
+			remainingSimulationDuration = -1;
+		}
+		else
+			remainingSimulationDuration -= commDur;
+		if(remainingSimulationDuration <= 0)
+			finished = true;
 		long time = Math.round(commDur);	//Take a random call duration
 		n.incrementTotalCommunicationDuration(commDur/SimulationRunner.args.getTimeUnit());//WirelessChannel.unitTime);
 
@@ -213,8 +223,10 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	
 	private double nextOnDuration()
 	{
-		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON)
-			return callDuration.nextDouble()*WirelessChannel.unitTime*60000;
+		if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.POISSON){
+			double val = callDuration.nextDouble();
+			return val*WirelessChannel.unitTime*60000;
+		}
 		else if(SimulationRunner.wc.getTrafficModel() == WirelessChannel.ON_OFF){
 			double val = onDuration.nextDouble();
 			return val*WirelessChannel.unitTime*60000;
