@@ -72,4 +72,8 @@ public class PrimaryTrafficGenerator {
 	{
 		return PrimaryTrafficGeneratorNode.logStats(registeredNodes);
 	}
+
+	public HashMap<PrimaryTrafficGeneratorNode, PrimaryTrafficGeneratorThread> getRegisteredNodes() {
+		return registeredNodes;
+	}
 }
