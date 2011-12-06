@@ -270,7 +270,7 @@ public class CRDESScheduler extends SimEnt{
 		namesList = new ArrayList<String>();
 		namesList.add("False Alarm");
 		namesList.add("Miss-detection");
-		SimulationRunner.plotSensingProbs.plotAllXWithLegend("Probabilities", 0, namesList, -1);
+		SimulationRunner.plotSensingProbs.plotAllXWithLegend("Probabilities2", 0, namesList, -1);
 		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){

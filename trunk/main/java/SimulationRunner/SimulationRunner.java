@@ -161,8 +161,8 @@ public class SimulationRunner extends JFrame{
 	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
 	private JTextField noSlotField,slotDurField,sensingResultField,senseScheduleField,commScheduleField,commDurField,
 					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
-					   maxSNR,sinrThresholdFied,noZones,channelBandwithField;
-	private JLabel label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
+					   maxSNR,sinrThresholdFied,noZones,channelBandwithField,tauField;
+	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
 				   label15,label16,label17,label19,label21,label22,label23,label24,label25,label26,label27,label28,
 				   label29,label30,label31;
 	private JComboBox seedModel,channelModel,trafficModel;
@@ -362,10 +362,25 @@ public class SimulationRunner extends JFrame{
 			sinrThresholdFied.addKeyListener(keyAdapter);
 		}
 		{
+			label1 = new JLabel();
+			mainPanel.add(label1);
+			label1.setToolTipText("Energy Threshold for CR Nodes Decide whether a channel is vacant or not");
+			label1.setText("Energy Threshold (tau)");
+			label1.setBounds(labelPos, 205, 165, 16);
+		}
+		{
+			tauField = new JTextField();
+			mainPanel.add(tauField);
+			tauField.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
+			tauField.setBounds(itemPos, 205, 120, 23);
+			tauField.setText("15.987");
+			tauField.addKeyListener(keyAdapter);
+		}
+		{
 			label7 = new JLabel();
 			mainPanel.add(label7);
 			label7.setText("Seed Model");
-			label7.setBounds(labelPos, 205, 165, 16);
+			label7.setBounds(labelPos, 240, 165, 16);
 		}
 		{
 			ComboBoxModel seedModelModel = 
@@ -389,7 +404,7 @@ public class SimulationRunner extends JFrame{
 				}
 			});
 			mainPanel.add(seedModel);
-			seedModel.setBounds(itemPos, 205, 120, 23);
+			seedModel.setBounds(itemPos, 240, 120, 23);
 			seedModel.addKeyListener(keyAdapter);
 		}
 		{
@@ -397,13 +412,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label8);
 			label8.setToolTipText("Seed Value of Random Number Generator");
 			label8.setText("Seed Value");
-			label8.setBounds(labelPos, 240, 165, 16);
+			label8.setBounds(labelPos, 275, 165, 16);
 		}
 		{
 			seedValue = new JTextField();
 			mainPanel.add(seedValue);
 			seedValue.setToolTipText("Seed Value of Random Number Generator");
-			seedValue.setBounds(itemPos, 240, 120, 23);
+			seedValue.setBounds(itemPos, 275, 120, 23);
 			seedValue.setText("111211211");
 			seedValue.addKeyListener(keyAdapter);
 		}
@@ -412,13 +427,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label9);
 			label9.setToolTipText("Run Animation During Simulation");
 			label9.setText("Animation");
-			label9.setBounds(labelPos, 275, 165, 16);
+			label9.setBounds(labelPos, 310, 165, 16);
 			animationOnOff = new ButtonGroup();
 		}
 		{
 			animationOnButton = new JRadioButton("On");
 			mainPanel.add(animationOnButton);
-			animationOnButton.setBounds(itemPos, 275, 50, 23);
+			animationOnButton.setBounds(itemPos, 310, 50, 23);
 			animationOnButton.setSelected(false);
 			animationOnOff.add(animationOnButton);
 			animationOnButton.addItemListener(new ItemListener() {
@@ -440,7 +455,7 @@ public class SimulationRunner extends JFrame{
 		{
 			animationOffButton = new JRadioButton("Off");
 			mainPanel.add(animationOffButton);
-			animationOffButton.setBounds(itemPos+70, 275, 50, 23);
+			animationOffButton.setBounds(itemPos+70, 310, 50, 23);
 			animationOffButton.setSelected(true);
 			animationOnOff.add(animationOffButton);
 			animationOffButton.addItemListener(new ItemListener() {
@@ -464,13 +479,13 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(label10);
 			label10.setToolTipText("Draw Plots at The End of The Simulation");
 			label10.setText("Plot");
-			label10.setBounds(labelPos, 310, 165, 16);
+			label10.setBounds(labelPos, 345, 165, 16);
 			plotOnOff = new ButtonGroup();
 		}
 		{
 			plotOnButton = new JRadioButton("On");
 			mainPanel.add(plotOnButton);
-			plotOnButton.setBounds(itemPos, 310, 50, 23);
+			plotOnButton.setBounds(itemPos, 345, 50, 23);
 			plotOnButton.setSelected(false);
 			plotOnOff.add(plotOnButton);
 			plotOnButton.addKeyListener(keyAdapter);
@@ -478,13 +493,13 @@ public class SimulationRunner extends JFrame{
 		{
 			plotOffButton = new JRadioButton("Off");
 			mainPanel.add(plotOffButton);
-			plotOffButton.setBounds(itemPos+70, 310, 50, 23);
+			plotOffButton.setBounds(itemPos+70, 345, 50, 23);
 			plotOffButton.setSelected(true);
 			plotOnOff.add(plotOffButton);
 			plotOffButton.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(mainPanel);
-		mainPanel.setBounds(panelLeft, 10, panelWidth, 345);
+		mainPanel.setBounds(panelLeft, 10, panelWidth, 380);
 	}
 	
 	private void initFrameOptionsGUI()
@@ -583,7 +598,7 @@ public class SimulationRunner extends JFrame{
 			commScheduleField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(framePanel);
-		framePanel.setBounds(panelRight,185,panelWidth,240);
+		framePanel.setBounds(panelRight,220,panelWidth,240);
 	}
 	
 	private void initZoneOptionsGUI()
@@ -748,7 +763,7 @@ public class SimulationRunner extends JFrame{
 			noZones.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(zonePanel);
-		zonePanel.setBounds(panelLeft, 360, panelWidth, 205);
+		zonePanel.setBounds(panelRight, 10, panelWidth, 205);
 	}
 	
 	private void initTrafficOptionsGUI()
@@ -850,7 +865,7 @@ public class SimulationRunner extends JFrame{
 			unitTime.setEnabled(false);
 		}
 		tabMainPanel.add(trafficPanel);
-		trafficPanel.setBounds(panelRight, 10, panelWidth, 170);
+		trafficPanel.setBounds(panelLeft, 395, panelWidth, 170);
 	}
 	
 	private void initFrequencyOptionsGUI()
@@ -889,7 +904,7 @@ public class SimulationRunner extends JFrame{
 			channelBandwithField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(frequencyPanel);
-		frequencyPanel.setBounds(panelRight, 430, panelWidth, 100);
+		frequencyPanel.setBounds(panelRight, 465, panelWidth, 100);
 	}
 	
 	private void addZoneOptinsGUI()
@@ -1099,25 +1114,27 @@ public class SimulationRunner extends JFrame{
 		}
 	}
 	
-	/**
-	 * Initializes the main simulation threads or schedulers
-	 */
-	public void startSimulation()
+	private boolean commonParts()
 	{
-		args = new Arguments();
-		if(!args.parseArguments(this)){
-			return;
+		if(args.getNumberOfCalls()<=2 && args.getTrafficModel() == 1){
+			if(args.isBatchMode()){
+				System.out.println("Mean Off Period Duration must be greater than 2 time units");
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "Mean Off Period Duration must be greater than 2 time units",
+					"Simulation", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
-		
-		if(args.getNumberOfCalls()<=2 && trafficModel.getSelectedIndex() == 1){
-			JOptionPane.showMessageDialog(this, "Mean Off Period Duration must be greater than 2 time units",
-				"Simulation", JOptionPane.WARNING_MESSAGE);
-			return;
-		}
-		if(args.getCallDura()<=2 && trafficModel.getSelectedIndex() == 1){
-			JOptionPane.showMessageDialog(this, "Mean On Period Duration must be greater than 2 time units",
-				"Simulation", JOptionPane.WARNING_MESSAGE);
-			return;
+		if(args.getCallDura()<=2 && args.getTrafficModel() == 1){
+			if(args.isBatchMode()){
+				System.out.println("Mean On Period Duration must be greater than 2 time units");
+			}
+			else {
+				JOptionPane.showMessageDialog(this, "Mean On Period Duration must be greater than 2 time units",
+					"Simulation", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 
 		if(args.getSeedModel() == 0){				//If seed model is random
@@ -1140,12 +1157,17 @@ public class SimulationRunner extends JFrame{
 		double dmax = crBase.farthestZoneDistance();
 		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
 		if(minSNR<=args.getSinrThreshold()){
-			JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
-				"Simulation", JOptionPane.WARNING_MESSAGE);
-			return;
+			if(args.isBatchMode()){
+				System.out.println("SINR threshold must be less than possible\nminimum SNR value: "+minSNR+"dB");
+			}
+			else{
+				JOptionPane.showMessageDialog(this, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
+					"Simulation", JOptionPane.WARNING_MESSAGE);
+			}
+			return false;
 		}
 
-		if(animationOnButton.isSelected()){
+		if(args.isAnimationOn()){
 			drawCell = new DrawCell((int)args.getRadius(), args.getSectrNo(), args.getAlpha(), (int)args.getdNumber(),
 									args.getNumberOfCrNodes(), args.getNumberOfPriNodes());
 			priTrafGen = new PrimaryTrafficGenerator();
@@ -1160,7 +1182,7 @@ public class SimulationRunner extends JFrame{
 		for(int i = 0; i<args.getNumberOfCrNodes() ;i++){
 			crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
 			wc.registerNode(crNodes.get(i));							//Register CR nodes
-			if(animationOnButton.isSelected())
+			if(args.isAnimationOn())
 				DrawCell.paintCrNode(crNodes.get(i), Color.GRAY);
 		}
 		
@@ -1174,7 +1196,7 @@ public class SimulationRunner extends JFrame{
 		tempArray.add(1);
 		tempArray.add(1);
 		plotSensingProbs = new SimultaneousPlot(2, tempArray);
-		if(SimulationRunner.plotOnButton.isSelected()){
+		if(args.isPlotOn()){
 			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 			numberOFYs.add(args.getNumberOfFreq());
 			numberOFYs.add(args.getNumberOfFreq());
@@ -1182,11 +1204,28 @@ public class SimulationRunner extends JFrame{
 		}
 		else
 			plot = null;
-		CRNode.initializeAverageSnr(args.getNumberOfFreq(),args.getNumberOfZones());			//Set average SNR values to zero
-		progressBar.setValue(0);							//Initialize progress bar
-		progressBar.setVisible(true);						//Make it visible
+		CRNode.initializeAverageSnr(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
 		CRNode.createLogFile("log.txt");
 		CRNode.createProbLogFile("prob.txt");
+		return true;
+	}
+	
+	/**
+	 * Initializes the main simulation threads or schedulers
+	 */
+	public void startSimulation()
+	{
+		args = new Arguments();
+		if(!args.parseArguments(this)){
+			return;
+		}
+		
+		if(!commonParts())
+			return;
+		
+		progressBar.setValue(0);							//Initialize progress bar
+		progressBar.setVisible(true);						//Make it visible
+		
 		terminateSimulation.setVisible(true);
 		for(int i = 0;i<args.getNumberOfPriNodes();i++){
 			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
@@ -1222,75 +1261,8 @@ public class SimulationRunner extends JFrame{
 	 */
 	public void startSimulationInBatchMode()
 	{
-		if(args.getNumberOfCalls()<=2 && args.getTrafficModel() == 1){
-			System.err.println("Mean Off Period Duration must be greater than 2 time units");
+		if(!commonParts())
 			return;
-		}
-		if(args.getCallDura()<=2 && args.getTrafficModel() == 1){
-			System.err.println("Mean On Period Duration must be greater than 2 time units");
-			return;
-		}
-
-		if(args.getSeedModel() == 0){				//If seed model is random
-			randEngine = new MersenneTwister(new Date());	//Give date as seed
-		}
-		else{
-			randEngine = new MersenneTwister(args.getSeed());			//Otherwise get seed from user
-		}
-
-		wc = new WirelessChannel(args.getChannelModel(), args.getNumberOfFreq(), args.getMaxSnr(), args.getSinrThreshold(),
-								 args.getNumberOfCalls(), args.getCallDura(), args.getTrafficModel(), args.getTimeUnit(),
-								 args.getBandwidth());//Create a wireless channel
-
-		cell = new Cell(null, args.getRadius(), args.getSectrNo(), args.getAlphaInDegrees(), args.getSetOfD());//Create a cell
-
-		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getMaxFreqCR()); //Create a CR base station in the origin
-		Cell.setBaseStation(crBase);
-		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
-
-		double dmax = crBase.farthestZoneDistance();
-		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
-		if(minSNR<=args.getSinrThreshold()){
-			System.err.println("SINR threshold must be less than possible\nminimum SNR value: "+minSNR+"dB");
-			return;
-		}
-
-		
-		drawCell = null;
-		priTrafGen = null;
-		priTrafGenDes = new DESPrimaryTrafficGenerator();
-
-		for(int i = 0; i<args.getNumberOfCrNodes() ;i++){
-			crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
-			wc.registerNode(crNodes.get(i));							//Register CR nodes
-		}
-		
-		ArrayList<Integer> tempArray = new ArrayList<Integer>();
-		tempArray.add(1);
-		tempArray.add(1);
-		tempArray.add(1);
-		tempArray.add(1);
-		plotProbs = new SimultaneousPlot(4, tempArray);
-		tempArray = new ArrayList<Integer>();
-		tempArray.add(1);
-		tempArray.add(1);
-		plotSensingProbs = new SimultaneousPlot(2, tempArray);
-		if(SimulationRunner.args.isPlotOn()){
-			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
-			numberOFYs.add(args.getNumberOfFreq());
-			numberOFYs.add(args.getNumberOfFreq());
-			plot = new Plot(args.getNumberOfZones()+1, numberOFYs, "Time", "Average SNR", "msec", "dB");
-		}
-		else
-			plot = null;
-		CRNode.initializeAverageSnr(args.getNumberOfFreq(),args.getNumberOfZones());			//Set average SNR values to zero
-		CRNode.createLogFile("log.txt");
-		CRNode.createProbLogFile("prob.txt");
-		for(int i = 0;i<args.getNumberOfPriNodes();i++){
-			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
-			wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
-			priTrafGenDes.registerNode(priTrafGenNodes.get(i));
-		}
 		
 		crSensor = null;
 		crDesScheduler = new CRDESScheduler((int)args.getSimDura(), args.getTimeUnit(), args.getMaxFreqCR(), args.getSlotDur(),
@@ -1550,5 +1522,13 @@ public class SimulationRunner extends JFrame{
 	 */
 	public JComboBox getTrafficModel() {
 		return trafficModel;
+	}
+
+	/**
+	 * Returns the text field that holds sensing energy threshold
+	 * @return The text field that holds sensing energy threshold
+	 */
+	public JTextField getTauField() {
+		return tauField;
 	}
 }

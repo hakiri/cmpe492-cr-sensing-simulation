@@ -168,7 +168,7 @@ public class CRSensorThread implements Runnable{
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 		
 			SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList,totalSimulationDuration/unitTime);
-			SimulationRunner.plotSensingProbs.plotAllXWithLegend("Probabilities", 0, namesList2, totalSimulationDuration/unitTime);
+			SimulationRunner.plotSensingProbs.plotAllXWithLegend("Probabilities2", 0, namesList2, totalSimulationDuration/unitTime);
 		}
 		finalizeSimulation();
 	}
