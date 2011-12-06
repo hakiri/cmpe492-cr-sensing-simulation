@@ -29,6 +29,7 @@ public class Arguments {
 	private int maxFreqCR = 0;
 	private double maxSnr = 0;
 	private double sinrThreshold = 0;
+	private double energyThreshold = 0;
 	private int crAlpha = 0;
 	private int crSector = 0;
 	private int crD = 0;
@@ -88,6 +89,7 @@ public class Arguments {
 			numberOfFreq = Integer.parseInt(sr.getNoFreqs().getText());						//Get number of frequencies
 			maxSnr = Double.parseDouble(sr.getMaxSNR().getText());							//Get max SNR value
 			sinrThreshold = Double.parseDouble(sr.getSinrThresholdFied().getText());
+			energyThreshold = Double.parseDouble(sr.getTauField().getText());
 			
 			numberOfPriNodes = Integer.parseInt(sr.getNoPriNodes().getText());	//Get number of primary nodes
 			maxFreqCR = Integer.parseInt(sr.getNoSlotField().getText());		//Get max number of frequencies a node can sense
@@ -162,6 +164,7 @@ public class Arguments {
 			simDura *= 60000;
 			maxSnr = input.nextDouble();			//Get max SNR value
 			sinrThreshold = input.nextDouble();
+			energyThreshold = Double.parseDouble(input.next());
 			seedModel = input.nextInt();
 			if(seedModel != 0){						//If seed model is not random
 				seed = input.nextInt();				//Otherwise get seed from user
@@ -381,6 +384,10 @@ public class Arguments {
 
 	public int getTrafficModel() {
 		return trafficModel;
+	}
+
+	public double getEnergyThreshold() {
+		return energyThreshold;
 	}
 	
 	public int getProgress() {

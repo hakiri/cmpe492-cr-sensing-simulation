@@ -25,7 +25,7 @@ import cern.jet.random.Normal;
  */
 public class CRNode extends Node {
 
-	final static double tau = 15.987;
+	static double tau = 15.987;
 	final static int tw = 5;
     /**
      * List of frequencies assigned to this node with respect to their SNR values.
@@ -125,6 +125,7 @@ public class CRNode extends Node {
         this.endCommEvent = new EndCommunicationEvent(this.id);
         this.expoInterarrival = new Exponential(SimulationRunner.wc.getMeanOffDuration(), SimulationRunner.randEngine);
         this.expoCommDuration = new Exponential((1.0 / SimulationRunner.wc.getMeanOnDuration()), SimulationRunner.randEngine);
+		CRNode.tau = SimulationRunner.args.getEnergyThreshold();
     }
 
     /**
