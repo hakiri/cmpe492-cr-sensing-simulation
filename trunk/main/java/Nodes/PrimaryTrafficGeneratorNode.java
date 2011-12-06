@@ -13,7 +13,19 @@ import java.util.Locale;
 /**
  * This class handles basic operations of Primary nodes.
  */
-public class PrimaryTrafficGeneratorNode extends Node{
+public class PrimaryTrafficGeneratorNode implements Node{
+	/**
+	 * Position of the node
+     */
+    protected Point2D.Double position = new Point2D.Double(0,0);
+    /**
+     * Velocity of the node
+     */
+    protected double velocity = 0;
+    /**
+     * Id o the Node
+     */
+    protected int id;
 	int communicationFreq;
 	int numberOfCallAttempts = 0;
 	int numberOfBlocks = 0;
@@ -207,5 +219,35 @@ public class PrimaryTrafficGeneratorNode extends Node{
 
 	public void setCommunicationFreq(int communicationFreq) {
 		this.communicationFreq = communicationFreq;
+	}
+	
+	@Override
+	public Point2D.Double getPosition() {
+		return position;
+	}
+
+	@Override
+	public double getVelocity() {
+		return velocity;
+	}
+
+	@Override
+	public void setPosition(Point2D.Double position) {
+		this.position = position;
+	}
+
+	@Override
+	public void setVelocity(double velocity) {
+		this.velocity = velocity;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public int getId() {
+		return id;
 	}
 }

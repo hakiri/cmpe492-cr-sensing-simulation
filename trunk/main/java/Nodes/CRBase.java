@@ -16,7 +16,19 @@ import java.util.Locale;
  * advertisement, communication schedule advertisement, handoff of CR users, etc.
  * It also keeps information about which CR node belongs which zone
  */
-public class CRBase extends Node{
+public class CRBase extends ArrayList<CRNode> implements Node{
+	/**
+	 * Position of the node
+     */
+    protected Point2D.Double position = new Point2D.Double(0,0);
+    /**
+     * Velocity of the node
+     */
+    protected double velocity = 0;
+    /**
+     * Id o the Node
+     */
+    protected int id;
     /**
      * the frequency number that crbase starts from it to deploy frequencies to the crnodes.
      */
@@ -80,6 +92,7 @@ public class CRBase extends Node{
      * @param number_of_freq_per_crnode The number of the frequencies that a CRNode is going to listen in a frame.
      */
     public CRBase(Point2D.Double pos,int id,int number_of_freq_per_crnode){
+		super();
         this.id = id;
         this.position = new Point2D.Double(pos.x, pos.y);
         this.velocity = 0.0;
@@ -92,6 +105,36 @@ public class CRBase extends Node{
         this.falseAlarm = new ArrayList<Double>();
         this.missDetection = new ArrayList<Double>();
     }
+
+	@Override
+	public Point2D.Double getPosition() {
+		return position;
+	}
+
+	@Override
+	public double getVelocity() {
+		return velocity;
+	}
+
+	@Override
+	public void setPosition(Point2D.Double position) {
+		this.position = position;
+	}
+
+	@Override
+	public void setVelocity(double velocity) {
+		this.velocity = velocity;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public int getId() {
+		return id;
+	}
     
     /**
      * An inner class to keep frequency ID and its corresponding average SNR value.
@@ -158,7 +201,7 @@ public class CRBase extends Node{
 			
 			for(int i=iStart;i<iEnd;i++){
 				ArrayList<Integer> frequencies = deploy_freq(i==iStart);
-				SimulationRunner.crNodes.get(i).setFrequencyList(frequencies); //assigns new freq list for crnode
+				get(i).setFrequencyList(frequencies); //assigns new freq list for crnode
 				for(int k=0;k<CRBase.number_of_freq_per_crnode;k++){ //updates the frequency_list
 					frequency_list.get(j).set(frequencies.get(k), (frequency_list.get(j).get(frequencies.get(k)) + 1));
 				}
@@ -187,7 +230,7 @@ public class CRBase extends Node{
 			
 			readyToCommInZone.add(0);
 			for(int crInZone=iStart;crInZone<iEnd;crInZone++){ //finding the max distance btw crbase and crnodes
-				if(SimulationRunner.crNodes.get(crInZone).getReadytoComm()){
+				if(get(crInZone).getReadytoComm()){
 					readyToCommInZone.set(zoneNumber, readyToCommInZone.get(zoneNumber) + 1);
 					totalNumberOfReadytoComm++;
 				}
@@ -203,10 +246,10 @@ public class CRBase extends Node{
 			iStart = zone==0 ? 0:nodesInZone.get(zone-1);
 			iEnd = zone==0 ? nodesInZone.get(0):nodesInZone.get(zone);
 			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
-				if(SimulationRunner.crNodes.get(crInZone).getReadytoComm()){
+				if(get(crInZone).getReadytoComm()){
 					int randomFreq = getARandomIndex(free_frequencies.get(zone));
-					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
-					SimulationRunner.crNodes.get(crInZone).setReadytoComm(false);
+					get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
+					get(crInZone).setReadytoComm(false);
 					
 					readyToCommInZone.set(zone, readyToCommInZone.get(zone)-1);
 					for(int k=0;k<free_frequencies.size();k++){
@@ -226,7 +269,7 @@ public class CRBase extends Node{
 						SimulationRunner.crDesScheduler.sendEndCommEvent(crInZone);
 					else{
 						SimulationRunner.crSensor.setCommunationDuration(crInZone);
-						DrawCell.paintCrNode(SimulationRunner.crNodes.get(crInZone), Color.GREEN);
+						DrawCell.paintCrNode(get(crInZone), Color.GREEN);
 					}
 					totalNumberOfReadytoComm--;
 					break;
@@ -234,22 +277,22 @@ public class CRBase extends Node{
 			}
 		}
 		
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){			//Send communication start event for the blocked users
-			if(SimulationRunner.crNodes.get(i).getReadytoComm()){
-				SimulationRunner.crNodes.get(i).setReadytoComm(false);
+		for(int i=0;i<size();i++){			//Send communication start event for the blocked users
+			if(get(i).getReadytoComm()){
+				get(i).setReadytoComm(false);
 				if(!SimulationRunner.args.isAnimationOn())
 					SimulationRunner.crDesScheduler.sendStartCommEvent(i);
 				else{
 					SimulationRunner.crSensor.setInactiveDuration(i,false);
-					DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
+					DrawCell.paintCrNode(get(i), Color.GRAY);
 				}
-				SimulationRunner.crNodes.get(i).setNumberOfBlocks(SimulationRunner.crNodes.get(i).getNumberOfBlocks()+1);
+				get(i).setNumberOfBlocks(get(i).getNumberOfBlocks()+1);
 			}
 		}
 		
 		
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			SimulationRunner.crNodes.get(i).setIsCollided(false);
+		for(int i=0;i<size();i++){
+			get(i).setIsCollided(false);
 		}
     }
     
@@ -304,9 +347,9 @@ public class CRBase extends Node{
 		//these loops finds the number of collided crnodes for each zone(and releases their comm_freq)
 		for(int i=0;i<registeredZones.size();i++)
 			collidedInZone.add(0);
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			if(SimulationRunner.crNodes.get(i).getIsCollided()){
-				SimulationRunner.crNodes.get(i).releaseCommunication_frequency();
+		for(int i=0;i<size();i++){
+			if(get(i).getIsCollided()){
+				get(i).releaseCommunication_frequency();
 				collidedInZone.set(findZone(i), collidedInZone.get(findZone(i)) + 1);
 				totalNumberOfCollided++;
 			}
@@ -321,10 +364,10 @@ public class CRBase extends Node{
 			iStart = zone==0 ? 0:nodesInZone.get(zone-1);
 			iEnd = zone==0 ? nodesInZone.get(0):nodesInZone.get(zone);
 			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
-				if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
+				if(get(crInZone).getIsCollided()){
 					int randomFreq = getARandomIndex(free_frequencies.get(zone));
-					SimulationRunner.crNodes.get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
-					SimulationRunner.crNodes.get(crInZone).setNumberOfForcedHandoff(SimulationRunner.crNodes.get(crInZone).getNumberOfForcedHandoff() + 1);
+					get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
+					get(crInZone).setNumberOfForcedHandoff(get(crInZone).getNumberOfForcedHandoff() + 1);
 					
 					collidedInZone.set(zone, collidedInZone.get(zone) - 1);
 					//updates free_frequencies
@@ -354,9 +397,9 @@ public class CRBase extends Node{
 			
 			if(collidedInZone.get(zoneNumber) > 0){
 				for(int crInZone=iStart;crInZone<iEnd;crInZone++){
-					if(SimulationRunner.crNodes.get(crInZone).getIsCollided()){
-						if(SimulationRunner.crNodes.get(crInZone).getCommunication_frequency() == -1){
-							SimulationRunner.crNodes.get(crInZone).setNumberOfDrops(SimulationRunner.crNodes.get(crInZone).getNumberOfDrops() + 1);
+					if(get(crInZone).getIsCollided()){
+						if(get(crInZone).getCommunication_frequency() == -1){
+							get(crInZone).setNumberOfDrops(get(crInZone).getNumberOfDrops() + 1);
 							
 							double msec = Scheduler.instance().getTime();
 							int hour = (int)(msec/3600000.0);
@@ -372,7 +415,7 @@ public class CRBase extends Node{
 							}
 							else{
 								SimulationRunner.crDesScheduler.sendStartCommEvent(crInZone);
-								Scheduler.deregister(SimulationRunner.crNodes.get(crInZone).endEventHandle);
+								Scheduler.deregister(get(crInZone).endEventHandle);
 							}
 						}
 					}
@@ -511,7 +554,7 @@ public class CRBase extends Node{
             iStart = nodesInZone.get(zoneId-1);
         iEnd = nodesInZone.get(zoneId);
         for(int i=iStart;i<iEnd;i++){
-            temp_dist = SimulationRunner.crNodes.get(i).getPosition().distance(position);
+            temp_dist = get(i).getPosition().distance(position);
             if(temp_dist>distance)
                 distance = temp_dist;
         }
@@ -529,7 +572,23 @@ public class CRBase extends Node{
     public void incrementFalseAlarm(int zoneId) {
         falseAlarm.set(zoneId, falseAlarm.get(zoneId)+1);
     }
+	
     public void incrementMissDetection(int zoneId) {
         missDetection.set(zoneId, missDetection.get(zoneId)+1);
     }
+	
+	public void addCRNode(CRNode n)
+	{
+		super.add(n);
+	}
+	
+	public CRNode getCRNode(int id)
+	{
+		return super.get(id);
+	}
+	
+	public int numberOfCRNodes()
+	{
+		return super.size();
+	}
 }

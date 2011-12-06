@@ -88,10 +88,6 @@ public class SimulationRunner extends JFrame{
 	 */
 	public static CRBase crBase = null;
 	/**
-	 * CR nodes which sense the wireless channel
-	 */
-	public static ArrayList<CRNode> crNodes = new ArrayList<CRNode>();
-	/**
 	 * Primary traffic generator nodes which cause traffic in wireless channel
 	 */
 	public static ArrayList<PrimaryTrafficGeneratorNode> priTrafGenNodes = new ArrayList<PrimaryTrafficGeneratorNode>();
@@ -1180,10 +1176,10 @@ public class SimulationRunner extends JFrame{
 		}
 
 		for(int i = 0; i<args.getNumberOfCrNodes() ;i++){
-			crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
-			wc.registerNode(crNodes.get(i));							//Register CR nodes
+			crBase.addCRNode(new CRNode(i,crBase.deployNodeinZone(i), 0));
+			wc.registerNode(crBase.getCRNode(i));							//Register CR nodes
 			if(args.isAnimationOn())
-				DrawCell.paintCrNode(crNodes.get(i), Color.GRAY);
+				DrawCell.paintCrNode(crBase.getCRNode(i), Color.GRAY);
 		}
 		
 		ArrayList<Integer> tempArray = new ArrayList<Integer>();
@@ -1280,7 +1276,7 @@ public class SimulationRunner extends JFrame{
 	 */
 	public static void clear()
 	{
-		crNodes.clear();			//Delete CR nodes
+		crBase.clear();			//Delete CR nodes
 		priTrafGenNodes.clear();	//Delete primary nodes
 		if(SimulationRunner.args.isAnimationOn())
 			drawCell.terminate();
