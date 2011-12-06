@@ -118,6 +118,10 @@ public class CRDESScheduler extends SimEnt{
 	 * Duration of frame
 	 */
 	private double frameDuration;
+	/**
+	 * Current frame ID
+	 */
+	private long currentFrame;
     private boolean isInComm = false;    
         
 	/**
@@ -144,7 +148,7 @@ public class CRDESScheduler extends SimEnt{
 		this.commDur = (commDur*unitTime);
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
 		finished = false;
-		
+		currentFrame = 0;
 		this.frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement + commScheduleAdvertisement + commDur;
 		CRNode.setTotalNumberOfFrames((int)(simulationDuration / this.frameDuration));
 	}
@@ -169,6 +173,7 @@ public class CRDESScheduler extends SimEnt{
 	@Override
 	public void recv(SimEnt src, Event ev) {
 		if(ev instanceof SenseScheduleAdvertiseEvent){
+			currentFrame++;
 			senseScheduleAdvertise();
 			senseSlotEvent.setSlotNumber(0);
 			send(this,senseSlotEvent,senseScheduleAdvertisement);
@@ -262,6 +267,10 @@ public class CRDESScheduler extends SimEnt{
 		namesList.add("Real Collision");
 		namesList.add("Measured Collision");
 		SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList,-1);
+		namesList = new ArrayList<String>();
+		namesList.add("False Alarm");
+		namesList.add("Miss-detection");
+		SimulationRunner.plotSensingProbs.plotAllXWithLegend("Probabilities", 0, namesList, -1);
 		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<String> names = new ArrayList<String>();
 			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
@@ -302,8 +311,6 @@ public class CRDESScheduler extends SimEnt{
 		CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
         //calculate drop,block and collision probabilities
         for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			//TODO Remove logging of CR SNR measures
-			//SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
@@ -425,5 +432,8 @@ public class CRDESScheduler extends SimEnt{
 	public void sendStartCommEvent(int crnode_id){
 		SimulationRunner.crNodes.get(crnode_id).startEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).startCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
 	}
-	
+
+	public long getCurrentFrame() {
+		return currentFrame;
+	}
 }
