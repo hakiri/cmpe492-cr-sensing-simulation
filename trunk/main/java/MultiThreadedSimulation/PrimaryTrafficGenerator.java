@@ -51,7 +51,7 @@ public class PrimaryTrafficGenerator {
 	 */
 	public void registerNode(PrimaryTrafficGeneratorNode n)
 	{
-		registeredNodes.put(n,new PrimaryTrafficGeneratorThread(n, SimulationRunner.wc.getMeanOnDuration(), SimulationRunner.wc.getMeanOffDuration(), SimulationRunner.args.getSimDura()));
+		registeredNodes.put(n,new PrimaryTrafficGeneratorThread(n, SimulationRunner.wc.getMeanOnDuration(), SimulationRunner.wc.getMeanOffDuration(), SimulationRunner.args.getSimulationDuration()));
 	}
 	
 	/**

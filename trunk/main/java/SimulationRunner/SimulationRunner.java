@@ -1116,7 +1116,7 @@ public class SimulationRunner extends JFrame{
 	
 	private boolean commonParts()
 	{
-		if(args.getNumberOfCalls()<=2 && args.getTrafficModel() == 1){
+		if(args.getAverageNumberOfCalls()<=2 && args.getTrafficModel() == 1){
 			if(args.isBatchMode()){
 				System.out.println("Mean Off Period Duration must be greater than 2 time units");
 			}
@@ -1126,7 +1126,7 @@ public class SimulationRunner extends JFrame{
 			}
 			return false;
 		}
-		if(args.getCallDura()<=2 && args.getTrafficModel() == 1){
+		if(args.getAverageCallDur()<=2 && args.getTrafficModel() == 1){
 			if(args.isBatchMode()){
 				System.out.println("Mean On Period Duration must be greater than 2 time units");
 			}
@@ -1145,12 +1145,12 @@ public class SimulationRunner extends JFrame{
 		}
 
 		wc = new WirelessChannel(args.getChannelModel(), args.getNumberOfFreq(), args.getMaxSnr(), args.getSinrThreshold(),
-								 args.getNumberOfCalls(), args.getCallDura(), args.getTrafficModel(), args.getTimeUnit(),
+								 args.getAverageNumberOfCalls(), args.getAverageCallDur(), args.getTrafficModel(), args.getTimeUnit(),
 								 args.getBandwidth());//Create a wireless channel
 
-		cell = new Cell(null, args.getRadius(), args.getSectrNo(), args.getAlphaInDegrees(), args.getSetOfD());//Create a cell
+		cell = new Cell(null, args.getRadius(), args.getNumberOfSectors(), args.getAlphaInDegrees(), args.getSetOfD());//Create a cell
 
-		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getMaxFreqCR()); //Create a CR base station in the origin
+		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getNumberOfSensingSlots()); //Create a CR base station in the origin
 		Cell.setBaseStation(crBase);
 		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
 
@@ -1168,7 +1168,7 @@ public class SimulationRunner extends JFrame{
 		}
 
 		if(args.isAnimationOn()){
-			drawCell = new DrawCell((int)args.getRadius(), args.getSectrNo(), args.getAlpha(), (int)args.getdNumber(),
+			drawCell = new DrawCell((int)args.getRadius(), args.getNumberOfSectors(), args.getNumberOfAlphaSlices(), (int)args.getdNumber(),
 									args.getNumberOfCrNodes(), args.getNumberOfPriNodes());
 			priTrafGen = new PrimaryTrafficGenerator();
 			priTrafGenDes = null;
@@ -1236,16 +1236,16 @@ public class SimulationRunner extends JFrame{
 				priTrafGenDes.registerNode(priTrafGenNodes.get(i));
 		}
 		if(animationOnButton.isSelected()){	//TODO Resolve racing conditions
-			crSensor = new CRSensorThread((int)args.getSimDura(), args.getTimeUnit(), args.getMaxFreqCR(), args.getSlotDur(),
-										  args.getSenseScheduleAdvertisement(), args.getCommScheduleAdvertisement(),
-										  args.getCommDur(), args.getSenseResultAdvertisement());
+			crSensor = new CRSensorThread((int)args.getSimulationDuration(), args.getTimeUnit(), args.getNumberOfSensingSlots(), args.getSensingSlotDur(),
+										  args.getSenseScheduleAdvertisementDur(), args.getCommScheduleAdvertisementDur(),
+										  args.getCommDur(), args.getSenseResultAdvertisementDur());
 			crDesScheduler = null;
 		}
 		else{
 			crSensor = null;
-			crDesScheduler = new CRDESScheduler((int)args.getSimDura(), args.getTimeUnit(), args.getMaxFreqCR(), args.getSlotDur(),
-												args.getSenseScheduleAdvertisement(), args.getCommScheduleAdvertisement(),
-												args.getCommDur(), args.getSenseResultAdvertisement());
+			crDesScheduler = new CRDESScheduler((int)args.getSimulationDuration(), args.getTimeUnit(), args.getNumberOfSensingSlots(), args.getSensingSlotDur(),
+												args.getSenseScheduleAdvertisementDur(), args.getCommScheduleAdvertisementDur(),
+												args.getCommDur(), args.getSenseResultAdvertisementDur());
 		}
 
 		if(animationOffButton.isSelected()){
@@ -1265,9 +1265,9 @@ public class SimulationRunner extends JFrame{
 			return;
 		
 		crSensor = null;
-		crDesScheduler = new CRDESScheduler((int)args.getSimDura(), args.getTimeUnit(), args.getMaxFreqCR(), args.getSlotDur(),
-											args.getSenseScheduleAdvertisement(), args.getCommScheduleAdvertisement(),
-											args.getCommDur(), args.getSenseResultAdvertisement());
+		crDesScheduler = new CRDESScheduler((int)args.getSimulationDuration(), args.getTimeUnit(), args.getNumberOfSensingSlots(), args.getSensingSlotDur(),
+											args.getSenseScheduleAdvertisementDur(), args.getCommScheduleAdvertisementDur(),
+											args.getCommDur(), args.getSenseResultAdvertisementDur());
 		
 		crDesScheduler.start();
 		priTrafGenDes.start();

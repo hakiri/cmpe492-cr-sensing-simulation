@@ -12,34 +12,31 @@ import javax.swing.JOptionPane;
  * This class holds necessary arguments for the simulation.
  */
 public class Arguments {
-	private int sectrNo = 0;
+	private int numberOfSectors = 0;
 	private double dNumber = 0;
-	private int alpha = 0;
+	private int numberOfAlphaSlices = 0;
 	private int alphaInDegrees;
 	private double radius = 0;
 
 	private int numberOfCrNodes = 0;
 	private int numberOfPriNodes = 0;
 
-	private double numberOfCalls = 0;
-	private double callDura = 0;
-	private long simDura = 0;
+	private double averageNumberOfCalls = 0;
+	private double averageCallDur = 0;
+	private long simulationDuration = 0;
 
 	private int numberOfFreq = 0;
-	private int maxFreqCR = 0;
+	private int numberOfSensingSlots = 0;
 	private double maxSnr = 0;
 	private double sinrThreshold = 0;
 	private double energyThreshold = 0;
-	private int crAlpha = 0;
-	private int crSector = 0;
-	private int crD = 0;
 	private int numberOfZones = 0;
 
-	private double slotDur = 0.0;
-	private double senseScheduleAdvertisement = 0.0;
-	private double commScheduleAdvertisement = 0.0;
+	private double sensingSlotDur = 0.0;
+	private double senseScheduleAdvertisementDur = 0.0;
+	private double commScheduleAdvertisementDur = 0.0;
 	private double commDur = 0.0;
-	private double senseResultAdvertisement = 0.0;
+	private double senseResultAdvertisementDur = 0.0;
 	private ArrayList<Double> setOfD = null;
 	private int bandwidth;
 	private int seed = 0;
@@ -60,6 +57,9 @@ public class Arguments {
 	private boolean animationOn = false;
 	private int progress = 0;
 
+	/**
+	 * Creates an arguments object that holds all related parameters of simulation.
+	 */
 	public Arguments() {
 		setOfD = new ArrayList<Double>();
 		sectorNumbers = new ArrayList<Integer>();
@@ -69,21 +69,29 @@ public class Arguments {
 		progress = 0;
 	}
 	
+	/**
+	 * Parses the arguments from GUI.
+	 * @param sr GUI of simulation that holds parameters
+	 * @return <ul>
+	 *				<li><i>True </i> if there is no parsing errors
+	 *				<li><i>False </i> if there are parsing errors
+	 *		   </ul>
+	 */
 	public boolean parseArguments(SimulationRunner sr)
 	{
 		try{
 			batchMode = false;
 					
-			slotDur = Double.parseDouble(sr.getSlotDurField().getText());
-			senseScheduleAdvertisement = Double.parseDouble(sr.getSenseScheduleField().getText());
-			commScheduleAdvertisement = Double.parseDouble(sr.getCommScheduleField().getText());
+			sensingSlotDur = Double.parseDouble(sr.getSlotDurField().getText());
+			senseScheduleAdvertisementDur = Double.parseDouble(sr.getSenseScheduleField().getText());
+			commScheduleAdvertisementDur = Double.parseDouble(sr.getCommScheduleField().getText());
 			commDur = Double.parseDouble(sr.getCommDurField().getText());
-			senseResultAdvertisement = Double.parseDouble(sr.getSensingResultField().getText());
+			senseResultAdvertisementDur = Double.parseDouble(sr.getSensingResultField().getText());
 			
-			sectrNo = Integer.parseInt(sr.getSectorNo().getText());			//Get number of sectors in the cell
+			numberOfSectors = Integer.parseInt(sr.getSectorNo().getText());			//Get number of sectors in the cell
 			dNumber = Integer.parseInt(sr.getdNo().getText());				//Get number of d's
-			alpha = Integer.parseInt(sr.getAlphaNo().getText());			//Get number of alpha's
-			alphaInDegrees = (360/sectrNo)/alpha;							//Evaluate the angle associated to alpha
+			numberOfAlphaSlices = Integer.parseInt(sr.getAlphaNo().getText());			//Get number of alpha's
+			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;							//Evaluate the angle associated to alpha
 			radius = Double.parseDouble(sr.getRadiusField().getText());		//Get radius of the cell
 			
 			numberOfFreq = Integer.parseInt(sr.getNoFreqs().getText());						//Get number of frequencies
@@ -92,14 +100,14 @@ public class Arguments {
 			energyThreshold = Double.parseDouble(sr.getTauField().getText());
 			
 			numberOfPriNodes = Integer.parseInt(sr.getNoPriNodes().getText());	//Get number of primary nodes
-			maxFreqCR = Integer.parseInt(sr.getNoSlotField().getText());		//Get max number of frequencies a node can sense
+			numberOfSensingSlots = Integer.parseInt(sr.getNoSlotField().getText());		//Get max number of frequencies a node can sense
 			numberOfZones = Integer.parseInt(sr.getNoZones().getText());		//Get the number of zones to be simulated
 			
-			numberOfCalls = Double.parseDouble(sr.getNoCalls().getText());		//Get number of calls per hour
-			callDura = Double.parseDouble(sr.getCallDur().getText());	//Get call duration in terms of min
+			averageNumberOfCalls = Double.parseDouble(sr.getNoCalls().getText());		//Get number of calls per hour
+			averageCallDur = Double.parseDouble(sr.getCallDur().getText());	//Get call duration in terms of min
 			
-			simDura = Long.parseLong(sr.getSimDur().getText());			//Get duration of the simulation in terms of min
-			simDura *= 60000;
+			simulationDuration = Long.parseLong(sr.getSimDur().getText());			//Get duration of the simulation in terms of min
+			simulationDuration *= 60000;
 			
 			bandwidth = Integer.parseInt(sr.getChannelBandwithField().getText())*1000;
 			
@@ -143,6 +151,14 @@ public class Arguments {
 		return true;
 	}
 	
+	/**
+	 * Parses arguments from a given file.
+	 * @param fileName Name of the file that holds simulation parameters
+	 * @return <ul>
+	 *				<li><i>True </i> if there is no parsing errors
+	 *				<li><i>False </i> if there are parsing errors
+	 *		   </ul>
+	 */
 	public boolean parseArguments(String fileName)
 	{
 		batchMode = true;
@@ -160,8 +176,8 @@ public class Arguments {
 			input.nextLine();				//Start parsing Main options
 			numberOfPriNodes = input.nextInt();		//Get number of primary nodes
 			channelModel = input.nextInt();
-			simDura = input.nextLong();				//Get duration of the simulation in terms of min
-			simDura *= 60000;
+			simulationDuration = input.nextLong();				//Get duration of the simulation in terms of min
+			simulationDuration *= 60000;
 			maxSnr = input.nextDouble();			//Get max SNR value
 			sinrThreshold = input.nextDouble();
 			energyThreshold = Double.parseDouble(input.next());
@@ -178,16 +194,16 @@ public class Arguments {
 			input.nextLine();
 			input.nextLine();						//Start parsing Traffic options
 			trafficModel = input.nextInt();
-			numberOfCalls = input.nextDouble();		//Get number of calls per hour
-			callDura = input.nextDouble();			//Get call duration in terms of min
+			averageNumberOfCalls = input.nextDouble();		//Get number of calls per hour
+			averageCallDur = input.nextDouble();			//Get call duration in terms of min
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Frame options
-			maxFreqCR = input.nextInt();			//Get max number of frequencies a node can sense
-			slotDur = input.nextDouble();
-			senseScheduleAdvertisement = input.nextDouble();
-			senseResultAdvertisement = input.nextDouble();
-			commScheduleAdvertisement = input.nextDouble();
+			numberOfSensingSlots = input.nextInt();			//Get max number of frequencies a node can sense
+			sensingSlotDur = input.nextDouble();
+			senseScheduleAdvertisementDur = input.nextDouble();
+			senseResultAdvertisementDur = input.nextDouble();
+			commScheduleAdvertisementDur = input.nextDouble();
 			commDur = input.nextDouble();
 			
 			input.nextLine();
@@ -197,10 +213,10 @@ public class Arguments {
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Zone options
-			sectrNo = input.nextInt();				//Get number of sectors in the cell
+			numberOfSectors = input.nextInt();				//Get number of sectors in the cell
 			dNumber = input.nextInt();				//Get number of d's
-			alpha = input.nextInt();				//Get number of alpha's
-			alphaInDegrees = (360/sectrNo)/alpha;	//Evaluate the angle associated to alpha
+			numberOfAlphaSlices = input.nextInt();				//Get number of alpha's
+			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;	//Evaluate the angle associated to alpha
 			radius = input.nextDouble();			//Get radius of the cell
 			numberOfZones = input.nextInt();		//Get the number of zones to be simulated
 			
@@ -238,162 +254,298 @@ public class Arguments {
 		return true;
 	}
 
-	public int getAlpha() {
-		return alpha;
+	/**
+	 * Returns number of alpha slices in a sector
+	 * @return Number of alpha slices in a sector
+	 */
+	public int getNumberOfAlphaSlices() {
+		return numberOfAlphaSlices;
 	}
 
+	/**
+	 * Returns the degree of alpha slices
+	 * @return The degree of alpha slices
+	 */
 	public int getAlphaInDegrees() {
 		return alphaInDegrees;
 	}
 
+	/**
+	 * Returns alpha numbers of registered zones
+	 * @return Alpha numbers of registered zones
+	 */
 	public ArrayList<Integer> getAlphaNumbers() {
 		return alphaNumbers;
 	}
 
+	/**
+	 * Returns whether the animation is on or not
+	 * @return Whether the animation is on or not
+	 */
 	public boolean isAnimationOn() {
 		return animationOn;
 	}
 
+	/**
+	 * Returns bandwidth of channels
+	 * @return Bandwidth of channels
+	 */
 	public int getBandwidth() {
 		return bandwidth;
 	}
 
+	/**
+	 * Returns whether the simulation is running on batch mode or not
+	 * @return Whether the simulation is running on batch mode or not
+	 */
 	public boolean isBatchMode() {
 		return batchMode;
 	}
 
-	public double getCallDura() {
-		return callDura;
+	/**
+	 * Returns average call duration of nodes in terms of minutes
+	 * @return Average call duration of nodes in terms of minutes
+	 */
+	public double getAverageCallDur() {
+		return averageCallDur;
 	}
 
+	/**
+	 * Returns channel model
+	 * @return Channel model
+	 */
 	public int getChannelModel() {
 		return channelModel;
 	}
 
+	/**
+	 * Returns communication duration in a frame in terms of msec
+	 * @return Communication duration in a frame in terms of msec
+	 */
 	public double getCommDur() {
 		return commDur;
 	}
 
-	public double getCommScheduleAdvertisement() {
-		return commScheduleAdvertisement;
+	/**
+	 * Returns communication schedule advertisement duration in a frame in terms of msec
+	 * @return Communication schedule advertisement duration in a frame in terms of msec
+	 */
+	public double getCommScheduleAdvertisementDur() {
+		return commScheduleAdvertisementDur;
 	}
 
-	public int getCrAlpha() {
-		return crAlpha;
-	}
-
-	public int getCrD() {
-		return crD;
-	}
-
-	public int getCrSector() {
-		return crSector;
-	}
-
+	/**
+	 * Returns number of d segments in a slice
+	 * @return Number of d segments in a slice
+	 */
 	public double getdNumber() {
 		return dNumber;
 	}
 
+	/**
+	 * Returns d numbers of registered zones
+	 * @return d numbers of registered zones
+	 */
 	public ArrayList<Integer> getdNumbers() {
 		return dNumbers;
 	}
 
-	public int getMaxFreqCR() {
-		return maxFreqCR;
+	/**
+	 * Returns number of sensing slots
+	 * @return Number of sensing slots
+	 */
+	public int getNumberOfSensingSlots() {
+		return numberOfSensingSlots;
 	}
 
+	/**
+	 * Returns max SNR value
+	 * @return Max SNR value
+	 */
 	public double getMaxSnr() {
 		return maxSnr;
 	}
 
-	public double getNumberOfCalls() {
-		return numberOfCalls;
+	/**
+	 * Returns average number of calls in an hour
+	 * @return Average number of calls in an hour
+	 */
+	public double getAverageNumberOfCalls() {
+		return averageNumberOfCalls;
 	}
 
+	/**
+	 * Returns number of CR users
+	 * @return Number of CR users
+	 */
 	public int getNumberOfCrNodes() {
 		return numberOfCrNodes;
 	}
 
+	/**
+	 * Returns number of available frequencies
+	 * @return Number of available frequencies
+	 */
 	public int getNumberOfFreq() {
 		return numberOfFreq;
 	}
 
+	/**
+	 * Returns number of primary users
+	 * @return Number of primary users
+	 */
 	public int getNumberOfPriNodes() {
 		return numberOfPriNodes;
 	}
 
+	/**
+	 * Returns number of registered zones
+	 * @return Number of registered zones
+	 */
 	public int getNumberOfZones() {
 		return numberOfZones;
 	}
 
+	/**
+	 * Returns number of CR users in registered zones
+	 * @return Number of CR users in registered zones
+	 */
 	public ArrayList<Integer> getNumbersOfCrUsersInZone() {
 		return numbersOfCrUsersInZone;
 	}
 
+	/**
+	 * Returns Whether the plots will be drawn or not
+	 * @return whether the plots will be drawn or not
+	 */
 	public boolean isPlotOn() {
 		return plotOn;
 	}
 
+	/**
+	 * Returns radius of cell in terms of 100 meters
+	 * @return Radius of cell in terms of 100 meters
+	 */
 	public double getRadius() {
 		return radius;
 	}
 
+	/**
+	 * Returns sectors of registered zones
+	 * @return Sectors of registered zones
+	 */
 	public ArrayList<Integer> getSectorNumbers() {
 		return sectorNumbers;
 	}
 
-	public int getSectrNo() {
-		return sectrNo;
+	/**
+	 * Returns number of sectors in a cell
+	 * @return Number of sectors in a cell
+	 */
+	public int getNumberOfSectors() {
+		return numberOfSectors;
 	}
 
+	/**
+	 * Returns the seed value
+	 * @return The seed value
+	 */
 	public int getSeed() {
 		return seed;
 	}
 
+	/**
+	 * Returns seed model
+	 * @return Seed model
+	 */
 	public int getSeedModel() {
 		return seedModel;
 	}
 
-	public double getSenseResultAdvertisement() {
-		return senseResultAdvertisement;
+	/**
+	 * Returns duration of sensing result advertisement in terms of msec
+	 * @return Duration of sensing result advertisement in terms of msec
+	 */
+	public double getSenseResultAdvertisementDur() {
+		return senseResultAdvertisementDur;
 	}
 
-	public double getSenseScheduleAdvertisement() {
-		return senseScheduleAdvertisement;
+	/**
+	 * Returns duration of sensing schedule advertisement in terms of msec
+	 * @return Duration of sensing schedule advertisement in terms of msec
+	 */
+	public double getSenseScheduleAdvertisementDur() {
+		return senseScheduleAdvertisementDur;
 	}
 
+	/**
+	 * Returns set of maximum distances of zones
+	 * @return Set of maximum distances of zones
+	 */
 	public ArrayList<Double> getSetOfD() {
 		return setOfD;
 	}
 
-	public long getSimDura() {
-		return simDura;
+	/**
+	 * Returns total simulation duration
+	 * @return Total simulation duration
+	 */
+	public long getSimulationDuration() {
+		return simulationDuration;
 	}
 
+	/**
+	 * Returns SINR threshold for CR users to communicate using the same frequency with primary user without collision
+	 * @return SINR threshold for CR users to communicate using the same frequency with primary user without collision
+	 */
 	public double getSinrThreshold() {
 		return sinrThreshold;
 	}
 
-	public double getSlotDur() {
-		return slotDur;
+	/**
+	 * Returns duration of a sensing slot
+	 * @return Duration of a sensing slot
+	 */
+	public double getSensingSlotDur() {
+		return sensingSlotDur;
 	}
 
+	/**
+	 * Returns unit of 1 simulation msec in terms of real msec
+	 * @return Unit of 1 simulation msec in terms of real msec
+	 */
 	public double getTimeUnit() {
 		return timeUnit;
 	}
 
+	/**
+	 * Returns traffic model
+	 * @return Traffic model
+	 */
 	public int getTrafficModel() {
 		return trafficModel;
 	}
 
+	/**
+	 * Returns energy threshold for CR users to decide whether a channel is vacant or not
+	 * @return Energy threshold for CR users to decide whether a channel is vacant or not
+	 */
 	public double getEnergyThreshold() {
 		return energyThreshold;
 	}
 	
+	/**
+	 * Returns Current progress of the simulation
+	 * @return Current progress of the simulation
+	 */
 	public int getProgress() {
 		return progress;
 	}
 
+	/**
+	 * Sets the current progress of the simulation
+	 * @param progress
+	 */
 	public void setProgress(int progress) {
 		if(batchMode){
 			if(this.progress != progress && progress != -1){
