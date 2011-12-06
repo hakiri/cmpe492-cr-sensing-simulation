@@ -107,12 +107,12 @@ public class CRSensorThread implements Runnable{
 		CRNode.setTotalNumberOfFrames((int)(simulationDuration / frameDuration));
 		
 		commRelatedTimes = new ArrayList<Integer>();
-		for(int i = 0 ; i<SimulationRunner.crNodes.size() ; i++){
+		for(int i = 0 ; i<SimulationRunner.crBase.numberOfCRNodes() ; i++){
 			collisionWarningExpires.add(-1);
-			int offDuration = SimulationRunner.crNodes.get(i).nextOffDuration(frameDuration);
+			int offDuration = SimulationRunner.crBase.getCRNode(i).nextOffDuration(frameDuration);
 			offDuration = offDuration == 0 ? 1:offDuration;
 			commRelatedTimes.add(offDuration);
-			DrawCell.paintCrNode(SimulationRunner.crNodes.get(i), Color.GRAY);
+			DrawCell.paintCrNode(SimulationRunner.crBase.getCRNode(i), Color.GRAY);
 		}
 		
 		finished = false;
@@ -222,8 +222,8 @@ public class CRSensorThread implements Runnable{
 		PrimaryTrafficGenerator.readLock.release();
 		PrimaryTrafficGenerator.z.release();
 
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			SimulationRunner.crNodes.get(i).sense(slotNumber);		//Sense the frequencies for each CR node
+		for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
+			SimulationRunner.crBase.getCRNode(i).sense(slotNumber);		//Sense the frequencies for each CR node
 		}
 
 		try {
@@ -264,14 +264,14 @@ public class CRSensorThread implements Runnable{
 		msec-= sec*1000.0;
 		CRNode.writeLogFile(String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec));
         CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-            totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
-            totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
-            totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
-            totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
-            totalCalls += SimulationRunner.crNodes.get(i).getNumberOfCalls();
-            totalFrames += SimulationRunner.crNodes.get(i).getNumberOfFramesCommunicated();
-            totalEstimatedCollisions += SimulationRunner.crNodes.get(i).getEstimatedNumberOfCollison();
+		for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
+            totalBlocks += SimulationRunner.crBase.getCRNode(i).getNumberOfBlocks();
+            totalDrops += SimulationRunner.crBase.getCRNode(i).getNumberOfDrops();
+            totalCallAttempts += SimulationRunner.crBase.getCRNode(i).getNumberOfCallAttempts();
+            totalCollisions += SimulationRunner.crBase.getCRNode(i).getNumberOfCollision();
+            totalCalls += SimulationRunner.crBase.getCRNode(i).getNumberOfCalls();
+            totalFrames += SimulationRunner.crBase.getCRNode(i).getNumberOfFramesCommunicated();
+            totalEstimatedCollisions += SimulationRunner.crBase.getCRNode(i).getEstimatedNumberOfCollison();
 		}
 		if(totalCallAttempts == 0){
             blockProb = 0.0;
@@ -451,7 +451,7 @@ public class CRSensorThread implements Runnable{
 	 * @param crnode_id		ID of the CR node
 	 */
 	public void setCommunationDuration(int crnode_id){
-		int onDuration = SimulationRunner.crNodes.get(crnode_id).nextOnDuration(frameDuration) - 1;
+		int onDuration = SimulationRunner.crBase.getCRNode(crnode_id).nextOnDuration(frameDuration) - 1;
 		commRelatedTimes.set(crnode_id, commRelatedTimes.get(crnode_id) + onDuration);
 	}
 	
@@ -463,14 +463,14 @@ public class CRSensorThread implements Runnable{
 	public void setInactiveDuration(int crnode_id, boolean dropped){
 		int offDuration;
 		if(dropped){
-			offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration);
+			offDuration = SimulationRunner.crBase.getCRNode(crnode_id).nextOffDuration(frameDuration);
 			commRelatedTimes.set(crnode_id, frame + offDuration);
 			if(SimulationRunner.args.isAnimationOn()){
-				DrawCell.paintCrNode(SimulationRunner.crNodes.get(crnode_id), Color.GRAY);
+				DrawCell.paintCrNode(SimulationRunner.crBase.getCRNode(crnode_id), Color.GRAY);
 			}
 		}
 		else{
-			offDuration = SimulationRunner.crNodes.get(crnode_id).nextOffDuration(frameDuration) - 1;
+			offDuration = SimulationRunner.crBase.getCRNode(crnode_id).nextOffDuration(frameDuration) - 1;
 			if(offDuration > 0)
 				commRelatedTimes.set(crnode_id, commRelatedTimes.get(crnode_id) + offDuration);
 		}
@@ -484,15 +484,15 @@ public class CRSensorThread implements Runnable{
 	{
 		while(commRelatedTimes.contains(frame)){
 			int cr = commRelatedTimes.indexOf(frame);
-			if(SimulationRunner.crNodes.get(cr).getCommOrNot()){
-				DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.GRAY);
-				SimulationRunner.crNodes.get(cr).setIsCollided(false);
-				SimulationRunner.crNodes.get(cr).releaseCommunication_frequency();
-				commRelatedTimes.set(cr, frame + SimulationRunner.crNodes.get(cr).nextOffDuration(frameDuration));
+			if(SimulationRunner.crBase.getCRNode(cr).getCommOrNot()){
+				DrawCell.paintCrNode(SimulationRunner.crBase.getCRNode(cr), Color.GRAY);
+				SimulationRunner.crBase.getCRNode(cr).setIsCollided(false);
+				SimulationRunner.crBase.getCRNode(cr).releaseCommunication_frequency();
+				commRelatedTimes.set(cr, frame + SimulationRunner.crBase.getCRNode(cr).nextOffDuration(frameDuration));
 			}
 			else{
-				SimulationRunner.crNodes.get(cr).setReadytoComm(true);
-				DrawCell.paintCrNode(SimulationRunner.crNodes.get(cr), Color.ORANGE);
+				SimulationRunner.crBase.getCRNode(cr).setReadytoComm(true);
+				DrawCell.paintCrNode(SimulationRunner.crBase.getCRNode(cr), Color.ORANGE);
 				commRelatedTimes.set(cr, commRelatedTimes.get(cr) + 1);
 			}
 		}
@@ -506,7 +506,7 @@ public class CRSensorThread implements Runnable{
 		while(collisionWarningExpires.contains(frame)){
 			int cr = collisionWarningExpires.indexOf(frame);
 			collisionWarningExpires.set(cr,-1);
-			DrawCell.drawCollision(SimulationRunner.crNodes.get(cr), false);
+			DrawCell.drawCollision(SimulationRunner.crBase.getCRNode(cr), false);
 		}
 		
 	}
@@ -517,7 +517,7 @@ public class CRSensorThread implements Runnable{
 	 */
 	public void setWarningExpirationFrame(int crNodeId)
 	{
-		DrawCell.drawCollision(SimulationRunner.crNodes.get(crNodeId), true);
+		DrawCell.drawCollision(SimulationRunner.crBase.getCRNode(crNodeId), true);
 		collisionWarningExpires.set(crNodeId, frame + (int)((2000.0)/(unitTime*frameDuration)));
 	}
 

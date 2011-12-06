@@ -23,8 +23,19 @@ import cern.jet.random.Normal;
  * communication events of all CR nodes.
  * @see Node
  */
-public class CRNode extends Node {
-
+public class CRNode implements Node {
+	/**
+	 * Position of the node
+     */
+    protected Point2D.Double position = new Point2D.Double(0,0);
+    /**
+     * Velocity of the node
+     */
+    protected double velocity = 0;
+    /**
+     * Id o the Node
+     */
+    protected int id;
 	static double tau = 15.987;
 	final static int tw = 5;
     /**
@@ -380,29 +391,29 @@ public class CRNode extends Node {
         for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
             sinr.add(0.0);
         }
-        for (int i = 0; i < SimulationRunner.crNodes.size(); i++) {
-            if (!SimulationRunner.crNodes.get(i).commOrNot) {
+        for (int i = 0; i < SimulationRunner.crBase.numberOfCRNodes(); i++) {
+            if (!SimulationRunner.crBase.getCRNode(i).commOrNot) {
                 continue;
             }
             String collision = "no collision";
-            int freq = SimulationRunner.crNodes.get(i).communication_frequency;
+            int freq = SimulationRunner.crBase.getCRNode(i).communication_frequency;
 			
-			sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crNodes.get(i), freq));
+			sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crBase.getCRNode(i), freq));
 			if(sinr.get(freq)<SimulationRunner.wc.sinrThreshold){ //checks if collision occured
 				collision = "collision occured";
-				SimulationRunner.crNodes.get(i).collisionOccured = true;
+				SimulationRunner.crBase.getCRNode(i).collisionOccured = true;
 			}
 			if(isRegular && !lastReport){   //updates time and sinr value of communicating cr nodes
-                SimulationRunner.crNodes.get(i).last_time = time;
-                SimulationRunner.crNodes.get(i).last_sinr = sinr.get(freq);
+                SimulationRunner.crBase.getCRNode(i).last_time = time;
+                SimulationRunner.crBase.getCRNode(i).last_sinr = sinr.get(freq);
             }
             if(isRegular && lastReport){
-                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2))*0.001;
+                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crBase.getCRNode(i).last_sinr))/Math.log(2))*0.001;
             }
             if(!isRegular){
-                SimulationRunner.crNodes.get(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crNodes.get(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crNodes.get(i).last_sinr))/Math.log(2))*0.001;
-                SimulationRunner.crNodes.get(i).last_time = time;
-                SimulationRunner.crNodes.get(i).last_sinr = sinr.get(freq);
+                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crBase.getCRNode(i).last_sinr))/Math.log(2))*0.001;
+                SimulationRunner.crBase.getCRNode(i).last_time = time;
+                SimulationRunner.crBase.getCRNode(i).last_sinr = sinr.get(freq);
             }
             
 			double msec = (double)time;
@@ -413,13 +424,13 @@ public class CRNode extends Node {
 			int sec = (int)(msec/1000.0);
 			msec-= sec*1000.0;
 			
-			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crNodes.get(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
+			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crBase.getCRNode(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
 			if(isRegular && lastReport){
-				SimulationRunner.crNodes.get(i).numberOfFramesCommunicated++;
-				if(SimulationRunner.crNodes.get(i).collisionOccured){
-					SimulationRunner.crNodes.get(i).numberOfCollision++;
+				SimulationRunner.crBase.getCRNode(i).numberOfFramesCommunicated++;
+				if(SimulationRunner.crBase.getCRNode(i).collisionOccured){
+					SimulationRunner.crBase.getCRNode(i).numberOfCollision++;
 				}
-				SimulationRunner.crNodes.get(i).collisionOccured = false;
+				SimulationRunner.crBase.getCRNode(i).collisionOccured = false;
 			}
         }
 		if(SimulationRunner.args.isPlotOn())
@@ -451,11 +462,11 @@ public class CRNode extends Node {
         writeLogFile(String.format(Locale.US, "Total Number of frames: %d", totalNumberOfFrames));
         double totalNumberOfFramesComm = 0.0, totalNumberOfCollision = 0.0, totalNumberOfCallAttempts = 0.0;
         double totalNumberOfCalls = 0.0, totalNumberOfBlocks = 0.0, totalNumberOfDrops = 0.0, totalNumberOfForcedHandoffs = 0.0, totalThroughput = 0.0;
-        String[][] data = new String[SimulationRunner.crNodes.size() + 1][9];
+        String[][] data = new String[SimulationRunner.crBase.numberOfCRNodes() + 1][9];
         int throughput = 0;
         int i = 0;
-        for (; i < SimulationRunner.crNodes.size(); i++) {
-            CRNode c = SimulationRunner.crNodes.get(i);
+        for (; i < SimulationRunner.crBase.numberOfCRNodes(); i++) {
+            CRNode c = SimulationRunner.crBase.getCRNode(i);
             if(SimulationRunner.args.isAnimationOn())
                 throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime());
             else if(!SimulationRunner.args.isAnimationOn())
@@ -481,16 +492,17 @@ public class CRNode extends Node {
             data[i][7] = String.valueOf(c.numberOfCollision);
 			data[i][8] = String.format(Locale.US, "%.2f Kbits/sec", throughput/1024.0);
         }
-        totalNumberOfFramesComm /= SimulationRunner.crNodes.size();
-        totalNumberOfCollision /= SimulationRunner.crNodes.size();
-        totalNumberOfCallAttempts /= SimulationRunner.crNodes.size();
-        totalNumberOfCalls /= SimulationRunner.crNodes.size();
-        totalNumberOfBlocks /= SimulationRunner.crNodes.size();
-        totalNumberOfDrops /= SimulationRunner.crNodes.size();
-        totalNumberOfForcedHandoffs /= SimulationRunner.crNodes.size();
-        totalThroughput /= SimulationRunner.crNodes.size();
+		int numberOfCRNodes = SimulationRunner.crBase.numberOfCRNodes();
+        totalNumberOfFramesComm /= numberOfCRNodes;
+        totalNumberOfCollision /= numberOfCRNodes;
+        totalNumberOfCallAttempts /= numberOfCRNodes;
+        totalNumberOfCalls /= numberOfCRNodes;
+        totalNumberOfBlocks /= numberOfCRNodes;
+        totalNumberOfDrops /= numberOfCRNodes;
+        totalNumberOfForcedHandoffs /= numberOfCRNodes;
+        totalThroughput /= numberOfCRNodes;
         writeLogFile("\nAverage:");
-        writeLogFile(String.format(Locale.US, "Number of CR Nodes\t\t\t\t: %d", SimulationRunner.crNodes.size()));
+        writeLogFile(String.format(Locale.US, "Number of CR Nodes\t\t\t\t: %d", numberOfCRNodes));
         writeLogFile(String.format(Locale.US, "Number of Call Attempts\t\t\t: %.2f", totalNumberOfCallAttempts));
         writeLogFile(String.format(Locale.US, "Number of Calls\t\t\t\t\t: %.2f", totalNumberOfCalls));
         writeLogFile(String.format(Locale.US, "Number of Frames Communicated\t: %.2f", totalNumberOfFramesComm));
@@ -836,4 +848,33 @@ public class CRNode extends Node {
         this.estimatedNumberOfCollison = estimatedNumberOfCollison;
     }
     
+	@Override
+	public Point2D.Double getPosition() {
+		return position;
+	}
+
+	@Override
+	public double getVelocity() {
+		return velocity;
+	}
+
+	@Override
+	public void setPosition(Point2D.Double position) {
+		this.position = position;
+	}
+
+	@Override
+	public void setVelocity(double velocity) {
+		this.velocity = velocity;
+	}
+
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public int getId() {
+		return id;
+	}
 }

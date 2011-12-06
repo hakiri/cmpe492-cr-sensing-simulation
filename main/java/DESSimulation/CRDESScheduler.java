@@ -159,9 +159,9 @@ public class CRDESScheduler extends SimEnt{
 	public void start()
 	{
 		send(this, senseScheAdverEvent, 0.0);
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			double offDuration = SimulationRunner.crNodes.get(i).nextOffDurationDES(this.frameDuration);
-			SimulationRunner.crNodes.get(i).startEventHandle = send(this, SimulationRunner.crNodes.get(i).startCommEvent, offDuration);
+		for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
+			double offDuration = SimulationRunner.crBase.getCRNode(i).nextOffDurationDES(this.frameDuration);
+			SimulationRunner.crBase.getCRNode(i).startEventHandle = send(this, SimulationRunner.crBase.getCRNode(i).startCommEvent, offDuration);
 		}
 	}
 	
@@ -215,14 +215,14 @@ public class CRDESScheduler extends SimEnt{
 		}
 		else if(ev instanceof CRNode.StartCommunicationEvent){
 			CRNode.StartCommunicationEvent sce = (CRNode.StartCommunicationEvent) ev;
-			SimulationRunner.crNodes.get(sce.id).setReadytoComm(true);
+			SimulationRunner.crBase.getCRNode(sce.id).setReadytoComm(true);
 		}
 		else if(ev instanceof CRNode.EndCommunicationEvent){
 			CRNode.EndCommunicationEvent ece = (CRNode.EndCommunicationEvent) ev;
-			if(SimulationRunner.crNodes.get(ece.id).getCommunication_frequency() != -1){
-				SimulationRunner.crNodes.get(ece.id).releaseCommunication_frequency();
-				SimulationRunner.crNodes.get(ece.id).setIsCollided(false);
-				SimulationRunner.crNodes.get(ece.id).startEventHandle = send(this,SimulationRunner.crNodes.get(ece.id).startCommEvent,SimulationRunner.crNodes.get(ece.id).nextOffDurationDES(this.frameDuration));
+			if(SimulationRunner.crBase.getCRNode(ece.id).getCommunication_frequency() != -1){
+				SimulationRunner.crBase.getCRNode(ece.id).releaseCommunication_frequency();
+				SimulationRunner.crBase.getCRNode(ece.id).setIsCollided(false);
+				SimulationRunner.crBase.getCRNode(ece.id).startEventHandle = send(this,SimulationRunner.crBase.getCRNode(ece.id).startCommEvent,SimulationRunner.crBase.getCRNode(ece.id).nextOffDurationDES(this.frameDuration));
 			}
 		}
 		SimulationRunner.args.setProgress((int)(((Scheduler.instance().getTime())*100)/simulationDuration));	//Update progress bar
@@ -290,8 +290,8 @@ public class CRDESScheduler extends SimEnt{
 	
 	private void sensingSlot(int slotNumber)
 	{
-		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			SimulationRunner.crNodes.get(i).sense(slotNumber);		//Sense the frequencies for each CR node
+		for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
+			SimulationRunner.crBase.getCRNode(i).sense(slotNumber);		//Sense the frequencies for each CR node
 		}
 	}
 	
@@ -310,14 +310,14 @@ public class CRDESScheduler extends SimEnt{
 		CRNode.writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 		CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
         //calculate drop,block and collision probabilities
-        for(int i=0;i<SimulationRunner.crNodes.size();i++){
-            totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
-            totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
-            totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();
-            totalCalls += SimulationRunner.crNodes.get(i).getNumberOfCalls();
-            totalCollisions += SimulationRunner.crNodes.get(i).getNumberOfCollision();
-			totalFrames += SimulationRunner.crNodes.get(i).getNumberOfFramesCommunicated();
-            totalEstimatedCollisions += SimulationRunner.crNodes.get(i).getEstimatedNumberOfCollison();
+        for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
+            totalBlocks += SimulationRunner.crBase.getCRNode(i).getNumberOfBlocks();
+            totalDrops += SimulationRunner.crBase.getCRNode(i).getNumberOfDrops();
+            totalCallAttempts += SimulationRunner.crBase.getCRNode(i).getNumberOfCallAttempts();
+            totalCalls += SimulationRunner.crBase.getCRNode(i).getNumberOfCalls();
+            totalCollisions += SimulationRunner.crBase.getCRNode(i).getNumberOfCollision();
+			totalFrames += SimulationRunner.crBase.getCRNode(i).getNumberOfFramesCommunicated();
+            totalEstimatedCollisions += SimulationRunner.crBase.getCRNode(i).getEstimatedNumberOfCollison();
 		}
 		if(totalCallAttempts == 0){
             blockProb = 0.0;
@@ -422,7 +422,7 @@ public class CRDESScheduler extends SimEnt{
 	 * @param crnode_id	ID of the CR node
 	 */
 	public void sendEndCommEvent(int crnode_id){
-		SimulationRunner.crNodes.get(crnode_id).endEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).endCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOnDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
+		SimulationRunner.crBase.getCRNode(crnode_id).endEventHandle = send(this,SimulationRunner.crBase.getCRNode(crnode_id).endCommEvent,SimulationRunner.crBase.getCRNode(crnode_id).nextOnDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
 	}
 	
 	/**
@@ -430,7 +430,7 @@ public class CRDESScheduler extends SimEnt{
 	 * @param crnode_id	ID of the CR node
 	 */
 	public void sendStartCommEvent(int crnode_id){
-		SimulationRunner.crNodes.get(crnode_id).startEventHandle = send(this,SimulationRunner.crNodes.get(crnode_id).startCommEvent,SimulationRunner.crNodes.get(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
+		SimulationRunner.crBase.getCRNode(crnode_id).startEventHandle = send(this,SimulationRunner.crBase.getCRNode(crnode_id).startCommEvent,SimulationRunner.crBase.getCRNode(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
 	}
 
 	public long getCurrentFrame() {
