@@ -117,7 +117,7 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	/**
 	 * Main event handler
 	 * @param src	Source of the event
-	 * @param ev	Occured event
+	 * @param ev	Occurred event
 	 */
 	@Override
 	public void recv(SimEnt src, Event ev) {
@@ -143,6 +143,7 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 		}
 		else if(ev instanceof CommunicationEndEvent){
 			SimulationRunner.wc.releaseFrequency(node.getCommunicationFreq(), node);
+			node.setCommunicationFreq(-1);
 			send(this, wait, 0.0);
 		}
 	}

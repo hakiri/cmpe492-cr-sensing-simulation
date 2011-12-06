@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Thread responsible for generating an invidual primary traffic in the wireless channel.
+ * Thread responsible for generating an individual primary traffic in the wireless channel.
  */
 public class PrimaryTrafficGeneratorThread implements Runnable{
 	/**
@@ -104,6 +104,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 			communicate();
 			
 			releaseFreq(freq);
+			n.setCommunicationFreq(-1);
 		}
 		finished=true;
 	}
@@ -164,7 +165,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 		if(commDur > remainingDur)
 			commDur = remainingDur;
 		long time = Math.round(commDur);	//Take a random call duration
-		n.incrementTotalCommunicationDuration(commDur/(double)WirelessChannel.unitTime);
+		n.incrementTotalCommunicationDuration(commDur/SimulationRunner.args.getTimeUnit());//WirelessChannel.unitTime);
 
 		try{
 			if(time > 1)

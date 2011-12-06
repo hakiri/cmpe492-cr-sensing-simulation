@@ -204,4 +204,8 @@ public class PrimaryTrafficGeneratorNode extends Node{
 		data[i][2] = String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec);
 		return data;
 	}
+
+	public void setCommunicationFreq(int communicationFreq) {
+		this.communicationFreq = communicationFreq;
+	}
 }
