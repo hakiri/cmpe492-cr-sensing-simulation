@@ -108,9 +108,13 @@ public class SimulationRunner extends JFrame{
 	 */
 	public static Plot plot = null;
 	/**
-	 * Plots the time versus block and drop probabilities graphs
+	 * Plots the time versus block, drop, and collision probabilities graphs
 	 */
 	public static SimultaneousPlot plotProbs = null;
+	/**
+	 * Plots the time versus false alarm and miss-detection probabilities graphs
+	 */
+	public static SimultaneousPlot plotSensingProbs = null;
 	/**
 	 * Collection of all of the arguments necessary to run the simulation.
 	 */
@@ -1131,14 +1135,7 @@ public class SimulationRunner extends JFrame{
 
 		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getMaxFreqCR()); //Create a CR base station in the origin
 		Cell.setBaseStation(crBase);
-		for(int i = 0; i<args.getNumberOfZones() ; i++){
-			int sectorNumber = args.getSectorNumbers().get(i);		//Get sector number CR nodes will be in
-			int alphaNumber = args.getAlphaNumbers().get(i);		//Get alpha number CR nodes will be in
-			int dNmber = args.getdNumbers().get(i);					//Get d interval CR nodes will be in
-			int numberOfCrUsersInZone = args.getNumbersOfCrUsersInZone().get(i);	//Get number of CR nodes in zone
-			//TODO add multiple zone registration
-			crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
-		}
+		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
 
 		double dmax = crBase.farthestZoneDistance();
 		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
@@ -1166,15 +1163,17 @@ public class SimulationRunner extends JFrame{
 			if(animationOnButton.isSelected())
 				DrawCell.paintCrNode(crNodes.get(i), Color.GRAY);
 		}
-//		ArrayList<Integer> tempArray = new ArrayList<Integer>();
-//		tempArray.add(3);
-//		plotProbs = new SimultaneousPlot(1, tempArray);
+		
 		ArrayList<Integer> tempArray = new ArrayList<Integer>();
 		tempArray.add(1);
 		tempArray.add(1);
 		tempArray.add(1);
 		tempArray.add(1);
 		plotProbs = new SimultaneousPlot(4, tempArray);
+		tempArray = new ArrayList<Integer>();
+		tempArray.add(1);
+		tempArray.add(1);
+		plotSensingProbs = new SimultaneousPlot(2, tempArray);
 		if(SimulationRunner.plotOnButton.isSelected()){
 			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 			numberOFYs.add(args.getNumberOfFreq());
@@ -1247,14 +1246,7 @@ public class SimulationRunner extends JFrame{
 
 		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getMaxFreqCR()); //Create a CR base station in the origin
 		Cell.setBaseStation(crBase);
-		for(int i = 0; i<args.getNumberOfZones() ; i++){
-			int sectorNumber = args.getSectorNumbers().get(i);		//Get sector number CR nodes will be in
-			int alphaNumber = args.getAlphaNumbers().get(i);		//Get alpha number CR nodes will be in
-			int dNmber = args.getdNumbers().get(i);					//Get d interval CR nodes will be in
-			int numberOfCrUsersInZone = args.getNumbersOfCrUsersInZone().get(i);	//Get number of CR nodes in zone
-			//TODO add multiple zone registration
-			crBase.registerZone(sectorNumber,alphaNumber,dNmber,numberOfCrUsersInZone);
-		}
+		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
 
 		double dmax = crBase.farthestZoneDistance();
 		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
@@ -1272,12 +1264,17 @@ public class SimulationRunner extends JFrame{
 			crNodes.add(new CRNode(i,crBase.deployNodeinZone(i), 0));
 			wc.registerNode(crNodes.get(i));							//Register CR nodes
 		}
+		
 		ArrayList<Integer> tempArray = new ArrayList<Integer>();
 		tempArray.add(1);
 		tempArray.add(1);
 		tempArray.add(1);
 		tempArray.add(1);
 		plotProbs = new SimultaneousPlot(4, tempArray);
+		tempArray = new ArrayList<Integer>();
+		tempArray.add(1);
+		tempArray.add(1);
+		plotSensingProbs = new SimultaneousPlot(2, tempArray);
 		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
 			numberOFYs.add(args.getNumberOfFreq());

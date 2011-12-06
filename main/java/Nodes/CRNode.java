@@ -195,14 +195,19 @@ public class CRNode extends Node {
             totalFalseAlarm += SimulationRunner.crBase.getFalseAlarm(i);
             totalMissDetection += SimulationRunner.crBase.getMissDetection(i);
         }
-//        if(SimulationRunner.args.isAnimationOn()){
-//            frame = (double)(SimulationRunner.crSensor.getFrame());
-//        }
-//        else{
-//            frame = SimulationRunner.crDesScheduler.
-//        }
-//        averageFalseAlarm = (totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame;
-//        averageMissDetection = (totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame;
+        if(SimulationRunner.args.isAnimationOn()){
+            frame = (double)(SimulationRunner.crSensor.getFrame());
+        }
+        else{
+            frame = SimulationRunner.crDesScheduler.getCurrentFrame();
+        }
+        averageFalseAlarm = ((totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getMaxFreqCR();
+        averageMissDetection = ((totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getMaxFreqCR();
+		//TODO Add those probs to plot object
+		ArrayList<Double> probs = new ArrayList<Double>();
+		probs.add(averageFalseAlarm);
+		probs.add(averageMissDetection);
+		SimulationRunner.plotSensingProbs.addPoint(frame, probs);
     }
     
     /**

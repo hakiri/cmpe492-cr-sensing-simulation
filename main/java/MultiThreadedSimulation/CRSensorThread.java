@@ -133,6 +133,9 @@ public class CRSensorThread implements Runnable{
 		namesList.add("Drop");
 		namesList.add("Real Collision");
 		namesList.add("Measured Collision");
+		ArrayList<String> namesList2 = new ArrayList<String>();
+		namesList2.add("False Alarm");
+		namesList2.add("Miss-detection");
 		for(frame = 0; remainingSimulationDuration>0&&!finished ; frame++){		//Until simulation duration is elapsed or thread is terminated
 			
 			arrangeCommunicationVariables();
@@ -165,6 +168,7 @@ public class CRSensorThread implements Runnable{
 			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 		
 			SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList,totalSimulationDuration/unitTime);
+			SimulationRunner.plotSensingProbs.plotAllXWithLegend("Probabilities", 0, namesList2, totalSimulationDuration/unitTime);
 		}
 		finalizeSimulation();
 	}
@@ -261,8 +265,6 @@ public class CRSensorThread implements Runnable{
 		CRNode.writeLogFile(String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec));
         CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 		for(int i=0;i<SimulationRunner.crNodes.size();i++){
-			//TODO Remove logging of CR SNR measures
-			//SimulationRunner.crNodes.get(i).logSnrValues();		//Log SNR values sensed by the CR nodes
             totalBlocks += SimulationRunner.crNodes.get(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crNodes.get(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crNodes.get(i).getNumberOfCallAttempts();

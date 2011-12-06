@@ -431,6 +431,29 @@ public class CRBase extends Node{
         else
             nodesInZone.add(crnodes);
     }
+	
+	/**
+	 * Takes parameters of multiple zones and registers those zones into registeredZones
+	 * @param sector Sector of the zone
+	 * @param alpha Alpha number of the zone
+	 * @param d Distance section of the zone
+	 * @param crnodes Total number of crnodes in that zone
+	 */
+    public void registerZones(ArrayList<Integer> sector, ArrayList<Integer> alpha, ArrayList<Integer> d, ArrayList<Integer> crnodes){
+        for(int i=0;i<sector.size();i++){
+			ArrayList<Integer> zone = new ArrayList<Integer>();
+			zone.add(sector.get(i));
+			zone.add(alpha.get(i));
+			zone.add(d.get(i));
+			registeredZones.add(zone);
+			missDetection.add(0.0);
+			falseAlarm.add(0.0);
+			if(nodesInZone.size() > 0)
+				nodesInZone.add(crnodes.get(i) + nodesInZone.get(nodesInZone.size() - 1));
+			else
+				nodesInZone.add(crnodes.get(i));
+		}
+    }
     
 	/**
 	 * Takes id of crnode then finds that crnode's zone, after this, calls deployNodeinZone function
