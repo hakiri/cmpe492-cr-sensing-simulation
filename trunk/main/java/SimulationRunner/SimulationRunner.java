@@ -1265,6 +1265,12 @@ public class SimulationRunner extends JFrame{
 											args.getSenseScheduleAdvertisementDur(), args.getCommScheduleAdvertisementDur(),
 											args.getCommDur(), args.getSenseResultAdvertisementDur());
 		
+        for(int i = 0;i<args.getNumberOfPriNodes();i++){
+			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
+			wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
+			priTrafGenDes.registerNode(priTrafGenNodes.get(i));
+		}
+        
 		crDesScheduler.start();
 		priTrafGenDes.start();
 		Thread t = new Thread(Scheduler.instance());

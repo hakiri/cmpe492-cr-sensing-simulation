@@ -409,7 +409,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 							int sec = (int)(msec/1000.0);
 							msec-= sec*1000.0;
 							
-							CRNode.writeLogFile("Time: " + String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec) + " -- number: " + crInZone + " is dropped");
+//							CRNode.writeLogFile("Time: " + String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec) + " -- number: " + crInZone + " is dropped");
 							if(SimulationRunner.args.isAnimationOn()){
 								SimulationRunner.crSensor.setInactiveDuration(crInZone, true);
 							}

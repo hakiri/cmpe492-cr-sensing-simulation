@@ -192,8 +192,8 @@ public class CRNode implements Node {
         double totalFalseAlarm=0.0,totalMissDetection=0.0,frame;
         double threshold,averageFalseAlarm,averageMissDetection;
         for (int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+            threshold = SimulationRunner.wc.getInrThreshold(i);
             for(int j=0;j<SimulationRunner.args.getNumberOfFreq();j++){
-                threshold = SimulationRunner.wc.getInrThreshold(i);
                 if((averageSnr.get(i).get(j) <= threshold)&&(sensingDecision.get(i).get(j) == 1)){
                     SimulationRunner.crBase.incrementFalseAlarm(i);
                 }
@@ -247,29 +247,29 @@ public class CRNode implements Node {
                 SimulationRunner.plot.addPoint(i, time, averageSnr.get(i));
             }
         }
-        pw.println("average snr values and sensing decisions: "); //writing to log file
-        for (int i = 0; i < averageSnr.size(); i++) {
-            pw.println(arrayListToString(averageSnr.get(i)));
-			pw.println(sensingDecision.get(i));
-        }
-        for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
-            ArrayList<Node> users = SimulationRunner.wc.getFreq(i);
-            pw.print("Freq: " + i + " ");
-            pw.print("Primary: ");
-            if (users.get(WirelessChannel.PRIMARY) == null) {
-                pw.print("null ");
-            } else {
-                pw.print(users.get(WirelessChannel.PRIMARY).getId() + " ");
-            }
-
-            pw.print("CR: ");
-            if (users.get(WirelessChannel.CR) == null) {
-                pw.print("null ");
-            } else {
-                pw.print(users.get(WirelessChannel.CR).getId() + " ");
-            }
-            pw.println();
-        }
+//        pw.println("average snr values and sensing decisions: "); //writing to log file
+//        for (int i = 0; i < averageSnr.size(); i++) {
+//            pw.println(arrayListToString(averageSnr.get(i)));
+//			pw.println(sensingDecision.get(i));
+//        }
+//        for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
+//            ArrayList<Node> users = SimulationRunner.wc.getFreq(i);
+//            pw.print("Freq: " + i + " ");
+//            pw.print("Primary: ");
+//            if (users.get(WirelessChannel.PRIMARY) == null) {
+//                pw.print("null ");
+//            } else {
+//                pw.print(users.get(WirelessChannel.PRIMARY).getId() + " ");
+//            }
+//
+//            pw.print("CR: ");
+//            if (users.get(WirelessChannel.CR) == null) {
+//                pw.print("null ");
+//            } else {
+//                pw.print(users.get(WirelessChannel.CR).getId() + " ");
+//            }
+//            pw.println();
+//        }
 
         for (int i = 0; i < averageSnr.size(); i++) { //resets the avarageSnr list.
             for (int j = 0; j < averageSnr.get(i).size(); j++) {
@@ -296,11 +296,11 @@ public class CRNode implements Node {
      * @param file_name
      */
     public static void createProbLogFile(String file_name) {
-        try {
-            pw_prob = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
-        } catch (IOException ex) {
-            System.err.println("Error during file operations");
-        }
+//        try {
+//            pw_prob = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
+//        } catch (IOException ex) {
+//            System.err.println("Error during file operations");
+//        }
     }
 
     /**
@@ -316,7 +316,7 @@ public class CRNode implements Node {
      * @param log_string
      */
     public static void writeLogFileProb(String log_string) {
-        pw_prob.println(log_string);
+//        pw_prob.println(log_string);
     }
 
     /**
@@ -330,7 +330,7 @@ public class CRNode implements Node {
      * 
      */
     public static void closeLogFileProb() {
-        pw_prob.close();
+//        pw_prob.close();
     }
     
     
@@ -424,7 +424,7 @@ public class CRNode implements Node {
 			int sec = (int)(msec/1000.0);
 			msec-= sec*1000.0;
 			
-			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crBase.getCRNode(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
+//			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crBase.getCRNode(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
 			if(isRegular && lastReport){
 				SimulationRunner.crBase.getCRNode(i).numberOfFramesCommunicated++;
 				if(SimulationRunner.crBase.getCRNode(i).collisionOccured){
