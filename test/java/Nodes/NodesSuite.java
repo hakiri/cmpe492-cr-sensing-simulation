@@ -21,7 +21,6 @@ public class NodesSuite extends TestCase {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("NodesSuite");
 		suite.addTest(CRNodeTest.suite());
-		suite.addTest(NodeTest.suite());
 		suite.addTest(CRBaseTest.suite());
 		suite.addTest(PrimaryTrafficGeneratorNodeTest.suite());
 		return suite;
