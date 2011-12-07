@@ -262,8 +262,8 @@ public class CRSensorThread implements Runnable{
 		msec -= min*60000.0;
 		int sec = (int)(msec/1000.0);
 		msec-= sec*1000.0;
-		CRNode.writeLogFile(String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec));
-        CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
+//		CRNode.writeLogFile(String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec));
+//        CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 		for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
             totalBlocks += SimulationRunner.crBase.getCRNode(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crBase.getCRNode(i).getNumberOfDrops();
@@ -354,7 +354,7 @@ public class CRSensorThread implements Runnable{
 		}
 		remainingSimulationDuration = endRemainingSimulationDuration;
 		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,true ,true);
-		CRNode.writeLogFile("\n");
+//		CRNode.writeLogFile("\n");
 	}
 	
 	private void finalizeSimulation()
