@@ -219,6 +219,12 @@ public class CRNode implements Node {
 		ArrayList<Double> probs = new ArrayList<Double>();
 		probs.add(averageFalseAlarm);
 		probs.add(averageMissDetection);
+		if(SimulationRunner.args.isAnimationOn()){
+            frame *= SimulationRunner.crSensor.getFrameDuration();
+        }
+        else{
+            frame *= SimulationRunner.crDesScheduler.getFrameDuration();
+        }
 		SimulationRunner.plotSensingProbs.addPoint(frame, probs);
     }
     

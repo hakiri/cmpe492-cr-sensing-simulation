@@ -215,7 +215,7 @@ public class SimulationRunner extends JFrame{
 				
 				tabPane = new JTabbedPane();
 				panel.add(tabPane);
-				tabPane.setBounds(0, 0, 835, 600);
+				tabPane.setBounds(0, 0, 835, 635);
 				
 				
 				initMainOptionsGUI();
@@ -231,7 +231,7 @@ public class SimulationRunner extends JFrame{
 				createButtons();
 			}
 			pack();
-			this.setSize(845, 670);
+			this.setSize(845, 705);
 			this.setResizable(false);
 			this.setTitle("Simulator");
 		} catch (Exception e) {
@@ -283,7 +283,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(noPriNodes);
 			noPriNodes.setToolTipText("Number of Primary Users in The CR Cell");
 			noPriNodes.setBounds(itemPos, 30, 120, 23);
-			noPriNodes.setText("150");
+			noPriNodes.setText("500");
 			noPriNodes.addKeyListener(keyAdapter);
 		}
 		{
@@ -339,7 +339,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(maxSNR);
 			maxSNR.setToolTipText("Maximum SNR Value of Transmitter");
 			maxSNR.setBounds(itemPos, 135, 120, 23);
-			maxSNR.setText("10");
+			maxSNR.setText("17.7");
 			maxSNR.addKeyListener(keyAdapter);
 		}
 		{
@@ -354,7 +354,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(sinrThresholdFied);
 			sinrThresholdFied.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
 			sinrThresholdFied.setBounds(itemPos, 170, 120, 23);
-			sinrThresholdFied.setText("1");
+			sinrThresholdFied.setText("2");
 			sinrThresholdFied.addKeyListener(keyAdapter);
 		}
 		{
@@ -369,7 +369,7 @@ public class SimulationRunner extends JFrame{
 			mainPanel.add(tauField);
 			tauField.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
 			tauField.setBounds(itemPos, 205, 120, 23);
-			tauField.setText("15.987");
+			tauField.setText("17.987");
 			tauField.addKeyListener(keyAdapter);
 		}
 		{
@@ -674,7 +674,7 @@ public class SimulationRunner extends JFrame{
 			zonePanel.add(noZones);
 			noZones.setToolTipText("Number of Zones to be simulated");
 			noZones.setBounds(itemPos, 170, 120, 23);
-			noZones.setText("24");
+			noZones.setText("36");
 			noZones.addMouseListener(new MouseAdapter() {
 
 				@Override
@@ -820,7 +820,7 @@ public class SimulationRunner extends JFrame{
 			noCalls = new JTextField();
 			trafficPanel.add(noCalls);
 			noCalls.setBounds(itemPos, 65, 120, 23);
-			noCalls.setText("2");
+			noCalls.setText("0.75");
 			noCalls.addKeyListener(keyAdapter);
 		}
 		{
@@ -841,7 +841,7 @@ public class SimulationRunner extends JFrame{
 			callDur = new JTextField();
 			trafficPanel.add(callDur);
 			callDur.setBounds(itemPos, 100, 120, 23);
-			callDur.setText("4");
+			callDur.setText("3");
 			callDur.addKeyListener(keyAdapter);
 		}
 		{
@@ -881,7 +881,7 @@ public class SimulationRunner extends JFrame{
 			frequencyPanel.add(noFreqs);
 			noFreqs.setToolTipText("Available Number of Frequencies in the Channel");
 			noFreqs.setBounds(itemPos, 30, 120, 23);
-			noFreqs.setText("20");
+			noFreqs.setText("40");
 			noFreqs.addKeyListener(keyAdapter);
 		}
 		{
@@ -910,8 +910,8 @@ public class SimulationRunner extends JFrame{
 		zoneAlphaNos = new ArrayList<JTextField>();
 		zoneCRUsers = new ArrayList<JTextField>();
 		int id=1;
-		int numberOfRows = 17;
-		
+		int numberOfRows = 18;
+		int numberOfCR = 500;
 		JTextField textField;
 		JPanel []panels = new JPanel[2];
 		for(int j=0; j<2; j++){
@@ -957,8 +957,6 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("In Which Sector The CR Nodes Located During Simulation");
 				textField.setBounds(66, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > initialNumberOfZones + 1)
-					textField.setEnabled(false);
 				textField.setText(String.valueOf(((id-2)/4)%3));
 				zoneSectorNos.add(textField);
 
@@ -967,8 +965,6 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("In Which D Section The CR Nodes Located During Simulation");
 				textField.setBounds(162, 35+i*30, 51, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > initialNumberOfZones + 1)
-					textField.setEnabled(false);
 				textField.setText(String.valueOf(((id-2)/12)%3));
 				zoneDNos.add(textField);
 
@@ -977,8 +973,6 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("In Which Alpha Section The CR Nodes Located During Simulation");
 				textField.setBounds(228, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > initialNumberOfZones + 1)
-					textField.setEnabled(false);
 				textField.setText(String.valueOf((id-2)%4));
 				zoneAlphaNos.add(textField);
 
@@ -987,15 +981,17 @@ public class SimulationRunner extends JFrame{
 				textField.setToolTipText("Number of Secondary Users in This Zone");
 				textField.setBounds(324, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
-				if(id > initialNumberOfZones + 1)
-					textField.setEnabled(false);
-				textField.setText("5");
+				int numberOfCrUsers = (j*numberOfRows + i) / 12;
+				numberOfCrUsers = (numberOfCR/9)*(2*numberOfCrUsers + 1);
+				numberOfCrUsers /= 12;
+				numberOfCrUsers++;
+				textField.setText(String.valueOf(numberOfCrUsers));
 				zoneCRUsers.add(textField);
 			}
 			tabZonePanel.add(panels[j]);
 		}
-		panels[0].setBounds(5,5,410,548);
-		panels[1].setBounds(425,5,410,548);
+		panels[0].setBounds(5,5,410,583);
+		panels[1].setBounds(425,5,410,583);
 	}
 	
 	private void createButtons()
@@ -1005,7 +1001,7 @@ public class SimulationRunner extends JFrame{
 			panel.add(closeButton);
 			closeButton.setText("CLOSE");
 			closeButton.setMnemonic('c');
-			closeButton.setBounds(panelRight+panelWidth-120, 603, 120, 23);
+			closeButton.setBounds(panelRight+panelWidth-120, 638, 120, 23);
 			closeButton.addActionListener(new ActionListener() {
 
 				@Override
@@ -1027,7 +1023,7 @@ public class SimulationRunner extends JFrame{
 			panel.add(startSimulation);
 			startSimulation.setText("Start");
 			startSimulation.setMnemonic('s');
-			startSimulation.setBounds(panelRight+panelWidth-120-135, 603, 120, 23);
+			startSimulation.setBounds(panelRight+panelWidth-120-135, 638, 120, 23);
 			startSimulation.addActionListener(new ActionListener() {
 
 				@Override
@@ -1064,7 +1060,7 @@ public class SimulationRunner extends JFrame{
 			panel.add(terminateSimulation);
 			terminateSimulation.setText("Terminate");
 			terminateSimulation.setMnemonic('t');
-			terminateSimulation.setBounds(panelRight+panelWidth-120-270, 603, 120, 23);
+			terminateSimulation.setBounds(panelRight+panelWidth-120-270, 638, 120, 23);
 			terminateSimulation.addActionListener(new ActionListener() {
 
 				@Override
@@ -1105,7 +1101,7 @@ public class SimulationRunner extends JFrame{
 			progressBar = new JProgressBar();
 			progressBar.setStringPainted(true);
 			panel.add(progressBar);
-			progressBar.setBounds(15, 603, 200, 23);
+			progressBar.setBounds(15, 638, 200, 23);
 			progressBar.setVisible(false);
 		}
 	}
@@ -1150,7 +1146,7 @@ public class SimulationRunner extends JFrame{
 		Cell.setBaseStation(crBase);
 		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
 
-		double dmax = crBase.farthestZoneDistance();
+		double dmax = crBase.farthestZoneDistance()/10.0;
 		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
 		if(minSNR<=args.getSinrThreshold()){
 			if(args.isBatchMode()){

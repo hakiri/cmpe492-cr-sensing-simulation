@@ -153,7 +153,7 @@ public class WirelessChannel {
 			double distance = 0;
 			if(frequencies.get(frequency).get(PRIMARY) !=null){	//If the frequency is occupied
 				distance = sensor.getPosition().distance(frequencies.get(frequency).get(PRIMARY).getPosition());	//Find distance
-				return maxSNR/Math.exp(0.12*distance);							//between occupier and sensor and compute
+				return maxSNR/Math.exp(0.12*distance/10.0);							//between occupier and sensor and compute
 			}																	//attenuation based on this distance
 		}
 		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
@@ -169,7 +169,7 @@ public class WirelessChannel {
      */
     public double generateSNR(double distance)
     {
-        return maxSNR/Math.exp(0.12*distance);
+        return maxSNR/Math.exp(0.12*distance/10.0);
     }
     
     /**
@@ -178,7 +178,9 @@ public class WirelessChannel {
      * @return INR threshold
      */
     public double getInrThreshold(int zoneId){
-        double tr = WirelessChannel.magTodb(WirelessChannel.dbToMag(SimulationRunner.wc.generateSNR(SimulationRunner.crBase.farthestDistanceInZone(zoneId)) - SimulationRunner.wc.sinrThreshold)-1);
+		double farthestDistance = SimulationRunner.crBase.farthestDistanceInZone(zoneId) / 10.0;
+		double inr = SimulationRunner.wc.generateSNR(farthestDistance);
+        double tr = WirelessChannel.magTodb(WirelessChannel.dbToMag(inr - SimulationRunner.wc.sinrThreshold)-1);
         return tr < 0.0 ? 0.0 : tr;
     }
 	
@@ -194,7 +196,7 @@ public class WirelessChannel {
 		double inrdb = generateSNR(receiver, freq);
 		if(channelModel==SIMPLECH){
 			double distance = transmitter.getPosition().distance(receiver.getPosition());
-			double snrdb = maxSNR/Math.exp(0.12*distance);
+			double snrdb = maxSNR/Math.exp(0.12*distance/10.0);
 			if(inrdb==0)
 				return snrdb;
 			inrdb = magTodb(dbToMag(inrdb)+1);

@@ -178,8 +178,8 @@ public class Arguments {
 			channelModel = input.nextInt();
 			simulationDuration = input.nextLong();				//Get duration of the simulation in terms of min
 			simulationDuration *= 60000;
-			maxSnr = input.nextDouble();			//Get max SNR value
-			sinrThreshold = input.nextDouble();
+			maxSnr = Double.parseDouble(input.next());			//Get max SNR value
+			sinrThreshold = Double.parseDouble(input.next());
 			energyThreshold = Double.parseDouble(input.next());
 			seedModel = input.nextInt();
 			if(seedModel != 0){						//If seed model is not random
@@ -194,17 +194,17 @@ public class Arguments {
 			input.nextLine();
 			input.nextLine();						//Start parsing Traffic options
 			trafficModel = input.nextInt();
-			averageNumberOfCalls = input.nextDouble();		//Get number of calls per hour
-			averageCallDur = input.nextDouble();			//Get call duration in terms of min
+			averageNumberOfCalls = Double.parseDouble(input.next());		//Get number of calls per hour
+			averageCallDur = Double.parseDouble(input.next());			//Get call duration in terms of min
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Frame options
 			numberOfSensingSlots = input.nextInt();			//Get max number of frequencies a node can sense
-			sensingSlotDur = input.nextDouble();
-			senseScheduleAdvertisementDur = input.nextDouble();
-			senseResultAdvertisementDur = input.nextDouble();
-			commScheduleAdvertisementDur = input.nextDouble();
-			commDur = input.nextDouble();
+			sensingSlotDur = Double.parseDouble(input.next());
+			senseScheduleAdvertisementDur = Double.parseDouble(input.next());
+			senseResultAdvertisementDur = Double.parseDouble(input.next());
+			commScheduleAdvertisementDur = Double.parseDouble(input.next());
+			commDur = Double.parseDouble(input.next());
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Frequency options
@@ -217,7 +217,7 @@ public class Arguments {
 			dNumber = input.nextInt();				//Get number of d's
 			numberOfAlphaSlices = input.nextInt();				//Get number of alpha's
 			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;	//Evaluate the angle associated to alpha
-			radius = input.nextDouble();			//Get radius of the cell
+			radius = Double.parseDouble(input.next());			//Get radius of the cell
 			numberOfZones = input.nextInt();		//Get the number of zones to be simulated
 			
 			input.nextLine();

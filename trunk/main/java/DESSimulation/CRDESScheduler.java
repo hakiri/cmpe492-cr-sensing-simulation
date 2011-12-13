@@ -436,4 +436,8 @@ public class CRDESScheduler extends SimEnt{
 	public long getCurrentFrame() {
 		return currentFrame;
 	}
+
+	public double getFrameDuration() {
+		return frameDuration;
+	}
 }
