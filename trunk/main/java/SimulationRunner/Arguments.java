@@ -77,7 +77,7 @@ public class Arguments {
 	 *				<li><i>False </i> if there are parsing errors
 	 *		   </ul>
 	 */
-	public boolean parseArguments(SimulationRunner sr)
+	public boolean parseArguments(GraphicalUserInterface sr)
 	{
 		try{
 			batchMode = false;
@@ -134,15 +134,15 @@ public class Arguments {
 				seed = Integer.parseInt(sr.getSeedValue().getText());	//Otherwise get seed from user
 			}
 			
-			if(SimulationRunner.animationOnButton.isSelected())					//Get unit time duration in terms of milliseconds
+			if(GraphicalUserInterface.animationOnButton.isSelected())					//Get unit time duration in terms of milliseconds
 				timeUnit = Double.parseDouble(sr.getUnitTime().getText());
 			else
 				timeUnit = 1;
 			
 			channelModel = sr.getChannelModel().getSelectedIndex();
 			trafficModel = sr.getTrafficModel().getSelectedIndex();
-			plotOn = SimulationRunner.plotOnButton.isSelected();
-			animationOn = SimulationRunner.animationOnButton.isSelected();
+			plotOn = GraphicalUserInterface.plotOnButton.isSelected();
+			animationOn = GraphicalUserInterface.animationOnButton.isSelected();
 		} catch(NumberFormatException nfe){
 			JOptionPane.showMessageDialog(sr, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);
@@ -556,10 +556,10 @@ public class Arguments {
 		else{
 			this.progress = progress;
 			if(progress >= 0)
-				SimulationRunner.progressBar.setValue(progress);
+				GraphicalUserInterface.progressBar.setValue(progress);
 			else{
-				SimulationRunner.progressBar.setValue(0);
-				SimulationRunner.progressBar.setVisible(false);
+				GraphicalUserInterface.progressBar.setValue(0);
+				GraphicalUserInterface.progressBar.setVisible(false);
 			}
 		}
 	}

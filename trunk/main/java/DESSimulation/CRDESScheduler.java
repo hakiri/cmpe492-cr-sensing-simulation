@@ -6,6 +6,7 @@ import DES.Scheduler;
 import DES.Scheduler.EventHandle;
 import DES.SimEnt;
 import Nodes.CRNode;
+import SimulationRunner.GraphicalUserInterface;
 import SimulationRunner.SimulationRunner;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -256,12 +257,12 @@ public class CRDESScheduler extends SimEnt{
 		SimulationRunner.args.setProgress(-1);
 		SimulationRunner.clear();								//Clear data related to simulation
 		if(!SimulationRunner.args.isBatchMode())
-			SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
+			GraphicalUserInterface.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
 		CRNode.closeLogFileProb();
 		SimulationStatsTable sst;
 		if(!SimulationRunner.args.isBatchMode())
-			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.guiRunner);
 		ArrayList<Integer> xs = new ArrayList<Integer>();
 		xs.add(0);
 		ArrayList<String> namesList = new ArrayList<String>();
