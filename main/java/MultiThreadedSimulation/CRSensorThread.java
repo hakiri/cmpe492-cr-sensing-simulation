@@ -3,6 +3,7 @@ package MultiThreadedSimulation;
 import Animation.DrawCell;
 import Animation.SimulationStatsTable;
 import Nodes.CRNode;
+import SimulationRunner.GraphicalUserInterface;
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -143,29 +144,29 @@ public class CRSensorThread implements Runnable{
 			expireCollisionWarnings();
 			
 			senseScheduleAdvertise();
-			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
+			GraphicalUserInterface.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			for(int j=0;j<numberOfSlots;j++){
 				sensingSlot(j);
-				SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
+				GraphicalUserInterface.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			}
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			senseResultAdvertise();
-			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
+			GraphicalUserInterface.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			commScheduleAdvertise();
-			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
+			GraphicalUserInterface.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 			if(remainingSimulationDuration<=0&&finished)
 				break;
 			
 			communicate();
-			SimulationRunner.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
+			GraphicalUserInterface.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 		
 			SimulationRunner.plotProbs.plotAllXWithLegend("Probabilities", 0, namesList,totalSimulationDuration/unitTime);
 			SimulationRunner.plotSensingProbs.plotAllXWithLegend("Probabilities2", 0, namesList2, CRNode.getTotalNumberOfFrames()+1);
@@ -366,15 +367,15 @@ public class CRSensorThread implements Runnable{
 			JOptionPane.showMessageDialog(null, "Simulation Terminated", "Simulation", JOptionPane.INFORMATION_MESSAGE);
 		else			//If simulation duration is elapsed
 			JOptionPane.showMessageDialog(null, "Simulation Completed", "Simulation", JOptionPane.INFORMATION_MESSAGE);
-		SimulationRunner.progressBar.setVisible(false);			//Hide progress bar
-		SimulationRunner.progressBar.setValue(0);				//Set its value to zero
+		GraphicalUserInterface.progressBar.setVisible(false);			//Hide progress bar
+		GraphicalUserInterface.progressBar.setValue(0);				//Set its value to zero
 		SimulationRunner.clear();								//Clear data related to simulation
-		SimulationRunner.terminateSimulation.setVisible(false);	//Hide "Terminate" button
+		GraphicalUserInterface.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
 		CRNode.closeLogFileProb();
 		SimulationStatsTable sst;
 		if(!SimulationRunner.args.isBatchMode())
-			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.runner);
+			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.guiRunner);
 		ArrayList<Integer> xs = new ArrayList<Integer>();
 		xs.add(0);		
 		if(SimulationRunner.args.isPlotOn()){
