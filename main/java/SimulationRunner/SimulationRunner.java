@@ -1197,7 +1197,7 @@ public class SimulationRunner extends JFrame{
 		else
 			plot = null;
 		CRNode.initializeAverageSnr(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
-		CRNode.createLogFile("log.txt");
+		CRNode.createLogFile("log.csv");
 		CRNode.createProbLogFile("prob.txt");
 		return true;
 	}
