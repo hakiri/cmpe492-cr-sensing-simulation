@@ -96,20 +96,6 @@ public class CRBaseTest extends TestCase {
 		
 	}
 
-	/**
-	 * Test of registerZone method, of class CRBase.
-	 */
-	public void testRegisterZone() {
-		System.out.println("registerZone");
-		int sector = 0;
-		int alpha = 0;
-		int d = 0;
-		int crnodes = 0;
-		CRBase instance = null;
-		instance.registerZone(sector, alpha, d, crnodes);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
 
 	/**
 	 * Test of deployNodeinZone method, of class CRBase.
