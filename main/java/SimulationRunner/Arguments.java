@@ -55,7 +55,8 @@ public class Arguments {
 	private boolean plotOn = false;
 	private boolean animationOn = false;
 	private int progress = 0;
-
+    final private int numberOfReports = 30;
+    
 	/**
 	 * Creates an arguments object that holds all related parameters of simulation.
 	 */
@@ -519,6 +520,10 @@ public class Arguments {
 		return progress;
 	}
 
+    public int getNumberOfReports() {
+        return numberOfReports;
+    }
+    
 	/**
 	 * Sets the current progress of the simulation
 	 * @param progress

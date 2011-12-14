@@ -39,7 +39,6 @@ public class CRNode implements Node {
 	static double powerThreshold = 15.987;
 	final static int tw = 5;
     
-    final static int numberOfReports = 30;
     /**
      * List of frequencies assigned to this node with respect to their SNR values.
      */
@@ -123,7 +122,7 @@ public class CRNode implements Node {
     private double last_time;
     private double lastChannelCapacity;
     private double totalNumberOfBitsTransmitted = 0;
-    
+    public static ArrayList<Integer> reportingFrames;
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param id ID of this CR node
@@ -139,6 +138,7 @@ public class CRNode implements Node {
         this.expoInterarrival = new Exponential(SimulationRunner.wc.getMeanOffDuration(), SimulationRunner.randEngine);
         this.expoCommDuration = new Exponential((1.0 / SimulationRunner.wc.getMeanOnDuration()), SimulationRunner.randEngine);
 		CRNode.powerThreshold = SimulationRunner.args.getPowerThreshold();
+        CRNode.reportingFrames = new ArrayList<Integer>();
     }
 
     /**
@@ -236,7 +236,7 @@ public class CRNode implements Node {
      * and then resets the average SNR values.
      * @param time Current time
      */
-    public static void logAverageSnr(double time) {
+    public static void fuseSensingResults(double time) {
         for (int i = 0; i < averageReceivedPower.size(); i++) {   //calculates the average snr values
             for (int j = 0; j < averageReceivedPower.get(i).size(); j++) {
                 averageReceivedPower.get(i).set(j, (averageReceivedPower.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
@@ -300,8 +300,8 @@ public class CRNode implements Node {
                 justComma += ";";
             }
             writeLogFile(String.format(Locale.US, "Time;Number of False Alarms"+justComma+"Number of Miss Detection"
-                    +justComma+"Number of Miss Collisions"+justComma+"Number of Miss Blocks"+justComma
-                    +"Number of Miss Drops"+justComma+"Throughput"+justComma));
+                    +justComma+"Number of Collisions"+justComma+"Number of Blocks"+justComma
+                    +"Number of Drops"+justComma+"Throughput"+justComma+"Total communicated frames"+justComma));
         } catch (IOException ex) {
             System.err.println("Error during file operations");
         }
@@ -423,9 +423,11 @@ public class CRNode implements Node {
             }
             if(isRegular && lastReport){
                 SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001;
+                SimulationRunner.crBase.incrementTotalBitsTransmitted(SimulationRunner.crBase.findZone(i), (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001);
             }
             if(!isRegular){
                 SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001;
+                SimulationRunner.crBase.incrementTotalBitsTransmitted(SimulationRunner.crBase.findZone(i), (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001);
                 SimulationRunner.crBase.getCRNode(i).last_time = time;
                 SimulationRunner.crBase.getCRNode(i).lastChannelCapacity = channelCapacity.get(freq);
             }
@@ -441,8 +443,10 @@ public class CRNode implements Node {
 //			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crBase.getCRNode(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
 			if(isRegular && lastReport){
 				SimulationRunner.crBase.getCRNode(i).numberOfFramesCommunicated++;
+                SimulationRunner.crBase.incrementTotalCommunicatedFrames(SimulationRunner.crBase.findZone(i));
 				if(SimulationRunner.crBase.getCRNode(i).collisionOccured){
 					SimulationRunner.crBase.getCRNode(i).numberOfCollision++;
+                    SimulationRunner.crBase.incrementCollision(SimulationRunner.crBase.findZone(i));
 				}
 				SimulationRunner.crBase.getCRNode(i).collisionOccured = false;
 			}
@@ -457,6 +461,7 @@ public class CRNode implements Node {
      */
     public static void setTotalNumberOfFrames(int totalNumberOfFrames) {
         CRNode.totalNumberOfFrames = totalNumberOfFrames;
+        CRNode.assignReportingFrames();
     }
 
     /**
@@ -482,9 +487,9 @@ public class CRNode implements Node {
         for (; i < SimulationRunner.crBase.numberOfCRNodes(); i++) {
             CRNode c = SimulationRunner.crBase.getCRNode(i);
             if(SimulationRunner.args.isAnimationOn())
-                throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime());
+                throughput = (int)(c.totalNumberOfBitsTransmitted/(SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime())*c.numberOfFramesCommunicated);
             else if(!SimulationRunner.args.isAnimationOn())
-                throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crDesScheduler.getCommDur());
+                throughput = (int)(c.totalNumberOfBitsTransmitted/(SimulationRunner.crDesScheduler.getCommDur())*c.numberOfFramesCommunicated);
 //            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %.2f Kbits",
 //                    c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, (throughput/1024.0)));
             totalNumberOfFramesComm += c.numberOfFramesCommunicated;
@@ -641,7 +646,15 @@ public class CRNode implements Node {
         double nextOffDur = expoInterarrival.nextDouble() * 3600000;
         return (int) Math.round(nextOffDur / frameDuration);
     }
-
+    
+    static private void assignReportingFrames(){
+        int totalframes = getTotalNumberOfFrames(), nofReports = SimulationRunner.args.getNumberOfReports();
+        for(int i=0;i<nofReports-1;i++){
+            reportingFrames.add((totalframes/nofReports)*i+(totalframes/nofReports));
+        }
+        reportingFrames.add(totalframes);
+    } 
+    
     /**
      * Returns whether this CR node is currently communicating or not
      * @return <ul>
