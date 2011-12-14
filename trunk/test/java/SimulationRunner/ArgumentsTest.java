@@ -39,10 +39,10 @@ public class ArgumentsTest {
     @Test
     public void testParseArguments_SimulationRunner() {
         System.out.println("parseArguments");
-        SimulationRunner sr = null;
+        GraphicalUserInterface gui = null;
         Arguments instance = new Arguments();
         boolean expResult = false;
-        boolean result = instance.parseArguments(sr);
+        boolean result = instance.parseArguments(gui);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
     }
@@ -153,19 +153,6 @@ public class ArgumentsTest {
     }
 
     /**
-     * Test of getChannelModel method, of class Arguments.
-     */
-    @Test
-    public void testGetChannelModel() {
-        System.out.println("getChannelModel");
-        Arguments instance = new Arguments();
-        int expResult = 0;
-        int result = instance.getChannelModel();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-    }
-
-    /**
      * Test of getCommDur method, of class Arguments.
      */
     @Test
@@ -227,19 +214,6 @@ public class ArgumentsTest {
         int expResult = 0;
         int result = instance.getNumberOfSensingSlots();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-    }
-
-    /**
-     * Test of getMaxSnr method, of class Arguments.
-     */
-    @Test
-    public void testGetMaxSnr() {
-        System.out.println("getMaxSnr");
-        Arguments instance = new Arguments();
-        double expResult = 0.0;
-        double result = instance.getMaxSnr();
-        assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
     }
 
@@ -452,19 +426,6 @@ public class ArgumentsTest {
     }
 
     /**
-     * Test of getSinrThreshold method, of class Arguments.
-     */
-    @Test
-    public void testGetSinrThreshold() {
-        System.out.println("getSinrThreshold");
-        Arguments instance = new Arguments();
-        double expResult = 0.0;
-        double result = instance.getSinrThreshold();
-        assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-    }
-
-    /**
      * Test of getSensingSlotDur method, of class Arguments.
      */
     @Test
@@ -500,19 +461,6 @@ public class ArgumentsTest {
         int expResult = 0;
         int result = instance.getTrafficModel();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-    }
-
-    /**
-     * Test of getEnergyThreshold method, of class Arguments.
-     */
-    @Test
-    public void testGetEnergyThreshold() {
-        System.out.println("getEnergyThreshold");
-        Arguments instance = new Arguments();
-        double expResult = 0.0;
-        double result = instance.getEnergyThreshold();
-        assertEquals(expResult, result, 0.0);
         // TODO review the generated test code and remove the default call to fail.
     }
 

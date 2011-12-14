@@ -48,48 +48,12 @@ public class CRNodeTest extends TestCase {
 	}
 
 	/**
-	 * Test of getSnrValues method, of class CRNode.
-	 */
-	public void testGetSnrValues() {
-		System.out.println("getSnrValues");
-		CRNode instance = null;
-		HashMap expResult = null;
-		HashMap result = instance.getSnrValues();
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
-	 * Test of initializeAverageSnr method, of class CRNode.
-	 */
-	public void testInitializeAverageSnr() {
-		System.out.println("initializeAverageSnr");
-		int total_number_of_frequencies = 0;
-		int numberOfZones = 0;
-		CRNode.initializeAverageSnr(total_number_of_frequencies, numberOfZones);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
-	 * Test of logSnrValues method, of class CRNode.
-	 */
-	public void testLogSnrValues() {
-		System.out.println("logSnrValues");
-		CRNode instance = null;
-		instance.logSnrValues();
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
-	 * Test of logAverageSnr method, of class CRNode.
+	 * Test of fuseSensingResults method, of class CRNode.
 	 */
 	public void testLogAverageSnr() {
 		System.out.println("logAverageSnr");
 		double time = 0.0;
-		CRNode.logAverageSnr(time);
+		CRNode.fuseSensingResults(time);
 		// TODO review the generated test code and remove the default call to fail.
 		
 	}
