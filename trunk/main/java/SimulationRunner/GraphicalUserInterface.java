@@ -54,11 +54,11 @@ public class GraphicalUserInterface extends JFrame{
 	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
 	private JTextField noSlotField,slotDurField,sensingResultField,senseScheduleField,commScheduleField,commDurField,
 					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
-					   maxSNR,sinrThresholdFied,noZones,channelBandwithField,tauField;
-	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
+					   transmitPowerField,noZones,channelBandwithField,tauField;
+	private JLabel label1,label2,label3,label4,label5,label7,label8,label9,label10,label11,label12,label13,label14,
 				   label15,label16,label17,label19,label21,label22,label23,label24,label25,label26,label27,label28,
 				   label29,label30,label31;
-	private JComboBox seedModel,channelModel,trafficModel;
+	private JComboBox seedModel,trafficModel;
 	private JButton startSimulation, closeButton;
 	private ButtonGroup animationOnOff, plotOnOff;
 	
@@ -184,96 +184,55 @@ public class GraphicalUserInterface extends JFrame{
 			noPriNodes.addKeyListener(keyAdapter);
 		}
 		{
-			label3 = new JLabel();
-			mainPanel.add(label3);
-			label3.setToolTipText("Model of Wireless Channel");
-			label3.setText("Channel Model");
-			label3.setBounds(labelPos, 65, 165, 16);
-		}
-		{
-			ComboBoxModel channelModelModel = 
-				new DefaultComboBoxModel(
-							new String[] { "Simple Channel", "Lognormal Channel"});
-			channelModel = new JComboBox();
-			mainPanel.add(channelModel);
-			channelModel.setToolTipText("Model of Wireless Channel");
-			channelModel.setModel(channelModelModel);
-			channelModel.addItemListener(new ItemListener() {
-
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-
-				}
-			});
-			mainPanel.add(channelModel);
-			channelModel.setBounds(itemPos, 65, 120, 23);
-			channelModel.addKeyListener(keyAdapter);
-		}
-		{
 			label4 = new JLabel();
 			mainPanel.add(label4);
 			label4.setToolTipText("Duration of Simulation in terms of minutes");
 			label4.setText("Simulation Dur. (min)");
-			label4.setBounds(labelPos, 100, 240, 16);
+			label4.setBounds(labelPos, 65, 240, 16);
 		}
 		{
 			simDur = new JTextField();
 			mainPanel.add(simDur);
 			simDur.setToolTipText("Duration of Simulation in terms of minutes");
-			simDur.setBounds(itemPos, 100, 120, 23);
+			simDur.setBounds(itemPos, 65, 120, 23);
 			simDur.setText("120");
 			simDur.addKeyListener(keyAdapter);
 		}
 		{
 			label5 = new JLabel();
 			mainPanel.add(label5);
-			label5.setToolTipText("Maximum SNR Value of Transmitter");
-			label5.setText("Max SNR Value (dB)");
-			label5.setBounds(labelPos, 135, 165, 16);
+			label5.setToolTipText("Maximum Signal Power of Transmitter");
+			label5.setText("Transmit Power (dBm)");
+			label5.setBounds(labelPos, 100, 165, 16);
 		}
 		{
-			maxSNR = new JTextField();
-			mainPanel.add(maxSNR);
-			maxSNR.setToolTipText("Maximum SNR Value of Transmitter");
-			maxSNR.setBounds(itemPos, 135, 120, 23);
-			maxSNR.setText("17.7");
-			maxSNR.addKeyListener(keyAdapter);
-		}
-		{
-			label6 = new JLabel();
-			mainPanel.add(label6);
-			label6.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
-			label6.setText("SINR Threshold (dB)");
-			label6.setBounds(labelPos, 170, 165, 16);
-		}
-		{
-			sinrThresholdFied = new JTextField();
-			mainPanel.add(sinrThresholdFied);
-			sinrThresholdFied.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
-			sinrThresholdFied.setBounds(itemPos, 170, 120, 23);
-			sinrThresholdFied.setText("2");
-			sinrThresholdFied.addKeyListener(keyAdapter);
+			transmitPowerField = new JTextField();
+			mainPanel.add(transmitPowerField);
+			transmitPowerField.setToolTipText("Maximum Signal Power of Transmitter");
+			transmitPowerField.setBounds(itemPos, 100, 120, 23);
+			transmitPowerField.setText("-50");
+			transmitPowerField.addKeyListener(keyAdapter);
 		}
 		{
 			label1 = new JLabel();
 			mainPanel.add(label1);
-			label1.setToolTipText("Energy Threshold for CR Nodes Decide whether a channel is vacant or not");
-			label1.setText("Energy Threshold (tau)");
-			label1.setBounds(labelPos, 205, 165, 16);
+			label1.setToolTipText("Power Threshold for CR Nodes Decide whether a channel is vacant or not");
+			label1.setText("Power Threshold (dBm)");
+			label1.setBounds(labelPos, 135, 165, 16);
 		}
 		{
 			tauField = new JTextField();
 			mainPanel.add(tauField);
 			tauField.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
-			tauField.setBounds(itemPos, 205, 120, 23);
-			tauField.setText("17.987");
+			tauField.setBounds(itemPos, 135, 120, 23);
+			tauField.setText("-100");
 			tauField.addKeyListener(keyAdapter);
 		}
 		{
 			label7 = new JLabel();
 			mainPanel.add(label7);
 			label7.setText("Seed Model");
-			label7.setBounds(labelPos, 240, 165, 16);
+			label7.setBounds(labelPos, 170, 165, 16);
 		}
 		{
 			ComboBoxModel seedModelModel = 
@@ -297,7 +256,7 @@ public class GraphicalUserInterface extends JFrame{
 				}
 			});
 			mainPanel.add(seedModel);
-			seedModel.setBounds(itemPos, 240, 120, 23);
+			seedModel.setBounds(itemPos, 170, 120, 23);
 			seedModel.addKeyListener(keyAdapter);
 		}
 		{
@@ -305,13 +264,13 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(label8);
 			label8.setToolTipText("Seed Value of Random Number Generator");
 			label8.setText("Seed Value");
-			label8.setBounds(labelPos, 275, 165, 16);
+			label8.setBounds(labelPos, 205, 165, 16);
 		}
 		{
 			seedValue = new JTextField();
 			mainPanel.add(seedValue);
 			seedValue.setToolTipText("Seed Value of Random Number Generator");
-			seedValue.setBounds(itemPos, 275, 120, 23);
+			seedValue.setBounds(itemPos, 205, 120, 23);
 			seedValue.setText("111211211");
 			seedValue.addKeyListener(keyAdapter);
 		}
@@ -320,13 +279,13 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(label9);
 			label9.setToolTipText("Run Animation During Simulation");
 			label9.setText("Animation");
-			label9.setBounds(labelPos, 310, 165, 16);
+			label9.setBounds(labelPos, 240, 165, 16);
 			animationOnOff = new ButtonGroup();
 		}
 		{
 			animationOnButton = new JRadioButton("On");
 			mainPanel.add(animationOnButton);
-			animationOnButton.setBounds(itemPos, 310, 50, 23);
+			animationOnButton.setBounds(itemPos, 240, 50, 23);
 			animationOnButton.setSelected(false);
 			animationOnOff.add(animationOnButton);
 			animationOnButton.addItemListener(new ItemListener() {
@@ -348,7 +307,7 @@ public class GraphicalUserInterface extends JFrame{
 		{
 			animationOffButton = new JRadioButton("Off");
 			mainPanel.add(animationOffButton);
-			animationOffButton.setBounds(itemPos+70, 310, 50, 23);
+			animationOffButton.setBounds(itemPos+70, 240, 50, 23);
 			animationOffButton.setSelected(true);
 			animationOnOff.add(animationOffButton);
 			animationOffButton.addItemListener(new ItemListener() {
@@ -372,13 +331,13 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(label10);
 			label10.setToolTipText("Draw Plots at The End of The Simulation");
 			label10.setText("Plot");
-			label10.setBounds(labelPos, 345, 165, 16);
+			label10.setBounds(labelPos, 275, 165, 16);
 			plotOnOff = new ButtonGroup();
 		}
 		{
 			plotOnButton = new JRadioButton("On");
 			mainPanel.add(plotOnButton);
-			plotOnButton.setBounds(itemPos, 345, 50, 23);
+			plotOnButton.setBounds(itemPos, 275, 50, 23);
 			plotOnButton.setSelected(false);
 			plotOnOff.add(plotOnButton);
 			plotOnButton.addKeyListener(keyAdapter);
@@ -386,13 +345,13 @@ public class GraphicalUserInterface extends JFrame{
 		{
 			plotOffButton = new JRadioButton("Off");
 			mainPanel.add(plotOffButton);
-			plotOffButton.setBounds(itemPos+70, 345, 50, 23);
+			plotOffButton.setBounds(itemPos+70, 275, 50, 23);
 			plotOffButton.setSelected(true);
 			plotOnOff.add(plotOffButton);
 			plotOffButton.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(mainPanel);
-		mainPanel.setBounds(panelLeft, 10, panelWidth, 380);
+		mainPanel.setBounds(panelLeft, 10, panelWidth, 310);
 	}
 	
 	private void initFrameOptionsGUI()
@@ -491,7 +450,7 @@ public class GraphicalUserInterface extends JFrame{
 			commScheduleField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(framePanel);
-		framePanel.setBounds(panelRight,220,panelWidth,240);
+		framePanel.setBounds(panelRight,185,panelWidth,240);
 	}
 	
 	private void initZoneOptionsGUI()
@@ -656,7 +615,7 @@ public class GraphicalUserInterface extends JFrame{
 			noZones.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(zonePanel);
-		zonePanel.setBounds(panelRight, 10, panelWidth, 205);
+		zonePanel.setBounds(panelLeft, 325, panelWidth, 205);
 	}
 	
 	private void initTrafficOptionsGUI()
@@ -758,7 +717,7 @@ public class GraphicalUserInterface extends JFrame{
 			unitTime.setEnabled(false);
 		}
 		tabMainPanel.add(trafficPanel);
-		trafficPanel.setBounds(panelLeft, 395, panelWidth, 170);
+		trafficPanel.setBounds(panelRight, 10, panelWidth, 170);
 	}
 	
 	private void initFrequencyOptionsGUI()
@@ -797,7 +756,7 @@ public class GraphicalUserInterface extends JFrame{
 			channelBandwithField.addKeyListener(keyAdapter);
 		}
 		tabMainPanel.add(frequencyPanel);
-		frequencyPanel.setBounds(panelRight, 465, panelWidth, 100);
+		frequencyPanel.setBounds(panelRight, 430, panelWidth, 100);
 	}
 	
 	private void addZoneOptinsGUI()
@@ -1069,8 +1028,8 @@ public class GraphicalUserInterface extends JFrame{
 	 * Returns the text field that holds max SNR value
 	 * @return The text field that holds max SNR value
 	 */
-	public JTextField getMaxSNR() {
-		return maxSNR;
+	public JTextField getTransmitPower() {
+		return transmitPowerField;
 	}
 
 	/**
@@ -1170,14 +1129,6 @@ public class GraphicalUserInterface extends JFrame{
 	}
 
 	/**
-	 * Returns the text field that holds SINR threshold value
-	 * @return The text field that holds SINR threshold value
-	 */
-	public JTextField getSinrThresholdFied() {
-		return sinrThresholdFied;
-	}
-
-	/**
 	 * Returns the text field that holds sensing slot duration
 	 * @return The text field that holds sensing slot duration
 	 */
@@ -1223,14 +1174,6 @@ public class GraphicalUserInterface extends JFrame{
 	 */
 	public ArrayList<JTextField> getZoneSectorNos() {
 		return zoneSectorNos;
-	}
-
-	/**
-	 * Returns the combo box that holds channel model
-	 * @return The combo box that holds channel model
-	 */
-	public JComboBox getChannelModel() {
-		return channelModel;
 	}
 
 	/**

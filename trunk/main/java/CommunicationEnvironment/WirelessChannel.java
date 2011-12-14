@@ -4,6 +4,7 @@ import Nodes.CRNode;
 import Nodes.Node;
 import Nodes.PrimaryTrafficGeneratorNode;
 import SimulationRunner.SimulationRunner;
+import cern.jet.random.Normal;
 import cern.jet.random.Uniform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -23,26 +24,10 @@ public class WirelessChannel {
 	 */
 	public static final int CR = 1;
 	/**
-	 * List of nodes using channel
-	 */
-	private ArrayList<Node> registeredNodes;
-	/**
 	 * List of frequencies in the channel. ArrayList holds two nodes, first element
 	 * Primary node second element CR node, which use the channel.
 	 */
 	private HashMap<Integer,ArrayList<Node>> frequencies;
-	/**
-	 * 0 for AWGN, 1 for Rayleigh, 2 for Lognormal
-	 */
-	int channelModel;
-	/**
-	 * Simple Channel Model such that SNR = maxSNR / e^f(distance)
-	 */
-	public static final int SIMPLECH = 0;
-	/**
-	 * Lognormal channel model
-	 */
-	public static final int LOGNORMALCH = 1;
 	/**
 	 * There is no available frequency right now
 	 */
@@ -50,16 +35,16 @@ public class WirelessChannel {
 	/**
 	 * Max SNR value of the channel
 	 */
-	public double maxSNR;
-	/**
-	 * Minimum SINR threshold to be able to communicate
-	 */
-	public double sinrThreshold;
+	public double Ptx = -50.0;	//TODO take as parameter
 	/**
 	 * Uniform distribution to accomplish frequency assignments
 	 */
 	public Uniform uniform = null;
-	
+	private Normal transmitNormal = null;
+	private static final double l0 = 38.4;
+	private static final double alpha = 35;
+	private static final double variance = 8;
+	private static final double noisePower = -111.0;
 	private double meanOnDuration;
 	private double meanOffDuration;
 	private int trafficModel;
@@ -91,7 +76,7 @@ public class WirelessChannel {
 	 * Initially there is no node in the channel.
 	 * @param channelModel			0 for Simple ch., 1 for Lognormal ch.
 	 * @param numberOfFrequencies	Number of frequencies in the channel
-	 * @param maxSNR				max SNR value of the channel
+	 * @param transmitPower				max SNR value of the channel
 	 * @param sinrThreshold			SINR threshold for CR nodes to be able to communicate without collision
 	 * @param meanOffDuration 	<ul>
 	 *								<li><i>If Poisson traffic model:</i> Mean number of calls per unit time
@@ -107,10 +92,9 @@ public class WirelessChannel {
 	 * @param unitTime			Scale of msec during animation
 	 * @param bandwidth			Bandwidth of each of the available channels 
 	 */
-	public WirelessChannel(int channelModel, int numberOfFrequencies, double maxSNR, double sinrThreshold,
+	public WirelessChannel(int numberOfFrequencies, double transmitPower,
                 double meanOffDuration, double meanOnDuration, int trafficModel, double unitTime,int bandwidth)
 	{
-		registeredNodes = new ArrayList<Node>();	//Create an empty list for registered nodes
 		frequencies = new HashMap<Integer, ArrayList<Node>>();	//Create a hash table for frequencies with integer keys and 
 													//node values which occupied the frequency
 		for(int i=0;i<numberOfFrequencies;i++){
@@ -120,92 +104,78 @@ public class WirelessChannel {
 			frequencies.put(i, temp);				//Create frequencies
             usageOfFreqs.add(0);
 		}
-		this.channelModel = channelModel;			//Set channel model
-		this.maxSNR = maxSNR;						//Sets max SNR value
-		this.sinrThreshold = sinrThreshold;
 		uniform = new Uniform(SimulationRunner.randEngine);			//Create Uniform distribution to select number of frequencies and their values
+		this.transmitNormal = new Normal(0, variance, SimulationRunner.randEngine);
 		this.meanOffDuration = meanOffDuration;
 		this.meanOnDuration = meanOnDuration;
 		this.trafficModel = trafficModel;
+		this.Ptx = transmitPower;
 		WirelessChannel.unitTime = unitTime;
         WirelessChannel.bandwidth = bandwidth;
         initializeFreqIntervals();
 	}
 	
 	/**
-	 * Registers a node to the channel.
-	 * @param n node that will be registered
-	 */
-	public void registerNode(Node n)
-	{
-		registeredNodes.add(n);						//Add the node to the registered nodes
-	}
-	
-	/**
-	 * Finds an SNR value according to the channel model.
-	 * @param sensor	Node to assign SNR value
+	 * Finds an received power of a CR node from a primary node.
+	 * @param sensor	Node to find received power
 	 * @param frequency Frequency to which the sensor senses
 	 * @return SNR value
 	 */
-	public double generateSNR(Node sensor, int frequency)
+	public double generateReceivedPower(Node sensor, int frequency)
 	{
-		if(channelModel==SIMPLECH){
-			double distance = 0;
-			if(frequencies.get(frequency).get(PRIMARY) !=null){	//If the frequency is occupied
-				distance = sensor.getPosition().distance(frequencies.get(frequency).get(PRIMARY).getPosition());	//Find distance
-				return maxSNR/Math.exp(0.12*distance/10.0);							//between occupier and sensor and compute
-			}																	//attenuation based on this distance
-		}
-		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
-			return 0;
-		}
-		return 0;
+		double distance = 0;
+		if(frequencies.get(frequency).get(PRIMARY) !=null){	//If the frequency is occupied
+			distance = sensor.getPosition().distance(frequencies.get(frequency).get(PRIMARY).getPosition());	//Find distance
+			double prx;
+			if(distance >= 80)
+				prx = Ptx - l0 - alpha*Math.log10(distance / 1000.0) + transmitNormal.nextDouble();
+			else
+				prx = Ptx + transmitNormal.nextDouble();
+			return prx;			//between occupier and sensor and compute
+		}										//attenuation based on this distance
+		return noisePower + transmitNormal.nextDouble();
 	}
-    
-    /**
-     * Finds an SNR value according to the channel model for a given distance.
-     * @param distance Distance between the nodes.
+	
+	/**
+     * Finds an received power for a given distance.
+     * @param distance Distance between the nodes in terms meters.
      * @return SNR value of the signal transmitted by transmitter node.
      */
-    public double generateSNR(double distance)
+    public double generateReceivedPower(double distance)
     {
-        return maxSNR/Math.exp(0.12*distance/10.0);
-    }
-    
-    /**
-     * Finds an INR threshold value according to the SNR value for a zone.
-     * @param zoneId Id of zone
-     * @return INR threshold
-     */
-    public double getInrThreshold(int zoneId){
-		double farthestDistance = SimulationRunner.crBase.farthestDistanceInZone(zoneId) / 10.0;
-		double inr = SimulationRunner.wc.generateSNR(farthestDistance);
-        double tr = WirelessChannel.magTodb(WirelessChannel.dbToMag(inr - SimulationRunner.wc.sinrThreshold)-1);
-        return tr < 0.0 ? 0.0 : tr;
+		double prx = Ptx;
+		if(distance >= 80)
+			prx = Ptx - l0 - alpha*Math.log10(distance / 1000.0);
+		return prx + transmitNormal.nextDouble();
     }
 	
 	/**
-	 * Finds an SNR value according to the channel model.
+	 * Finds channel capacity between two nodes.
 	 * @param transmitter	Node transmitting the signal
-	 * @param receiver		Node to assign SNR value
+	 * @param receiver		Node receiving the signal
 	 * @param freq			Frequency which will be used during the communication between transmitter and receiver
-	 * @return SNR value at receiver caused by transmitter
+	 * @return Bandwidth in terms of bps
 	 */
-	public double generateSINR(Node transmitter, Node receiver, int freq)
-	{
-		double inrdb = generateSNR(receiver, freq);
-		if(channelModel==SIMPLECH){
-			double distance = transmitter.getPosition().distance(receiver.getPosition());
-			double snrdb = maxSNR/Math.exp(0.12*distance/10.0);
-			if(inrdb==0)
-				return snrdb;
-			inrdb = magTodb(dbToMag(inrdb)+1);
-			return snrdb - inrdb;
+	public double currentChannelCapacity(Node transmitter, Node receiver, int freq)
+	{	//TODO Check SINR calculation
+		double interference_db = 0;
+		double distance = transmitter.getPosition().distance(receiver.getPosition());
+		double signal_db = generateReceivedPower(distance);
+		double noise_db = noisePower + transmitNormal.nextDouble();
+		double interfacePower;
+		if(frequencies.get(freq).get(PRIMARY) != null){	//If the frequency is occupied
+			interference_db = generateReceivedPower(receiver, freq);
+			interfacePower = dbmToMag(interference_db);
 		}
-		if(channelModel==LOGNORMALCH){	//NOT SUPPORTED YET
-			return 0;
-		}
-		return 0;
+		else
+			interfacePower = 0.0;
+		double noise_Power = dbmToMag(noise_db);
+		double signalPower = dbmToMag(signal_db);
+		double mag = signalPower / (interfacePower + noise_Power);
+		double capacity = Math.log1p(mag) / Math.log(2);
+		capacity *= bandwidth;
+		return capacity;
+
 	}
 	
 	/**
@@ -345,9 +315,9 @@ public class WirelessChannel {
 	 * @param db dB value to be computed
 	 * @return magnitude equivalent of db
 	 */
-	public static double dbToMag(double db)
+	public static double dbmToMag(double db)
 	{
-		return Math.pow(10, (db/20));
+		return Math.pow(10, ((db - 30.0)/10));
 	}
 	
 	/**
@@ -355,9 +325,9 @@ public class WirelessChannel {
 	 * @param mag Magnitude value to be computed
 	 * @return dB equivalent of mag
 	 */
-	public static double magTodb(double mag)
+	public static double magTodbm(double mag)
 	{
-		return 20.0*Math.log10(mag);
+		return 10.0*Math.log10(mag) + 30.0;
 	}
 	
 	/**

@@ -17,6 +17,7 @@ public class Arguments {
 	private int numberOfAlphaSlices = 0;
 	private int alphaInDegrees;
 	private double radius = 0;
+	private double primaryRadius = 0;
 
 	private int numberOfCrNodes = 0;
 	private int numberOfPriNodes = 0;
@@ -27,9 +28,8 @@ public class Arguments {
 
 	private int numberOfFreq = 0;
 	private int numberOfSensingSlots = 0;
-	private double maxSnr = 0;
-	private double sinrThreshold = 0;
-	private double energyThreshold = 0;
+	private double transmitPower = 0;
+	private double powerThreshold = 0;
 	private int numberOfZones = 0;
 
 	private double sensingSlotDur = 0.0;
@@ -48,7 +48,6 @@ public class Arguments {
 	
 	private double timeUnit = 1;
 	
-	private int channelModel = 0;
 	private int trafficModel = 0;
 	private int seedModel = 0;
 	
@@ -92,12 +91,12 @@ public class Arguments {
 			dNumber = Integer.parseInt(sr.getdNo().getText());				//Get number of d's
 			numberOfAlphaSlices = Integer.parseInt(sr.getAlphaNo().getText());			//Get number of alpha's
 			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;							//Evaluate the angle associated to alpha
-			radius = Double.parseDouble(sr.getRadiusField().getText());		//Get radius of the cell
+			radius = Double.parseDouble(sr.getRadiusField().getText())*100;			//Get radius of the cell
+			primaryRadius = radius + 1500;
 			
 			numberOfFreq = Integer.parseInt(sr.getNoFreqs().getText());						//Get number of frequencies
-			maxSnr = Double.parseDouble(sr.getMaxSNR().getText());							//Get max SNR value
-			sinrThreshold = Double.parseDouble(sr.getSinrThresholdFied().getText());
-			energyThreshold = Double.parseDouble(sr.getTauField().getText());
+			transmitPower = Double.parseDouble(sr.getTransmitPower().getText());							//Get max SNR value
+			powerThreshold = Double.parseDouble(sr.getTauField().getText());
 			
 			numberOfPriNodes = Integer.parseInt(sr.getNoPriNodes().getText());	//Get number of primary nodes
 			numberOfSensingSlots = Integer.parseInt(sr.getNoSlotField().getText());		//Get max number of frequencies a node can sense
@@ -111,10 +110,8 @@ public class Arguments {
 			
 			bandwidth = Integer.parseInt(sr.getChannelBandwithField().getText())*1000;
 			
-			double temp = radius / dNumber;							//Evaluate length of each d as they will be equal
-			double inc = temp;
-			for(int i = 0;i<dNumber;i++,temp+=inc)
-				setOfD.add(temp);									//Create set of d's
+			for(int i = 1;i<=dNumber;i++)
+				setOfD.add(radius * Math.sqrt((double)i/dNumber));									//Create set of d's
 			
 			numberOfCrNodes = 0;
 			for(int i = 0; i<numberOfZones ; i++){
@@ -139,7 +136,6 @@ public class Arguments {
 			else
 				timeUnit = 1;
 			
-			channelModel = sr.getChannelModel().getSelectedIndex();
 			trafficModel = sr.getTrafficModel().getSelectedIndex();
 			plotOn = GraphicalUserInterface.plotOnButton.isSelected();
 			animationOn = GraphicalUserInterface.animationOnButton.isSelected();
@@ -175,12 +171,10 @@ public class Arguments {
 		try {
 			input.nextLine();				//Start parsing Main options
 			numberOfPriNodes = input.nextInt();		//Get number of primary nodes
-			channelModel = input.nextInt();
 			simulationDuration = input.nextLong();				//Get duration of the simulation in terms of min
 			simulationDuration *= 60000;
-			maxSnr = Double.parseDouble(input.next());			//Get max SNR value
-			sinrThreshold = Double.parseDouble(input.next());
-			energyThreshold = Double.parseDouble(input.next());
+			transmitPower = Double.parseDouble(input.next());			//Get transmit power value in terms of dBm
+			powerThreshold = Double.parseDouble(input.next());
 			seedModel = input.nextInt();
 			if(seedModel != 0){						//If seed model is not random
 				seed = input.nextInt();				//Otherwise get seed from user
@@ -217,7 +211,8 @@ public class Arguments {
 			dNumber = input.nextInt();				//Get number of d's
 			numberOfAlphaSlices = input.nextInt();				//Get number of alpha's
 			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;	//Evaluate the angle associated to alpha
-			radius = Double.parseDouble(input.next());			//Get radius of the cell
+			radius = Double.parseDouble(input.next())*100;			//Get radius of the cell
+			primaryRadius = radius + 1500;
 			numberOfZones = input.nextInt();		//Get the number of zones to be simulated
 			
 			input.nextLine();
@@ -235,10 +230,8 @@ public class Arguments {
 				dNumbers.add(dNmber);
 			}
 			
-			double temp = radius / dNumber;			//Evaluate length of each d as they will be equal
-			double inc = temp;
-			for(int i = 0;i<dNumber;i++,temp+=inc)
-				setOfD.add(temp);					//Create set of d's
+			for(int i = 1;i<=dNumber;i++)
+				setOfD.add(radius * Math.sqrt((double)i/dNumber));					//Create set of d's
 
 			timeUnit = 1;
 		} catch(InputMismatchException ime) {
@@ -311,14 +304,6 @@ public class Arguments {
 	}
 
 	/**
-	 * Returns channel model
-	 * @return Channel model
-	 */
-	public int getChannelModel() {
-		return channelModel;
-	}
-
-	/**
 	 * Returns communication duration in a frame in terms of msec
 	 * @return Communication duration in a frame in terms of msec
 	 */
@@ -359,11 +344,11 @@ public class Arguments {
 	}
 
 	/**
-	 * Returns max SNR value
-	 * @return Max SNR value
+	 * Returns transmit power in terms of dBm
+	 * @return transmit power in terms of dBm
 	 */
-	public double getMaxSnr() {
-		return maxSnr;
+	public double getTransmitPower() {
+		return transmitPower;
 	}
 
 	/**
@@ -495,14 +480,6 @@ public class Arguments {
 	}
 
 	/**
-	 * Returns SINR threshold for CR users to communicate using the same frequency with primary user without collision
-	 * @return SINR threshold for CR users to communicate using the same frequency with primary user without collision
-	 */
-	public double getSinrThreshold() {
-		return sinrThreshold;
-	}
-
-	/**
 	 * Returns duration of a sensing slot
 	 * @return Duration of a sensing slot
 	 */
@@ -530,8 +507,8 @@ public class Arguments {
 	 * Returns energy threshold for CR users to decide whether a channel is vacant or not
 	 * @return Energy threshold for CR users to decide whether a channel is vacant or not
 	 */
-	public double getEnergyThreshold() {
-		return energyThreshold;
+	public double getPowerThreshold() {
+		return powerThreshold;
 	}
 	
 	/**
@@ -562,5 +539,9 @@ public class Arguments {
 				GraphicalUserInterface.progressBar.setVisible(false);
 			}
 		}
+	}
+
+	public double getPrimaryRadius() {
+		return primaryRadius;
 	}
 }

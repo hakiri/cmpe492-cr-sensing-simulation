@@ -146,28 +146,14 @@ public class SimulationRunner {
 			randEngine = new MersenneTwister(args.getSeed());			//Otherwise get seed from user
 		}
 
-		wc = new WirelessChannel(args.getChannelModel(), args.getNumberOfFreq(), args.getMaxSnr(), args.getSinrThreshold(),
-								 args.getAverageNumberOfCalls(), args.getAverageCallDur(), args.getTrafficModel(), args.getTimeUnit(),
-								 args.getBandwidth());//Create a wireless channel
+		wc = new WirelessChannel(args.getNumberOfFreq(), args.getTransmitPower(), args.getAverageNumberOfCalls(), 
+								 args.getAverageCallDur(), args.getTrafficModel(), args.getTimeUnit(), args.getBandwidth());//Create a wireless channel
 
 		cell = new Cell(null, args.getRadius(), args.getNumberOfSectors(), args.getAlphaInDegrees(), args.getSetOfD());//Create a cell
 
 		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getNumberOfSensingSlots()); //Create a CR base station in the origin
 		Cell.setBaseStation(crBase);
 		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
-
-		double dmax = crBase.farthestZoneDistance()/10.0;
-		double minSNR = args.getMaxSnr()/Math.exp(dmax*0.12);
-		if(minSNR<=args.getSinrThreshold()){
-			if(args.isBatchMode()){
-				System.out.println("SINR threshold must be less than possible\nminimum SNR value: "+minSNR+"dB");
-			}
-			else{
-				JOptionPane.showMessageDialog(guiRunner, "SINR threshold must be less than possible\nminimum SNR value: "+String.valueOf(minSNR)+"dB",
-					"Simulation", JOptionPane.WARNING_MESSAGE);
-			}
-			return false;
-		}
 
 		if(args.isAnimationOn()){
 			drawCell = new DrawCell((int)args.getRadius(), args.getNumberOfSectors(), args.getNumberOfAlphaSlices(), (int)args.getdNumber(),
@@ -183,7 +169,6 @@ public class SimulationRunner {
 
 		for(int i = 0; i<args.getNumberOfCrNodes() ;i++){
 			crBase.addCRNode(new CRNode(i,crBase.deployNodeinZone(i), 0));
-			wc.registerNode(crBase.getCRNode(i));							//Register CR nodes
 			if(args.isAnimationOn())
 				DrawCell.paintCrNode(crBase.getCRNode(i), Color.GRAY);
 		}
@@ -206,7 +191,7 @@ public class SimulationRunner {
 		}
 		else
 			plot = null;
-		CRNode.initializeAverageSnr(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
+		CRNode.initializeAverageReceivedPowers(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
 		CRNode.createLogFile("log.csv");
 		CRNode.createProbLogFile("prob.txt");
 		return true;
@@ -231,7 +216,6 @@ public class SimulationRunner {
 		GraphicalUserInterface.terminateSimulation.setVisible(true);
 		for(int i = 0;i<args.getNumberOfPriNodes();i++){
 			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
-			wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
 			if(args.isAnimationOn())
 				priTrafGen.registerNode(priTrafGenNodes.get(i));	//and create threads for each of them
 			else
@@ -273,7 +257,6 @@ public class SimulationRunner {
 		
         for(int i = 0;i<args.getNumberOfPriNodes();i++){
 			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
-			wc.registerNode(priTrafGenNodes.get(i));					//generator nodes and register them to the channel
 			priTrafGenDes.registerNode(priTrafGenNodes.get(i));
 		}
         
