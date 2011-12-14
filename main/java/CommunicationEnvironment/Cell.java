@@ -31,7 +31,7 @@ public class Cell {
      */
     static int alpha;
     /**
-     * Uniform distribuion to set random positions to nodes
+     * Uniform distribution to set random positions to nodes
      */
     private static Uniform uniform;
     /**

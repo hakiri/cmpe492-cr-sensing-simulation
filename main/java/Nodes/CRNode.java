@@ -36,14 +36,14 @@ public class CRNode implements Node {
      * Id o the Node
      */
     protected int id;
-	static double tau = 15.987;
+	static double powerThreshold = 15.987;
 	final static int tw = 5;
     
     final static int numberOfReports = 30;
     /**
      * List of frequencies assigned to this node with respect to their SNR values.
      */
-    private HashMap<Integer, Double> snrValues;
+    private HashMap<Integer, Double> receievedPowers;
     /**
      * Writer for the log file.
      */
@@ -52,7 +52,7 @@ public class CRNode implements Node {
     /**
      * Average SNR values of the frequencies.
      */
-    private static ArrayList<ArrayList<Double>> averageSnr = null;
+    private static ArrayList<ArrayList<Double>> averageReceivedPower = null;
 	private static ArrayList<ArrayList<Integer>> sensingDecision = null;
     /**
      * Communication frequency of the CR node.
@@ -121,7 +121,7 @@ public class CRNode implements Node {
     private boolean isCollided = false;
     
     private double last_time;
-    private double last_sinr;
+    private double lastChannelCapacity;
     private double totalNumberOfBitsTransmitted = 0;
     
     /**
@@ -138,7 +138,7 @@ public class CRNode implements Node {
         this.endCommEvent = new EndCommunicationEvent(this.id);
         this.expoInterarrival = new Exponential(SimulationRunner.wc.getMeanOffDuration(), SimulationRunner.randEngine);
         this.expoCommDuration = new Exponential((1.0 / SimulationRunner.wc.getMeanOnDuration()), SimulationRunner.randEngine);
-		CRNode.tau = SimulationRunner.args.getEnergyThreshold();
+		CRNode.powerThreshold = SimulationRunner.args.getPowerThreshold();
     }
 
     /**
@@ -147,11 +147,11 @@ public class CRNode implements Node {
      */
     public void sense(int sensingSlot) {
 		int frequency = freq_list_to_listen.get(sensingSlot);
-		double snrValue = SimulationRunner.wc.generateSNR(this, frequency);
-        snrValues.put(frequency, snrValue);
+		double receivedPower = SimulationRunner.wc.generateReceivedPower(this, frequency);
+        receievedPowers.put(frequency, receivedPower);
         int zone = SimulationRunner.crBase.findZone(id);
-        averageSnr.get(zone).set(frequency, (averageSnr.get(zone).get(frequency) + snrValue));
-		if(tau < generateNonCentralChi(2*tw, 2*WirelessChannel.dbToMag(snrValue)))
+        averageReceivedPower.get(zone).set(frequency, (averageReceivedPower.get(zone).get(frequency) + receivedPower));
+		if(powerThreshold < receivedPower)
 			sensingDecision.get(zone).set(frequency, sensingDecision.get(zone).get(frequency) + 1);
     }
 
@@ -159,8 +159,8 @@ public class CRNode implements Node {
      * Returns SNR values of each frequencies which are assigned to this node.
      * @return SNR values of each frequencies which are assigned to this node.
      */
-    public HashMap<Integer, Double> getSnrValues() {
-        return snrValues;
+    public HashMap<Integer, Double> getReceivedPowers() {
+        return receievedPowers;
     }
 
     /**
@@ -168,14 +168,14 @@ public class CRNode implements Node {
      * @param total_number_of_frequencies	Total number of frequencies
      * @param numberOfZones					Number of zones currently simulating
      */
-    public static void initializeAverageSnr(int total_number_of_frequencies, int numberOfZones) {
-        averageSnr = new ArrayList<ArrayList<Double>>();
+    public static void initializeAverageReceivedPowers(int total_number_of_frequencies, int numberOfZones) {
+        averageReceivedPower = new ArrayList<ArrayList<Double>>();
 		sensingDecision = new ArrayList<ArrayList<Integer>>();
         for (int j = 0; j < numberOfZones; j++) {
-            averageSnr.add(new ArrayList<Double>());
+            averageReceivedPower.add(new ArrayList<Double>());
 			sensingDecision.add(new ArrayList<Integer>());
             for (int i = 0; i < total_number_of_frequencies; i++) {
-                averageSnr.get(j).add(0.0);
+                averageReceivedPower.get(j).add(0.0);
 				sensingDecision.get(j).add(0);
             }
         }
@@ -185,21 +185,22 @@ public class CRNode implements Node {
      * Writes the id of the CRNode, position of the CRNode and snrValues of the CRNode
      * to the log file, respectively.
      */
-    public void logSnrValues() {
-        pw.println("number: " + String.valueOf(id) + " -- position: " + point2DtoString(position) + " -- snrValues: " + hashMapToString(snrValues));
+    public void logReceivedPowers() {
+        pw.println("number: " + String.valueOf(id) + " -- position: " + point2DtoString(position) + " -- snrValues: " + hashMapToString(receievedPowers));
     }
     
     private static void calculate_Pf_Pm()
     {
         double totalFalseAlarm=0.0,totalMissDetection=0.0,frame;
-        double threshold,averageFalseAlarm,averageMissDetection;
+        double averageFalseAlarm,averageMissDetection;
         for (int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
-            threshold = SimulationRunner.wc.getInrThreshold(i);
             for(int j=0;j<SimulationRunner.args.getNumberOfFreq();j++){
-                if((averageSnr.get(i).get(j) <= threshold)&&(sensingDecision.get(i).get(j) == 1)){
+                if((SimulationRunner.wc.getFreq(j).get(WirelessChannel.PRIMARY) == null)&&
+																		(sensingDecision.get(i).get(j) == 1)){
                     SimulationRunner.crBase.incrementFalseAlarm(i);
                 }
-                else if((averageSnr.get(i).get(j) > threshold)&&(sensingDecision.get(i).get(j) == 0)){
+                else if((SimulationRunner.wc.getFreq(j).get(WirelessChannel.PRIMARY) != null)&&
+																		(sensingDecision.get(i).get(j) == 0)){
                     SimulationRunner.crBase.incrementMissDetection(i);
                 }
             }
@@ -236,9 +237,9 @@ public class CRNode implements Node {
      * @param time Current time
      */
     public static void logAverageSnr(double time) {
-        for (int i = 0; i < averageSnr.size(); i++) {   //calculates the average snr values
-            for (int j = 0; j < averageSnr.get(i).size(); j++) {
-                averageSnr.get(i).set(j, (averageSnr.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
+        for (int i = 0; i < averageReceivedPower.size(); i++) {   //calculates the average snr values
+            for (int j = 0; j < averageReceivedPower.get(i).size(); j++) {
+                averageReceivedPower.get(i).set(j, (averageReceivedPower.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
 			                                                                                        //number that listens to this freq.
 				//If more than half of the CR nodes sensing a channel decides that the channel is busy then it is decided busy
 				
@@ -251,13 +252,13 @@ public class CRNode implements Node {
         calculate_Pf_Pm();
         SimulationRunner.crBase.setLastSensingResults(sensingDecision);
         if (SimulationRunner.args.isPlotOn()) {
-            for (int i = 0; i < averageSnr.size(); i++) {
-                SimulationRunner.plot.addPoint(i, time, averageSnr.get(i));
+            for (int i = 0; i < averageReceivedPower.size(); i++) {
+                SimulationRunner.plot.addPoint(i, time, averageReceivedPower.get(i));
             }
         }
-//        pw.println("average snr values and sensing decisions: "); //writing to log file
-//        for (int i = 0; i < averageSnr.size(); i++) {
-//            pw.println(arrayListToString(averageSnr.get(i)));
+        //pw.println("average snr values and sensing decisions: "); //writing to log file
+//        for (int i = 0; i < averageReceivedPower.size(); i++) {
+//            pw.println(arrayListToString(averageReceivedPower.get(i)));
 //			pw.println(sensingDecision.get(i));
 //        }
 //        for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
@@ -279,9 +280,9 @@ public class CRNode implements Node {
 //            pw.println();
 //        }
 
-        for (int i = 0; i < averageSnr.size(); i++) { //resets the avarageSnr list.
-            for (int j = 0; j < averageSnr.get(i).size(); j++) {
-                averageSnr.get(i).set(j, 0.0);
+        for (int i = 0; i < averageReceivedPower.size(); i++) { //resets the avarageSnr list.
+            for (int j = 0; j < averageReceivedPower.get(i).size(); j++) {
+                averageReceivedPower.get(i).set(j, 0.0);
 				sensingDecision.get(i).set(j, 0);
             }
         }
@@ -354,9 +355,9 @@ public class CRNode implements Node {
      * @param frequencies Frequency list
      */
     public void setFrequencyList(ArrayList<Integer> frequencies) {
-        snrValues = new HashMap<Integer, Double>();
+        receievedPowers = new HashMap<Integer, Double>();
         for (int i = 0; i < frequencies.size(); i++) {
-            snrValues.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
+            receievedPowers.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
             //hash table with 0.0 initial snr value
         }
         freq_list_to_listen = frequencies;
@@ -402,33 +403,31 @@ public class CRNode implements Node {
      */
     public static void communicate(double time,boolean isRegular, boolean lastReport) {
         
-        ArrayList<Double> sinr = new ArrayList<Double>();
+        ArrayList<Double> channelCapacity = new ArrayList<Double>();
         for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
-            sinr.add(0.0);
+            channelCapacity.add(0.0);
         }
         for (int i = 0; i < SimulationRunner.crBase.numberOfCRNodes(); i++) {
             if (!SimulationRunner.crBase.getCRNode(i).commOrNot) {
                 continue;
             }
-            String collision = "no collision";
             int freq = SimulationRunner.crBase.getCRNode(i).communication_frequency;
 			
-			sinr.set(freq,SimulationRunner.wc.generateSINR(SimulationRunner.crBase, SimulationRunner.crBase.getCRNode(i), freq));
-			if(sinr.get(freq)<SimulationRunner.wc.sinrThreshold){ //checks if collision occured
-				collision = "collision occured";
+			channelCapacity.set(freq,SimulationRunner.wc.currentChannelCapacity(SimulationRunner.crBase, SimulationRunner.crBase.getCRNode(i), freq));
+			if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.PRIMARY) != null){ //checks if collision occured
 				SimulationRunner.crBase.getCRNode(i).collisionOccured = true;
 			}
 			if(isRegular && !lastReport){   //updates time and sinr value of communicating cr nodes
                 SimulationRunner.crBase.getCRNode(i).last_time = time;
-                SimulationRunner.crBase.getCRNode(i).last_sinr = sinr.get(freq);
+                SimulationRunner.crBase.getCRNode(i).lastChannelCapacity = channelCapacity.get(freq);
             }
             if(isRegular && lastReport){
-                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crBase.getCRNode(i).last_sinr))/Math.log(2))*0.001;
+                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001;
             }
             if(!isRegular){
-                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*WirelessChannel.bandwidth*(Math.log(1+WirelessChannel.dbToMag(SimulationRunner.crBase.getCRNode(i).last_sinr))/Math.log(2))*0.001;
+                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001;
                 SimulationRunner.crBase.getCRNode(i).last_time = time;
-                SimulationRunner.crBase.getCRNode(i).last_sinr = sinr.get(freq);
+                SimulationRunner.crBase.getCRNode(i).lastChannelCapacity = channelCapacity.get(freq);
             }
             
 			double msec = (double)time;
@@ -449,7 +448,7 @@ public class CRNode implements Node {
 			}
         }
 		if(SimulationRunner.args.isPlotOn())
-			SimulationRunner.plot.addPoint(SimulationRunner.crBase.registeredZones.size(),time, sinr);
+			SimulationRunner.plot.addPoint(SimulationRunner.crBase.registeredZones.size(),time, channelCapacity);
     }
 
     /**
