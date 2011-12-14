@@ -38,6 +38,8 @@ public class CRNode implements Node {
     protected int id;
 	static double tau = 15.987;
 	final static int tw = 5;
+    
+    final static int numberOfReports = 30;
     /**
      * List of frequencies assigned to this node with respect to their SNR values.
      */
@@ -290,8 +292,15 @@ public class CRNode implements Node {
      * @param file_name Name of the log file
      */
     public static void createLogFile(String file_name) {
+        String justComma = "";
         try {
             pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
+            for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+                justComma += ";";
+            }
+            writeLogFile(String.format(Locale.US, "Time;Number of False Alarms"+justComma+"Number of Miss Detection"
+                    +justComma+"Number of Miss Collisions"+justComma+"Number of Miss Blocks"+justComma
+                    +"Number of Miss Drops"+justComma+"Throughput"+justComma));
         } catch (IOException ex) {
             System.err.println("Error during file operations");
         }
@@ -464,8 +473,8 @@ public class CRNode implements Node {
      * @return CrNode statistic values
      */
     public static String[][] logStats() {
-        writeLogFile("-----CR NODE STATS-----");
-        writeLogFile(String.format(Locale.US, "Total Number of frames: %d", totalNumberOfFrames));
+//        writeLogFile("-----CR NODE STATS-----");
+//        writeLogFile(String.format(Locale.US, "Total Number of frames: %d", totalNumberOfFrames));
         double totalNumberOfFramesComm = 0.0, totalNumberOfCollision = 0.0, totalNumberOfCallAttempts = 0.0;
         double totalNumberOfCalls = 0.0, totalNumberOfBlocks = 0.0, totalNumberOfDrops = 0.0, totalNumberOfForcedHandoffs = 0.0, totalThroughput = 0.0;
         String[][] data = new String[SimulationRunner.crBase.numberOfCRNodes() + 1][9];
@@ -477,8 +486,8 @@ public class CRNode implements Node {
                 throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime());
             else if(!SimulationRunner.args.isAnimationOn())
                 throughput = (int)(c.totalNumberOfBitsTransmitted/SimulationRunner.crDesScheduler.getCommDur());
-            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %.2f Kbits",
-                    c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, (throughput/1024.0)));
+//            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %.2f Kbits",
+//                    c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, (throughput/1024.0)));
             totalNumberOfFramesComm += c.numberOfFramesCommunicated;
             totalNumberOfCollision += c.numberOfCollision;
             totalNumberOfCallAttempts += c.numberOfCallAttempts;
@@ -507,16 +516,16 @@ public class CRNode implements Node {
         totalNumberOfDrops /= numberOfCRNodes;
         totalNumberOfForcedHandoffs /= numberOfCRNodes;
         totalThroughput /= numberOfCRNodes;
-        writeLogFile("\nAverage:");
-        writeLogFile(String.format(Locale.US, "Number of CR Nodes\t\t\t\t: %d", numberOfCRNodes));
-        writeLogFile(String.format(Locale.US, "Number of Call Attempts\t\t\t: %.2f", totalNumberOfCallAttempts));
-        writeLogFile(String.format(Locale.US, "Number of Calls\t\t\t\t\t: %.2f", totalNumberOfCalls));
-        writeLogFile(String.format(Locale.US, "Number of Frames Communicated\t: %.2f", totalNumberOfFramesComm));
-        writeLogFile(String.format(Locale.US, "Number of Blocks\t\t\t\t: %.2f", totalNumberOfBlocks));
-        writeLogFile(String.format(Locale.US, "Number of Drops\t\t\t\t\t: %.2f", totalNumberOfDrops));
-        writeLogFile(String.format(Locale.US, "Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
-        writeLogFile(String.format(Locale.US, "Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
-		writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f Kbits", totalThroughput/1024.0));
+//        writeLogFile("\nAverage:");
+//        writeLogFile(String.format(Locale.US, "Number of CR Nodes\t\t\t\t: %d", numberOfCRNodes));
+//        writeLogFile(String.format(Locale.US, "Number of Call Attempts\t\t\t: %.2f", totalNumberOfCallAttempts));
+//        writeLogFile(String.format(Locale.US, "Number of Calls\t\t\t\t\t: %.2f", totalNumberOfCalls));
+//        writeLogFile(String.format(Locale.US, "Number of Frames Communicated\t: %.2f", totalNumberOfFramesComm));
+//        writeLogFile(String.format(Locale.US, "Number of Blocks\t\t\t\t: %.2f", totalNumberOfBlocks));
+//        writeLogFile(String.format(Locale.US, "Number of Drops\t\t\t\t\t: %.2f", totalNumberOfDrops));
+//        writeLogFile(String.format(Locale.US, "Number of Forced Handoff\t\t: %.2f", totalNumberOfForcedHandoffs));
+//        writeLogFile(String.format(Locale.US, "Number of Collisions\t\t\t: %.2f", totalNumberOfCollision));
+//		writeLogFile(String.format(Locale.US, "Throughput\t\t\t: %.2f Kbits", totalThroughput/1024.0));
         
         data[i][0] = "Average";
         data[i][1] = String.format(Locale.US, "%.2f", totalNumberOfCallAttempts);
@@ -527,14 +536,14 @@ public class CRNode implements Node {
         data[i][6] = String.format(Locale.US, "%.2f", totalNumberOfForcedHandoffs);
         data[i][7] = String.format(Locale.US, "%.2f", totalNumberOfCollision);
 		data[i][8] = String.format(Locale.US, "%.2f Kbits/sec", totalThroughput/1024.0);
-        writeLogFile("\n\nProbabilities of False Alarm");
-        for(int j=0;j<SimulationRunner.args.getNumberOfZones();j++){
-            writeLogFile(String.format(Locale.US, "%d. Zone : %f --- total false alarm: %f", j, (double)(SimulationRunner.crBase.getFalseAlarm(j)/totalNumberOfFrames),SimulationRunner.crBase.getFalseAlarm(j)));
-        }
-        writeLogFile("\n\nProbabilities of Miss Detection");
-        for(int j=0;j<SimulationRunner.args.getNumberOfZones();j++){
-            writeLogFile(String.format(Locale.US, "%d. Zone : %f --- total miss detection: %f", j, (double)(SimulationRunner.crBase.getMissDetection(j)/totalNumberOfFrames),SimulationRunner.crBase.getMissDetection(j)));
-        }
+//        writeLogFile("\n\nProbabilities of False Alarm");
+//        for(int j=0;j<SimulationRunner.args.getNumberOfZones();j++){
+//            writeLogFile(String.format(Locale.US, "%d. Zone : %f --- total false alarm: %f", j, (double)(SimulationRunner.crBase.getFalseAlarm(j)/totalNumberOfFrames),SimulationRunner.crBase.getFalseAlarm(j)));
+//        }
+//        writeLogFile("\n\nProbabilities of Miss Detection");
+//        for(int j=0;j<SimulationRunner.args.getNumberOfZones();j++){
+//            writeLogFile(String.format(Locale.US, "%d. Zone : %f --- total miss detection: %f", j, (double)(SimulationRunner.crBase.getMissDetection(j)/totalNumberOfFrames),SimulationRunner.crBase.getMissDetection(j)));
+//        }
         return data;
     }
 

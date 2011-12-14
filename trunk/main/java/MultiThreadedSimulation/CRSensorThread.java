@@ -337,7 +337,7 @@ public class CRSensorThread implements Runnable{
 	{
 		time = System.currentTimeMillis();		//Save current time
 		CRNode.communicate((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime,true, false);
-		CRNode.writeLogFile("");
+//		CRNode.writeLogFile("");
 		double endRemainingSimulationDuration = remainingSimulationDuration - commDur;
 		time = (long)(commDur) - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 		while(time>1){												//unit time if it is greater than 1 milli sec

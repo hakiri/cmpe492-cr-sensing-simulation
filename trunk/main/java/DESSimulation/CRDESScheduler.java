@@ -123,7 +123,7 @@ public class CRDESScheduler extends SimEnt{
 	 */
 	private long currentFrame;
     private boolean isInComm = false;    
-        
+     String justComma = "";    
 	/**
 	 * Creates a DES scheduler that performs frame action for CR sensor nodes
 	 * @param simulationDuration			Duration of the simulation in unit time
@@ -151,6 +151,9 @@ public class CRDESScheduler extends SimEnt{
 		currentFrame = 0;
 		this.frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement + commScheduleAdvertisement + commDur;
 		CRNode.setTotalNumberOfFrames((int)(simulationDuration / this.frameDuration));
+        for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+                justComma += ";";
+        }
 	}
 	
 	/**
@@ -299,14 +302,15 @@ public class CRDESScheduler extends SimEnt{
 	{
 		int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
         double blockProb, dropProb,collisionProb,estimatedCollisionProb;
+        String falseAlarms="",missDetections="",collisions="",drops="",blocks="",throughput="";
         /*Write time to log file*/
 		double msec = (double)(Scheduler.instance().getTime())/unitTime;
-		int hour = (int)(msec/3600000.0);
-		msec -= hour*3600000.0;
-		int min = (int)(msec/60000.0);
-		msec -= min*60000.0;
-		int sec = (int)(msec/1000.0);
-		msec-= sec*1000.0;
+//		int hour = (int)(msec/3600000.0);
+//		msec -= hour*3600000.0;
+//		int min = (int)(msec/60000.0);
+//		msec -= min*60000.0;
+//		int sec = (int)(msec/1000.0);
+//		msec-= sec*1000.0;
 //		CRNode.writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 //		CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
         //calculate drop,block and collision probabilities
@@ -344,9 +348,18 @@ public class CRDESScheduler extends SimEnt{
 		probs.add(collisionProb);
         probs.add(estimatedCollisionProb);
 		SimulationRunner.plotProbs.addPoint(Scheduler.instance().getTime(), probs);
-		CRNode.writeLogFileProb(String.format(Locale.US,"Total number of Call Attempts: %d --- Total number of calls: %d --- Total number of drops: %d", totalCallAttempts,totalCalls,totalDrops));
-        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f --- Estimated Collision prob: %.4f", blockProb,dropProb,collisionProb,estimatedCollisionProb));
-		CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
+//		CRNode.writeLogFileProb(String.format(Locale.US,"Total number of Call Attempts: %d --- Total number of calls: %d --- Total number of drops: %d", totalCallAttempts,totalCalls,totalDrops));
+//        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f --- Estimated Collision prob: %.4f", blockProb,dropProb,collisionProb,estimatedCollisionProb));
+		//TODO writing log file 30 times
+        for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+            falseAlarms += String.valueOf(SimulationRunner.crBase.getFalseAlarm(i))+";";
+            missDetections += String.valueOf(SimulationRunner.crBase.getMissDetection(i))+";";
+            collisions += String.valueOf(SimulationRunner.crBase)+";";//FIXME zone based collisions should be calculated
+        }
+        CRNode.writeLogFile(String.format(Locale.US, "%.2f;Number of False Alarms"+justComma+"Number of Miss Detection"
+                    +justComma+"Number of Miss Collisions"+justComma+"Number of Miss Blocks"+justComma
+                    +"Number of Miss Drops"+justComma+"Throughput"+justComma,msec));
+        CRNode.logAverageSnr((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
 	}
 	
 	private void commScheduleAdvertise()

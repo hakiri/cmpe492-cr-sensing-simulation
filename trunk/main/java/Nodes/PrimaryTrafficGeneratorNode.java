@@ -131,7 +131,7 @@ public class PrimaryTrafficGeneratorNode implements Node{
 	{
 		int totalCallAttempts = 0, totalDrops = 0;
 		double totalCommDur = 0;
-		CRNode.writeLogFile("\n-----PRIMARY NODE STATS-----");
+//		CRNode.writeLogFile("\n-----PRIMARY NODE STATS-----");
 		
 		ArrayList<PrimaryTrafficGeneratorNode> list = new ArrayList<PrimaryTrafficGeneratorNode>(registeredNodes.keySet());
 		String[][] data = new String[list.size()+2][3];
@@ -154,8 +154,8 @@ public class PrimaryTrafficGeneratorNode implements Node{
 			int sec = (int)(msec/1000.0);
 			msec-= sec*1000.0;
 			
-			CRNode.writeLogFile(String.format(Locale.US,"Primary Node: %2d\tNumber of Calls: %d\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
-				n.getId(), n.getNumberOfCallAttempts() - n.getNumberOfDrops(), hour,min,sec,msec));
+//			CRNode.writeLogFile(String.format(Locale.US,"Primary Node: %2d\tNumber of Calls: %d\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
+//				n.getId(), n.getNumberOfCallAttempts() - n.getNumberOfDrops(), hour,min,sec,msec));
 			totalCallAttempts += n.getNumberOfCallAttempts();
 			totalCommDur += n.getComunicationDuration();
 			totalDrops += n.getNumberOfDrops();
@@ -175,8 +175,8 @@ public class PrimaryTrafficGeneratorNode implements Node{
 		int sec = (int)(msec/1000.0);
 		msec-= sec*1000.0;
         
-		CRNode.writeLogFile(String.format(Locale.US,"TOTAL\t\t\t\tNumber of Calls: %d\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
-				totalCallAttempts - totalDrops, hour,min,sec,msec));
+//		CRNode.writeLogFile(String.format(Locale.US,"TOTAL\t\t\t\tNumber of Calls: %d\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
+//				totalCallAttempts - totalDrops, hour,min,sec,msec));
 		
 		msec = totalCommDur/(double)list.size();
 		hour = (int)(msec/3600000.0);
@@ -186,25 +186,25 @@ public class PrimaryTrafficGeneratorNode implements Node{
 		sec = (int)(msec/1000.0);
 		msec-= sec*1000.0;
 		
-		CRNode.writeLogFile(String.format(Locale.US,"Average\t\t\t\tNumber of Calls: %.2f\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
-				(double)(totalCallAttempts - totalDrops) / (double)list.size(), hour,min,sec,msec));
+//		CRNode.writeLogFile(String.format(Locale.US,"Average\t\t\t\tNumber of Calls: %.2f\t\tCommunication Duration: %2d:%2d:%2d:%.2f",
+//				(double)(totalCallAttempts - totalDrops) / (double)list.size(), hour,min,sec,msec));
 		
         double totalUsageOfFreq = 0.0;
-        CRNode.writeLogFile("");
-        for(int j=0;j<SimulationRunner.wc.numberOfFreq();j++){
-            CRNode.writeLogFile(String.format(Locale.US, "Freq# %d used %d times, by primary users", j,SimulationRunner.wc.usageOfFreqs.get(j)));
-        }
-        CRNode.writeLogFile("");
-        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
-            totalUsageOfFreq += SimulationRunner.wc.usageOfFreqsInIntervals.get(j);
-        }
-        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
-            CRNode.writeLogFile(String.format(Locale.US, "Total usage of %d. freq interval is %d (which is %.2f percentage in total)",j,SimulationRunner.wc.usageOfFreqsInIntervals.get(j),SimulationRunner.wc.usageOfFreqsInIntervals.get(j)/totalUsageOfFreq));
-        }
-        CRNode.writeLogFile("");
-        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
-            CRNode.writeLogFile(String.format(Locale.US, "Last index of %d. freq interval is %d",j,SimulationRunner.wc.indexesOfFreqIntervals.get(j)-1));
-        }
+//        CRNode.writeLogFile("");
+//        for(int j=0;j<SimulationRunner.wc.numberOfFreq();j++){
+//            CRNode.writeLogFile(String.format(Locale.US, "Freq# %d used %d times, by primary users", j,SimulationRunner.wc.usageOfFreqs.get(j)));
+//        }
+//        CRNode.writeLogFile("");
+//        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
+//            totalUsageOfFreq += SimulationRunner.wc.usageOfFreqsInIntervals.get(j);
+//        }
+//        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
+//            CRNode.writeLogFile(String.format(Locale.US, "Total usage of %d. freq interval is %d (which is %.2f percentage in total)",j,SimulationRunner.wc.usageOfFreqsInIntervals.get(j),SimulationRunner.wc.usageOfFreqsInIntervals.get(j)/totalUsageOfFreq));
+//        }
+//        CRNode.writeLogFile("");
+//        for(int j=0;j<SimulationRunner.wc.indexesOfFreqIntervals.size();j++){
+//            CRNode.writeLogFile(String.format(Locale.US, "Last index of %d. freq interval is %d",j,SimulationRunner.wc.indexesOfFreqIntervals.get(j)-1));
+//        }
         
 		data[i][0] = "Total";
 		data[i][1] = String.valueOf(totalCallAttempts - totalDrops);
