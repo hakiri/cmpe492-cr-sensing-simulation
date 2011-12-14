@@ -84,7 +84,11 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     private ArrayList<Integer> nodesInZone;
     private ArrayList<Double> falseAlarm;
     private ArrayList<Double> missDetection;
-    
+    private ArrayList<Double> collisions;
+    private ArrayList<Double> drops;
+    private ArrayList<Double> blocks;
+    private ArrayList<Double> totalNumberOfBitsTransmitted;
+    private ArrayList<Double> totalCommunicatedFrames;
     /**
      * Creates a CRBase at the given position.
      * @param pos Position of the Base station
@@ -104,6 +108,11 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 		this.nodesInZone = new ArrayList<Integer>();
         this.falseAlarm = new ArrayList<Double>();
         this.missDetection = new ArrayList<Double>();
+        this.collisions = new ArrayList<Double>();
+        this.blocks = new ArrayList<Double>();
+        this.drops = new ArrayList<Double>();
+        this.totalNumberOfBitsTransmitted = new ArrayList<Double>();
+        this.totalCommunicatedFrames = new ArrayList<Double>();
     }
 
 	@Override
@@ -287,6 +296,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 					DrawCell.paintCrNode(get(i), Color.GRAY);
 				}
 				get(i).setNumberOfBlocks(get(i).getNumberOfBlocks()+1);
+                incrementBlock(findZone(id));
 			}
 		}
 		
@@ -400,7 +410,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 					if(get(crInZone).getIsCollided()){
 						if(get(crInZone).getCommunication_frequency() == -1){
 							get(crInZone).setNumberOfDrops(get(crInZone).getNumberOfDrops() + 1);
-							
+							incrementDrop(zoneNumber);
 							double msec = Scheduler.instance().getTime();
 							int hour = (int)(msec/3600000.0);
 							msec -= hour*3600000.0;
@@ -455,27 +465,6 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     }
     
 	/**
-	 * Takes parameters of a zone and registers this zone into registeredZones
-	 * @param sector Sector of the zone
-	 * @param alpha Alpha number of the zone
-	 * @param d Distance section of the zone
-	 * @param crnodes Total number of crnodes in that zone
-	 */
-    public void registerZone(int sector, int alpha, int d, int crnodes){
-        ArrayList<Integer> zone = new ArrayList<Integer>();
-        zone.add(sector);
-        zone.add(alpha);
-        zone.add(d);
-        registeredZones.add(zone);
-        missDetection.add(0.0);
-        falseAlarm.add(0.0);
-        if(nodesInZone.size() > 0)
-            nodesInZone.add(crnodes + nodesInZone.get(nodesInZone.size() - 1));
-        else
-            nodesInZone.add(crnodes);
-    }
-	
-	/**
 	 * Takes parameters of multiple zones and registers those zones into registeredZones
 	 * @param sector Sector of the zone
 	 * @param alpha Alpha number of the zone
@@ -491,6 +480,11 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 			registeredZones.add(zone);
 			missDetection.add(0.0);
 			falseAlarm.add(0.0);
+            collisions.add(0.0);
+            blocks.add(0.0);
+            drops.add(0.0);
+            totalNumberOfBitsTransmitted.add(0.0);
+            totalCommunicatedFrames.add(0.0);
 			if(nodesInZone.size() > 0)
 				nodesInZone.add(crnodes.get(i) + nodesInZone.get(nodesInZone.size() - 1));
 			else
@@ -560,13 +554,33 @@ public class CRBase extends ArrayList<CRNode> implements Node{
         }
         return distance;
     }
-
+    
     public double  getFalseAlarm(int zoneId) {
         return falseAlarm.get(zoneId);
     }
 
     public double getMissDetection(int zoneId) {
         return missDetection.get(zoneId);
+    }
+
+    public double getCollisions(int zoneId) {
+        return collisions.get(zoneId);
+    }
+
+    public double getDrops(int zoneId) {
+        return drops.get(zoneId);
+    }
+
+    public double getBlocks(int zoneId) {
+        return blocks.get(zoneId);
+    }
+    
+    public double getTotalBitsTransmitted(int zoneId) {
+        return totalNumberOfBitsTransmitted.get(zoneId);
+    }
+    
+    public double getTotalCommunicatedFrames(int zoneId) {
+        return totalCommunicatedFrames.get(zoneId);
     }
     
     public void incrementFalseAlarm(int zoneId) {
@@ -577,6 +591,26 @@ public class CRBase extends ArrayList<CRNode> implements Node{
         missDetection.set(zoneId, missDetection.get(zoneId)+1);
     }
 	
+    public void incrementCollision(int zoneId) {
+        collisions.set(zoneId, collisions.get(zoneId)+1);
+    }
+    
+    public void incrementDrop(int zoneId) {
+        drops.set(zoneId, drops.get(zoneId)+1);
+    }
+    
+    public void incrementBlock(int zoneId) {
+        blocks.set(zoneId, blocks.get(zoneId)+1);
+    }
+    
+    public void incrementTotalBitsTransmitted(int zoneId, double increase) {
+        totalNumberOfBitsTransmitted.set(zoneId, totalNumberOfBitsTransmitted.get(zoneId)+increase);
+    }
+    
+    public void incrementTotalCommunicatedFrames(int zoneId) {
+        totalCommunicatedFrames.set(zoneId, totalCommunicatedFrames.get(zoneId)+1);
+    }
+    
 	public void addCRNode(CRNode n)
 	{
 		super.add(n);

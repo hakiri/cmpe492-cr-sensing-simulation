@@ -253,8 +253,9 @@ public class CRSensorThread implements Runnable{
 	private void senseResultAdvertise()
 	{
         int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
-        double blockProb, dropProb,collisionProb,estimatedCollisionProb;
-		time = System.currentTimeMillis();		//Save current time
+        double blockProb, dropProb,collisionProb,estimatedCollisionProb,th=0.0;
+		String falseAlarms="",missDetections="",collisions="",drops="",blocks="",throughput="";
+        time = System.currentTimeMillis();		//Save current time
 		/*Write time to log file*/
 		double msec = (double)(totalSimulationDuration-remainingSimulationDuration)/unitTime;
 		int hour = (int)(msec/3600000.0);
@@ -300,7 +301,22 @@ public class CRSensorThread implements Runnable{
         probs.add(estimatedCollisionProb);
 		SimulationRunner.plotProbs.addPoint((totalSimulationDuration-remainingSimulationDuration)/unitTime, probs);
         CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f --- Estimated Collision prob: %.4f", blockProb,dropProb,collisionProb,estimatedCollisionProb));
-		CRNode.logAverageSnr((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
+		if(CRNode.reportingFrames.contains(frame)){
+            for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+                falseAlarms += String.valueOf(SimulationRunner.crBase.getFalseAlarm(i))+";";
+                missDetections += String.valueOf(SimulationRunner.crBase.getMissDetection(i))+";";
+                collisions += String.valueOf(SimulationRunner.crBase.getCollisions(i))+";";
+                blocks += String.valueOf(SimulationRunner.crBase.getBlocks(i))+";";
+                drops += String.valueOf(SimulationRunner.crBase.getDrops(i))+";";
+                if(SimulationRunner.args.isAnimationOn())
+                    th = (int)(SimulationRunner.crBase.getTotalBitsTransmitted(i)/SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime());
+                else if(!SimulationRunner.args.isAnimationOn())
+                    th = (int)(SimulationRunner.crBase.getTotalBitsTransmitted(i)/SimulationRunner.crDesScheduler.getCommDur());
+                throughput += String.valueOf(th)+";";
+            }
+            CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarms+missDetections+collisions+blocks+drops+throughput,msec));
+        }
+        CRNode.fuseSensingResults((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
 		
 		time = (long)senseResultAdvertisement - (System.currentTimeMillis() - time);	//Calculate time spent by now and subtract it from
 		while(time>1){												//unit time if it is greater than 1 milli sec sleep for that amount
