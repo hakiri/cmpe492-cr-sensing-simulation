@@ -296,7 +296,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 					DrawCell.paintCrNode(get(i), Color.GRAY);
 				}
 				get(i).setNumberOfBlocks(get(i).getNumberOfBlocks()+1);
-                incrementBlock(findZone(id));
+                incrementBlock(findZone(i));
 			}
 		}
 		
