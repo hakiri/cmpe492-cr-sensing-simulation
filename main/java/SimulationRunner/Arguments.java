@@ -31,9 +31,11 @@ public class Arguments {
 	private int numberOfSensingSlots = 0;
 	private double transmitPower = 0;
 	private double powerThreshold = 0;
+	private double noiseFloor = 0;
+	private double noiseStdDev = 0;
+	
 	private int numberOfZones = 0;
-
-	private double sensingSlotDur = 0.0;
+private double sensingSlotDur = 0.0;
 	private double senseScheduleAdvertisementDur = 0.0;
 	private double commScheduleAdvertisementDur = 0.0;
 	private double commDur = 0.0;
@@ -72,55 +74,57 @@ public class Arguments {
 	
 	/**
 	 * Parses the arguments from GUI.
-	 * @param sr GUI of simulation that holds parameters
+	 * @param gui GUI of simulation that holds parameters
 	 * @return <ul>
 	 *				<li><i>True </i> if there is no parsing errors
 	 *				<li><i>False </i> if there are parsing errors
 	 *		   </ul>
 	 */
-	public boolean parseArguments(GraphicalUserInterface sr)
+	public boolean parseArguments(GraphicalUserInterface gui)
 	{
 		try{
 			batchMode = false;
 					
-			sensingSlotDur = Double.parseDouble(sr.getSlotDurField().getText());
-			senseScheduleAdvertisementDur = Double.parseDouble(sr.getSenseScheduleField().getText());
-			commScheduleAdvertisementDur = Double.parseDouble(sr.getCommScheduleField().getText());
-			commDur = Double.parseDouble(sr.getCommDurField().getText());
-			senseResultAdvertisementDur = Double.parseDouble(sr.getSensingResultField().getText());
+			sensingSlotDur = Double.parseDouble(gui.getSlotDurField().getText());
+			senseScheduleAdvertisementDur = Double.parseDouble(gui.getSenseScheduleField().getText());
+			commScheduleAdvertisementDur = Double.parseDouble(gui.getCommScheduleField().getText());
+			commDur = Double.parseDouble(gui.getCommDurField().getText());
+			senseResultAdvertisementDur = Double.parseDouble(gui.getSensingResultField().getText());
 			
-			numberOfSectors = Integer.parseInt(sr.getSectorNo().getText());			//Get number of sectors in the cell
-			dNumber = Integer.parseInt(sr.getdNo().getText());				//Get number of d's
-			numberOfAlphaSlices = Integer.parseInt(sr.getAlphaNo().getText());			//Get number of alpha's
+			numberOfSectors = Integer.parseInt(gui.getSectorNo().getText());			//Get number of sectors in the cell
+			dNumber = Integer.parseInt(gui.getdNo().getText());				//Get number of d's
+			numberOfAlphaSlices = Integer.parseInt(gui.getAlphaNo().getText());			//Get number of alpha's
 			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;							//Evaluate the angle associated to alpha
-			radius = Double.parseDouble(sr.getRadiusField().getText())*100;			//Get radius of the cell
+			radius = Double.parseDouble(gui.getRadiusField().getText())*100;			//Get radius of the cell
 			primaryRadius = radius + 1500;
 			
-			numberOfFreq = Integer.parseInt(sr.getNoFreqs().getText());						//Get number of frequencies
-			transmitPower = Double.parseDouble(sr.getTransmitPower().getText());							//Get max SNR value
-			powerThreshold = Double.parseDouble(sr.getTauField().getText());
+			numberOfFreq = Integer.parseInt(gui.getNoFreqs().getText());						//Get number of frequencies
+			transmitPower = Double.parseDouble(gui.getTransmitPower().getText());							//Get max SNR value
+			powerThreshold = Double.parseDouble(gui.getTauField().getText());
+			noiseFloor = Double.parseDouble(gui.getNoiseFloorField().getText());
+			noiseStdDev = Double.parseDouble(gui.getNoiseStdDevField().getText());
 			
-			numberOfPriNodes = Integer.parseInt(sr.getNoPriNodes().getText());	//Get number of primary nodes
-			numberOfSensingSlots = Integer.parseInt(sr.getNoSlotField().getText());		//Get max number of frequencies a node can sense
-			numberOfZones = Integer.parseInt(sr.getNoZones().getText());		//Get the number of zones to be simulated
+			numberOfPriNodes = Integer.parseInt(gui.getNoPriNodes().getText());	//Get number of primary nodes
+			numberOfSensingSlots = Integer.parseInt(gui.getNoSlotField().getText());		//Get max number of frequencies a node can sense
+			numberOfZones = Integer.parseInt(gui.getNoZones().getText());		//Get the number of zones to be simulated
 			
-			averageNumberOfCalls = Double.parseDouble(sr.getNoCalls().getText());		//Get number of calls per hour
-			averageCallDur = Double.parseDouble(sr.getCallDur().getText());	//Get call duration in terms of min
+			averageNumberOfCalls = Double.parseDouble(gui.getNoCalls().getText());		//Get number of calls per hour
+			averageCallDur = Double.parseDouble(gui.getCallDur().getText());	//Get call duration in terms of min
 			
-			simulationDuration = Long.parseLong(sr.getSimDur().getText());			//Get duration of the simulation in terms of min
+			simulationDuration = Long.parseLong(gui.getSimDur().getText());			//Get duration of the simulation in terms of min
 			simulationDuration *= 60000;
 			
-			bandwidth = Integer.parseInt(sr.getChannelBandwithField().getText())*1000;
+			bandwidth = Integer.parseInt(gui.getChannelBandwithField().getText())*1000;
 			
 			for(int i = 1;i<=dNumber;i++)
 				setOfD.add(radius * Math.sqrt((double)i/dNumber));									//Create set of d's
 			
 			numberOfCrNodes = 0;
 			for(int i = 0; i<numberOfZones ; i++){
-				int sectorNumber = Integer.parseInt(sr.getZoneSectorNos().get(i).getText());		//Get sector number CR nodes will be in
-				int alphaNumber = Integer.parseInt(sr.getZoneAlphaNos().get(i).getText());			//Get alpha number CR nodes will be in
-				int dNmber = Integer.parseInt(sr.getZoneDNos().get(i).getText());					//Get d interval CR nodes will be in
-				int numberOfCrUsersInZone = Integer.parseInt(sr.getZoneCRUsers().get(i).getText());	//Get number of CR nodes in zone
+				int sectorNumber = Integer.parseInt(gui.getZoneSectorNos().get(i).getText());		//Get sector number CR nodes will be in
+				int alphaNumber = Integer.parseInt(gui.getZoneAlphaNos().get(i).getText());			//Get alpha number CR nodes will be in
+				int dNmber = Integer.parseInt(gui.getZoneDNos().get(i).getText());					//Get d interval CR nodes will be in
+				int numberOfCrUsersInZone = Integer.parseInt(gui.getZoneCRUsers().get(i).getText());	//Get number of CR nodes in zone
 				numberOfCrNodes += numberOfCrUsersInZone;
 				sectorNumbers.add(sectorNumber);
 				alphaNumbers.add(alphaNumber);
@@ -128,9 +132,9 @@ public class Arguments {
 				dNumbers.add(dNmber);
 			}
 			
-			seedModel = sr.getSeedModel().getSelectedIndex();
+			seedModel = gui.getSeedModel().getSelectedIndex();
 			if(seedModel != 0){				//If seed model is not random
-				seed = Integer.parseInt(sr.getSeedValue().getText());	//Otherwise get seed from user
+				seed = Integer.parseInt(gui.getSeedValue().getText());	//Otherwise get seed from user
 			}
 			else {
 				seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
@@ -138,15 +142,15 @@ public class Arguments {
 			}
 			
 			if(GraphicalUserInterface.animationOnButton.isSelected())					//Get unit time duration in terms of milliseconds
-				timeUnit = Double.parseDouble(sr.getUnitTime().getText());
+				timeUnit = Double.parseDouble(gui.getUnitTime().getText());
 			else
 				timeUnit = 1;
 			
-			trafficModel = sr.getTrafficModel().getSelectedIndex();
+			trafficModel = gui.getTrafficModel().getSelectedIndex();
 			plotOn = GraphicalUserInterface.plotOnButton.isSelected();
 			animationOn = GraphicalUserInterface.animationOnButton.isSelected();
 		} catch(NumberFormatException nfe){
-			JOptionPane.showMessageDialog(sr, "Invalid argument:\n"+nfe.getMessage(),
+			JOptionPane.showMessageDialog(gui, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
@@ -179,7 +183,9 @@ public class Arguments {
 			numberOfPriNodes = input.nextInt();		//Get number of primary nodes
 			simulationDuration = input.nextLong();				//Get duration of the simulation in terms of min
 			simulationDuration *= 60000;
-			transmitPower = Double.parseDouble(input.next());			//Get transmit power value in terms of dBm
+			transmitPower = Double.parseDouble(input.next());			//Get transmit power value in terms of dB
+			noiseFloor = Double.parseDouble(input.next());
+			noiseStdDev = Double.parseDouble(input.next());
 			powerThreshold = Double.parseDouble(input.next());
 			seedModel = input.nextInt();
 			if(seedModel != 0){						//If seed model is not random
@@ -557,5 +563,13 @@ public class Arguments {
 
 	public double getPrimaryRadius() {
 		return primaryRadius;
+	}
+
+	public double getNoiseFloor() {
+		return noiseFloor;
+	}
+
+	public double getNoiseStdDev() {
+		return noiseStdDev;
 	}
 }

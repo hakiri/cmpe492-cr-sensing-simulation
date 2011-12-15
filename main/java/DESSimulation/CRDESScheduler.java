@@ -243,6 +243,11 @@ public class CRDESScheduler extends SimEnt{
 		super.destructor();
 		String[][] crStats = CRNode.logStats();
 		String[][] priStats = SimulationRunner.priTrafGenDes.logStats();
+		String primaryUtilization = priStats[priStats.length - 2][priStats[0].length - 1];
+		double primaryUtil = Double.parseDouble(primaryUtilization) * 100.;
+		primaryUtil /= (simulationDuration*SimulationRunner.args.getNumberOfFreq());
+		primaryUtilization = String.valueOf(primaryUtil);
+		CRNode.writeLogFile("\nPrimary Utilization:;"+primaryUtilization);
 		if(finished){	//If the thread is terminated
 			if(SimulationRunner.args.isBatchMode())
 				System.out.println("Simulation Terminated");
@@ -270,12 +275,16 @@ public class CRDESScheduler extends SimEnt{
 		namesList.add("Drop");
 		namesList.add("Real Collision");
 		namesList.add("Measured Collision");
-		String fileName = "Probs1_"+String.valueOf(SimulationRunner.args.getSeed());
+		String fileName = "Probs1_"+String.valueOf(SimulationRunner.args.getSeed())+
+								"_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
+								"_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
 		SimulationRunner.plotProbs.plotAllXWithLegend(fileName, 0, namesList,-1);
 		namesList = new ArrayList<String>();
 		namesList.add("False Alarm");
 		namesList.add("Miss-detection");
-		fileName = "Probs2_"+String.valueOf(SimulationRunner.args.getSeed());
+		fileName = "Probs2_"+String.valueOf(SimulationRunner.args.getSeed())+
+						 "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
+						 "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
 		SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList, -1);
 		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<String> names = new ArrayList<String>();
