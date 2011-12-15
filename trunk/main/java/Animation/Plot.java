@@ -226,7 +226,7 @@ public class Plot {
 			for(int j=0;j<ys.get(i).size();j++){
 				pw.println(colors[graphCounter%colors.length]);
 				for(int q=0;q<x.get(xs.get(i)).size();q++){
-					pw.println(shapes[graphCounter/colors.length]+" "+x.get(xs.get(i)).get(q)+" "+
+					pw.println(shapes[graphCounter%colors.length]+" "+x.get(xs.get(i)).get(q)+" "+
 							y.get(xs.get(i)).get(ys.get(i).get(j)).get(q));
 				}
 
@@ -314,7 +314,7 @@ public class Plot {
 			for(int j=0;j<ys.get(i).size();j++){
 				pw.println(colors[graphCounter%colors.length]);
 				for(int q=0;q<x.get(xs.get(i)).size();q++){
-					pw.println(shapes[graphCounter/colors.length]+" "+x.get(xs.get(i)).get(q)+" "+
+					pw.println(shapes[graphCounter%colors.length]+" "+x.get(xs.get(i)).get(q)+" "+
 							y.get(xs.get(i)).get(ys.get(i).get(j)).get(q));
 				}
 
@@ -355,9 +355,9 @@ public class Plot {
 		for(int i=0;i<names.size();i++){
 			for(int j=0;j<names.get(i).size();j++){
 				pw.println(colors[graphCounter%colors.length]);
-				pw.println(shapes[graphCounter/colors.length]+" "+(xMax+xInc)+" "+(yMin+yInc*(2*graphCounter+1)));
-				pw.println(shapes[graphCounter/colors.length]+" "+(xMax+xInc*2)+" "+(yMin+yInc*(2*graphCounter+1)));
-				pw.println(shapes[graphCounter/colors.length]+" "+(xMax+xInc*3)+" "+(yMin+yInc*(2*graphCounter+1)));
+				pw.println(shapes[graphCounter%colors.length]+" "+(xMax+xInc)+" "+(yMin+yInc*(2*graphCounter+1)));
+				pw.println(shapes[graphCounter%colors.length]+" "+(xMax+xInc*2)+" "+(yMin+yInc*(2*graphCounter+1)));
+				pw.println(shapes[graphCounter%colors.length]+" "+(xMax+xInc*3)+" "+(yMin+yInc*(2*graphCounter+1)));
 				pw.println("line "+(xMax+xInc)+" "+(yMin+yInc*(2*graphCounter+1))+" "+(xMax+xInc*3)+" "+(yMin+yInc*(2*graphCounter+1)));
 				pw.println("rtext "+(xMax+xInc*3)+" "+(yMin+yInc*(2*graphCounter+1))+"\n"+names.get(i).get(j));
 				graphCounter++;
