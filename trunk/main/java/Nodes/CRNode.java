@@ -292,15 +292,17 @@ public class CRNode implements Node {
      * @param file_name Name of the log file
      */
     public static void createLogFile(String file_name) {
-        String justComma = "";
+        String justComma = "",zones="";
         try {
             pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
             for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
                 justComma += ";";
+                zones += String.valueOf(i) + ". zone;";
             }
             writeLogFile(String.format(Locale.US, "Time;Number of False Alarms"+justComma+"Number of Miss Detection"
                     +justComma+"Number of Collisions"+justComma+"Number of Blocks"+justComma
                     +"Number of Drops"+justComma+"Throughput"+justComma+"Total communicated frames"+justComma));
+            writeLogFile(String.format(Locale.US, ";"+zones+zones+zones+zones+zones+zones+zones));
         } catch (IOException ex) {
             System.err.println("Error during file operations");
         }
