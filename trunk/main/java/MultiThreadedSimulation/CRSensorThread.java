@@ -388,7 +388,6 @@ public class CRSensorThread implements Runnable{
 		SimulationRunner.clear();								//Clear data related to simulation
 		GraphicalUserInterface.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
-		CRNode.closeLogFileProb();
 		SimulationStatsTable sst;
 		if(!SimulationRunner.args.isBatchMode())
 			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.guiRunner);
