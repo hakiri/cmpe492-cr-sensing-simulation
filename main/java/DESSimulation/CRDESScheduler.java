@@ -316,7 +316,12 @@ public class CRDESScheduler extends SimEnt{
 //		CRNode.writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
 //		CRNode.writeLogFileProb(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec));
         //calculate drop,block and collision probabilities
-        for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
+        
+//		CRNode.writeLogFileProb(String.format(Locale.US,"Total number of Call Attempts: %d --- Total number of calls: %d --- Total number of drops: %d", totalCallAttempts,totalCalls,totalDrops));
+//        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f --- Estimated Collision prob: %.4f", blockProb,dropProb,collisionProb,estimatedCollisionProb));
+		
+        if(CRNode.reportingFrames.contains((int)currentFrame)){
+            for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
             totalBlocks += SimulationRunner.crBase.getCRNode(i).getNumberOfBlocks();
             totalDrops += SimulationRunner.crBase.getCRNode(i).getNumberOfDrops();
             totalCallAttempts += SimulationRunner.crBase.getCRNode(i).getNumberOfCallAttempts();
@@ -324,36 +329,32 @@ public class CRDESScheduler extends SimEnt{
             totalCollisions += SimulationRunner.crBase.getCRNode(i).getNumberOfCollision();
 			totalFrames += SimulationRunner.crBase.getCRNode(i).getNumberOfFramesCommunicated();
             totalEstimatedCollisions += SimulationRunner.crBase.getCRNode(i).getEstimatedNumberOfCollison();
-		}
-		if(totalCallAttempts == 0){
-            blockProb = 0.0;
-        }else{
-            blockProb = (double)totalBlocks/totalCallAttempts;
-        }
-		if(totalCalls == 0){
-			dropProb = 0.0;
-		}
-		else{
-			dropProb = (double)totalDrops/totalCalls;
-		}
-		if(totalFrames == 0){
-			collisionProb = 0.0;
-            estimatedCollisionProb = 0.0;
-		}
-		else{
-			collisionProb = (double)totalCollisions/totalFrames;
-            estimatedCollisionProb = (double)totalEstimatedCollisions/totalFrames;
-		}
-		ArrayList<Double> probs = new ArrayList<Double>();
-		probs.add(blockProb);
-		probs.add(dropProb);
-		probs.add(collisionProb);
-        probs.add(estimatedCollisionProb);
-		SimulationRunner.plotProbs.addPoint(Scheduler.instance().getTime(), probs);
-//		CRNode.writeLogFileProb(String.format(Locale.US,"Total number of Call Attempts: %d --- Total number of calls: %d --- Total number of drops: %d", totalCallAttempts,totalCalls,totalDrops));
-//        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f --- Estimated Collision prob: %.4f", blockProb,dropProb,collisionProb,estimatedCollisionProb));
-		//TODO writing log file 30 times
-        if(CRNode.reportingFrames.contains((int)currentFrame)){
+            }
+            if(totalCallAttempts == 0){
+                blockProb = 0.0;
+            }else{
+                blockProb = (double)totalBlocks/totalCallAttempts;
+            }
+            if(totalCalls == 0){
+                dropProb = 0.0;
+            }
+            else{
+                dropProb = (double)totalDrops/totalCalls;
+            }
+            if(totalFrames == 0){
+                collisionProb = 0.0;
+                estimatedCollisionProb = 0.0;
+            }
+            else{
+                collisionProb = (double)totalCollisions/totalFrames;
+                estimatedCollisionProb = (double)totalEstimatedCollisions/totalFrames;
+            }
+            ArrayList<Double> probs = new ArrayList<Double>();
+            probs.add(blockProb);
+            probs.add(dropProb);
+            probs.add(collisionProb);
+            probs.add(estimatedCollisionProb);
+            SimulationRunner.plotProbs.addPoint(Scheduler.instance().getTime(), probs);
             for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
                 falseAlarms += String.valueOf(SimulationRunner.crBase.getFalseAlarm(i))+";";
                 missDetections += String.valueOf(SimulationRunner.crBase.getMissDetection(i))+";";

@@ -205,30 +205,30 @@ public class CRNode implements Node {
                 }
             }
         }
-        //TODO Simultaneous probability of Pm and Pf will be calculated, will be sent to corresponding object.
-        for (int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
-            totalFalseAlarm += SimulationRunner.crBase.getFalseAlarm(i);
-            totalMissDetection += SimulationRunner.crBase.getMissDetection(i);
-        }
         if(SimulationRunner.args.isAnimationOn()){
             frame = (double)(SimulationRunner.crSensor.getFrame()) + 1;
         }
         else{
             frame = SimulationRunner.crDesScheduler.getCurrentFrame();
         }
-        averageFalseAlarm = ((totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
-        averageMissDetection = ((totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
-		//TODO Add those probs to plot object
-		ArrayList<Double> probs = new ArrayList<Double>();
-		probs.add(averageFalseAlarm);
-		probs.add(averageMissDetection);
-		if(SimulationRunner.args.isAnimationOn()){
-            frame *= SimulationRunner.crSensor.getFrameDuration();
+        if(CRNode.reportingFrames.contains((int)frame)){
+            for (int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+                totalFalseAlarm += SimulationRunner.crBase.getFalseAlarm(i);
+                totalMissDetection += SimulationRunner.crBase.getMissDetection(i);
+            }
+            averageFalseAlarm = ((totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
+            averageMissDetection = ((totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
+            ArrayList<Double> probs = new ArrayList<Double>();
+            probs.add(averageFalseAlarm);
+            probs.add(averageMissDetection);
+            if(SimulationRunner.args.isAnimationOn()){
+                frame *= SimulationRunner.crSensor.getFrameDuration();
+            }
+            else{
+                frame *= SimulationRunner.crDesScheduler.getFrameDuration();
+            }
+            SimulationRunner.plotSensingProbs.addPoint(frame, probs);
         }
-        else{
-            frame *= SimulationRunner.crDesScheduler.getFrameDuration();
-        }
-		SimulationRunner.plotSensingProbs.addPoint(frame, probs);
     }
     
     /**
@@ -415,7 +415,8 @@ public class CRNode implements Node {
 			
 			channelCapacity.set(freq,SimulationRunner.wc.currentChannelCapacity(SimulationRunner.crBase, SimulationRunner.crBase.getCRNode(i), freq));
 			if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.PRIMARY) != null){ //checks if collision occured
-				SimulationRunner.crBase.getCRNode(i).collisionOccured = true;
+				if(isRegular&&(!lastReport))
+                    SimulationRunner.crBase.getCRNode(i).collisionOccured = true;
 			}
 			if(isRegular && !lastReport){   //updates time and sinr value of communicating cr nodes
                 SimulationRunner.crBase.getCRNode(i).last_time = time;
