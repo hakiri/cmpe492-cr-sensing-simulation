@@ -180,7 +180,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(noPriNodes);
 			noPriNodes.setToolTipText("Number of Primary Users in The CR Cell");
 			noPriNodes.setBounds(itemPos, 30, 120, 23);
-			noPriNodes.setText("500");
+			noPriNodes.setText("1500");
 			noPriNodes.addKeyListener(keyAdapter);
 		}
 		{
@@ -195,7 +195,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(simDur);
 			simDur.setToolTipText("Duration of Simulation in terms of minutes");
 			simDur.setBounds(itemPos, 65, 120, 23);
-			simDur.setText("120");
+			simDur.setText("240");
 			simDur.addKeyListener(keyAdapter);
 		}
 		{
@@ -225,7 +225,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(tauField);
 			tauField.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
 			tauField.setBounds(itemPos, 135, 120, 23);
-			tauField.setText("-100");
+			tauField.setText("-103");
 			tauField.addKeyListener(keyAdapter);
 		}
 		{
@@ -240,7 +240,7 @@ public class GraphicalUserInterface extends JFrame{
 							new String[] { "Random Seed", "Constant Seed"});
 			seedModel = new JComboBox();
 			seedModel.setModel(seedModelModel);
-			seedModel.setSelectedIndex(1);
+			seedModel.setSelectedIndex(0);
 			seedModel.addItemListener(new ItemListener() {
 
 				@Override
@@ -265,6 +265,7 @@ public class GraphicalUserInterface extends JFrame{
 			label8.setToolTipText("Seed Value of Random Number Generator");
 			label8.setText("Seed Value");
 			label8.setBounds(labelPos, 205, 165, 16);
+			label8.setVisible(false);
 		}
 		{
 			seedValue = new JTextField();
@@ -273,6 +274,7 @@ public class GraphicalUserInterface extends JFrame{
 			seedValue.setBounds(itemPos, 205, 120, 23);
 			seedValue.setText("111211211");
 			seedValue.addKeyListener(keyAdapter);
+			seedValue.setVisible(false);
 		}
 		{
 			label9 = new JLabel();
@@ -650,7 +652,7 @@ public class GraphicalUserInterface extends JFrame{
 						noCalls.setText("2");
 					else
 						noCalls.setText("0.5");
-					callDur.setText("4");
+					callDur.setText("2");
 				}
 			});
 			trafficPanel.add(trafficModel);
@@ -676,7 +678,7 @@ public class GraphicalUserInterface extends JFrame{
 			noCalls = new JTextField();
 			trafficPanel.add(noCalls);
 			noCalls.setBounds(itemPos, 65, 120, 23);
-			noCalls.setText("0.75");
+			noCalls.setText("0.5");
 			noCalls.addKeyListener(keyAdapter);
 		}
 		{
@@ -697,7 +699,7 @@ public class GraphicalUserInterface extends JFrame{
 			callDur = new JTextField();
 			trafficPanel.add(callDur);
 			callDur.setBounds(itemPos, 100, 120, 23);
-			callDur.setText("3");
+			callDur.setText("2");
 			callDur.addKeyListener(keyAdapter);
 		}
 		{

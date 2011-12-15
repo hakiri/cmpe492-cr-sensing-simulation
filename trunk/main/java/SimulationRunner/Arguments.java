@@ -1,5 +1,6 @@
 package SimulationRunner;
 
+import cern.jet.random.engine.RandomSeedTable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -131,6 +132,10 @@ public class Arguments {
 			if(seedModel != 0){				//If seed model is not random
 				seed = Integer.parseInt(sr.getSeedValue().getText());	//Otherwise get seed from user
 			}
+			else {
+				seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
+														  (int)System.currentTimeMillis());
+			}
 			
 			if(GraphicalUserInterface.animationOnButton.isSelected())					//Get unit time duration in terms of milliseconds
 				timeUnit = Double.parseDouble(sr.getUnitTime().getText());
@@ -179,6 +184,10 @@ public class Arguments {
 			seedModel = input.nextInt();
 			if(seedModel != 0){						//If seed model is not random
 				seed = input.nextInt();				//Otherwise get seed from user
+			}
+			else {
+				seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
+														  (int)System.currentTimeMillis());
 			}
 			int plot = input.nextInt();
 			if(plot == 0)
