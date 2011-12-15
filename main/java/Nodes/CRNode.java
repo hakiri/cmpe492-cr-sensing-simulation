@@ -47,7 +47,6 @@ public class CRNode implements Node {
      * Writer for the log file.
      */
     private static PrintWriter pw = null;
-    private static PrintWriter pw_prob = null;
     /**
      * Average SNR values of the frequencies.
      */
@@ -308,18 +307,6 @@ public class CRNode implements Node {
     }
 
     /**
-     * 
-     * @param file_name
-     */
-    public static void createProbLogFile(String file_name) {
-//        try {
-//            pw_prob = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
-//        } catch (IOException ex) {
-//            System.err.println("Error during file operations");
-//        }
-    }
-
-    /**
      * Writes the input string to the log file.
      * @param log_string String
      */
@@ -340,15 +327,7 @@ public class CRNode implements Node {
      */
     public static void closeLogFile() {
         pw.close();
-    }
-    
-    /**
-     * 
-     */
-    public static void closeLogFileProb() {
-//        pw_prob.close();
-    }
-    
+    }    
     
     /**
      * Sets frequency list to listen in the sensing slots.

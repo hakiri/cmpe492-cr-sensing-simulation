@@ -193,7 +193,6 @@ public class SimulationRunner {
 			plot = null;
 		CRNode.initializeAverageReceivedPowers(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
 		CRNode.createLogFile("log.csv");
-		CRNode.createProbLogFile("prob.txt");
 		return true;
 	}
 	

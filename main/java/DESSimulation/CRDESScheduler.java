@@ -260,7 +260,6 @@ public class CRDESScheduler extends SimEnt{
 		if(!SimulationRunner.args.isBatchMode())
 			GraphicalUserInterface.terminateSimulation.setVisible(false);	//Hide "Terminate" button
 		CRNode.closeLogFile();									//Close log file
-		CRNode.closeLogFileProb();
 		SimulationStatsTable sst;
 		if(!SimulationRunner.args.isBatchMode())
 			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.guiRunner);
