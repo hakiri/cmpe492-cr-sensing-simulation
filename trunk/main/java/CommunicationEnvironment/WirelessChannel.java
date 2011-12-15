@@ -33,7 +33,7 @@ public class WirelessChannel {
 	 */
 	public static final int NOFREEFREQ = -1;
 	/**
-	 * Max SNR value of the channel
+	 * Transmitter power
 	 */
 	public double Ptx = -50.0;	//TODO take as parameter
 	/**
@@ -41,10 +41,11 @@ public class WirelessChannel {
 	 */
 	public Uniform uniform = null;
 	private Normal transmitNormal = null;
+	private Normal noiseNormal = null;
 	private static final double l0 = 38.4;
 	private static final double alpha = 35;
 	private static final double variance = 8;
-	private static final double noisePower = -111.0;
+	private double noiseFloor = -111.0;
 	private double meanOnDuration;
 	private double meanOffDuration;
 	private int trafficModel;
@@ -106,6 +107,8 @@ public class WirelessChannel {
 		}
 		uniform = new Uniform(SimulationRunner.randEngine);			//Create Uniform distribution to select number of frequencies and their values
 		this.transmitNormal = new Normal(0, variance, SimulationRunner.randEngine);
+		this.noiseNormal = new Normal(0, SimulationRunner.args.getNoiseStdDev(), SimulationRunner.randEngine);
+		this.noiseFloor = SimulationRunner.args.getNoiseFloor();
 		this.meanOffDuration = meanOffDuration;
 		this.meanOnDuration = meanOnDuration;
 		this.trafficModel = trafficModel;
@@ -133,7 +136,7 @@ public class WirelessChannel {
 				prx = Ptx + transmitNormal.nextDouble();
 			return prx;			//between occupier and sensor and compute
 		}										//attenuation based on this distance
-		return noisePower + transmitNormal.nextDouble();
+		return noiseFloor + noiseNormal.nextDouble();
 	}
 	
 	/**
@@ -161,7 +164,7 @@ public class WirelessChannel {
 		double interference_db = 0;
 		double distance = transmitter.getPosition().distance(receiver.getPosition());
 		double signal_db = generateReceivedPower(distance);
-		double noise_db = noisePower + transmitNormal.nextDouble();
+		double noise_db = noiseFloor + noiseNormal.nextDouble();
 		double interfacePower;
 		if(frequencies.get(freq).get(PRIMARY) != null){	//If the frequency is occupied
 			interference_db = generateReceivedPower(receiver, freq);

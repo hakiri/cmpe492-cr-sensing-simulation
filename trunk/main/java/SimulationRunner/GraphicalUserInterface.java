@@ -1,6 +1,7 @@
 package SimulationRunner;
 
 import java.awt.BorderLayout;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,8 +55,8 @@ public class GraphicalUserInterface extends JFrame{
 	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
 	private JTextField noSlotField,slotDurField,sensingResultField,senseScheduleField,commScheduleField,commDurField,
 					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
-					   transmitPowerField,noZones,channelBandwithField,tauField;
-	private JLabel label1,label2,label3,label4,label5,label7,label8,label9,label10,label11,label12,label13,label14,
+					   transmitPowerField,noZones,channelBandwithField,tauField,noiseFloorField,noiseStdDevField;
+	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
 				   label15,label16,label17,label19,label21,label22,label23,label24,label25,label26,label27,label28,
 				   label29,label30,label31;
 	private JComboBox seedModel,trafficModel;
@@ -168,71 +169,108 @@ public class GraphicalUserInterface extends JFrame{
 		mainPanel = new JPanel();
 		mainPanel.setBorder(BorderFactory.createTitledBorder("Main Options"));
 		mainPanel.setLayout(null);
+		int y = 30;
 		{
 			label2 = new JLabel();
 			mainPanel.add(label2);
 			label2.setToolTipText("Number of Primary Users in The CR Cell");
 			label2.setText("Number of Primary Nodes");
-			label2.setBounds(labelPos, 30, 165, 16);
+			label2.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			noPriNodes = new JTextField();
 			mainPanel.add(noPriNodes);
 			noPriNodes.setToolTipText("Number of Primary Users in The CR Cell");
-			noPriNodes.setBounds(itemPos, 30, 120, 23);
+			noPriNodes.setBounds(itemPos, y, 120, 23);
 			noPriNodes.setText("1500");
 			noPriNodes.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label4 = new JLabel();
 			mainPanel.add(label4);
 			label4.setToolTipText("Duration of Simulation in terms of minutes");
 			label4.setText("Simulation Dur. (min)");
-			label4.setBounds(labelPos, 65, 240, 16);
+			label4.setBounds(labelPos, y, 240, 16);
 		}
 		{
 			simDur = new JTextField();
 			mainPanel.add(simDur);
 			simDur.setToolTipText("Duration of Simulation in terms of minutes");
-			simDur.setBounds(itemPos, 65, 120, 23);
+			simDur.setBounds(itemPos, y, 120, 23);
 			simDur.setText("240");
 			simDur.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label5 = new JLabel();
 			mainPanel.add(label5);
 			label5.setToolTipText("Maximum Signal Power of Transmitter");
-			label5.setText("Transmit Power (dBm)");
-			label5.setBounds(labelPos, 100, 165, 16);
+			label5.setText("Transmit Power (dB)");
+			label5.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			transmitPowerField = new JTextField();
 			mainPanel.add(transmitPowerField);
 			transmitPowerField.setToolTipText("Maximum Signal Power of Transmitter");
-			transmitPowerField.setBounds(itemPos, 100, 120, 23);
-			transmitPowerField.setText("-50");
+			transmitPowerField.setBounds(itemPos, y, 120, 23);
+			transmitPowerField.setText("-10");
 			transmitPowerField.addKeyListener(keyAdapter);
 		}
+		y += 35;
+		{
+			label3 = new JLabel();
+			mainPanel.add(label3);
+			label3.setToolTipText("Noise floor value");
+			label3.setText("Noise Floor (dB)");
+			label3.setBounds(labelPos, y, 165, 16);
+		}
+		{
+			noiseFloorField = new JTextField();
+			mainPanel.add(noiseFloorField);
+			noiseFloorField.setToolTipText("Noise floor value");
+			noiseFloorField.setBounds(itemPos, y, 120, 23);
+			noiseFloorField.setText("-100");
+			noiseFloorField.addKeyListener(keyAdapter);
+		}
+		y += 35;
+		{
+			label6 = new JLabel();
+			mainPanel.add(label6);
+			label6.setToolTipText("Standart deviation of noise floor");
+			label6.setText("Noise Floor Std Dev (dB)");
+			label6.setBounds(labelPos, y, 165, 16);
+		}
+		{
+			noiseStdDevField = new JTextField();
+			mainPanel.add(noiseStdDevField);
+			noiseStdDevField.setToolTipText("Standard deviation of noise floor");
+			noiseStdDevField.setBounds(itemPos, y, 120, 23);
+			noiseStdDevField.setText("60");
+			noiseStdDevField.addKeyListener(keyAdapter);
+		}
+		y += 35;
 		{
 			label1 = new JLabel();
 			mainPanel.add(label1);
 			label1.setToolTipText("Power Threshold for CR Nodes Decide whether a channel is vacant or not");
-			label1.setText("Power Threshold (dBm)");
-			label1.setBounds(labelPos, 135, 165, 16);
+			label1.setText("Power Threshold (dB)");
+			label1.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			tauField = new JTextField();
 			mainPanel.add(tauField);
 			tauField.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
-			tauField.setBounds(itemPos, 135, 120, 23);
-			tauField.setText("-103");
+			tauField.setBounds(itemPos, y, 120, 23);
+			tauField.setText("-62");
 			tauField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label7 = new JLabel();
 			mainPanel.add(label7);
 			label7.setText("Seed Model");
-			label7.setBounds(labelPos, 170, 165, 16);
+			label7.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			ComboBoxModel seedModelModel = 
@@ -248,30 +286,83 @@ public class GraphicalUserInterface extends JFrame{
 					if(seedModel.getSelectedIndex() == 0){
 						label8.setVisible(false);
 						seedValue.setVisible(false);
+						
+						Rectangle bound8 = label8.getBounds();
+						
+						Rectangle bound = label9.getBounds();
+						bound.y = bound8.y;
+						label9.setBounds(bound);
+						
+						bound = label10.getBounds();
+						bound.y = bound8.y + 35;
+						label10.setBounds(bound);
+						
+						bound = animationOnButton.getBounds();
+						bound.y = bound8.y;
+						animationOnButton.setBounds(bound);
+						
+						bound = animationOffButton.getBounds();
+						bound.y = bound8.y;
+						animationOffButton.setBounds(bound);
+						
+						bound = plotOnButton.getBounds();
+						bound.y = bound8.y + 35;
+						plotOnButton.setBounds(bound);
+						
+						bound = plotOffButton.getBounds();
+						bound.y = bound8.y + 35;
+						plotOffButton.setBounds(bound);
 					}
 					else{
 						label8.setVisible(true);
 						seedValue.setVisible(true);
+						
+						Rectangle bound8 = label8.getBounds();
+						
+						Rectangle bound = label9.getBounds();
+						bound.y = bound8.y + 35;
+						label9.setBounds(bound);
+						
+						bound = label10.getBounds();
+						bound.y = bound8.y + 70;
+						label10.setBounds(bound);
+						
+						bound = animationOnButton.getBounds();
+						bound.y = bound8.y + 35;
+						animationOnButton.setBounds(bound);
+						
+						bound = animationOffButton.getBounds();
+						bound.y = bound8.y + 35;
+						animationOffButton.setBounds(bound);
+						
+						bound = plotOnButton.getBounds();
+						bound.y = bound8.y + 70;
+						plotOnButton.setBounds(bound);
+						
+						bound = plotOffButton.getBounds();
+						bound.y = bound8.y + 70;
+						plotOffButton.setBounds(bound);
 					}
 				}
 			});
 			mainPanel.add(seedModel);
-			seedModel.setBounds(itemPos, 170, 120, 23);
+			seedModel.setBounds(itemPos, y, 120, 23);
 			seedModel.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label8 = new JLabel();
 			mainPanel.add(label8);
 			label8.setToolTipText("Seed Value of Random Number Generator");
 			label8.setText("Seed Value");
-			label8.setBounds(labelPos, 205, 165, 16);
+			label8.setBounds(labelPos, y, 165, 16);
 			label8.setVisible(false);
 		}
 		{
 			seedValue = new JTextField();
 			mainPanel.add(seedValue);
 			seedValue.setToolTipText("Seed Value of Random Number Generator");
-			seedValue.setBounds(itemPos, 205, 120, 23);
+			seedValue.setBounds(itemPos, y, 120, 23);
 			seedValue.setText("111211211");
 			seedValue.addKeyListener(keyAdapter);
 			seedValue.setVisible(false);
@@ -281,13 +372,13 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(label9);
 			label9.setToolTipText("Run Animation During Simulation");
 			label9.setText("Animation");
-			label9.setBounds(labelPos, 240, 165, 16);
+			label9.setBounds(labelPos, y, 165, 16);
 			animationOnOff = new ButtonGroup();
 		}
 		{
 			animationOnButton = new JRadioButton("On");
 			mainPanel.add(animationOnButton);
-			animationOnButton.setBounds(itemPos, 240, 50, 23);
+			animationOnButton.setBounds(itemPos, y, 50, 23);
 			animationOnButton.setSelected(false);
 			animationOnOff.add(animationOnButton);
 			animationOnButton.addItemListener(new ItemListener() {
@@ -309,7 +400,7 @@ public class GraphicalUserInterface extends JFrame{
 		{
 			animationOffButton = new JRadioButton("Off");
 			mainPanel.add(animationOffButton);
-			animationOffButton.setBounds(itemPos+70, 240, 50, 23);
+			animationOffButton.setBounds(itemPos+70, y, 50, 23);
 			animationOffButton.setSelected(true);
 			animationOnOff.add(animationOffButton);
 			animationOffButton.addItemListener(new ItemListener() {
@@ -328,18 +419,19 @@ public class GraphicalUserInterface extends JFrame{
 			});
 			animationOffButton.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label10 = new JLabel();
 			mainPanel.add(label10);
 			label10.setToolTipText("Draw Plots at The End of The Simulation");
 			label10.setText("Plot");
-			label10.setBounds(labelPos, 275, 165, 16);
+			label10.setBounds(labelPos, y, 165, 16);
 			plotOnOff = new ButtonGroup();
 		}
 		{
 			plotOnButton = new JRadioButton("On");
 			mainPanel.add(plotOnButton);
-			plotOnButton.setBounds(itemPos, 275, 50, 23);
+			plotOnButton.setBounds(itemPos, y, 50, 23);
 			plotOnButton.setSelected(false);
 			plotOnOff.add(plotOnButton);
 			plotOnButton.addKeyListener(keyAdapter);
@@ -347,13 +439,14 @@ public class GraphicalUserInterface extends JFrame{
 		{
 			plotOffButton = new JRadioButton("Off");
 			mainPanel.add(plotOffButton);
-			plotOffButton.setBounds(itemPos+70, 275, 50, 23);
+			plotOffButton.setBounds(itemPos+70, y, 50, 23);
 			plotOffButton.setSelected(true);
 			plotOnOff.add(plotOffButton);
 			plotOffButton.addKeyListener(keyAdapter);
 		}
+		y += 70;
 		tabMainPanel.add(mainPanel);
-		mainPanel.setBounds(panelLeft, 10, panelWidth, 310);
+		mainPanel.setBounds(panelLeft, 10, panelWidth, y);
 	}
 	
 	private void initFrameOptionsGUI()
@@ -361,98 +454,105 @@ public class GraphicalUserInterface extends JFrame{
 		framePanel = new JPanel();
 		framePanel.setBorder(BorderFactory.createTitledBorder("Frame Options"));
 		framePanel.setLayout(null);
+		int y = 30;
 		{
 			label11 = new JLabel();
 			framePanel.add(label11);
 			label11.setToolTipText("Number Of Sensing Slot in CR Frame");
 			label11.setText("Number of Sensing Slots");
-			label11.setBounds(labelPos, 30, 165, 16);
+			label11.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			noSlotField = new JTextField();
 			framePanel.add(noSlotField);
 			noSlotField.setToolTipText("Number Of Sensing Slot in CR Frame");
-			noSlotField.setBounds(itemPos, 30, 120, 23);
+			noSlotField.setBounds(itemPos, y, 120, 23);
 			noSlotField.setText("20");
 			noSlotField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label12 = new JLabel();
 			framePanel.add(label12);
 			label12.setToolTipText("Duration of Sensing Slot in terms of msec");
 			label12.setText("Sensing Slot Duration (msec)");
-			label12.setBounds(labelPos, 65, 245, 16);
+			label12.setBounds(labelPos, y, 245, 16);
 		}
 		{
 			slotDurField = new JTextField();
 			framePanel.add(slotDurField);
 			slotDurField.setToolTipText("Duration of Sensing Slot in terms of msec");
-			slotDurField.setBounds(itemPos, 65, 120, 23);
+			slotDurField.setBounds(itemPos, y, 120, 23);
 			slotDurField.setText("10");
 			slotDurField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label13 = new JLabel();
 			framePanel.add(label13);
 			label13.setToolTipText("Duration of Sensing Result Advertisement in terms of msec");
 			label13.setText("Dur. of sensing result ack. (msec)");
-			label13.setBounds(labelPos, 100, 245, 16);
+			label13.setBounds(labelPos, y, 245, 16);
 		}
 		{
 			sensingResultField = new JTextField();
 			framePanel.add(sensingResultField);
 			sensingResultField.setToolTipText("Duration of Sensing Result Advertisement in terms of msec");
-			sensingResultField.setBounds(itemPos, 100, 120, 23);
+			sensingResultField.setBounds(itemPos, y, 120, 23);
 			sensingResultField.setText("10");
 			sensingResultField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label14 = new JLabel();
 			framePanel.add(label14);
 			label14.setToolTipText("Duration of Sensing Schedule Advertisement in terms of msec");
 			label14.setText("Sensing Schedule Advert. Dur. (msec)");
-			label14.setBounds(labelPos, 135, 245, 16);
+			label14.setBounds(labelPos, y, 245, 16);
 		}
 		{
 			senseScheduleField = new JTextField();
 			framePanel.add(senseScheduleField);
 			senseScheduleField.setToolTipText("Duration of Sensing Schedule Advertisement in terms of msec");
-			senseScheduleField.setBounds(itemPos, 135, 120, 23);
+			senseScheduleField.setBounds(itemPos, y, 120, 23);
 			senseScheduleField.setText("10");
 			senseScheduleField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label15 = new JLabel();
 			framePanel.add(label15);
 			label15.setToolTipText("Duration of Communication in terms of msec");
 			label15.setText("Comm. Duration (msec)");
-			label15.setBounds(labelPos, 170, 245, 16);
+			label15.setBounds(labelPos, y, 245, 16);
 		}
 		{
 			commDurField = new JTextField();
 			framePanel.add(commDurField);
 			commDurField.setToolTipText("Duration of Communication in terms of msec");
-			commDurField.setBounds(itemPos, 170, 120, 23);
+			commDurField.setBounds(itemPos, y, 120, 23);
 			commDurField.setText("630");
 			commDurField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label16 = new JLabel();
 			framePanel.add(label16);
 			label16.setToolTipText("Duration of Communication Schedule Advertisement in terms of msec");
 			label16.setText("Comm. Schedule Advert. Dur. (msec)");
-			label16.setBounds(labelPos, 205, 245, 16);
+			label16.setBounds(labelPos, y, 245, 16);
 		}
 		{
 			commScheduleField = new JTextField();
 			framePanel.add(commScheduleField);
 			commScheduleField.setToolTipText("Duration of Communication Schedule Advertisement in terms of msec");
-			commScheduleField.setBounds(itemPos, 205, 120, 23);
+			commScheduleField.setBounds(itemPos, y, 120, 23);
 			commScheduleField.setText("10");
 			commScheduleField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		tabMainPanel.add(framePanel);
-		framePanel.setBounds(panelRight,185,panelWidth,240);
+		framePanel.setBounds(panelRight,185,panelWidth,y);
 	}
 	
 	private void initZoneOptionsGUI()
@@ -460,78 +560,83 @@ public class GraphicalUserInterface extends JFrame{
 		zonePanel = new JPanel();
 		zonePanel.setBorder(BorderFactory.createTitledBorder("Zone Options"));
 		zonePanel.setLayout(null);
+		int y = 30;
 		{
 			label17 = new JLabel();
 			zonePanel.add(label17);
 			label17.setToolTipText("Sectors Of Cell");
 			label17.setText("Sector Number");
-			label17.setBounds(labelPos, 30, 165, 16);
+			label17.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			sectorNo = new JTextField();
 			zonePanel.add(sectorNo);
 			sectorNo.setToolTipText("Number of Sectors in A Cell");
-			sectorNo.setBounds(itemPos, 30, 120, 23);
+			sectorNo.setBounds(itemPos, y, 120, 23);
 			sectorNo.setText("3");
 			sectorNo.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label19 = new JLabel();
 			zonePanel.add(label19);
 			label19.setToolTipText("D Sections of Radius");
 			label19.setText("D Number");
-			label19.setBounds(labelPos, 65, 165, 16);
+			label19.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			dNo = new JTextField();
 			zonePanel.add(dNo);
 			dNo.setToolTipText("Number of D Sections Radius is Divided");
-			dNo.setBounds(itemPos, 65, 120, 23);
+			dNo.setBounds(itemPos, y, 120, 23);
 			dNo.setText("3");
 			dNo.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label21 = new JLabel();
 			zonePanel.add(label21);
 			label21.setToolTipText("Alpha Sections in A Sector");
 			label21.setText("Alpha Number");
-			label21.setBounds(labelPos, 100, 165, 16);
+			label21.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			alphaNo = new JTextField();
 			zonePanel.add(alphaNo);
 			alphaNo.setToolTipText("Number of Alpha Sections in A Sector");
-			alphaNo.setBounds(itemPos, 100, 120, 23);
+			alphaNo.setBounds(itemPos, y, 120, 23);
 			alphaNo.setText("4");
 			alphaNo.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label23 = new JLabel();
 			zonePanel.add(label23);
 			label23.setToolTipText("Radius of CR Cell in terms of 100s of meters");
 			label23.setText("Radius of Cell (100 m)");
-			label23.setBounds(labelPos, 135, 165, 16);
+			label23.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			radiusField = new JTextField();
 			zonePanel.add(radiusField);
 			radiusField.setToolTipText("Radius of CR Cell in terms of 100s of meters");
-			radiusField.setBounds(itemPos, 135, 120, 23);
+			radiusField.setBounds(itemPos, y, 120, 23);
 			radiusField.setText("15");
 			radiusField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label22 = new JLabel();
 			zonePanel.add(label22);
 			label22.setToolTipText("Number of Zones to be simulated");
 			label22.setText("Number Of Zones");
-			label22.setBounds(labelPos, 170, 165, 16);
+			label22.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			noZones = new JTextField();
 			zonePanel.add(noZones);
 			noZones.setToolTipText("Number of Zones to be simulated");
-			noZones.setBounds(itemPos, 170, 120, 23);
+			noZones.setBounds(itemPos, y, 120, 23);
 			noZones.setText("36");
 			noZones.addMouseListener(new MouseAdapter() {
 
@@ -616,8 +721,9 @@ public class GraphicalUserInterface extends JFrame{
 			});
 			noZones.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		tabMainPanel.add(zonePanel);
-		zonePanel.setBounds(panelLeft, 325, panelWidth, 205);
+		zonePanel.setBounds(panelLeft, 395, panelWidth, y);
 	}
 	
 	private void initTrafficOptionsGUI()
@@ -625,12 +731,13 @@ public class GraphicalUserInterface extends JFrame{
 		trafficPanel = new JPanel();
 		trafficPanel.setBorder(BorderFactory.createTitledBorder("Traffic Options"));
 		trafficPanel.setLayout(null);
+		int y = 30;
 		{
 			label24 = new JLabel();
 			trafficPanel.add(label24);
 			label24.setToolTipText("Traffic Generation Model of Primary Users");
 			label24.setText("Traffic Model");
-			label24.setBounds(labelPos, 30, 165, 16);
+			label24.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			ComboBoxModel trafficModelModel = 
@@ -657,69 +764,73 @@ public class GraphicalUserInterface extends JFrame{
 			});
 			trafficPanel.add(trafficModel);
 			trafficModel.setToolTipText("Traffic Generation Model of Primary Users");
-			trafficModel.setBounds(itemPos, 30, 120, 23);
+			trafficModel.setBounds(itemPos, y, 120, 23);
 			trafficModel.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label25 = new JLabel();
 			trafficPanel.add(label25);
 			label25.setToolTipText("Mean of OFF Period duration of a Source");
 			label25.setText("OFF Duration (hour)");
-			label25.setBounds(labelPos, 65, 175, 16);
+			label25.setBounds(labelPos, y, 175, 16);
 			label25.setVisible(false);
 			
 			label26 = new JLabel();
 			trafficPanel.add(label26);
 			label26.setToolTipText("Mean of Number of Calls of a Source per hour");
 			label26.setText("Number of Calls/hour");
-			label26.setBounds(labelPos, 65, 165, 16);
+			label26.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			noCalls = new JTextField();
 			trafficPanel.add(noCalls);
-			noCalls.setBounds(itemPos, 65, 120, 23);
+			noCalls.setBounds(itemPos, y, 120, 23);
 			noCalls.setText("0.5");
 			noCalls.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label27 = new JLabel();
 			trafficPanel.add(label27);
 			label27.setToolTipText("Mean of ON Period duration of a Source");
 			label27.setText("ON Duration (min)");
-			label27.setBounds(labelPos, 100, 165, 16);
+			label27.setBounds(labelPos, y, 165, 16);
 			label27.setVisible(false);
 			
 			label28 = new JLabel();
 			trafficPanel.add(label28);
 			label28.setToolTipText("Mean of Call duration of a Source");
 			label28.setText("Call Duration (min)");
-			label28.setBounds(labelPos, 100, 165, 16);
+			label28.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			callDur = new JTextField();
 			trafficPanel.add(callDur);
-			callDur.setBounds(itemPos, 100, 120, 23);
+			callDur.setBounds(itemPos, y, 120, 23);
 			callDur.setText("2");
 			callDur.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label29 = new JLabel();
 			trafficPanel.add(label29);
 			label29.setToolTipText("Duration of a unit time during animation");
 			label29.setText("Unit Time (msec)");
-			label29.setBounds(labelPos, 135, 165, 16);
+			label29.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			unitTime = new JTextField();
 			trafficPanel.add(unitTime);
 			unitTime.setToolTipText("Duration of a unit time during animation");
-			unitTime.setBounds(itemPos, 135, 120, 23);
+			unitTime.setBounds(itemPos, y, 120, 23);
 			unitTime.setText("0.01");
 			unitTime.addKeyListener(keyAdapter);
 			unitTime.setEnabled(false);
 		}
+		y += 35;
 		tabMainPanel.add(trafficPanel);
-		trafficPanel.setBounds(panelRight, 10, panelWidth, 170);
+		trafficPanel.setBounds(panelRight, 10, panelWidth, y);
 	}
 	
 	private void initFrequencyOptionsGUI()
@@ -727,38 +838,41 @@ public class GraphicalUserInterface extends JFrame{
 		frequencyPanel = new JPanel();
 		frequencyPanel.setBorder(BorderFactory.createTitledBorder("Frequency Options"));
 		frequencyPanel.setLayout(null);
+		int y = 30;
 		{
 			label30 = new JLabel();
 			frequencyPanel.add(label30);
 			label30.setToolTipText("Available Number of Frequencies in the Channel");
 			label30.setText("Number of Frequencies");
-			label30.setBounds(labelPos, 30, 165, 16);
+			label30.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			noFreqs = new JTextField();
 			frequencyPanel.add(noFreqs);
 			noFreqs.setToolTipText("Available Number of Frequencies in the Channel");
-			noFreqs.setBounds(itemPos, 30, 120, 23);
+			noFreqs.setBounds(itemPos, y, 120, 23);
 			noFreqs.setText("40");
 			noFreqs.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		{
 			label31 = new JLabel();
 			frequencyPanel.add(label31);
 			label31.setToolTipText("Channel bandwith of each frequency");
 			label31.setText("Channel Bandwith (KHz)");
-			label31.setBounds(labelPos, 65, 165, 16);
+			label31.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			channelBandwithField = new JTextField();
 			frequencyPanel.add(channelBandwithField);
 			channelBandwithField.setToolTipText("Channel bandwith of each frequency in terms of KHz");
-			channelBandwithField.setBounds(itemPos, 65, 120, 23);
+			channelBandwithField.setBounds(itemPos, y, 120, 23);
 			channelBandwithField.setText("8000");
 			channelBandwithField.addKeyListener(keyAdapter);
 		}
+		y += 35;
 		tabMainPanel.add(frequencyPanel);
-		frequencyPanel.setBounds(panelRight, 430, panelWidth, 100);
+		frequencyPanel.setBounds(panelRight, 430, panelWidth, y);
 	}
 	
 	private void addZoneOptinsGUI()
@@ -1192,5 +1306,13 @@ public class GraphicalUserInterface extends JFrame{
 	 */
 	public JTextField getTauField() {
 		return tauField;
+	}
+
+	public JTextField getNoiseFloorField() {
+		return noiseFloorField;
+	}
+
+	public JTextField getNoiseStdDevField() {
+		return noiseStdDevField;
 	}
 }
