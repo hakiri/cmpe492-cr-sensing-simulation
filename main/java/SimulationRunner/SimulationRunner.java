@@ -3,16 +3,13 @@ package SimulationRunner;
 import Animation.DrawCell;
 import Animation.Plot;
 import Animation.SimultaneousPlot;
-import CommunicationEnvironment.Cell;
-import CommunicationEnvironment.WirelessChannel;
+import CommunicationEnvironment.*;
 import DES.Scheduler;
 import DESSimulation.CRDESScheduler;
 import DESSimulation.DESPrimaryTrafficGenerator;
 import MultiThreadedSimulation.CRSensorThread;
 import MultiThreadedSimulation.PrimaryTrafficGenerator;
-import Nodes.CRBase;
-import Nodes.CRNode;
-import Nodes.PrimaryTrafficGeneratorNode;
+import Nodes.*;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
 import java.awt.Color;
@@ -192,7 +189,8 @@ public class SimulationRunner {
 		else
 			plot = null;
 		CRNode.initializeAverageReceivedPowers(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
-		CRNode.createLogFile("log.csv");
+		String logFileName = "log_"+String.valueOf(args.getSeed())+".csv";
+		CRNode.createLogFile(logFileName);
 		return true;
 	}
 	
