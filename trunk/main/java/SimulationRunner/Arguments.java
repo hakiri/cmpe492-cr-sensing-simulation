@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
  * This class holds necessary arguments for the simulation.
  */
 public class Arguments {
+	private String logFileDirectory = null;
 	private int numberOfSectors = 0;
 	private double dNumber = 0;
 	private int numberOfAlphaSlices = 0;
@@ -175,6 +176,8 @@ private double sensingSlotDur = 0.0;
 			input = new Scanner(new File(fileName));
 		} catch (FileNotFoundException ex) {
 			System.err.println("File "+fileName+" not FOUND!!!");
+			System.err.println(ex.getMessage());
+			System.err.println(ex.getLocalizedMessage());
 			return false;
 		}
 		
@@ -259,10 +262,107 @@ private double sensingSlotDur = 0.0;
 		} finally {
 			input.close();
 		}
-		
 		return true;
 	}
 
+	/**
+	 * Parses arguments from a given file.
+	 * @param fileName Name of the file that holds simulation parameters
+	 * @return <ul>
+	 *				<li><i>True </i> if there is no parsing errors
+	 *				<li><i>False </i> if there are parsing errors
+	 *		   </ul>
+	 */
+	public boolean parseArguments(String []args)
+	{
+		for(int i = 0; i< args.length ; i++){
+			System.out.println(args[i]);
+		}
+		batchMode = true;
+		animationOn = false;
+		plotOn = true;		//TODO make optional
+		int crUsers;
+		try {
+			numberOfPriNodes = Integer.parseInt(args[0]);
+			crUsers = Integer.parseInt(args[1]);
+		} catch (NumberFormatException nfe) {
+			System.out.println("Invalid Argument!!!");
+			System.out.println(nfe.getMessage());
+			return false;
+		}
+		
+		logFileDirectory = args[2];
+		
+		simulationDuration = 240;				//Get duration of the simulation in terms of min
+		simulationDuration *= 60000;
+		transmitPower = -10.0;			//Get transmit power value in terms of dB
+		noiseFloor = -100.0;
+		noiseStdDev = 60.0;
+		powerThreshold = -62;
+		seedModel = 0;
+		seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
+													  (int)System.currentTimeMillis());
+		plotOn = false;
+
+		trafficModel = 0;
+		averageNumberOfCalls = 0.5;		//Get number of calls per hour
+		averageCallDur = 2.0;			//Get call duration in terms of min
+
+		numberOfSensingSlots = 20;			//Get max number of frequencies a node can sense
+		sensingSlotDur = 1.0;
+		senseScheduleAdvertisementDur = 1.0;
+		senseResultAdvertisementDur = 1.0;
+		commScheduleAdvertisementDur = 1.0;
+		commDur = 63;
+
+		numberOfFreq = 40;			//Get number of frequencies
+		bandwidth = 8000000;
+
+		numberOfSectors = 3;				//Get number of sectors in the cell
+		dNumber = 3;						//Get number of d's
+		numberOfAlphaSlices = 4;				//Get number of alpha's
+		alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;	//Evaluate the angle associated to alpha
+		radius = 1500;			//Get radius of the cell
+		primaryRadius = radius + 1500;
+		numberOfZones = 36;		//Get the number of zones to be simulated
+
+		numberOfCrNodes = crUsers;
+//			int sectorNumber = input.nextInt();				//Get sector number CR nodes will be in
+//			int dNmber = input.nextInt();					//Get d interval CR nodes will be in
+//			int alphaNumber = input.nextInt();				//Get alpha number CR nodes will be in
+//			int numberOfCrUsersInZone = input.nextInt();	//Get number of CR nodes in zone
+//			numberOfCrNodes += numberOfCrUsersInZone;
+//			sectorNumbers.add(sectorNumber);
+//			alphaNumbers.add(alphaNumber);
+//			numbersOfCrUsersInZone.add(numberOfCrUsersInZone);
+//			dNumbers.add(dNmber);
+		for(int k=0;k<dNumber;k++){
+			int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
+			numberInZone *= (2*k+1);
+			numberInZone /= (numberOfAlphaSlices*numberOfSectors);
+			numberInZone ++;
+			for(int j=0;j<numberOfSectors;j++){
+				for(int l=0;l<numberOfAlphaSlices;l++){
+					if(numberInZone > crUsers)
+						numberInZone = crUsers;
+					sectorNumbers.add(j);
+					alphaNumbers.add(l);
+					numbersOfCrUsersInZone.add(numberInZone);
+					dNumbers.add(k);
+					crUsers -= numberInZone;
+				}
+			}
+		}
+
+		for(int i = 1;i<=dNumber;i++)
+			setOfD.add(radius * Math.sqrt((double)i/dNumber));					//Create set of d's
+
+		timeUnit = 1;
+
+		
+		return true;
+	}
+	
 	/**
 	 * Returns number of alpha slices in a sector
 	 * @return Number of alpha slices in a sector
@@ -571,5 +671,13 @@ private double sensingSlotDur = 0.0;
 
 	public double getNoiseStdDev() {
 		return noiseStdDev;
+	}
+
+	public String getLogFileDirectory() {
+		return logFileDirectory;
+	}
+
+	public void setLogFileDirectory(String logFileDirectory) {
+		this.logFileDirectory = logFileDirectory;
 	}
 }

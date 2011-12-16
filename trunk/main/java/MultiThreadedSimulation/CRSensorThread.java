@@ -168,13 +168,15 @@ public class CRSensorThread implements Runnable{
 			communicate();
 			GraphicalUserInterface.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
 		
-			String fileName = "Probs1_"+String.valueOf(SimulationRunner.args.getSeed())+
-									"_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
-									"_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
+			String fileName = SimulationRunner.args.getLogFileDirectory() + 
+							  "Probs1_"+String.valueOf(SimulationRunner.args.getSeed())+
+							  "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
+							  "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
 			SimulationRunner.plotProbs.plotAllXWithLegend(fileName, 0, namesList,totalSimulationDuration/unitTime);
-			fileName = "Probs2_"+String.valueOf(SimulationRunner.args.getSeed())+
-							 "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
-							 "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
+			fileName = SimulationRunner.args.getLogFileDirectory() + 
+					   "Probs2_"+String.valueOf(SimulationRunner.args.getSeed())+
+					   "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
+					   "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
 			SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList2, CRNode.getTotalNumberOfFrames()+1);
 		}
 		finalizeSimulation();
