@@ -46,7 +46,7 @@ public class CRNode implements Node {
     /**
      * Writer for the log file.
      */
-    private static PrintWriter pw = null;
+    private static PrintWriter logFileWriter = null;
     /**
      * Average SNR values of the frequencies.
      */
@@ -185,7 +185,7 @@ public class CRNode implements Node {
      * to the log file, respectively.
      */
     public void logReceivedPowers() {
-        pw.println("number: " + String.valueOf(id) + " -- position: " + point2DtoString(position) + " -- snrValues: " + hashMapToString(receievedPowers));
+        logFileWriter.println("number: " + String.valueOf(id) + " -- position: " + point2DtoString(position) + " -- snrValues: " + hashMapToString(receievedPowers));
     }
     
     private static void calculate_Pf_Pm()
@@ -294,7 +294,7 @@ public class CRNode implements Node {
     public static void createLogFile(String file_name) {
         String justComma = "",zones="";
         try {
-            pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
+            logFileWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
             for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
                 justComma += ";";
                 zones += String.valueOf(i) + ". zone;";
@@ -313,7 +313,7 @@ public class CRNode implements Node {
      * @param log_string String
      */
     public static void writeLogFile(String log_string) {
-        pw.println(log_string);
+        logFileWriter.println(log_string);
     }
 
     /**
@@ -328,7 +328,7 @@ public class CRNode implements Node {
      * Closes the log file.
      */
     public static void closeLogFile() {
-        pw.close();
+        logFileWriter.close();
     }    
     
     /**

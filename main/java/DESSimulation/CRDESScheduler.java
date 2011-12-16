@@ -275,16 +275,18 @@ public class CRDESScheduler extends SimEnt{
 		namesList.add("Drop");
 		namesList.add("Real Collision");
 		namesList.add("Measured Collision");
-		String fileName = "Probs1_"+String.valueOf(SimulationRunner.args.getSeed())+
-								"_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
-								"_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
+		String fileName = SimulationRunner.args.getLogFileDirectory() + 
+						  "Probs1_"+String.valueOf(SimulationRunner.args.getSeed())+
+						  "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
+						  "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
 		SimulationRunner.plotProbs.plotAllXWithLegend(fileName, 0, namesList,-1);
 		namesList = new ArrayList<String>();
 		namesList.add("False Alarm");
 		namesList.add("Miss-detection");
-		fileName = "Probs2_"+String.valueOf(SimulationRunner.args.getSeed())+
-						 "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
-						 "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
+		fileName = SimulationRunner.args.getLogFileDirectory() + 
+				   "Probs2_"+String.valueOf(SimulationRunner.args.getSeed())+
+				   "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
+				   "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
 		SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList, -1);
 		if(SimulationRunner.args.isPlotOn()){
 			ArrayList<String> names = new ArrayList<String>();

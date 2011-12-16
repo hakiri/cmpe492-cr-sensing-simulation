@@ -33,9 +33,19 @@ public class SimulationRunner {
 	 */
 	public static void main(String[] args) {
 		runner = new SimulationRunner();
-		if(args.length > 0){
+		
+		if(args.length == 2){
 			SimulationRunner.args = new Arguments();
 			if(!SimulationRunner.args.parseArguments(args[0])){
+				return;
+			}
+			SimulationRunner.args.setLogFileDirectory(args[1]);
+			runner.startSimulationInBatchMode();
+			return;
+		}
+		if(args.length == 3){
+			SimulationRunner.args = new Arguments();
+			if(!SimulationRunner.args.parseArguments(args)){
 				return;
 			}
 			runner.startSimulationInBatchMode();
@@ -189,7 +199,7 @@ public class SimulationRunner {
 		else
 			plot = null;
 		CRNode.initializeAverageReceivedPowers(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
-		String logFileName = "log_"+String.valueOf(args.getSeed())+
+		String logFileName = args.getLogFileDirectory() + "log_"+String.valueOf(args.getSeed())+
 								"_"+String.valueOf(args.getNumberOfPriNodes())+
 								"_"+String.valueOf(args.getNumberOfCrNodes())+".csv";
 		CRNode.createLogFile(logFileName);
