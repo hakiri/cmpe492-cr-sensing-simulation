@@ -55,9 +55,10 @@ public class GraphicalUserInterface extends JFrame{
 	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
 	private JTextField noSlotField,slotDurField,sensingResultField,senseScheduleField,commScheduleField,commDurField,
 					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
-					   transmitPowerField,noZones,channelBandwithField,tauField,noiseFloorField,noiseStdDevField;
+					   transmitPowerField,noZones,channelBandwithField,tauField,noiseFloorField,noiseStdDevField,
+					   noCRNodes;
 	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
-				   label15,label16,label17,label19,label21,label22,label23,label24,label25,label26,label27,label28,
+				   label15,label16,label17,label18,label19,label21,label22,label23,label24,label25,label26,label27,label28,
 				   label29,label30,label31;
 	private JComboBox seedModel,trafficModel;
 	private JButton startSimulation, closeButton;
@@ -173,17 +174,117 @@ public class GraphicalUserInterface extends JFrame{
 		{
 			label2 = new JLabel();
 			mainPanel.add(label2);
-			label2.setToolTipText("Number of Primary Users in The CR Cell");
+			label2.setToolTipText("Number of Primary Users in and around the CR Cell");
 			label2.setText("Number of Primary Nodes");
 			label2.setBounds(labelPos, y, 165, 16);
 		}
 		{
 			noPriNodes = new JTextField();
 			mainPanel.add(noPriNodes);
-			noPriNodes.setToolTipText("Number of Primary Users in The CR Cell");
+			noPriNodes.setToolTipText("Number of Primary Users in and around the CR Cell");
 			noPriNodes.setBounds(itemPos, y, 120, 23);
 			noPriNodes.setText("1500");
 			noPriNodes.addKeyListener(keyAdapter);
+		}
+		y += 35;
+		{
+			label18 = new JLabel();
+			mainPanel.add(label18);
+			label18.setToolTipText("Number of CR Users in The CR Cell");
+			label18.setText("Number of CR Nodes");
+			label18.setBounds(labelPos, y, 165, 16);
+		}
+		{
+			noCRNodes = new JTextField();
+			mainPanel.add(noCRNodes);
+			noCRNodes.setToolTipText("Number of CR Users in The CR Cell");
+			noCRNodes.setBounds(itemPos, y, 120, 23);
+			noCRNodes.setText("500");
+			noCRNodes.addKeyListener(keyAdapter);
+			
+			noCRNodes.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					super.mouseClicked(e);
+					noCRNodes.selectAll();
+				}
+				
+			});
+			
+			noCRNodes.getDocument().addDocumentListener(new DocumentListener() {
+
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					if(noCRNodes.getText().isEmpty())
+						return;
+					int numberOfCR=0;
+					try{
+						numberOfCR = Integer.parseInt(noCRNodes.getText());
+					}
+					catch(NumberFormatException nfe){
+						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+nfe.getMessage(),
+							"Simulation", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					int numberOfCRRemained = numberOfCR;
+					int numberOfRows = Integer.parseInt(noZones.getText())/2;
+					for(int j=0;j<2;j++){
+						for(int i=0;i<numberOfRows;i++){
+							int numberOfCrUsers = (j*numberOfRows + i) / 12;
+							if(j*numberOfRows + i < 24){
+								numberOfCrUsers = (numberOfCR/9)*(2*numberOfCrUsers + 1);
+								numberOfCrUsers /= 12;
+								numberOfCrUsers++;
+							}
+							else if(j*numberOfRows + i < 35){
+								numberOfCrUsers = numberOfCRRemained / (numberOfRows - i);
+							}
+							else
+								numberOfCrUsers = numberOfCRRemained;
+							zoneCRUsers.get(j*numberOfRows+i).setText(String.valueOf(numberOfCrUsers));
+							numberOfCRRemained -= numberOfCrUsers;
+						}
+					}
+				}
+
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					if(noCRNodes.getText().isEmpty())
+						return;
+					int numberOfCR=0;
+					try{
+						numberOfCR = Integer.parseInt(noCRNodes.getText());
+					}
+					catch(NumberFormatException nfe){
+						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+nfe.getMessage(),
+							"Simulation", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					int numberOfCRRemained = numberOfCR;
+					int numberOfRows = Integer.parseInt(noZones.getText())/2;
+					for(int j=0;j<2;j++){
+						for(int i=0;i<numberOfRows;i++){
+							int numberOfCrUsers = (j*numberOfRows + i) / 12;
+							if(j*numberOfRows + i < 24){
+								numberOfCrUsers = (numberOfCR/9)*(2*numberOfCrUsers + 1);
+								numberOfCrUsers /= 12;
+								numberOfCrUsers++;
+							}
+							else if(j*numberOfRows + i < 35){
+								numberOfCrUsers = numberOfCRRemained / (numberOfRows - i);
+							}
+							else
+								numberOfCrUsers = numberOfCRRemained;
+							zoneCRUsers.get(j*numberOfRows+i).setText(String.valueOf(numberOfCrUsers));
+							numberOfCRRemained -= numberOfCrUsers;
+						}
+					}
+				}
+
+				@Override
+				public void changedUpdate(DocumentEvent e) {}
+			});
 		}
 		y += 35;
 		{
@@ -552,7 +653,7 @@ public class GraphicalUserInterface extends JFrame{
 		}
 		y += 35;
 		tabMainPanel.add(framePanel);
-		framePanel.setBounds(panelRight,185,panelWidth,y);
+		framePanel.setBounds(panelRight,220,panelWidth,y);
 	}
 	
 	private void initZoneOptionsGUI()
@@ -663,11 +764,6 @@ public class GraphicalUserInterface extends JFrame{
 							"Simulation", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
-					if(i>34){
-						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+"Number of Zones cannot be greater than 34",
-							"Simulation", JOptionPane.WARNING_MESSAGE);
-						return;
-					}
 					for(int j=0;j<i;j++){
 						zoneAlphaNos.get(j).setEnabled(true);
 						zoneCRUsers.get(j).setEnabled(true);
@@ -696,11 +792,6 @@ public class GraphicalUserInterface extends JFrame{
 							"Simulation", JOptionPane.WARNING_MESSAGE);
 						return;
 					}
-					if(i>34){
-						JOptionPane.showMessageDialog(null, "Invalid argument:\n"+"Number of Zones cannot be greater than 34",
-							"Simulation", JOptionPane.WARNING_MESSAGE);
-						return;
-					}
 					for(int j=0;j<i;j++){
 						zoneAlphaNos.get(i).setEnabled(true);
 						zoneCRUsers.get(i).setEnabled(true);
@@ -723,7 +814,7 @@ public class GraphicalUserInterface extends JFrame{
 		}
 		y += 35;
 		tabMainPanel.add(zonePanel);
-		zonePanel.setBounds(panelLeft, 395, panelWidth, y);
+		zonePanel.setBounds(panelRight, 10, panelWidth, y);
 	}
 	
 	private void initTrafficOptionsGUI()
@@ -830,7 +921,7 @@ public class GraphicalUserInterface extends JFrame{
 		}
 		y += 35;
 		tabMainPanel.add(trafficPanel);
-		trafficPanel.setBounds(panelRight, 10, panelWidth, y);
+		trafficPanel.setBounds(panelLeft, 430, panelWidth, y);
 	}
 	
 	private void initFrequencyOptionsGUI()
@@ -872,7 +963,7 @@ public class GraphicalUserInterface extends JFrame{
 		}
 		y += 35;
 		tabMainPanel.add(frequencyPanel);
-		frequencyPanel.setBounds(panelRight, 430, panelWidth, y);
+		frequencyPanel.setBounds(panelRight, 465, panelWidth, y);
 	}
 	
 	private void addZoneOptinsGUI()
@@ -884,6 +975,7 @@ public class GraphicalUserInterface extends JFrame{
 		int id=1;
 		int numberOfRows = 18;
 		int numberOfCR = 500;
+		int numberOfCRRemained = 500;
 		JTextField textField;
 		JPanel []panels = new JPanel[2];
 		for(int j=0; j<2; j++){
@@ -915,7 +1007,6 @@ public class GraphicalUserInterface extends JFrame{
 			panels[j].add(label);
 			label.setText("CR Users");
 			label.setBounds(324, 5, 60, 23);
-			int initialNumberOfZones = 24;
 
 			for(int i=0;i<numberOfRows;i++){
 				label = new JLabel();
@@ -930,6 +1021,7 @@ public class GraphicalUserInterface extends JFrame{
 				textField.setBounds(66, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
 				textField.setText(String.valueOf(((id-2)/4)%3));
+				textField.setEditable(false);
 				zoneSectorNos.add(textField);
 
 				textField = new JTextField();
@@ -938,6 +1030,7 @@ public class GraphicalUserInterface extends JFrame{
 				textField.setBounds(162, 35+i*30, 51, 23);
 				textField.addKeyListener(keyAdapter);
 				textField.setText(String.valueOf(((id-2)/12)%3));
+				textField.setEditable(false);
 				zoneDNos.add(textField);
 
 				textField = new JTextField();
@@ -946,6 +1039,7 @@ public class GraphicalUserInterface extends JFrame{
 				textField.setBounds(228, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
 				textField.setText(String.valueOf((id-2)%4));
+				textField.setEditable(false);
 				zoneAlphaNos.add(textField);
 
 				textField = new JTextField();
@@ -957,7 +1051,11 @@ public class GraphicalUserInterface extends JFrame{
 				numberOfCrUsers = (numberOfCR/9)*(2*numberOfCrUsers + 1);
 				numberOfCrUsers /= 12;
 				numberOfCrUsers++;
+				if(numberOfCrUsers > numberOfCRRemained)
+					numberOfCrUsers = numberOfCRRemained;
 				textField.setText(String.valueOf(numberOfCrUsers));
+				numberOfCRRemained -= numberOfCrUsers;
+				textField.setEditable(false);
 				zoneCRUsers.add(textField);
 			}
 			tabZonePanel.add(panels[j]);
