@@ -327,32 +327,30 @@ private double sensingSlotDur = 0.0;
 		numberOfZones = 36;		//Get the number of zones to be simulated
 
 		numberOfCrNodes = crUsers;
-//			int sectorNumber = input.nextInt();				//Get sector number CR nodes will be in
-//			int dNmber = input.nextInt();					//Get d interval CR nodes will be in
-//			int alphaNumber = input.nextInt();				//Get alpha number CR nodes will be in
-//			int numberOfCrUsersInZone = input.nextInt();	//Get number of CR nodes in zone
-//			numberOfCrNodes += numberOfCrUsersInZone;
-//			sectorNumbers.add(sectorNumber);
-//			alphaNumbers.add(alphaNumber);
-//			numbersOfCrUsersInZone.add(numberOfCrUsersInZone);
-//			dNumbers.add(dNmber);
 		for(int k=0;k<dNumber;k++){
-			int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
-			numberInZone *= (2*k+1);
-			numberInZone /= (numberOfAlphaSlices*numberOfSectors);
-			numberInZone ++;
 			for(int j=0;j<numberOfSectors;j++){
 				for(int l=0;l<numberOfAlphaSlices;l++){
-					if(numberInZone > crUsers)
+					int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
+					if(k<dNumber - 1){
+						numberInZone *= (2*k+1);
+						numberInZone /= (numberOfAlphaSlices*numberOfSectors);
+						numberInZone ++;
+					}
+					else if(numberOfZones != 1){
+						numberInZone = crUsers / (numberOfZones);
+					}
+					else
 						numberInZone = crUsers;
 					sectorNumbers.add(j);
 					alphaNumbers.add(l);
 					numbersOfCrUsersInZone.add(numberInZone);
 					dNumbers.add(k);
 					crUsers -= numberInZone;
+					numberOfZones--;
 				}
 			}
 		}
+		numberOfZones = 36;
 
 		for(int i = 1;i<=dNumber;i++)
 			setOfD.add(radius * Math.sqrt((double)i/dNumber));					//Create set of d's
