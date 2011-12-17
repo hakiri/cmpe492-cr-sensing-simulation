@@ -266,8 +266,7 @@ private double sensingSlotDur = 0.0;
 	}
 
 	/**
-	 * Parses arguments from a given file.
-	 * @param fileName Name of the file that holds simulation parameters
+     * @param args Arguments
 	 * @return <ul>
 	 *				<li><i>True </i> if there is no parsing errors
 	 *				<li><i>False </i> if there are parsing errors
@@ -632,7 +631,11 @@ private double sensingSlotDur = 0.0;
 	public int getProgress() {
 		return progress;
 	}
-
+    
+    /**
+     * Returns how many reports will be done in the log file during the simulation.
+     * @return 
+     */
     public int getNumberOfReports() {
         return numberOfReports;
     }
@@ -658,23 +661,43 @@ private double sensingSlotDur = 0.0;
 			}
 		}
 	}
-
+    
+    /**
+     * Returns the radius of the circle that primary users can be deployed.
+     * @return 
+     */
 	public double getPrimaryRadius() {
 		return primaryRadius;
 	}
-
+    
+    /**
+     * Returns the noise floor.
+     * @return 
+     */
 	public double getNoiseFloor() {
 		return noiseFloor;
 	}
-
+    
+    /**
+     * Returns the standard deviation of the noise
+     * @return 
+     */
 	public double getNoiseStdDev() {
 		return noiseStdDev;
 	}
 
+    /**
+     * Return location of the log file.
+     * @return 
+     */
 	public String getLogFileDirectory() {
 		return logFileDirectory;
 	}
 
+    /**
+     * Sets location of the log file.
+     * @param logFileDirectory 
+     */
 	public void setLogFileDirectory(String logFileDirectory) {
 		this.logFileDirectory = logFileDirectory;
 	}

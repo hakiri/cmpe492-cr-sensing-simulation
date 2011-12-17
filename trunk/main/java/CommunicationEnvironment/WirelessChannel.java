@@ -57,7 +57,6 @@ public class WirelessChannel {
 	 * On-Off traffic model
 	 */
 	public static final int ON_OFF = 1;
-	
 	/**
 	 * Scale of msec during animation
 	 */
@@ -66,19 +65,32 @@ public class WirelessChannel {
 	 * Bandwidth of each of the available channels 
 	 */
 	public static int bandwidth ;
-    
+    /**
+     * Probabilities of frequency intervals. When a primary user wants to talk, he gets a 
+     * free channel to communicate(if possible), and the probability of which channel that he gets is 
+     * determined by this probability array.
+     */
     public ArrayList<Double> probsOfFreqIntervals = null;
+    /**
+     * This array keeps the boundaries of frequency intervals with respect to 
+     * their probabilities about how they are likely to come when we get a random free frequency
+     */
 	public ArrayList<Integer> indexesOfFreqIntervals = null;
+    /**
+     * This array keeps the total number of usages of each frequency by primary users.
+     */
     public ArrayList<Integer> usageOfFreqs = new ArrayList<Integer>();
+    /**
+     * This array keeps the total number of usages of each frequency intervals by primary users.
+     */
     public ArrayList<Integer> usageOfFreqsInIntervals = new ArrayList<Integer>();
-	/**
+	
+    /**
 	 * Creates a wireless channel with the given model.
 	 * It creates numberOfFrequencies amount frequency.
 	 * Initially there is no node in the channel.
-	 * @param channelModel			0 for Simple ch., 1 for Lognormal ch.
 	 * @param numberOfFrequencies	Number of frequencies in the channel
 	 * @param transmitPower				max SNR value of the channel
-	 * @param sinrThreshold			SINR threshold for CR nodes to be able to communicate without collision
 	 * @param meanOffDuration 	<ul>
 	 *								<li><i>If Poisson traffic model:</i> Mean number of calls per unit time
 	 *								<li><i>If ON-OFF traffic model:</i> Mean OFF period duration of a node in terms of time units
@@ -249,13 +261,21 @@ public class WirelessChannel {
         }
 	}
 	
+    /**
+     * Finds all available frequency intervals and selects an interval randomly with respect to the 
+     * frequency interval probabilities.
+     * @return  <ul>
+     *              <li>Boundaries of the selected frequency interval, if there are some available frequencies. </li>
+     *              <li>An arraylist with two elements in it and each element is '-1', otherwise.</li>
+     *          </ul>
+     */
     public ArrayList<Integer> freqInterval(){
         ArrayList<Integer> freqInterval = new ArrayList<Integer>();
         ArrayList<Integer> availableFreqIntervals = new ArrayList<Integer>();
         ArrayList<Double> cumulativeProbsOfFreq = new ArrayList<Double>();
         int temp=0,iStart=-1,iEnd=-1; 
         double totalProb=0.0,expandCoeff,cumProb=0.0,random;
-        
+        //finds available frequency intervals and add their probability value to the totalProb
         for(int i=0;i<probsOfFreqIntervals.size();i++){
             for(int j=temp;j<indexesOfFreqIntervals.get(i);j++){
                 if(frequencies.get(j).get(PRIMARY) == null){
@@ -297,13 +317,17 @@ public class WirelessChannel {
         return freqInterval;
     }
     
+    /**
+     * Assigns probabilities to the frequency intervals, and initializes other arrays related with 
+     * these frequency intervals
+     */
     public final void initializeFreqIntervals(){
         int temp=0;
         probsOfFreqIntervals = new ArrayList<Double>();
         indexesOfFreqIntervals = new ArrayList<Integer>();
-        probsOfFreqIntervals.add(0.2);
-        probsOfFreqIntervals.add(0.6);
-        probsOfFreqIntervals.add(0.2);
+        probsOfFreqIntervals.add(0.2);  //probability of first frequency interval
+        probsOfFreqIntervals.add(0.6);  //probability of second frequency interval
+        probsOfFreqIntervals.add(0.2);  //probability of third frequency interval
         temp = (int)Math.ceil(frequencies.size()/probsOfFreqIntervals.size());
         for(int i=0;i<probsOfFreqIntervals.size()-1;i++){
             indexesOfFreqIntervals.add(temp*i+temp);

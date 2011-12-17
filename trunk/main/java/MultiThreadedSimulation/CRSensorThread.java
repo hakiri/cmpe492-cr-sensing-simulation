@@ -552,7 +552,11 @@ public class CRSensorThread implements Runnable{
 	public Thread getRunner() {
 		return runner;
 	}
-
+    
+    /**
+     * Returns the number of the current frame.
+     * @return The current frame number
+     */
     public int getFrame() {
         return frame;
     }

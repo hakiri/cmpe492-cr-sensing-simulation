@@ -555,72 +555,149 @@ public class CRBase extends ArrayList<CRNode> implements Node{
         return distance;
     }
     
+    /**
+     * Returns the total number of false alarms in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
     public double  getFalseAlarm(int zoneId) {
         return falseAlarm.get(zoneId);
     }
-
+    
+    /**
+     * Returns the total number of miss detections in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
     public double getMissDetection(int zoneId) {
         return missDetection.get(zoneId);
     }
-
+    
+    /**
+     * Returns the total number of collisions in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
     public double getCollisions(int zoneId) {
         return collisions.get(zoneId);
     }
-
+    
+    /**
+     * Returns the total number of drops in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
     public double getDrops(int zoneId) {
         return drops.get(zoneId);
     }
-
+    
+    /**
+     * Returns the total number of blocks in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
     public double getBlocks(int zoneId) {
         return blocks.get(zoneId);
     }
     
+    /**
+     * Returns the total number of bits transmitted from cr users in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
     public double getTotalBitsTransmitted(int zoneId) {
         return totalNumberOfBitsTransmitted.get(zoneId);
     }
     
+    /**
+     * Returns the total number of communicated frames of cr users in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
     public double getTotalCommunicatedFrames(int zoneId) {
         return totalCommunicatedFrames.get(zoneId);
     }
     
+    /**
+     * Increments the number of false alarms in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
     public void incrementFalseAlarm(int zoneId) {
         falseAlarm.set(zoneId, falseAlarm.get(zoneId)+1);
     }
 	
+    /**
+     * Increments the number of miss detections in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
     public void incrementMissDetection(int zoneId) {
         missDetection.set(zoneId, missDetection.get(zoneId)+1);
     }
 	
+    /**
+     * Increments the number of collisions in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
     public void incrementCollision(int zoneId) {
         collisions.set(zoneId, collisions.get(zoneId)+1);
     }
     
+    /**
+     * Increments the number of drops in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
     public void incrementDrop(int zoneId) {
         drops.set(zoneId, drops.get(zoneId)+1);
     }
     
+    /**
+     * Increments the number of blocks in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
     public void incrementBlock(int zoneId) {
         blocks.set(zoneId, blocks.get(zoneId)+1);
     }
     
+    /**
+     * Increments the number of bits transmitted from cr users in a zone, by increase value.
+     * @param zoneId Id number of the zone
+     * @param increase Increase in the total number of bits transmitted
+     */
     public void incrementTotalBitsTransmitted(int zoneId, double increase) {
         totalNumberOfBitsTransmitted.set(zoneId, totalNumberOfBitsTransmitted.get(zoneId)+increase);
     }
     
+    /**
+     * Increments the number of total communicated frames of cr users in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
     public void incrementTotalCommunicatedFrames(int zoneId) {
         totalCommunicatedFrames.set(zoneId, totalCommunicatedFrames.get(zoneId)+1);
     }
     
+    /**
+     * Adds a cr node to the cr base
+     * @param n Cr node
+     */
 	public void addCRNode(CRNode n)
 	{
 		super.add(n);
 	}
 	
+    /**
+     * Returns the cr node with respect to its id.
+     * @param id Id of the cr node
+     * @return 
+     */
 	public CRNode getCRNode(int id)
 	{
 		return super.get(id);
 	}
 	
+    /**
+     * Returns total number of cr nodes in the cr base.
+     * @return 
+     */
 	public int numberOfCRNodes()
 	{
 		return super.size();

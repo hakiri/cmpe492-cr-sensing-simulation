@@ -57,6 +57,7 @@ public class PrimaryTrafficGeneratorThread implements Runnable{
 	 *								<li><i>If Poisson traffic model:</i> Mean number of calls per unit time
 	 *								<li><i>If ON-OFF traffic model:</i> Mean OFF period duration of a node in terms of time units
 	 *							</ul>
+     * @param simulationDuration Duration of the simulation
 	 */
 	public PrimaryTrafficGeneratorThread(PrimaryTrafficGeneratorNode n, double meanOnDuration, double meanOffDuration, double simulationDuration)
 	{
