@@ -33,7 +33,7 @@ public class CRNode implements Node {
      */
     protected double velocity = 0;
     /**
-     * Id o the Node
+     * Id of the Node
      */
     protected int id;
 	static double powerThreshold = 15.987;
@@ -305,8 +305,9 @@ public class CRNode implements Node {
             }
             writeLogFile(String.format(Locale.US, "Time;Number of False Alarms"+justComma+"Number of Miss Detection"
                     +justComma+"Number of Collisions"+justComma+"Number of Blocks"+justComma
-                    +"Number of Drops"+justComma+"Throughput"+justComma+"Total communicated frames"+justComma));
-            writeLogFile(String.format(Locale.US, ";"+zones+zones+zones+zones+zones+zones+zones));
+                    +"Number of Drops"+justComma+"Throughput"+justComma+"Total communicated frames"+justComma
+                    +"Number of calls"+justComma+"Number of call attempts"+justComma));
+            writeLogFile(String.format(Locale.US, ";"+zones+zones+zones+zones+zones+zones+zones+zones+zones));
         } catch (IOException ex) {
             System.err.println("Error during file operations");
         }
@@ -356,8 +357,10 @@ public class CRNode implements Node {
         this.communication_frequency = communication_frequency;
         commOrNot = true;
         SimulationRunner.wc.occupyFrequency(communication_frequency, this);
-        if(!this.isCollided)    //when a call starts
+        if(!this.isCollided){    //when a call starts
             this.numberOfCalls++;
+            SimulationRunner.crBase.incrementNumberOfCalls(SimulationRunner.crBase.findZone(id));
+        }
         isCollided=false;
     }
 
@@ -659,6 +662,7 @@ public class CRNode implements Node {
     public void setReadytoComm(boolean readytoComm) {
         if (readytoComm) {
             numberOfCallAttempts++;
+            SimulationRunner.crBase.incrementNumberOfCallAttempts(SimulationRunner.crBase.findZone(id));
         }
         this.readytoComm = readytoComm;
     }

@@ -89,6 +89,8 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     private ArrayList<Double> blocks;
     private ArrayList<Double> totalNumberOfBitsTransmitted;
     private ArrayList<Double> totalCommunicatedFrames;
+    private ArrayList<Double> numberOfCalls;
+    private ArrayList<Double> numberOfCallAttempts;
     /**
      * Creates a CRBase at the given position.
      * @param pos Position of the Base station
@@ -113,6 +115,8 @@ public class CRBase extends ArrayList<CRNode> implements Node{
         this.drops = new ArrayList<Double>();
         this.totalNumberOfBitsTransmitted = new ArrayList<Double>();
         this.totalCommunicatedFrames = new ArrayList<Double>();
+        this.numberOfCalls = new ArrayList<Double>();
+        this.numberOfCallAttempts = new ArrayList<Double>();
     }
 
 	@Override
@@ -485,6 +489,8 @@ public class CRBase extends ArrayList<CRNode> implements Node{
             drops.add(0.0);
             totalNumberOfBitsTransmitted.add(0.0);
             totalCommunicatedFrames.add(0.0);
+            numberOfCalls.add(0.0);
+            numberOfCallAttempts.add(0.0);
 			if(nodesInZone.size() > 0)
 				nodesInZone.add(crnodes.get(i) + nodesInZone.get(nodesInZone.size() - 1));
 			else
@@ -619,6 +625,24 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     }
     
     /**
+     * Returns the total number of calls of cr users in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
+    public double getNumberOfCalls(int zoneId){
+        return numberOfCalls.get(zoneId);
+    }
+    
+    /**
+     * Returns the total number of call attempts of cr users in a zone.
+     * @param zoneId Id number of the zone
+     * @return 
+     */
+    public double getNumberOfCallAttempts(int zoneId){
+        return numberOfCallAttempts.get(zoneId);
+    }
+    
+    /**
      * Increments the number of false alarms in a zone, by one.
      * @param zoneId Id number of the zone
      */
@@ -673,6 +697,22 @@ public class CRBase extends ArrayList<CRNode> implements Node{
      */
     public void incrementTotalCommunicatedFrames(int zoneId) {
         totalCommunicatedFrames.set(zoneId, totalCommunicatedFrames.get(zoneId)+1);
+    }
+    
+    /**
+     * Increments the number of calls of cr users in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
+    public void incrementNumberOfCalls(int zoneId){
+        numberOfCalls.set(zoneId, numberOfCalls.get(zoneId)+1);
+    }
+    
+    /**
+     * Increments the number of call attempts of cr users in a zone, by one.
+     * @param zoneId Id number of the zone
+     */
+    public void incrementNumberOfCallAttempts(int zoneId){
+        numberOfCallAttempts.set(zoneId, numberOfCallAttempts.get(zoneId)+1);
     }
     
     /**

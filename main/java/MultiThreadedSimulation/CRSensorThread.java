@@ -262,7 +262,7 @@ public class CRSensorThread implements Runnable{
 	{
         int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
         double blockProb, dropProb,collisionProb,estimatedCollisionProb,th=0.0;
-		String falseAlarms="",missDetections="",collisions="",drops="",blocks="",throughput="";
+		String falseAlarms="",missDetections="",collisions="",drops="",blocks="",throughput="",commFrames="",calls="",callAttempts="";
         time = System.currentTimeMillis();		//Save current time
 		/*Write time to log file*/
 		double msec = (double)(totalSimulationDuration-remainingSimulationDuration)/unitTime;
@@ -321,8 +321,11 @@ public class CRSensorThread implements Runnable{
                 else if(!SimulationRunner.args.isAnimationOn())
                     th = (int)(SimulationRunner.crBase.getTotalBitsTransmitted(i)/SimulationRunner.crDesScheduler.getCommDur());
                 throughput += String.valueOf(th)+";";
+                commFrames += String.valueOf(SimulationRunner.crBase.getTotalCommunicatedFrames(i))+";";
+                calls += String.valueOf(SimulationRunner.crBase.getNumberOfCalls(i))+";";
+                callAttempts += String.valueOf(SimulationRunner.crBase.getNumberOfCallAttempts(i))+";";
             }
-            CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarms+missDetections+collisions+blocks+drops+throughput,msec));
+            CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarms+missDetections+collisions+blocks+drops+throughput+commFrames+calls+callAttempts,msec));
         }
         CRNode.fuseSensingResults((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
 		
