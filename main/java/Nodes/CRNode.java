@@ -117,11 +117,15 @@ public class CRNode implements Node {
      * True if the CR node has collided in the previous frame
      */
     private boolean isCollided = false;
-    
     private double last_time;
     private double lastChannelCapacity;
     private double totalNumberOfBitsTransmitted = 0;
+    /**
+     * Array list that keeps the reporting frame numbers, so that at each "reporting frame"
+     * all related data will be logged in the log file.
+     */
     public static ArrayList<Integer> reportingFrames;
+    
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param id ID of this CR node
@@ -738,7 +742,7 @@ public class CRNode implements Node {
     }
 
     /**
-     * 
+     * Returns the number of calls of this cr node.
      * @return
      */
     public int getNumberOfCalls() {
@@ -746,7 +750,7 @@ public class CRNode implements Node {
     }
 
     /**
-     * 
+     * Sets the number of calls of this cr node.
      * @param numberOfCalls
      */
     public void setNumberOfCalls(int numberOfCalls) {
@@ -754,7 +758,7 @@ public class CRNode implements Node {
     }
 
     /**
-     * 
+     * Returns the number of call attempts of this cr node.
      * @return
      */
     public int getNumberOfCallAttempts() {
@@ -762,7 +766,7 @@ public class CRNode implements Node {
     }
 
     /**
-     * 
+     * Returns number of collisions of this cr node with other primary nodes.
      * @return
      */
     public int getNumberOfCollision() {
@@ -838,21 +842,32 @@ public class CRNode implements Node {
 	}
 
     /**
-     * 
+     * Returns the number of frames communicated.
      * @return
      */
     public int getNumberOfFramesCommunicated() {
 		return numberOfFramesCommunicated;
 	}
-
+    
+    /**
+     * Returns the number of estimated collisions.
+     * @return
+     */
     public int getEstimatedNumberOfCollison() {
         return estimatedNumberOfCollison;
     }
     
+    /**
+     * Increments the number of estimated collisions by one.
+     */
     public void incrementEstimatedNumberOfCollision() {
         estimatedNumberOfCollison++;
     }
-
+    
+    /**
+     * 
+     * @param estimatedNumberOfCollison Estimated number of collisions
+     */
     public void setEstimatedNumberOfCollison(int estimatedNumberOfCollison) {
         this.estimatedNumberOfCollison = estimatedNumberOfCollison;
     }

@@ -217,6 +217,10 @@ public class PrimaryTrafficGeneratorNode implements Node{
 		return data;
 	}
 
+    /**
+     * Sets a communication frequency for a primary node.
+     * @param communicationFreq Communication frequency
+     */
 	public void setCommunicationFreq(int communicationFreq) {
 		this.communicationFreq = communicationFreq;
 	}

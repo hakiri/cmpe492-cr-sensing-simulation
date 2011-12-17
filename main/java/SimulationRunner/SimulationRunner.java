@@ -21,6 +21,9 @@ import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
+/**
+ * Main class of the simulation.
+ */
 public class SimulationRunner {
 	public static SimulationRunner runner;
 	/**

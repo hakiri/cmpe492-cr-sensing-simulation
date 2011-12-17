@@ -464,11 +464,19 @@ public class CRDESScheduler extends SimEnt{
 	public void sendStartCommEvent(int crnode_id){
 		SimulationRunner.crBase.getCRNode(crnode_id).startEventHandle = send(this,SimulationRunner.crBase.getCRNode(crnode_id).startCommEvent,SimulationRunner.crBase.getCRNode(crnode_id).nextOffDurationDES(this.frameDuration)-(this.frameDuration-this.commScheduleAdvertisement-this.commDur));
 	}
-
+    
+    /**
+     * Returns the number of the current frame.
+     * @return The current frame number
+     */
 	public long getCurrentFrame() {
 		return currentFrame;
 	}
-
+    
+    /**
+     * Returns the frame duration in terms of unit time.
+     * @return Frame duration in terms of unit time
+     */
 	public double getFrameDuration() {
 		return frameDuration;
 	}
