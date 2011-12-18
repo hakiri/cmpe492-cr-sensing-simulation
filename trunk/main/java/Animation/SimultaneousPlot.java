@@ -20,8 +20,12 @@ public class SimultaneousPlot {
 	
 	/**
 	 * Creates a new plotter object with no x value and y value.
-	 * @param xs	Number of different x values
-	 * @param yPerX	How many y belongs to each x
+	 * @param xs	 Number of different x values
+	 * @param yPerX	 How many y belongs to each x
+	 * @param xLabel Label of x axis
+	 * @param yLabel Label of y axis
+	 * @param xUnits Units of the x axis
+	 * @param yUnits Units of the y axis
 	 */
 	public SimultaneousPlot(int xs, ArrayList<Integer> yPerX, String xLabel, String yLabel, String xUnits, String yUnits)
 	{
@@ -40,7 +44,6 @@ public class SimultaneousPlot {
 	
 	/**
 	 * Adds an x value and its corresponding y values plotter.
-	 * @param xPos		Which x value collection the values belong
 	 * @param xVal		x value to be added
 	 * @param yVals		y values to be added
 	 */

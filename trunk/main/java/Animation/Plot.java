@@ -47,6 +47,10 @@ public class Plot {
 	 * Creates a new plotter object with no x value and y value.
 	 * @param numberOfXs	Number of different x values
 	 * @param yPerX			How many y belongs to each x
+	 * @param xLabel		Label of x axis
+	 * @param yLabel		Label of y axis
+	 * @param xUnits		Units of the x axis
+	 * @param yUnits		Units of the y axis
 	 */
 	public Plot(int numberOfXs, ArrayList<Integer> yPerX, String xLabel, String yLabel, String xUnit, String yUnit)
 	{

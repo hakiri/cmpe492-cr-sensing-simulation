@@ -25,6 +25,9 @@ import javax.swing.SwingUtilities;
  * Main class of the simulation.
  */
 public class SimulationRunner {
+	/**
+	 * Object of the currently running SimulationRunner
+	 */
 	public static SimulationRunner runner;
 	/**
 	 * Currently running GraphicalUserInterface instance
