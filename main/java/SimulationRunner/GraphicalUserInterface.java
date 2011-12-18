@@ -1406,10 +1406,18 @@ public class GraphicalUserInterface extends JFrame{
 		return tauField;
 	}
 
+	/**
+	 * Returns the text field that holds noise floor
+	 * @return The text field that holds noise floor
+	 */
 	public JTextField getNoiseFloorField() {
 		return noiseFloorField;
 	}
 
+	/**
+	 * Returns the text field that holds standard deviation of the noise
+	 * @return The text field that holds standard deviation of the noise
+	 */
 	public JTextField getNoiseStdDevField() {
 		return noiseStdDevField;
 	}

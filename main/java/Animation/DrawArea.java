@@ -186,14 +186,26 @@ public class DrawArea extends JPanel{
 		repaint();
 	}
 
+	/**
+	 * Returns the collision warnings of secondary users
+	 * @return The collision warnings of secondary users
+	 */
 	public HashMap<Integer, PointColor> getCrNodeCollisionWarning() {
 		return crNodeCollisionWarning;
 	}
 
+	/**
+	 * Returns the drawable secondary users and their draw data
+	 * @return The drawable secondary users and their draw data
+	 */
 	public HashMap<Integer, PointColor> getCrNodes() {
 		return crNodes;
 	}
 
+	/**
+	 * Returns the drawable primary users and their draw data
+	 * @return The drawable primary users and their draw data
+	 */
 	public HashMap<Integer, PointColor> getPrimaryNodes() {
 		return primaryNodes;
 	}
