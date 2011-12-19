@@ -35,7 +35,7 @@ public class WirelessChannel {
 	/**
 	 * Transmitter power
 	 */
-	public double Ptx = -50.0;	//TODO take as parameter
+	public double Ptx = -10.0;	//TODO take as parameter
 	/**
 	 * Uniform distribution to accomplish frequency assignments
 	 */
@@ -45,7 +45,7 @@ public class WirelessChannel {
 	private static final double l0 = 38.4;
 	private static final double alpha = 35;
 	private static final double variance = 8;
-	private double noiseFloor = -111.0;
+	private double noiseFloor = -100.0;
 	private double meanOnDuration;
 	private double meanOffDuration;
 	private int trafficModel;
@@ -344,7 +344,7 @@ public class WirelessChannel {
 	 */
 	public static double dbmToMag(double db)
 	{
-		return Math.pow(10, ((db - 30.0)/10));
+		return Math.pow(10, (db / 10));
 	}
 	
 	/**
@@ -354,7 +354,7 @@ public class WirelessChannel {
 	 */
 	public static double magTodbm(double mag)
 	{
-		return 10.0*Math.log10(mag) + 30.0;
+		return 10.0*Math.log10(mag);
 	}
 	
 	/**

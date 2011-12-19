@@ -288,8 +288,12 @@ public class SimulationRunner {
 	{
 		crBase.clear();			//Delete CR nodes
 		priTrafGenNodes.clear();	//Delete primary nodes
-		if(args.isAnimationOn())
+		if(!args.isBatchMode()){
+			SimultaneousPlot.reset();
+		}
+		if(args.isAnimationOn()){
 			drawCell.terminate();
+		}
 	}
 	
 	private void exit()
