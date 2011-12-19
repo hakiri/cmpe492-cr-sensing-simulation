@@ -395,54 +395,60 @@ public class CRNode implements Node {
         for (int i = 0; i < SimulationRunner.wc.numberOfFreq(); i++) {
             channelCapacity.add(0.0);
         }
-        for (int i = 0; i < SimulationRunner.crBase.numberOfCRNodes(); i++) {
-            if (!SimulationRunner.crBase.getCRNode(i).commOrNot) {
-                continue;
-            }
-            int freq = SimulationRunner.crBase.getCRNode(i).communication_frequency;
-			
-			channelCapacity.set(freq,SimulationRunner.wc.currentChannelCapacity(SimulationRunner.crBase, SimulationRunner.crBase.getCRNode(i), freq));
-			if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.PRIMARY) != null){ //checks if collision occured
-				if(isRegular&&(!lastReport))
-                    SimulationRunner.crBase.getCRNode(i).collisionOccured = true;
-			}
-			if(isRegular && !lastReport){   //updates time and sinr value of communicating cr nodes
-                SimulationRunner.crBase.getCRNode(i).last_time = time;
-                SimulationRunner.crBase.getCRNode(i).lastChannelCapacity = channelCapacity.get(freq);
-            }
-            if(isRegular && lastReport){
-                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001;
-                SimulationRunner.crBase.incrementTotalBitsTransmitted(SimulationRunner.crBase.findZone(i), (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001);
-            }
-            if(!isRegular){
-                SimulationRunner.crBase.getCRNode(i).totalNumberOfBitsTransmitted += (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001;
-                SimulationRunner.crBase.incrementTotalBitsTransmitted(SimulationRunner.crBase.findZone(i), (time-SimulationRunner.crBase.getCRNode(i).last_time)*SimulationRunner.crBase.getCRNode(i).lastChannelCapacity*0.001);
-                SimulationRunner.crBase.getCRNode(i).last_time = time;
-                SimulationRunner.crBase.getCRNode(i).lastChannelCapacity = channelCapacity.get(freq);
-            }
-            
-			double msec = (double)time;
-			int hour = (int)(msec/3600000.0);
-			msec -= hour*3600000.0;
-			int min = (int)(msec/60000.0);
-			msec -= min*60000.0;
-			int sec = (int)(msec/1000.0);
-			msec-= sec*1000.0;
-			
-//			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crBase.getCRNode(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
-			if(isRegular && lastReport){
-				SimulationRunner.crBase.getCRNode(i).numberOfFramesCommunicated++;
-                SimulationRunner.crBase.incrementTotalCommunicatedFrames(SimulationRunner.crBase.findZone(i));
-				if(SimulationRunner.crBase.getCRNode(i).collisionOccured){
-					SimulationRunner.crBase.getCRNode(i).numberOfCollision++;
-                    SimulationRunner.crBase.incrementCollision(SimulationRunner.crBase.findZone(i));
-				}
-				SimulationRunner.crBase.getCRNode(i).collisionOccured = false;
-			}
-        }
+		
+		for (CRNode node : SimulationRunner.crBase) {
+			if(!node.commOrNot)
+				continue;
+			node.communicate(time, isRegular, lastReport, channelCapacity);
+		}
 		if(SimulationRunner.args.isPlotOn())
 			SimulationRunner.plot.addPoint(SimulationRunner.crBase.registeredZones.size(),time, channelCapacity);
     }
+	
+	private void communicate(double time, boolean isRegular, boolean lastReport, ArrayList<Double> channelCapacity)
+	{
+		int freq = communication_frequency;
+		int zoneId = SimulationRunner.crBase.findZone(id);
+			
+		channelCapacity.set(freq,SimulationRunner.wc.currentChannelCapacity(SimulationRunner.crBase, this, freq));
+		if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.PRIMARY) != null){ //checks if collision occured
+			if(isRegular&&(!lastReport))
+				collisionOccured = true;
+		}
+		if(isRegular && !lastReport){   //updates time and sinr value of communicating cr nodes
+			last_time = time;
+			lastChannelCapacity = channelCapacity.get(freq);
+		}
+		if(isRegular && lastReport){
+			totalNumberOfBitsTransmitted += (time-last_time)*lastChannelCapacity*0.001;
+			SimulationRunner.crBase.incrementTotalBitsTransmitted(zoneId, (time-last_time)*lastChannelCapacity*0.001);
+		}
+		if(!isRegular){
+			totalNumberOfBitsTransmitted += (time-last_time)*lastChannelCapacity*0.001;
+			SimulationRunner.crBase.incrementTotalBitsTransmitted(zoneId, (time-last_time)*lastChannelCapacity*0.001);
+			last_time = time;
+			lastChannelCapacity = channelCapacity.get(freq);
+		}
+
+//			double msec = (double)time;
+//			int hour = (int)(msec/3600000.0);
+//			msec -= hour*3600000.0;
+//			int min = (int)(msec/60000.0);
+//			msec -= min*60000.0;
+//			int sec = (int)(msec/1000.0);
+//			msec-= sec*1000.0;
+
+//			writeLogFile(String.format(Locale.US,"Time: %2d:%2d:%2d:%.2f", hour,min,sec,msec) +" -- number: "+String.valueOf(SimulationRunner.crBase.getCRNode(i).id) + " -- frequency: " + String.valueOf(freq) + " -- sinrValue: " + sinr.get(freq).toString() + " --- " + collision );
+		if(isRegular && lastReport){
+			numberOfFramesCommunicated++;
+			SimulationRunner.crBase.incrementTotalCommunicatedFrames(zoneId);
+			if(collisionOccured){
+				numberOfCollision++;
+				SimulationRunner.crBase.incrementCollision(zoneId);
+			}
+			collisionOccured = false;
+		}
+	}
 
     /**
      * Sets the total number of frames for a simulation.
@@ -476,9 +482,9 @@ public class CRNode implements Node {
         for (; i < SimulationRunner.crBase.numberOfCRNodes(); i++) {
             CRNode c = SimulationRunner.crBase.getCRNode(i);
             if(SimulationRunner.args.isAnimationOn())
-                throughput = (int)(c.totalNumberOfBitsTransmitted/(SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime())*c.numberOfFramesCommunicated);
-            else if(!SimulationRunner.args.isAnimationOn())
-                throughput = (int)(c.totalNumberOfBitsTransmitted/(SimulationRunner.crDesScheduler.getCommDur())*c.numberOfFramesCommunicated);
+                throughput = 1000*(int)(c.totalNumberOfBitsTransmitted/(SimulationRunner.crSensor.getCommDurationInTermsOfUnitTime()*c.numberOfFramesCommunicated));
+            else
+                throughput = 1000*(int)(c.totalNumberOfBitsTransmitted/(SimulationRunner.crDesScheduler.getCommDur()*c.numberOfFramesCommunicated));
 //            writeLogFile(String.format(Locale.US, "CR Node: %d\t\tNumber of Call Attempts: %d\t\tNumber of Calls: %d\t\tNumber of Frames Communicated: %d\t\tNumber of Blocks: %d\t\tNumber of Drops: %d\t\tNumber of Forced Handoffs: %d\t\tNumber of Collisions: %d\t\tThroughput: %.2f Kbits",
 //                    c.id, c.numberOfCallAttempts, c.numberOfCalls, c.numberOfFramesCommunicated, c.numberOfBlocks, c.numberOfDrops, c.numberOfForcedHandoff, c.numberOfCollision, (throughput/1024.0)));
             totalNumberOfFramesComm += c.numberOfFramesCommunicated;

@@ -17,6 +17,8 @@ public class SimultaneousPlot {
 	Plot plot;
 	boolean plotted;
 	int xs;
+	static int numberOfPlots = 0;
+	private int xlocation=680, ylocation;
 	
 	/**
 	 * Creates a new plotter object with no x value and y value.
@@ -32,6 +34,8 @@ public class SimultaneousPlot {
 		this.xs = xs;
 		plot = new Plot(xs, yPerX, xLabel, yLabel, xUnits, yUnits);
 		plotted = false;
+		ylocation = numberOfPlots*380;
+		numberOfPlots++;
 	}
 	
 	/**
@@ -99,15 +103,20 @@ public class SimultaneousPlot {
 		/* Add the new application frame to the list */
 
 		/* Set the fram size to the dimension above */
-		ApplicationFrame.setSize(new Dimension(Constant.CASCADE_WIDTH-20, Constant.CASCADE_HEIGHT));
+		ApplicationFrame.setSize(new Dimension(Constant.CASCADE_WIDTH-170, Constant.CASCADE_HEIGHT-100));
 		/* Set the title of the frame window */
 		ApplicationFrame.setTitle(title);
 		/* Validates the size of all components within the frame. (Needed for correct display). */
 		ApplicationFrame.validate();
 		/* Setting the location at which the frame is to be displayed on the screen */
-		ApplicationFrame.setLocation(680, 0);
+		ApplicationFrame.setLocation(xlocation+135, ylocation);
 		/* Display the frame */
 		ApplicationFrame.show();
 		plotted = true;
+	}
+	
+	public static void reset()
+	{
+		numberOfPlots = 0;
 	}
 }
