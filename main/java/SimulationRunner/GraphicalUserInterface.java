@@ -228,23 +228,17 @@ public class GraphicalUserInterface extends JFrame{
 						return;
 					}
 					int numberOfCRRemained = numberOfCR;
-					int numberOfRows = Integer.parseInt(noZones.getText())/2;
-					for(int j=0;j<2;j++){
-						for(int i=0;i<numberOfRows;i++){
-							int numberOfCrUsers = (j*numberOfRows + i) / 12;
-							if(j*numberOfRows + i < 24){
-								numberOfCrUsers = (numberOfCR/9)*(2*numberOfCrUsers + 1);
-								numberOfCrUsers /= 12;
-								numberOfCrUsers++;
-							}
-							else if(j*numberOfRows + i < 35){
-								numberOfCrUsers = numberOfCRRemained / (numberOfRows - i);
-							}
-							else
-								numberOfCrUsers = numberOfCRRemained;
-							zoneCRUsers.get(j*numberOfRows+i).setText(String.valueOf(numberOfCrUsers));
-							numberOfCRRemained -= numberOfCrUsers;
+					int numberOfZones = Integer.parseInt(noZones.getText());
+					int numberOfCrUsers;
+					for(int j=0;j<numberOfZones;j++){
+						if(j == (numberOfZones - 1)){
+							numberOfCrUsers = numberOfCRRemained;
 						}
+						else{
+							numberOfCrUsers = numberOfCRRemained / (numberOfZones - j);
+						}
+						zoneCRUsers.get(j).setText(String.valueOf(numberOfCrUsers));
+						numberOfCRRemained -= numberOfCrUsers;
 					}
 				}
 
@@ -262,23 +256,17 @@ public class GraphicalUserInterface extends JFrame{
 						return;
 					}
 					int numberOfCRRemained = numberOfCR;
-					int numberOfRows = Integer.parseInt(noZones.getText())/2;
-					for(int j=0;j<2;j++){
-						for(int i=0;i<numberOfRows;i++){
-							int numberOfCrUsers = (j*numberOfRows + i) / 12;
-							if(j*numberOfRows + i < 24){
-								numberOfCrUsers = (numberOfCR/9)*(2*numberOfCrUsers + 1);
-								numberOfCrUsers /= 12;
-								numberOfCrUsers++;
-							}
-							else if(j*numberOfRows + i < 35){
-								numberOfCrUsers = numberOfCRRemained / (numberOfRows - i);
-							}
-							else
-								numberOfCrUsers = numberOfCRRemained;
-							zoneCRUsers.get(j*numberOfRows+i).setText(String.valueOf(numberOfCrUsers));
-							numberOfCRRemained -= numberOfCrUsers;
+					int numberOfZones = Integer.parseInt(noZones.getText());
+					int numberOfCrUsers;
+					for(int j=0;j<numberOfZones;j++){
+						if(j == (numberOfZones - 1)){
+							numberOfCrUsers = numberOfCRRemained;
 						}
+						else{
+							numberOfCrUsers = numberOfCRRemained / (numberOfZones - j);
+						}
+						zoneCRUsers.get(j).setText(String.valueOf(numberOfCrUsers));
+						numberOfCRRemained -= numberOfCrUsers;
 					}
 				}
 
@@ -978,6 +966,7 @@ public class GraphicalUserInterface extends JFrame{
 		int numberOfCRRemained = 500;
 		JTextField textField;
 		JPanel []panels = new JPanel[2];
+		int numberOfZonesRemained = 36;
 		for(int j=0; j<2; j++){
 			panels[j] = new JPanel();
 			panels[j].setBorder(BorderFactory.createTitledBorder(""));
@@ -1047,13 +1036,15 @@ public class GraphicalUserInterface extends JFrame{
 				textField.setToolTipText("Number of Secondary Users in This Zone");
 				textField.setBounds(324, 35+i*30, 81, 23);
 				textField.addKeyListener(keyAdapter);
-				int numberOfCrUsers = (j*numberOfRows + i) / 12;
-				numberOfCrUsers = (numberOfCR/9)*(2*numberOfCrUsers + 1);
-				numberOfCrUsers /= 12;
-				numberOfCrUsers++;
-				if(numberOfCrUsers > numberOfCRRemained)
+				int numberOfCrUsers;
+				if(numberOfZonesRemained == 1){
 					numberOfCrUsers = numberOfCRRemained;
+				}
+				else{
+					numberOfCrUsers = numberOfCRRemained/numberOfZonesRemained;
+				}
 				textField.setText(String.valueOf(numberOfCrUsers));
+				numberOfZonesRemained--;
 				numberOfCRRemained -= numberOfCrUsers;
 				textField.setEditable(false);
 				zoneCRUsers.add(textField);

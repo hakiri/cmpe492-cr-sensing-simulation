@@ -330,16 +330,12 @@ private double sensingSlotDur = 0.0;
 			for(int j=0;j<numberOfSectors;j++){
 				for(int l=0;l<numberOfAlphaSlices;l++){
 					int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
-					if(k<dNumber - 1){
-//						numberInZone *= (2*k+1);
-						numberInZone /= (numberOfAlphaSlices*numberOfSectors);
-						numberInZone ++;
-					}
-					else if(numberOfZones != 1){
-						numberInZone = crUsers / (numberOfZones);
-					}
-					else
+					if(numberOfZones == 1){
 						numberInZone = crUsers;
+					}
+					else{
+						numberInZone = crUsers / numberOfZones;
+					}
 					sectorNumbers.add(j);
 					alphaNumbers.add(l);
 					numbersOfCrUsersInZone.add(numberInZone);
