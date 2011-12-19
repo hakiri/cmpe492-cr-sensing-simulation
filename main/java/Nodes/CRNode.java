@@ -48,6 +48,10 @@ public class CRNode implements Node {
      */
     private static PrintWriter logFileWriter = null;
     /**
+     * Writer for the probability log file.
+     */
+    private static PrintWriter probabilityLogFileWriter = null;
+    /**
      * Average SNR values of the frequencies.
      */
     private static ArrayList<ArrayList<Double>> averageReceivedPower = null;
@@ -240,12 +244,11 @@ public class CRNode implements Node {
      * @param time Current time
      */
     public static void fuseSensingResults(double time) {
-        for (int i = 0; i < averageReceivedPower.size(); i++) {   //calculates the average snr values
+        for (int i = 0; i < averageReceivedPower.size(); i++) {   //calculates the average received powers
             for (int j = 0; j < averageReceivedPower.get(i).size(); j++) {
                 averageReceivedPower.get(i).set(j, (averageReceivedPower.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
 			                                                                                        //number that listens to this freq.
 				//If more than half of the CR nodes sensing a channel decides that the channel is busy then it is decided busy
-				
 				if(sensingDecision.get(i).get(j) > SimulationRunner.crBase.getFrequency_list().get(i).get(j) / 2)
 					sensingDecision.get(i).set(j,1);
 				else	//Vacant otherwise
@@ -309,18 +312,47 @@ public class CRNode implements Node {
                     +"Number of calls"+justComma+"Number of call attempts"+justComma));
             writeLogFile(String.format(Locale.US, ";"+zones+zones+zones+zones+zones+zones+zones+zones+zones));
         } catch (IOException ex) {
-            System.err.println("Error during file operations");
+            System.err.println("Error during file operations in log file creation");
         }
     }
-
+    
     /**
-     * Writes the input string to the log file.
+     * Creates the log file for the probabilities of some cr statistics.
+     * @param file_name Name of the log file
+     */
+    public static void createProbabilityLogFile(String file_name) {
+        String justComma = "",zones="";
+        try {
+            probabilityLogFileWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
+            for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+                justComma += ";";
+                zones += String.valueOf(i) + ". zone;";
+            }
+            writeProbabilityLogFile(String.format(Locale.US, "Time;Probability of False Alarm"+justComma
+                    +"Probability of Miss Detection"+justComma+"Probability of Collision"+justComma
+                    +"Probability of Block"+justComma+"Probability of Drop"+justComma));
+            writeProbabilityLogFile(String.format(Locale.US, ";"+zones+zones+zones+zones+zones));
+        } catch (IOException ex) {
+            System.err.println("Error during file operations in probability log file creation");
+        }
+    }
+    
+    /**
+     * Writes the input string into the log file.
      * @param log_string String
      */
     public static void writeLogFile(String log_string) {
         logFileWriter.println(log_string);
     }
-
+    
+    /**
+     * Writes the input string into the probability log file.
+     * @param log_string String
+     */
+    public static void writeProbabilityLogFile(String log_string) {
+        probabilityLogFileWriter.println(log_string);
+    }
+    
     /**
      * 
      * @param log_string
@@ -335,6 +367,13 @@ public class CRNode implements Node {
     public static void closeLogFile() {
         logFileWriter.close();
     }    
+    
+    /**
+     * Closes the probability log file.
+     */
+    public static void closeProbabilityLogFile() {
+        probabilityLogFileWriter.close();
+    }
     
     /**
      * Sets frequency list to listen in the sensing slots.

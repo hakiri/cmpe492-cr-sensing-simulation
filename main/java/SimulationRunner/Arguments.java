@@ -331,7 +331,7 @@ private double sensingSlotDur = 0.0;
 				for(int l=0;l<numberOfAlphaSlices;l++){
 					int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
 					if(k<dNumber - 1){
-						numberInZone *= (2*k+1);
+//						numberInZone *= (2*k+1);
 						numberInZone /= (numberOfAlphaSlices*numberOfSectors);
 						numberInZone ++;
 					}
@@ -511,7 +511,15 @@ private double sensingSlotDur = 0.0;
 	public ArrayList<Integer> getNumbersOfCrUsersInZone() {
 		return numbersOfCrUsersInZone;
 	}
-
+    
+    /**
+	 * Returns number of CR users in a zone
+	 * @return Number of CR users in a zone
+	 */
+	public Integer getNumbersOfCrUsersInAZone(int zoneId) {
+		return numbersOfCrUsersInZone.get(zoneId);
+	}
+    
 	/**
 	 * Returns Whether the plots will be drawn or not
 	 * @return whether the plots will be drawn or not

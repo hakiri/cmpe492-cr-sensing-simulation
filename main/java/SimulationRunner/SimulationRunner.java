@@ -208,7 +208,11 @@ public class SimulationRunner {
 		String logFileName = args.getLogFileDirectory() + "log_"+String.valueOf(args.getSeed())+
 								"_"+String.valueOf(args.getNumberOfPriNodes())+
 								"_"+String.valueOf(args.getNumberOfCrNodes())+".csv";
+        String probabilityLogFileName = args.getLogFileDirectory() + "prob_log_"+String.valueOf(args.getSeed())+
+								"_"+String.valueOf(args.getNumberOfPriNodes())+
+								"_"+String.valueOf(args.getNumberOfCrNodes())+".csv";
 		CRNode.createLogFile(logFileName);
+        CRNode.createProbabilityLogFile(probabilityLogFileName);
 		return true;
 	}
 	
