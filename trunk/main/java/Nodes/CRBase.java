@@ -742,4 +742,15 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	{
 		return super.size();
 	}
+	
+	public double utilization()
+	{
+		double totalNumberOfCommunicatedFrames = 0;
+		for (CRNode node : this) {
+			totalNumberOfCommunicatedFrames += node.getNumberOfFramesCommunicated();
+		}
+		double capacity = CRNode.getTotalNumberOfFrames()*SimulationRunner.args.getNumberOfFreq();
+		double utilization = totalNumberOfCommunicatedFrames / capacity;
+		return utilization * 100.0;
+	}
 }
