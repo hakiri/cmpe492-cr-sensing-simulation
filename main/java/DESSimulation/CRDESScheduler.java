@@ -244,6 +244,8 @@ public class CRDESScheduler extends SimEnt{
 		primaryUtil /= (simulationDuration*SimulationRunner.args.getNumberOfFreq());
 		primaryUtilization = String.valueOf(primaryUtil);
 		CRNode.writeLogFile("\nPrimary Utilization:;"+primaryUtilization);
+		CRNode.writeProbabilityLogFile("Primary Utilization;"+primaryUtilization);
+		CRNode.writeProbabilityLogFile("Secondary Utilization;"+String.valueOf(SimulationRunner.crBase.utilization()));
 		if(finished){	//If the thread is terminated
 			if(SimulationRunner.args.isBatchMode())
 				System.out.println("Simulation Terminated");

@@ -319,7 +319,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(noiseFloorField);
 			noiseFloorField.setToolTipText("Noise floor value");
 			noiseFloorField.setBounds(itemPos, y, 120, 23);
-			noiseFloorField.setText("-100");
+			noiseFloorField.setText("-75");
 			noiseFloorField.addKeyListener(keyAdapter);
 		}
 		y += 35;
@@ -335,7 +335,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(noiseStdDevField);
 			noiseStdDevField.setToolTipText("Standard deviation of noise floor");
 			noiseStdDevField.setBounds(itemPos, y, 120, 23);
-			noiseStdDevField.setText("60");
+			noiseStdDevField.setText("20");
 			noiseStdDevField.addKeyListener(keyAdapter);
 		}
 		y += 35;
@@ -351,7 +351,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(tauField);
 			tauField.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
 			tauField.setBounds(itemPos, y, 120, 23);
-			tauField.setText("-62");
+			tauField.setText("-61");
 			tauField.addKeyListener(keyAdapter);
 		}
 		y += 35;
@@ -930,7 +930,7 @@ public class GraphicalUserInterface extends JFrame{
 			frequencyPanel.add(noFreqs);
 			noFreqs.setToolTipText("Available Number of Frequencies in the Channel");
 			noFreqs.setBounds(itemPos, y, 120, 23);
-			noFreqs.setText("40");
+			noFreqs.setText("60");
 			noFreqs.addKeyListener(keyAdapter);
 		}
 		y += 35;

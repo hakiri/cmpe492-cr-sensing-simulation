@@ -295,9 +295,9 @@ private double sensingSlotDur = 0.0;
 		simulationDuration = 240;				//Get duration of the simulation in terms of min
 		simulationDuration *= 60000;
 		transmitPower = -10.0;			//Get transmit power value in terms of dB
-		noiseFloor = -100.0;
-		noiseStdDev = 60.0;
-		powerThreshold = -62;
+		noiseFloor = -75.0;
+		noiseStdDev = 20;
+		powerThreshold = -61;
 		seedModel = 0;
 		seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
 													  (int)System.currentTimeMillis());
@@ -307,14 +307,14 @@ private double sensingSlotDur = 0.0;
 		averageNumberOfCalls = 0.5;		//Get number of calls per hour
 		averageCallDur = 2.0;			//Get call duration in terms of min
 
-		numberOfSensingSlots = 20;			//Get max number of frequencies a node can sense
+		numberOfSensingSlots = 30;			//Get max number of frequencies a node can sense
 		sensingSlotDur = 1.0;
 		senseScheduleAdvertisementDur = 1.0;
 		senseResultAdvertisementDur = 1.0;
 		commScheduleAdvertisementDur = 1.0;
 		commDur = 63;
 
-		numberOfFreq = 40;			//Get number of frequencies
+		numberOfFreq = 60;			//Get number of frequencies
 		bandwidth = 8000000;
 
 		numberOfSectors = 3;				//Get number of sectors in the cell
