@@ -1,6 +1,77 @@
 #summary Meeting Reports
 #labels Featured,Phase-Requirements
 
+= Report of Meeting Thursday, Dec 29, 2011 =
+
+== Issues & Decisions ==
+<dl>
+ <dt>1. Graphs obtained from the runs decided at the previous meeting are discussed.</dt>
+
+ <dt>2. The reason of the spikes in the graphs is discussed. It is assumed that these spikes are caused due to majority rule, used for cooperative decision, such that while the number of users sensing a frequency is odd, the majority rule gives better results. Therefore, keeping number of users sensing a channel as odd at every run and then inspect the results is decided.</dt>
+ 
+ <dt>3. A formulation for sensing scheduling is discussed:</dt><dd>3.1. First divided users in the cell into clusters</dd><dd>3.2. According to number of users in the cluster decide number of frequencies to be sensed in this cluster. Also decide which frequencies to be sensed.</dd><dd>3.3. Maximize the seperation of the users that sense the same frequency in order to obtain better results.</dd>
+</dl>
+== Attendees ==
+   * Bilal Acar _(Developer)_
+   * Mehmet Akif Ersoy _(Developer)_
+   * Tuna Tugcu _(Supervisor)_
+   * Salim Eryigit _(Assistant Supervisor)_
+   * Birkan Yilmaz _(Assistant Supervisor)_
+----
+
+
+= Report of Meeting Thursday, Dec 22, 2011 =
+
+== Issues & Decisions ==
+<dl>
+ <dt>1. Graphs obtained from the runs decided at the previous meeting are discussed.</dt>
+
+ <dt>2. Due to the spikes in the graphs and too high block and drop probability values changing some parameters is decided.</dt>
+
+ <dt>3. In order to reduce the spikes in the false alarm and miss-detection graphs incresing the gap between the number of users is decided.</dt>
+ 
+ <dt>4. In order to fix abnormalarities in the graphs:</dt><dd>4.1. Increasing number of frequencies to 60~80,</dd><dd>4.2. Increasing the noise floor value to -70~-80 dB,</dd><dd>4.3. Reducing the variance of the noise to 15~20 dB,</dd>is decided.
+
+ <dt>5. Plotting also the utilization of primary, secondary, and total users is decided.</dt>
+</dl>
+== Attendees ==
+   * Bilal Acar _(Developer)_
+   * Mehmet Akif Ersoy _(Developer)_
+   * Tuna Tugcu _(Supervisor)_
+   * Salim Eryigit _(Assistant Supervisor)_
+   * Birkan Yilmaz _(Assistant Supervisor)_
+----
+
+
+= Report of Meeting Thursday, Dec 8, 2011 =
+
+== Issues & Decisions ==
+<dl>
+ <dt>1. Improvements in the project, after the previous meeting, are explained.</dt>
+
+ <dt>2. Increasing the number of both primary and secondary users in the simulation is decided.</dt>
+ 
+ <dt>3. Allocating all possible zones in the cell is decided. In that scheme secondary users will be distributed over cell homogeneously.</dt>
+
+ <dt>4. Increasing the area where primary users are locating is decided. The area will be increased such that a primary user in the farthest point of that area could barely cause an interference to a secondary user which is at the border of its cell.</dt>
+ 
+ <dt>5. Keeping false alarm and miss-detection probabilities under 0.1 is decided.</dt>
+ 
+ <dt>6. Reducing the number of data points on the output graphs, i.e. taking batch outputs, is decided. Number of batches will be 30.</dt>
+ 
+ <dt>5. Changing the current channel model is decided. The channel model in FARAMIR project will be used. According to that model P<sub>rx</sub> = P<sub>tx</sub> - l<sub>0</sub> - alpha*log(d) + s, where P<sub>rx</sub> is received power, P<sub>tx</sub> is transmit power, l<sub>0</sub> is constant (38.4), alpha is path loss exponent (constant 35), d is distance between receiver and transmitter in kilometers, and s is a random variate which is distributed Normal(0,8). All of the parameters are in dB.</dt>
+ 
+ <dt>6. Running the program with the same parameter except changing the number of primary and secondart users is decided. After that runs graph of probability of false alarm, miss-detection, collision, block, and drop vs number of users will be plotted.</dt>
+</dl>
+== Attendees ==
+   * Bilal Acar _(Developer)_
+   * Mehmet Akif Ersoy _(Developer)_
+   * Tuna Tugcu _(Supervisor)_
+   * Salim Eryigit _(Assistant Supervisor)_
+   * Birkan Yilmaz _(Assistant Supervisor)_
+----
+
+
 = Report of Meeting Thursday, Dec 1, 2011 =
 
 == Issues & Decisions ==
