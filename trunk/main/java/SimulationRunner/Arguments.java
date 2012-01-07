@@ -56,7 +56,6 @@ private double sensingSlotDur = 0.0;
 	private int seedModel = 0;
 	
 	private boolean batchMode = false;
-	private boolean plotOn = false;
 	private boolean animationOn = false;
 	private int progress = 0;
     final private int numberOfReports = 30;
@@ -148,8 +147,8 @@ private double sensingSlotDur = 0.0;
 				timeUnit = 1;
 			
 			trafficModel = gui.getTrafficModel().getSelectedIndex();
-			plotOn = GraphicalUserInterface.plotOnButton.isSelected();
 			animationOn = GraphicalUserInterface.animationOnButton.isSelected();
+			logFileDirectory = "C:\\Out\\";
 		} catch(NumberFormatException nfe){
 			JOptionPane.showMessageDialog(gui, "Invalid argument:\n"+nfe.getMessage(),
 					"Simulation", JOptionPane.WARNING_MESSAGE);
@@ -170,7 +169,6 @@ private double sensingSlotDur = 0.0;
 	{
 		batchMode = true;
 		animationOn = false;
-		plotOn = true;		//TODO make optional
 		Scanner input = null;
 		try {
 			input = new Scanner(new File(fileName));
@@ -198,11 +196,6 @@ private double sensingSlotDur = 0.0;
 				seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
 														  (int)System.currentTimeMillis());
 			}
-			int plot = input.nextInt();
-			if(plot == 0)
-				plotOn = false;
-			else
-				plotOn = true;
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Traffic options
@@ -279,7 +272,6 @@ private double sensingSlotDur = 0.0;
 		}
 		batchMode = true;
 		animationOn = false;
-		plotOn = true;		//TODO make optional
 		int crUsers;
 		try {
 			numberOfPriNodes = Integer.parseInt(args[0]);
@@ -295,14 +287,12 @@ private double sensingSlotDur = 0.0;
 		simulationDuration = 240;				//Get duration of the simulation in terms of min
 		simulationDuration *= 60000;
 		transmitPower = -10.0;			//Get transmit power value in terms of dB
-		noiseFloor = -75.0;
+		noiseFloor = -85.0;
 		noiseStdDev = 20;
-		powerThreshold = -61;
+		powerThreshold = -69;
 		seedModel = 0;
 		seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
 													  (int)System.currentTimeMillis());
-		plotOn = false;
-
 		trafficModel = 0;
 		averageNumberOfCalls = 0.5;		//Get number of calls per hour
 		averageCallDur = 2.0;			//Get call duration in terms of min
@@ -516,14 +506,6 @@ private double sensingSlotDur = 0.0;
 		return numbersOfCrUsersInZone.get(zoneId);
 	}
     
-	/**
-	 * Returns Whether the plots will be drawn or not
-	 * @return whether the plots will be drawn or not
-	 */
-	public boolean isPlotOn() {
-		return plotOn;
-	}
-
 	/**
 	 * Returns radius of cell in terms of 100 meters
 	 * @return Radius of cell in terms of 100 meters

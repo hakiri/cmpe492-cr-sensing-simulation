@@ -42,7 +42,7 @@ public class DrawCell implements Runnable{
 	 * Number of primary nodes in the cell
 	 */
 	int numberOfPriNodes;
-	private static int unit = 22;
+	private static int unit = 11;
 	/**
 	 * Radius of a node
 	 */
@@ -60,7 +60,7 @@ public class DrawCell implements Runnable{
 	 * @param numberOfPriNodes	Number of primary nodes in the cell
 	 */
 	public DrawCell(int radius, int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
-		this.radius = radius;
+		DrawCell.radius = radius/50;
 		this.numberOfSectors = numberOfSectors;
 		this.numberOfAlpha = numberOfAlpha;
 		this.numberOfCrNodes=numberOfCrNodes;

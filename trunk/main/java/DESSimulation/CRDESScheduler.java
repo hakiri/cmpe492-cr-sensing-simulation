@@ -287,14 +287,6 @@ public class CRDESScheduler extends SimEnt{
 				   "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
 				   "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
 		SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList, -1);
-		if(SimulationRunner.args.isPlotOn()){
-			ArrayList<String> names = new ArrayList<String>();
-			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
-				names.add("SNR of Zone "+i);
-			}
-			names.add("SINR");
-			SimulationRunner.plot.plotAll(names);			//Plot the time vs average SNR graphs
-		}
 		finished=true;											//Set finished as true
 	}
 	

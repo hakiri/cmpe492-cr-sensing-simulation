@@ -1,7 +1,6 @@
 package SimulationRunner;
 
 import Animation.DrawCell;
-import Animation.Plot;
 import Animation.SimultaneousPlot;
 import CommunicationEnvironment.*;
 import DES.Scheduler;
@@ -108,10 +107,6 @@ public class SimulationRunner {
 	 */
 	private static DrawCell drawCell;
 	/**
-	 * Plots the time versus average SNR and SINR values graphs
-	 */
-	public static Plot plot = null;
-	/**
 	 * Plots the time versus block, drop, and collision probabilities graphs
 	 */
 	public static SimultaneousPlot plotProbs = null;
@@ -196,14 +191,6 @@ public class SimulationRunner {
 		tempArray.add(1);
 		tempArray.add(1);
 		plotSensingProbs = new SimultaneousPlot(2, tempArray, "Time", "Probabilities", "Frame", "");
-		if(args.isPlotOn()){
-			ArrayList<Integer> numberOFYs = new ArrayList<Integer>();
-			numberOFYs.add(args.getNumberOfFreq());
-			numberOFYs.add(args.getNumberOfFreq());
-			plot = new Plot(args.getNumberOfZones()+1, numberOFYs, "Time", "Average SNR", "msec", "dB");
-		}
-		else
-			plot = null;
 		CRNode.initializeAverageReceivedPowers(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
 		String logFileName = args.getLogFileDirectory() + "log_"+String.valueOf(args.getSeed())+
 								"_"+String.valueOf(args.getNumberOfPriNodes())+
@@ -234,7 +221,7 @@ public class SimulationRunner {
 		
 		GraphicalUserInterface.terminateSimulation.setVisible(true);
 		for(int i = 0;i<args.getNumberOfPriNodes();i++){
-			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
+			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinPrimaryCell(), 0,i));	//Create primary traffic
 			if(args.isAnimationOn())
 				priTrafGen.registerNode(priTrafGenNodes.get(i));	//and create threads for each of them
 			else
@@ -275,7 +262,7 @@ public class SimulationRunner {
 											args.getCommDur(), args.getSenseResultAdvertisementDur());
 		
         for(int i = 0;i<args.getNumberOfPriNodes();i++){
-			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinCell(), 0,i));	//Create primary traffic
+			priTrafGenNodes.add(new PrimaryTrafficGeneratorNode(Cell.deployNodeinPrimaryCell(), 0,i));	//Create primary traffic
 			priTrafGenDes.registerNode(priTrafGenNodes.get(i));
 		}
         
