@@ -49,7 +49,7 @@ public class GraphicalUserInterface extends JFrame{
 	 * Progress bar to show progress of the simulation
 	 */
 	public static JProgressBar progressBar;
-	public static JRadioButton animationOnButton, animationOffButton, plotOnButton, plotOffButton;
+	public static JRadioButton animationOnButton, animationOffButton;
 	private JPanel panel, tabMainPanel, tabZonePanel, mainPanel, framePanel, zonePanel, trafficPanel, frequencyPanel;
 	private JTabbedPane tabPane;
 	private ArrayList<JTextField> zoneSectorNos, zoneDNos, zoneAlphaNos, zoneCRUsers;
@@ -57,12 +57,12 @@ public class GraphicalUserInterface extends JFrame{
 					   sectorNo,dNo,alphaNo,radiusField,noPriNodes,seedValue,noCalls,callDur,unitTime,simDur,noFreqs,
 					   transmitPowerField,noZones,channelBandwithField,tauField,noiseFloorField,noiseStdDevField,
 					   noCRNodes;
-	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,
+	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label11,label12,label13,label14,
 				   label15,label16,label17,label18,label19,label21,label22,label23,label24,label25,label26,label27,label28,
 				   label29,label30,label31;
 	private JComboBox seedModel,trafficModel;
 	private JButton startSimulation, closeButton;
-	private ButtonGroup animationOnOff, plotOnOff;
+	private ButtonGroup animationOnOff;
 	
 	private final static int labelPos = 12;
 	private final static int itemPos = 260;
@@ -199,7 +199,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(noCRNodes);
 			noCRNodes.setToolTipText("Number of CR Users in The CR Cell");
 			noCRNodes.setBounds(itemPos, y, 120, 23);
-			noCRNodes.setText("500");
+			noCRNodes.setText("792");
 			noCRNodes.addKeyListener(keyAdapter);
 			
 			noCRNodes.addMouseListener(new MouseAdapter() {
@@ -287,7 +287,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(simDur);
 			simDur.setToolTipText("Duration of Simulation in terms of minutes");
 			simDur.setBounds(itemPos, y, 120, 23);
-			simDur.setText("240");
+			simDur.setText("90");
 			simDur.addKeyListener(keyAdapter);
 		}
 		y += 35;
@@ -319,7 +319,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(noiseFloorField);
 			noiseFloorField.setToolTipText("Noise floor value");
 			noiseFloorField.setBounds(itemPos, y, 120, 23);
-			noiseFloorField.setText("-75");
+			noiseFloorField.setText("-85");
 			noiseFloorField.addKeyListener(keyAdapter);
 		}
 		y += 35;
@@ -351,7 +351,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(tauField);
 			tauField.setToolTipText("SINR Threshold for CR Nodes To Communicate w/o Collision");
 			tauField.setBounds(itemPos, y, 120, 23);
-			tauField.setText("-61");
+			tauField.setText("-69");
 			tauField.addKeyListener(keyAdapter);
 		}
 		y += 35;
@@ -382,25 +382,13 @@ public class GraphicalUserInterface extends JFrame{
 						bound.y = bound8.y;
 						label9.setBounds(bound);
 						
-						bound = label10.getBounds();
-						bound.y = bound8.y + 35;
-						label10.setBounds(bound);
-						
 						bound = animationOnButton.getBounds();
 						bound.y = bound8.y;
 						animationOnButton.setBounds(bound);
 						
 						bound = animationOffButton.getBounds();
 						bound.y = bound8.y;
-						animationOffButton.setBounds(bound);
-						
-						bound = plotOnButton.getBounds();
-						bound.y = bound8.y + 35;
-						plotOnButton.setBounds(bound);
-						
-						bound = plotOffButton.getBounds();
-						bound.y = bound8.y + 35;
-						plotOffButton.setBounds(bound);
+						animationOffButton.setBounds(bound);	
 					}
 					else{
 						label8.setVisible(true);
@@ -412,10 +400,6 @@ public class GraphicalUserInterface extends JFrame{
 						bound.y = bound8.y + 35;
 						label9.setBounds(bound);
 						
-						bound = label10.getBounds();
-						bound.y = bound8.y + 70;
-						label10.setBounds(bound);
-						
 						bound = animationOnButton.getBounds();
 						bound.y = bound8.y + 35;
 						animationOnButton.setBounds(bound);
@@ -423,14 +407,6 @@ public class GraphicalUserInterface extends JFrame{
 						bound = animationOffButton.getBounds();
 						bound.y = bound8.y + 35;
 						animationOffButton.setBounds(bound);
-						
-						bound = plotOnButton.getBounds();
-						bound.y = bound8.y + 70;
-						plotOnButton.setBounds(bound);
-						
-						bound = plotOffButton.getBounds();
-						bound.y = bound8.y + 70;
-						plotOffButton.setBounds(bound);
 					}
 				}
 			});
@@ -508,31 +484,6 @@ public class GraphicalUserInterface extends JFrame{
 			});
 			animationOffButton.addKeyListener(keyAdapter);
 		}
-		y += 35;
-		{
-			label10 = new JLabel();
-			mainPanel.add(label10);
-			label10.setToolTipText("Draw Plots at The End of The Simulation");
-			label10.setText("Plot");
-			label10.setBounds(labelPos, y, 165, 16);
-			plotOnOff = new ButtonGroup();
-		}
-		{
-			plotOnButton = new JRadioButton("On");
-			mainPanel.add(plotOnButton);
-			plotOnButton.setBounds(itemPos, y, 50, 23);
-			plotOnButton.setSelected(false);
-			plotOnOff.add(plotOnButton);
-			plotOnButton.addKeyListener(keyAdapter);
-		}
-		{
-			plotOffButton = new JRadioButton("Off");
-			mainPanel.add(plotOffButton);
-			plotOffButton.setBounds(itemPos+70, y, 50, 23);
-			plotOffButton.setSelected(true);
-			plotOnOff.add(plotOffButton);
-			plotOffButton.addKeyListener(keyAdapter);
-		}
 		y += 70;
 		tabMainPanel.add(mainPanel);
 		mainPanel.setBounds(panelLeft, 10, panelWidth, y);
@@ -556,7 +507,7 @@ public class GraphicalUserInterface extends JFrame{
 			framePanel.add(noSlotField);
 			noSlotField.setToolTipText("Number Of Sensing Slot in CR Frame");
 			noSlotField.setBounds(itemPos, y, 120, 23);
-			noSlotField.setText("20");
+			noSlotField.setText("30");
 			noSlotField.addKeyListener(keyAdapter);
 		}
 		y += 35;
@@ -909,7 +860,7 @@ public class GraphicalUserInterface extends JFrame{
 		}
 		y += 35;
 		tabMainPanel.add(trafficPanel);
-		trafficPanel.setBounds(panelLeft, 430, panelWidth, y);
+		trafficPanel.setBounds(panelLeft, 395, panelWidth, y);
 	}
 	
 	private void initFrequencyOptionsGUI()
@@ -962,8 +913,7 @@ public class GraphicalUserInterface extends JFrame{
 		zoneCRUsers = new ArrayList<JTextField>();
 		int id=1;
 		int numberOfRows = 18;
-		int numberOfCR = 500;
-		int numberOfCRRemained = 500;
+		int numberOfCRRemained = 792;
 		JTextField textField;
 		JPanel []panels = new JPanel[2];
 		int numberOfZonesRemained = 36;

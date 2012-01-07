@@ -33,8 +33,8 @@ public class PointColor {
 	 * @param unit Scale unit
 	 */
 	public PointColor(Point2D.Double p, int r, Color c, int unit) {
-		this.x = (int)(p.x*unit);
-		this.y = (int)(p.y*unit);
+		this.x = (int)((p.x/100)*unit);
+		this.y = (int)((p.y/100)*unit);
 		this.r = r;
 		this.c = c;
 	}

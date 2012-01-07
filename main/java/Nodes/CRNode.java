@@ -257,11 +257,6 @@ public class CRNode implements Node {
         }
         calculate_Pf_Pm();
         SimulationRunner.crBase.setLastSensingResults(sensingDecision);
-        if (SimulationRunner.args.isPlotOn()) {
-            for (int i = 0; i < averageReceivedPower.size(); i++) {
-                SimulationRunner.plot.addPoint(i, time, averageReceivedPower.get(i));
-            }
-        }
         //pw.println("average snr values and sensing decisions: "); //writing to log file
 //        for (int i = 0; i < averageReceivedPower.size(); i++) {
 //            pw.println(arrayListToString(averageReceivedPower.get(i)));
@@ -440,8 +435,6 @@ public class CRNode implements Node {
 				continue;
 			node.communicate(time, isRegular, lastReport, channelCapacity);
 		}
-		if(SimulationRunner.args.isPlotOn())
-			SimulationRunner.plot.addPoint(SimulationRunner.crBase.registeredZones.size(),time, channelCapacity);
     }
 	
 	private void communicate(double time, boolean isRegular, boolean lastReport, ArrayList<Double> channelCapacity)

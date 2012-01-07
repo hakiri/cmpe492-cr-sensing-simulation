@@ -20,6 +20,10 @@ public class Cell {
      * Radius of the of the network coverage
      */
     static double radius;
+	/**
+     * Radius of the of the network coverage
+     */
+    static double primaryRadius;
     /**
      * Number of sectors in the network coverage. "number_of_sectors" must divide 
      * 360 without remainder
@@ -52,6 +56,7 @@ public class Cell {
     public Cell(CRBase baseStation,double radius,int number_of_sectors, int alpha, ArrayList<Double> set_of_d) {
         Cell.baseStation = baseStation;
         Cell.radius = radius;
+		Cell.primaryRadius = SimulationRunner.args.getPrimaryRadius();
         
         if((360%number_of_sectors) == 0){   //this condition should be granted.
             Cell.number_of_sectors = number_of_sectors; 
@@ -98,6 +103,14 @@ public class Cell {
     public static Point2D.Double deployNodeinCell(){
         return deployNode(0,360,0,radius);
     }
+	
+	/**
+     * Finds a random position for a node in the Cell.
+     * @return Position of the node.
+     */
+    public static Point2D.Double deployNodeinPrimaryCell(){
+        return deployNode(0,360,0,primaryRadius);
+    }
     
     /**
      * Finds a random position for a node in a specified zone.
@@ -140,9 +153,9 @@ public class Cell {
 			n.x += node.getPosition().x;
 			n.y += node.getPosition().y;
 			i++;
-		}while(n.distance(baseStation.getPosition()) > radius && i<2);
-		if(n.distance(baseStation.getPosition()) > radius){
-			n = deployNodeinCell();
+		}while(n.distance(baseStation.getPosition()) > primaryRadius && i<2);
+		if(n.distance(baseStation.getPosition()) > primaryRadius){
+			n = deployNodeinPrimaryCell();
 		}
 		return n;
 	}

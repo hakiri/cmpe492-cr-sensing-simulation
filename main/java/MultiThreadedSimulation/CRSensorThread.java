@@ -172,12 +172,12 @@ public class CRSensorThread implements Runnable{
 							  "Probs1_"+String.valueOf(SimulationRunner.args.getSeed())+
 							  "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
 							  "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
-			SimulationRunner.plotProbs.plotAllXWithLegend(fileName, 0, namesList,totalSimulationDuration/unitTime);
+			//SimulationRunner.plotProbs.plotAllXWithLegend(fileName, 0, namesList,totalSimulationDuration/unitTime);
 			fileName = SimulationRunner.args.getLogFileDirectory() + 
 					   "Probs2_"+String.valueOf(SimulationRunner.args.getSeed())+
 					   "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
 					   "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
-			SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList2, CRNode.getTotalNumberOfFrames()+1);
+			//SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList2, CRNode.getTotalNumberOfFrames()+1);
 		}
 		finalizeSimulation();
 	}
@@ -439,14 +439,6 @@ public class CRSensorThread implements Runnable{
 			sst = new SimulationStatsTable(crStats, priStats, SimulationRunner.guiRunner);
 		ArrayList<Integer> xs = new ArrayList<Integer>();
 		xs.add(0);		
-		if(SimulationRunner.args.isPlotOn()){
-			ArrayList<String> names = new ArrayList<String>();
-			for(int i=0;i<SimulationRunner.crBase.registeredZones.size();i++){
-				names.add("SNR of Zone "+i);
-			}
-			names.add("SINR");
-			SimulationRunner.plot.plotAll(names);			//Plot the time vs average SNR graphs
-		}
 		finished=true;											//Set finished as true
 	}
 	
