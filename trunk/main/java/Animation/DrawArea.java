@@ -1,5 +1,6 @@
 package Animation;
 
+import CommunicationEnvironment.Cell;
 import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -24,6 +25,7 @@ public class DrawArea extends JPanel{
 	private HashMap<Integer, PointColor> primaryNodes;
 	private HashMap<Integer, PointColor> crNodes;
 	private HashMap<Integer, PointColor> crNodeCollisionWarning;
+	private int primaryRadius;
     
 	/**
 	 * Creates an animation window.
@@ -34,8 +36,9 @@ public class DrawArea extends JPanel{
 	 * @param numberOfCrNodes	Number of CR nodes in the zone
 	 * @param numberOfPriNodes	Number of Primary nodes in the cell
 	 */
-    public DrawArea(int cellRadius,int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
+    public DrawArea(int priRadius, int cellRadius,int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
         super();
+		this.primaryRadius = priRadius;
 		this.cellRadius = cellRadius;
 		this.numberOfSectors = numberOfSectors;
 		this.numberOfAlpha = numberOfAlpha;
@@ -55,14 +58,16 @@ public class DrawArea extends JPanel{
     public void paintComponent(Graphics g)
     {
         super.paintComponent(g);
+		g.setColor(Color.RED);
+        g.drawOval(0, 0, primaryRadius*2, primaryRadius*2);
         g.setColor(Color.BLACK);
-        g.drawOval(0, 0, cellRadius*2, cellRadius*2);
+        g.drawOval(primaryRadius - cellRadius, primaryRadius - cellRadius, cellRadius*2, cellRadius*2);
 		int tx,ty;
 		int sectorInc = 360/numberOfSectors;
 		for(int degree=0;degree<360;degree+=sectorInc){
-			tx=cellRadius+(int)(cellRadius*Math.cos(((double)(degree)/180.0)*Math.PI));
-			ty=cellRadius-(int)(cellRadius*Math.sin(((double)(degree)/180.0)*Math.PI));
-			g.drawLine(cellRadius, cellRadius, tx, ty);
+			tx=primaryRadius+(int)(cellRadius*Math.cos(((double)(degree)/180.0)*Math.PI));
+			ty=primaryRadius-(int)(cellRadius*Math.sin(((double)(degree)/180.0)*Math.PI));
+			g.drawLine(primaryRadius, primaryRadius, tx, ty);
 		}
 		
 		g.setColor(Color.ORANGE);
@@ -70,11 +75,10 @@ public class DrawArea extends JPanel{
 		for(int degree=alphaInc;degree<360;degree+=alphaInc){
 			if(degree % sectorInc == 0)
 				continue;
-			tx=cellRadius+(int)(cellRadius*Math.cos(((double)(degree)/180.0)*Math.PI));
-			ty=cellRadius-(int)(cellRadius*Math.sin(((double)(degree)/180.0)*Math.PI));
-			g.drawLine(cellRadius, cellRadius, tx, ty);
+			tx=primaryRadius+(int)(cellRadius*Math.cos(((double)(degree)/180.0)*Math.PI));
+			ty=primaryRadius-(int)(cellRadius*Math.sin(((double)(degree)/180.0)*Math.PI));
+			g.drawLine(primaryRadius, primaryRadius, tx, ty);
 		}
-		int dInc = cellRadius / numberOfDSections;
 		g.setColor(Color.BLUE);
 		for(int i = 0; i<SimulationRunner.crBase.registeredZones.size() ; i++){
 			int sectorNumber = SimulationRunner.crBase.registeredZones.get(i).get(0);
@@ -82,20 +86,26 @@ public class DrawArea extends JPanel{
 			int dNumber = SimulationRunner.crBase.registeredZones.get(i).get(2);
 			int zoneBegDegree = sectorNumber*sectorInc+alphaInc*alphaNumber;
 			int zoneEndDegree = sectorNumber*sectorInc+alphaInc*(alphaNumber+1);
-			int dmin = dNumber*dInc;
-			int dmax = dmin+dInc;
-			tx=cellRadius+(int)(dmin*Math.cos(((double)(zoneBegDegree)/180.0)*Math.PI));
-			ty=cellRadius-(int)(dmin*Math.sin(((double)(zoneBegDegree)/180.0)*Math.PI));
-			int tx2=cellRadius+(int)(dmax*Math.cos(((double)(zoneBegDegree)/180.0)*Math.PI));
-			int ty2=cellRadius-(int)(dmax*Math.sin(((double)(zoneBegDegree)/180.0)*Math.PI));
+			double dminVal = dNumber == 0 ? 0:Cell.getSet_of_d().get(dNumber-1);
+			double dmaxVal = Cell.getSet_of_d().get(dNumber);
+			dminVal /= 100;
+			dmaxVal /= 100;
+			dminVal *= DrawCell.unit;
+			dmaxVal *= DrawCell.unit;
+			int dmin = (int)dminVal;
+			int dmax = (int)dmaxVal;
+			tx=primaryRadius+(int)(dmin*Math.cos(((double)(zoneBegDegree)/180.0)*Math.PI));
+			ty=primaryRadius-(int)(dmin*Math.sin(((double)(zoneBegDegree)/180.0)*Math.PI));
+			int tx2=primaryRadius+(int)(dmax*Math.cos(((double)(zoneBegDegree)/180.0)*Math.PI));
+			int ty2=primaryRadius-(int)(dmax*Math.sin(((double)(zoneBegDegree)/180.0)*Math.PI));
 			g.drawLine(tx, ty, tx2, ty2);
-			tx=cellRadius+(int)(dmin*Math.cos(((double)(zoneEndDegree)/180.0)*Math.PI));
-			ty=cellRadius-(int)(dmin*Math.sin(((double)(zoneEndDegree)/180.0)*Math.PI));
-			tx2=cellRadius+(int)(dmax*Math.cos(((double)(zoneEndDegree)/180.0)*Math.PI));
-			ty2=cellRadius-(int)(dmax*Math.sin(((double)(zoneEndDegree)/180.0)*Math.PI));
+			tx=primaryRadius+(int)(dmin*Math.cos(((double)(zoneEndDegree)/180.0)*Math.PI));
+			ty=primaryRadius-(int)(dmin*Math.sin(((double)(zoneEndDegree)/180.0)*Math.PI));
+			tx2=primaryRadius+(int)(dmax*Math.cos(((double)(zoneEndDegree)/180.0)*Math.PI));
+			ty2=primaryRadius-(int)(dmax*Math.sin(((double)(zoneEndDegree)/180.0)*Math.PI));
 			g.drawLine(tx, ty, tx2, ty2);
-			g.drawArc(cellRadius-dmin, cellRadius-dmin, 2*dmin, 2*dmin, zoneBegDegree, alphaInc);
-			g.drawArc(cellRadius-dmax, cellRadius-dmax, 2*dmax, 2*dmax, zoneBegDegree, alphaInc);
+			g.drawArc(primaryRadius-dmin, primaryRadius-dmin, 2*dmin, 2*dmin, zoneBegDegree, alphaInc);
+			g.drawArc(primaryRadius-dmax, primaryRadius-dmax, 2*dmax, 2*dmax, zoneBegDegree, alphaInc);
 		}
     }
 

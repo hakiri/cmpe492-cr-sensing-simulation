@@ -27,6 +27,10 @@ public class DrawCell implements Runnable{
 	 */
 	static int radius;
 	/**
+	 * Radius of the area where the primary users are located
+	 */
+	static int primaryRadius;
+	/**
 	 * Number of sectors in the cell
 	 */
 	int numberOfSectors;
@@ -42,7 +46,7 @@ public class DrawCell implements Runnable{
 	 * Number of primary nodes in the cell
 	 */
 	int numberOfPriNodes;
-	private static int unit = 11;
+	static int unit = 12;
 	/**
 	 * Radius of a node
 	 */
@@ -52,22 +56,23 @@ public class DrawCell implements Runnable{
 
 	/**
 	 * Constructs a cell structure to paint
-	 * @param radius			Radius of the cell
+	 * @param priRadius			Radius of the cell
 	 * @param numberOfSectors	Number of sectors in the cell
 	 * @param numberOfAlpha		Number of alpha sections in a sector
 	 * @param numberOfDSections Number of distance sections in a alpha slice
 	 * @param numberOfCrNodes	Number of CR nodes in the zone
 	 * @param numberOfPriNodes	Number of primary nodes in the cell
 	 */
-	public DrawCell(int radius, int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
-		DrawCell.radius = radius/50;
+	public DrawCell(int priRadius, int crRadius, int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
+		DrawCell.primaryRadius = priRadius/100;
+		DrawCell.radius = crRadius/100;
 		this.numberOfSectors = numberOfSectors;
 		this.numberOfAlpha = numberOfAlpha;
 		this.numberOfCrNodes=numberOfCrNodes;
 		this.numberOfPriNodes=numberOfPriNodes;
 		finished = false;
 		
-		d = new DrawArea(radius*unit, numberOfSectors, numberOfAlpha, numberOfDSections, numberOfCrNodes, numberOfPriNodes);
+		d = new DrawArea(primaryRadius*unit, radius*unit, numberOfSectors, numberOfAlpha, numberOfDSections, numberOfCrNodes, numberOfPriNodes);
 		if(runner==null){
             runner=new Thread(this);            //Create the thread
             runner.start();			//Start the thread: This method will call run method below
@@ -98,7 +103,7 @@ public class DrawCell implements Runnable{
         frame=new JFrame("AREA");
         d.setBackground(Color.WHITE);
         frame.add(d);
-        frame.setSize(radius*unit*2+20, radius*unit*2+41);
+        frame.setSize(primaryRadius*unit*2+20, primaryRadius*unit*2+41);
         frame.setVisible(true);
     }
 	
@@ -110,7 +115,7 @@ public class DrawCell implements Runnable{
 	public static void paintPrimaryNode(Node n, Color c)
 	{
 		PointColor p = new PointColor(n.getPosition(), (int)((pointRadius/8.0)*7.0), c, unit);
-		p.convertCoordinate(radius*unit);
+		p.convertCoordinate(primaryRadius*unit);
 		d.paintPrimary(n.getId(), p);
 	}
 	
@@ -122,7 +127,7 @@ public class DrawCell implements Runnable{
 	public static void paintCrNode(Node n, Color c)
 	{
 		PointColor p = new PointColor(n.getPosition(), (int)(pointRadius*2), c, unit);
-		p.convertCoordinate(radius*unit);
+		p.convertCoordinate(primaryRadius*unit);
 		d.paintCR(n.getId(), p);
 	}
 	
@@ -137,7 +142,7 @@ public class DrawCell implements Runnable{
 	public static void drawCollision(Node n, boolean draw)
 	{
 		PointColor p = new PointColor(n.getPosition(), (int)(pointRadius*4), Color.RED, unit);
-		p.convertCoordinate(radius*unit);
+		p.convertCoordinate(primaryRadius*unit);
 		d.paintCollision(n.getId(), p, draw);
 	}
 	

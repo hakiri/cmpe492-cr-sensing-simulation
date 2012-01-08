@@ -94,7 +94,7 @@ public class CRSensorThread implements Runnable{
 			double senseScheduleAdvertisement, double commScheduleAdvertisement, double commDur,
 			double senseResultAdvertisement)
 	{
-		this.remainingSimulationDuration = simulationDuration*unitTime;	//Perform simulation for every half of time unit
+		this.remainingSimulationDuration = simulationDuration*unitTime;
 		this.unitTime = unitTime;
 		this.numberOfSlots = numberOfSlots;
 		this.slotDur = slotDur*unitTime;
@@ -167,17 +167,19 @@ public class CRSensorThread implements Runnable{
 			
 			communicate();
 			GraphicalUserInterface.progressBar.setValue((int)(((totalSimulationDuration-remainingSimulationDuration)*100)/totalSimulationDuration));	//Update progress bar
-		
+			
+			if(frame < CRNode.getTotalNumberOfFrames() / 29)
+				continue;
 			String fileName = SimulationRunner.args.getLogFileDirectory() + 
 							  "Probs1_"+String.valueOf(SimulationRunner.args.getSeed())+
 							  "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
 							  "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
-			//SimulationRunner.plotProbs.plotAllXWithLegend(fileName, 0, namesList,totalSimulationDuration/unitTime);
+			SimulationRunner.plotProbs.plotAllXWithLegend(fileName, 0, namesList,totalSimulationDuration/unitTime);
 			fileName = SimulationRunner.args.getLogFileDirectory() + 
 					   "Probs2_"+String.valueOf(SimulationRunner.args.getSeed())+
 					   "_"+String.valueOf(SimulationRunner.args.getNumberOfPriNodes())+
 					   "_"+String.valueOf(SimulationRunner.args.getNumberOfCrNodes());
-			//SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList2, CRNode.getTotalNumberOfFrames()+1);
+			SimulationRunner.plotSensingProbs.plotAllXWithLegend(fileName, 0, namesList2, totalSimulationDuration/unitTime);
 		}
 		finalizeSimulation();
 	}
