@@ -457,6 +457,8 @@ public class GraphicalUserInterface extends JFrame{
 						sensingResultField.setText("100");
 						commScheduleField.setText("100");
 						commDurField.setText("6300");
+						noPriNodes.setText("300");
+						noCRNodes.setText("72");
 					}
 				}
 			});
@@ -474,11 +476,13 @@ public class GraphicalUserInterface extends JFrame{
 				public void itemStateChanged(ItemEvent e) {
 					if(animationOffButton.isSelected()){
 						unitTime.setEnabled(false);
-						slotDurField.setText("1");
-						senseScheduleField.setText("1");
-						sensingResultField.setText("1");
-						commScheduleField.setText("1");
-						commDurField.setText("63");
+						slotDurField.setText("10");
+						senseScheduleField.setText("10");
+						sensingResultField.setText("10");
+						commScheduleField.setText("10");
+						commDurField.setText("630");
+						noPriNodes.setText("1500");
+						noCRNodes.setText("792");
 					}
 				}
 			});

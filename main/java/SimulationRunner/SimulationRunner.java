@@ -164,7 +164,7 @@ public class SimulationRunner {
 		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
 
 		if(args.isAnimationOn()){
-			drawCell = new DrawCell((int)args.getRadius(), args.getNumberOfSectors(), args.getNumberOfAlphaSlices(), (int)args.getdNumber(),
+			drawCell = new DrawCell((int)args.getPrimaryRadius(), (int)args.getRadius(), args.getNumberOfSectors(), args.getNumberOfAlphaSlices(), (int)args.getdNumber(),
 									args.getNumberOfCrNodes(), args.getNumberOfPriNodes());
 			priTrafGen = new PrimaryTrafficGenerator();
 			priTrafGenDes = null;
