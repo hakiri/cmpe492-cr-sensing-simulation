@@ -15,6 +15,7 @@ import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -213,9 +214,13 @@ public class SimulationRunner {
 			return;
 		}
 		
+		File outputFolder = new File("C:\\Out");
+		if(!outputFolder.exists())
+			outputFolder.mkdir();
+		
 		if(!commonParts())
 			return;
-		
+				
 		GraphicalUserInterface.progressBar.setValue(0);							//Initialize progress bar
 		GraphicalUserInterface.progressBar.setVisible(true);						//Make it visible
 		

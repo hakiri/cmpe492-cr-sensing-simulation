@@ -574,7 +574,7 @@ public class CRSensorThread implements Runnable{
 	public void setWarningExpirationFrame(int crNodeId)
 	{
 		DrawCell.drawCollision(SimulationRunner.crBase.getCRNode(crNodeId), true);
-		collisionWarningExpires.set(crNodeId, frame + (int)((2000.0)/(unitTime*frameDuration)));
+		collisionWarningExpires.set(crNodeId, frame + (int)((500.0)/(unitTime*frameDuration)));
 	}
 
 	/**
