@@ -41,7 +41,7 @@ public class DrawAreaTest extends TestCase {
 		System.out.println("paintPrimary");
 		Integer id = 0;
 		PointColor p = new PointColor(0, 0, 8, Color.red);
-		DrawArea instance = new DrawArea(15, 3, 4, 3, 5, 10);
+		DrawArea instance = new DrawArea(30, 15, 3, 4, 3, 5, 10);
 		instance.paintPrimary(id, p);
 		PointColor p2 = instance.getPrimaryNodes().get(id);
 		assertEquals(p, p2);
@@ -54,7 +54,7 @@ public class DrawAreaTest extends TestCase {
 		System.out.println("paintCR");
 		Integer id = 1;
 		PointColor p = new PointColor(3, 5, 8, Color.GREEN);
-		DrawArea instance = new DrawArea(15, 3, 4, 3, 5, 10);
+		DrawArea instance = new DrawArea(30, 15, 3, 4, 3, 5, 10);
 		instance.paintCR(id, p);
 		assertEquals(p, instance.getCrNodes().get(id));
 	}

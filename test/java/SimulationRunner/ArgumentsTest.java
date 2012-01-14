@@ -300,19 +300,6 @@ public class ArgumentsTest {
 	}
 
 	/**
-	 * Test of isPlotOn method, of class Arguments.
-	 */
-	@Test
-	public void testIsPlotOn() {
-		System.out.println("isPlotOn");
-		Arguments instance = new Arguments();
-		boolean expResult = false;
-		boolean result = instance.isPlotOn();
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-	}
-
-	/**
 	 * Test of getRadius method, of class Arguments.
 	 */
 	@Test
