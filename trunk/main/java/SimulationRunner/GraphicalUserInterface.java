@@ -457,8 +457,10 @@ public class GraphicalUserInterface extends JFrame{
 						sensingResultField.setText("100");
 						commScheduleField.setText("100");
 						commDurField.setText("6300");
-						noPriNodes.setText("300");
-						noCRNodes.setText("72");
+						noPriNodes.setText("450");
+						noCRNodes.setText("108");
+						noFreqs.setText("20");
+						noSlotField.setText("20");
 					}
 				}
 			});
@@ -483,6 +485,8 @@ public class GraphicalUserInterface extends JFrame{
 						commDurField.setText("630");
 						noPriNodes.setText("1500");
 						noCRNodes.setText("792");
+						noFreqs.setText("60");
+						noSlotField.setText("30");
 					}
 				}
 			});
