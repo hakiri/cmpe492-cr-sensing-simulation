@@ -621,7 +621,7 @@ private double sensingSlotDur = 0.0;
     
     /**
      * Returns how many reports will be done in the log file during the simulation.
-     * @return 
+     * @return how many reports will be done in the log file during the simulation
      */
     public int getNumberOfReports() {
         return numberOfReports;
@@ -629,7 +629,7 @@ private double sensingSlotDur = 0.0;
     
 	/**
 	 * Sets the current progress of the simulation
-	 * @param progress
+	 * @param progress progress of the simulation
 	 */
 	public void setProgress(int progress) {
 		if(batchMode){
@@ -683,7 +683,7 @@ private double sensingSlotDur = 0.0;
 
     /**
      * Sets location of the log file.
-     * @param logFileDirectory 
+     * @param logFileDirectory log file directory
      */
 	public void setLogFileDirectory(String logFileDirectory) {
 		this.logFileDirectory = logFileDirectory;

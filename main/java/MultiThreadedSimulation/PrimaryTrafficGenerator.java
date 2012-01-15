@@ -75,7 +75,7 @@ public class PrimaryTrafficGenerator {
     
     /**
      * Returns registered nodes.
-     * @return 
+     * @return registered nodes
      */
 	public HashMap<PrimaryTrafficGeneratorNode, PrimaryTrafficGeneratorThread> getRegisteredNodes() {
 		return registeredNodes;

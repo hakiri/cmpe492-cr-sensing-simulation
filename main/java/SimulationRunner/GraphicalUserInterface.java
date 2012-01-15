@@ -80,7 +80,7 @@ public class GraphicalUserInterface extends JFrame{
 
 	/**
 	 * Initializes the simulation runner object for batch mode.
-	 * @param batchMode
+	 * @param batchMode true if the simulation runs in the batch mode.
 	 */
 	public GraphicalUserInterface(boolean batchMode) {
 	}

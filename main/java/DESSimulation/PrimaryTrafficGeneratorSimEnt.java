@@ -174,7 +174,7 @@ public class PrimaryTrafficGeneratorSimEnt extends SimEnt{
 	}
 	
 	/**
-	 * Finds the next off duration accoriding to the traffic model
+	 * Finds the next off duration according to the traffic model
 	 * @return	Off duration
 	 */
 	private double nextOffDuration()

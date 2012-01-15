@@ -9,11 +9,10 @@ import cern.jet.random.Uniform;
 import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * This class handles basic operation of a CR base station such as sensing schedule
- * advertisement, communication schedule advertisement, handoff of CR users, etc.
+ * advertisement, communication schedule advertisement, hand-off of CR users, etc.
  * It also keeps information about which CR node belongs which zone
  */
 public class CRBase extends ArrayList<CRNode> implements Node{
@@ -462,7 +461,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     
     /**
      * Returns the frequency_list
-     * @return frequency_list
+     * @return Frequency list
      */
     public ArrayList<ArrayList<Integer>> getFrequency_list() {
         return frequency_list;
@@ -564,7 +563,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of false alarms in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of false alarms in a zone
      */
     public double  getFalseAlarm(int zoneId) {
         return falseAlarm.get(zoneId);
@@ -573,7 +572,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of miss detections in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of miss detections in a zone
      */
     public double getMissDetection(int zoneId) {
         return missDetection.get(zoneId);
@@ -582,7 +581,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of collisions in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of collisions in a zone
      */
     public double getCollisions(int zoneId) {
         return collisions.get(zoneId);
@@ -591,7 +590,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of drops in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of drops in a zone
      */
     public double getDrops(int zoneId) {
         return drops.get(zoneId);
@@ -600,7 +599,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of blocks in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of blocks in a zone
      */
     public double getBlocks(int zoneId) {
         return blocks.get(zoneId);
@@ -609,7 +608,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of bits transmitted from cr users in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of bits transmitted from cr users in a zone
      */
     public double getTotalBitsTransmitted(int zoneId) {
         return totalNumberOfBitsTransmitted.get(zoneId);
@@ -618,7 +617,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of communicated frames of cr users in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of communicated frames of cr users in a zone
      */
     public double getTotalCommunicatedFrames(int zoneId) {
         return totalCommunicatedFrames.get(zoneId);
@@ -627,7 +626,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of calls of cr users in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of calls of cr users in a zone
      */
     public double getNumberOfCalls(int zoneId){
         return numberOfCalls.get(zoneId);
@@ -636,7 +635,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the total number of call attempts of cr users in a zone.
      * @param zoneId Id number of the zone
-     * @return 
+     * @return total number of call attempts of cr users in a zone
      */
     public double getNumberOfCallAttempts(int zoneId){
         return numberOfCallAttempts.get(zoneId);
@@ -727,7 +726,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Returns the cr node with respect to its id.
      * @param id Id of the cr node
-     * @return 
+     * @return cr node with respect to its id
      */
 	public CRNode getCRNode(int id)
 	{
@@ -736,7 +735,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	
     /**
      * Returns total number of cr nodes in the cr base.
-     * @return 
+     * @return total number of cr nodes in the cr base
      */
 	public int numberOfCRNodes()
 	{

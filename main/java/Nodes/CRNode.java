@@ -349,7 +349,7 @@ public class CRNode implements Node {
     }
     
     /**
-     * 
+     * Writes log_string to the log file
      * @param log_string
      */
     public static void writeLogFileProb(String log_string) {
@@ -816,9 +816,9 @@ public class CRNode implements Node {
     }
     	
     /**
-     * 
-     * @param param
-     * @return
+     * Converts point2D to string
+     * @param param point2D
+     * @return string notation of that point
      */
     public static String point2DtoString(Point2D.Double param)
 	{
@@ -826,9 +826,9 @@ public class CRNode implements Node {
 	}
 	
     /**
-     * 
-     * @param param
-     * @return
+     * Converts Hash map to string
+     * @param param hash map
+     * @return string representation of the hash map
      */
     public static String hashMapToString(HashMap<Integer, Double> param)
 	{
@@ -845,7 +845,7 @@ public class CRNode implements Node {
 	
     /**
      * Returns the number of frames communicated.
-     * @return
+     * @return the number of frames communicated
      */
     public int getNumberOfFramesCommunicated() {
 		return numberOfFramesCommunicated;
@@ -853,7 +853,7 @@ public class CRNode implements Node {
     
     /**
      * Returns the number of estimated collisions.
-     * @return
+     * @return the number of estimated collisions
      */
     public int getEstimatedNumberOfCollison() {
         return estimatedNumberOfCollison;

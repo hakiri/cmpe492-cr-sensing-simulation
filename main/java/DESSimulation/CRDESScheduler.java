@@ -302,7 +302,10 @@ public class CRDESScheduler extends SimEnt{
 			SimulationRunner.crBase.getCRNode(i).sense(slotNumber);		//Sense the frequencies for each CR node
 		}
 	}
-	
+    
+	/**
+     * Calculates statistics for CR users and writes those statistics to log files.
+     */
 	private void senseResultAdvertise()
 	{
 		int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
