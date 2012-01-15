@@ -54,7 +54,7 @@ public class DESPrimaryTrafficGenerator{
     
     /**
      * Returns registered nodes.
-     * @return 
+     * @return registered nodes
      */
 	public HashMap<PrimaryTrafficGeneratorNode, PrimaryTrafficGeneratorSimEnt> getRegisteredNodes() {
 		return registeredNodes;

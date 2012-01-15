@@ -33,7 +33,7 @@ public interface Node {
     
     /**
      * Sets an id for the node.
-     * @param id 
+     * @param id id of the node
      */
     public void setId(int id);
     
