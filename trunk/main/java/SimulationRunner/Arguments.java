@@ -500,7 +500,8 @@ private double sensingSlotDur = 0.0;
     
     /**
 	 * Returns number of CR users in a zone
-	 * @return Number of CR users in a zone
+     * @param zoneId Id of the zone
+     * @return Number of CR users in a zone
 	 */
 	public Integer getNumbersOfCrUsersInAZone(int zoneId) {
 		return numbersOfCrUsersInZone.get(zoneId);

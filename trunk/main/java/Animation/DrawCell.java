@@ -56,8 +56,9 @@ public class DrawCell implements Runnable{
 
 	/**
 	 * Constructs a cell structure to paint
-	 * @param priRadius			Radius of the cell
-	 * @param numberOfSectors	Number of sectors in the cell
+	 * @param priRadius			Radius of primary users cell
+     * @param crRadius          Radius of secondary users cell
+     * @param numberOfSectors	Number of sectors in the cell
 	 * @param numberOfAlpha		Number of alpha sections in a sector
 	 * @param numberOfDSections Number of distance sections in a alpha slice
 	 * @param numberOfCrNodes	Number of CR nodes in the zone
@@ -132,7 +133,7 @@ public class DrawCell implements Runnable{
 	}
 	
 	/**
-	 * Draws or erases collisin warning for a node.
+	 * Draws or erases collision warning for a node.
 	 * @param n		Related node
 	 * @param draw	<ul>
 	 *					<li>If <b><i>True</i></b> draws collision warning</li>

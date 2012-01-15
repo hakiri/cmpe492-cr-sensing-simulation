@@ -743,7 +743,11 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 		return super.size();
 	}
 	
-	public double utilization()
+    /**
+     * Returns total utilization of channels due to CR users.
+     * @return Utilization  of channels due to CR users
+     */
+    public double utilization()
 	{
 		double totalNumberOfCommunicatedFrames = 0;
 		for (CRNode node : this) {

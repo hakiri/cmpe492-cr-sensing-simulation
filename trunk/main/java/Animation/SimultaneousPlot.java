@@ -115,7 +115,10 @@ public class SimultaneousPlot {
 		plotted = true;
 	}
 	
-	public static void reset()
+    /**
+     * Deletes older simultaneous plots
+     */
+    public static void reset()
 	{
 		numberOfPlots = 0;
 	}

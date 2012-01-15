@@ -12,7 +12,7 @@ public class PointColor {
 	Color c;
 
 	/**
-	 * Constructs a PointColor with specied coordinate and color
+	 * Constructs a PointColor with specified coordinate and color
 	 * @param x x coordinate of the point
 	 * @param y y coordinate of the point
 	 * @param r Radius of the point
