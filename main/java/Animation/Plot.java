@@ -49,8 +49,8 @@ public class Plot {
 	 * @param yPerX			How many y belongs to each x
 	 * @param xLabel		Label of x axis
 	 * @param yLabel		Label of y axis
-	 * @param xUnits		Units of the x axis
-	 * @param yUnits		Units of the y axis
+     * @param xUnit         Unit of the values on the x-axis
+     * @param yUnit         Unit of the values on the y-axis
 	 */
 	public Plot(int numberOfXs, ArrayList<Integer> yPerX, String xLabel, String yLabel, String xUnit, String yUnit)
 	{

@@ -63,7 +63,7 @@ public class SimulationRunner {
         
         // Normally, we'd call splash.showSplash() and get on 
         // with the program. But, since this is only a test...
-        splash.showSplashAndExit();
+        splash.showSplash();
         
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

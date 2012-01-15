@@ -865,25 +865,6 @@ public class CRNode implements Node {
 	}
 	
     /**
-     * 
-     * @param param
-     * @return
-     */
-    public static String arrayListToString(ArrayList<Double> param)
-	{
-		String res = String.format(Locale.US, "[%.1f", param.get(0));
-		
-		for(int i = 1; i<param.size() ; i++){
-			if(param.get(i) != 0.0)
-				res = res.concat(String.format(Locale.US, ", %.4f", param.get(i)));
-			else
-				res = res.concat(String.format(Locale.US, ", %.1f", param.get(i)));
-		}
-		res = res.concat("]");
-		return res;
-	}
-
-    /**
      * Returns the number of frames communicated.
      * @return
      */

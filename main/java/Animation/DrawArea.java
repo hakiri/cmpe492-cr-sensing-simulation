@@ -29,7 +29,8 @@ public class DrawArea extends JPanel{
     
 	/**
 	 * Creates an animation window.
-	 * @param cellRadius		Radius of the cell
+     * @param priRadius         Radius of the primary users cell
+     * @param cellRadius		Radius of the secondary users cell
 	 * @param numberOfSectors	Number of sectors in the cell
 	 * @param numberOfAlpha		Number of alpha slices in a sector
 	 * @param numberOfDSections Number of distance sections in a alpha slice
