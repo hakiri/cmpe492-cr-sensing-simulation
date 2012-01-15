@@ -785,7 +785,7 @@ public class CRNode implements Node {
 
     /**
      * Returns the number of calls of this cr node.
-     * @return
+     * @return the number of calls of this cr node.
      */
     public int getNumberOfCalls() {
         return numberOfCalls;
@@ -801,7 +801,7 @@ public class CRNode implements Node {
 
     /**
      * Returns the number of call attempts of this cr node.
-     * @return
+     * @return the number of call attempts of this cr node.
      */
     public int getNumberOfCallAttempts() {
         return numberOfCallAttempts;
@@ -809,33 +809,12 @@ public class CRNode implements Node {
 
     /**
      * Returns number of collisions of this cr node with other primary nodes.
-     * @return
+     * @return number of collisions of this cr node with other primary nodes.
      */
     public int getNumberOfCollision() {
         return numberOfCollision;
     }
-    
-    /**
-     * 
-     * @param freedom
-     * @param nonCentrality
-     * @return
-     */
-    public static double generateNonCentralChi(int freedom, double nonCentrality){
-		int stdev = 1;
-		double mu_square = nonCentrality/freedom;
-		double mu = Math.sqrt(mu_square);
-		Normal normal = new Normal(mu, stdev, SimulationRunner.randEngine);
-		
-		double sum = 0;
-		for (int i=0; i<freedom; i++){
-			double temp = normal.nextDouble();
-			sum += (temp*temp);
-		}
-		
-		return sum;	
-	}
-	
+    	
     /**
      * 
      * @param param

@@ -651,7 +651,7 @@ private double sensingSlotDur = 0.0;
     
     /**
      * Returns the radius of the circle that primary users can be deployed.
-     * @return 
+     * @return the radius of the circle that primary users can be deployed.
      */
 	public double getPrimaryRadius() {
 		return primaryRadius;
@@ -659,7 +659,7 @@ private double sensingSlotDur = 0.0;
     
     /**
      * Returns the noise floor.
-     * @return 
+     * @return the noise floor.
      */
 	public double getNoiseFloor() {
 		return noiseFloor;
@@ -667,15 +667,15 @@ private double sensingSlotDur = 0.0;
     
     /**
      * Returns the standard deviation of the noise
-     * @return 
+     * @return the standard deviation of the noise
      */
 	public double getNoiseStdDev() {
 		return noiseStdDev;
 	}
 
     /**
-     * Return location of the log file.
-     * @return 
+     * Returns location of the log file.
+     * @return location of the log file.
      */
 	public String getLogFileDirectory() {
 		return logFileDirectory;
