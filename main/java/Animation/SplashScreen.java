@@ -2,6 +2,9 @@ package Animation;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 /**
  * Splash Screen of user interface
@@ -24,10 +27,10 @@ public class SplashScreen extends JWindow {
      */
     public void showSplash() {
         JPanel content = (JPanel)getContentPane();
-        content.setBackground(Color.white);
+        content.setBackground(Color.WHITE);
         // Set the window's bounds, centering the window
-        int width = 750;
-        int height =355;
+        int width = 950;
+        int height =255;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (screen.width-width)/2;
         int y = (screen.height-height)/2;
@@ -41,7 +44,8 @@ public class SplashScreen extends JWindow {
         content.add(label, BorderLayout.NORTH);
         content.add(labelLoading, BorderLayout.CENTER);
         content.add(copyrt, BorderLayout.SOUTH);
-        content.setBorder(BorderFactory.createLineBorder(Color.BLUE, 5));
+		content.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+															"ZoneS Simulator", TitledBorder.LEFT, TitledBorder.TOP));
         // Display it
         setVisible(true);   
         // Wait a little while, maybe while loading resources
