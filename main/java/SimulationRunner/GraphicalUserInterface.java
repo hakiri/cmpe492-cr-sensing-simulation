@@ -132,7 +132,7 @@ public class GraphicalUserInterface extends JFrame{
 			pack();
 			this.setSize(845, 705);
 			this.setResizable(false);
-			this.setTitle("Simulator");
+			this.setTitle("ZoneS Simulator");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

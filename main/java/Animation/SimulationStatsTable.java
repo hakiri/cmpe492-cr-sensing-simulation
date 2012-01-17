@@ -67,7 +67,13 @@ public class SimulationStatsTable extends JFrame{
 		
 		setStatNames();
 		
-		this.crStats = crStats;
+		//this.crStats = crStats;
+		this.crStats = new String[crStats.length][8];
+		for(int i=0;i<crStats.length;i++){
+			for(int j=0;j<8;j++){
+				this.crStats[i][j]=crStats[i][j];
+			}
+		}
 		this.priStats = priStats;
 		
 		createCrTable();
@@ -103,7 +109,7 @@ public class SimulationStatsTable extends JFrame{
 	
 	private void setStatNames()
 	{
-		crStatNames = new String[9];
+		crStatNames = new String[8];
 		crStatNames[0] = "CR Node";
 		crStatNames[1] = "# of Call Attempts";
 		crStatNames[2] = "# of Calls";
@@ -112,7 +118,7 @@ public class SimulationStatsTable extends JFrame{
 		crStatNames[5] = "# of Drops";
 		crStatNames[6] = "# of Forced Handoff";
 		crStatNames[7] = "# of Collision";
-		crStatNames[8] = "Throughput";
+		//crStatNames[8] = "Throughput";
 		
 		priStatNames = new String[3];
 		priStatNames[0] = "Primary Node";
@@ -150,7 +156,7 @@ public class SimulationStatsTable extends JFrame{
 		crStatTable.getColumn("# of Drops").setPreferredWidth(60);
 		crStatTable.getColumn("# of Forced Handoff").setPreferredWidth(60);
 		crStatTable.getColumn("# of Collision").setPreferredWidth(60);
-		crStatTable.getColumn("Throughput").setPreferredWidth(90);
+		//crStatTable.getColumn("Throughput").setPreferredWidth(90);
 		
 	}
 	
