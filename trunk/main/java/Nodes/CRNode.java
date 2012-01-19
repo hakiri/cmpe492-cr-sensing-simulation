@@ -36,8 +36,7 @@ public class CRNode implements Node {
      * Id of the Node
      */
     protected int id;
-	static double powerThreshold = 15.987;
-	final static int tw = 5;
+	static double powerThreshold = 0;
     
     /**
      * List of frequencies assigned to this node with respect to their SNR values.
@@ -350,7 +349,7 @@ public class CRNode implements Node {
     
     /**
      * Writes log_string to the log file
-     * @param log_string
+     * @param log_string String
      */
     public static void writeLogFileProb(String log_string) {
 //        pw_prob.println(log_string);
@@ -793,7 +792,7 @@ public class CRNode implements Node {
 
     /**
      * Sets the number of calls of this cr node.
-     * @param numberOfCalls
+     * @param numberOfCalls number of calls
      */
     public void setNumberOfCalls(int numberOfCalls) {
         this.numberOfCalls = numberOfCalls;

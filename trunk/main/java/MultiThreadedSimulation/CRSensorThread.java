@@ -263,8 +263,8 @@ public class CRSensorThread implements Runnable{
 	private void senseResultAdvertise()
 	{
         int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
-        double falseAlarmsForAZone=0,missDetectionsForAZone=0,collisionsForAZone=0,dropsForAZone=0,blocksForAZone=0,
-                callsForAZone=0,callAttemptsForAZone=0,communicatedFramesForAZone=0;
+        double falseAlarmsForAZone=0.0,missDetectionsForAZone=0.0,collisionsForAZone=0.0,dropsForAZone=0.0,blocksForAZone=0.0,
+                callsForAZone=0.0,callAttemptsForAZone=0.0,communicatedFramesForAZone=0.0;
         double blockProb, dropProb,collisionProb,estimatedCollisionProb;
         String falseAlarmsString="",missDetectionsString="",collisionsString="",dropsString="",blocksString="",
                 throughputString="",commFramesString="",callsString="",callAttemptsString="";
@@ -350,17 +350,17 @@ public class CRSensorThread implements Runnable{
                     probDropsString += String.valueOf(dropsForAZone/callsForAZone)+";";
                 }
                 if(communicatedFramesForAZone == 0){
-                    probCollisionString = String.valueOf(0.0)+";";
+                    probCollisionString += String.valueOf(0.0)+";";
                 }
                 else{
-                    probCollisionString = String.valueOf(collisionsForAZone/communicatedFramesForAZone)+";";
+                    probCollisionString += String.valueOf(collisionsForAZone/communicatedFramesForAZone)+";";
                 }
-                probFalseAlarmString = String.valueOf(((falseAlarmsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
-                probMissDetectionString = String.valueOf(((missDetectionsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
+                probFalseAlarmString += String.valueOf(((falseAlarmsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
+                probMissDetectionString += String.valueOf(((missDetectionsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
             }
             CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarmsString+missDetectionsString+collisionsString
                     +blocksString+dropsString+throughputString+commFramesString+callsString+callAttemptsString,msec));
-            CRNode.writeProbabilityLogFile(String.format(Locale.US, "%.2f"+probFalseAlarmString+probMissDetectionString
+            CRNode.writeProbabilityLogFile(String.format(Locale.US, "%.2f;"+probFalseAlarmString+probMissDetectionString
                     +probCollisionString+probBlocksString+probDropsString,msec));
         }
         CRNode.fuseSensingResults((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes
