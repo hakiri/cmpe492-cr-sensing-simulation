@@ -316,7 +316,7 @@ public class CRDESScheduler extends SimEnt{
                 throughputString="",commFramesString="",callsString="",callAttemptsString="";
         String probFalseAlarmString="",probMissDetectionString="",probCollisionString="",probDropsString="",probBlocksString="";
         /*Write time to log file*/
-		double msec = (double)(Scheduler.instance().getTime())/unitTime,th=0.0;
+		double msec = (double)(Scheduler.instance().getTime())/unitTime;
 //		int hour = (int)(msec/3600000.0);
 //		msec -= hour*3600000.0;
 //		int min = (int)(msec/60000.0);
