@@ -50,7 +50,7 @@ public class SimulationRunner {
 			runner.startSimulationInBatchMode();
 			return;
 		}
-		if(args.length == 3){
+		if(args.length == 6){
 			SimulationRunner.args = new Arguments();
 			if(!SimulationRunner.args.parseArguments(args)){
 				return;
@@ -203,10 +203,12 @@ public class SimulationRunner {
 		CRNode.initializeAverageReceivedPowers(args.getNumberOfFreq(),args.getNumberOfZones());	//Set average SNR values to zero
 		String logFileName = args.getLogFileDirectory() + "log_"+String.valueOf(args.getSeed())+
 								"_"+String.valueOf(args.getNumberOfPriNodes())+
-								"_"+String.valueOf(args.getNumberOfCrNodes())+".csv";
+								"_"+String.valueOf(args.getNumberOfCrNodes())+
+								"_"+String.valueOf(args.getNumberOfZones())+".csv";
         String probabilityLogFileName = args.getLogFileDirectory() + "prob_log_"+String.valueOf(args.getSeed())+
 								"_"+String.valueOf(args.getNumberOfPriNodes())+
-								"_"+String.valueOf(args.getNumberOfCrNodes())+".csv";
+								"_"+String.valueOf(args.getNumberOfCrNodes())+
+								"_"+String.valueOf(args.getNumberOfZones())+".csv";
 		CRNode.createLogFile(logFileName);
         CRNode.createProbabilityLogFile(probabilityLogFileName);
 		return true;

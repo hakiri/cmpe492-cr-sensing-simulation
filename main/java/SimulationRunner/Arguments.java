@@ -20,6 +20,7 @@ public class Arguments {
 	private int alphaInDegrees;
 	private double radius = 0;
 	private double primaryRadius = 0;
+	private double interferenceDistance;
 
 	private int numberOfCrNodes = 0;
 	private int numberOfPriNodes = 0;
@@ -96,13 +97,17 @@ private double sensingSlotDur = 0.0;
 			numberOfAlphaSlices = Integer.parseInt(gui.getAlphaNo().getText());			//Get number of alpha's
 			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;							//Evaluate the angle associated to alpha
 			radius = Double.parseDouble(gui.getRadiusField().getText())*100;			//Get radius of the cell
-			primaryRadius = radius + 1500;
+			
 			
 			numberOfFreq = Integer.parseInt(gui.getNoFreqs().getText());						//Get number of frequencies
 			transmitPower = Double.parseDouble(gui.getTransmitPower().getText());							//Get max SNR value
 			powerThreshold = Double.parseDouble(gui.getTauField().getText());
 			noiseFloor = Double.parseDouble(gui.getNoiseFloorField().getText());
 			noiseStdDev = Double.parseDouble(gui.getNoiseStdDevField().getText());
+			interferenceDistance = powerThreshold - transmitPower + 38.4;
+			interferenceDistance /= (-35);
+			interferenceDistance = Math.pow(10, interferenceDistance)*1000.0;
+			primaryRadius = radius + interferenceDistance;
 			
 			numberOfPriNodes = Integer.parseInt(gui.getNoPriNodes().getText());	//Get number of primary nodes
 			numberOfSensingSlots = Integer.parseInt(gui.getNoSlotField().getText());		//Get max number of frequencies a node can sense
@@ -307,13 +312,17 @@ private double sensingSlotDur = 0.0;
 		numberOfFreq = 60;			//Get number of frequencies
 		bandwidth = 8000000;
 
-		numberOfSectors = 3;				//Get number of sectors in the cell
-		dNumber = 3;						//Get number of d's
-		numberOfAlphaSlices = 4;				//Get number of alpha's
+		numberOfSectors = Integer.parseInt(args[3]);		//Get number of sectors in the cell
+		numberOfAlphaSlices = Integer.parseInt(args[4]);	//Get number of alpha's
+		dNumber = Integer.parseInt(args[5]);				//Get number of d's
 		alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;	//Evaluate the angle associated to alpha
 		radius = 1500;			//Get radius of the cell
-		primaryRadius = radius + 1500;
-		numberOfZones = 36;		//Get the number of zones to be simulated
+		interferenceDistance = powerThreshold - transmitPower + 38.4;
+		interferenceDistance /= (-35);
+		interferenceDistance = Math.pow(10, interferenceDistance)*1000.0;
+		primaryRadius = radius + interferenceDistance;
+		int noZones = numberOfSectors*numberOfAlphaSlices*(int)dNumber;
+		numberOfZones = noZones;		//Get the number of zones to be simulated
 
 		numberOfCrNodes = crUsers;
 		for(int k=0;k<dNumber;k++){
@@ -335,7 +344,7 @@ private double sensingSlotDur = 0.0;
 				}
 			}
 		}
-		numberOfZones = 36;
+		numberOfZones = noZones;
 
 		for(int i = 1;i<=dNumber;i++)
 			setOfD.add(radius * Math.sqrt((double)i/dNumber));					//Create set of d's
@@ -687,5 +696,9 @@ private double sensingSlotDur = 0.0;
      */
 	public void setLogFileDirectory(String logFileDirectory) {
 		this.logFileDirectory = logFileDirectory;
+	}
+
+	public double getInterferenceDistance() {
+		return interferenceDistance;
 	}
 }
