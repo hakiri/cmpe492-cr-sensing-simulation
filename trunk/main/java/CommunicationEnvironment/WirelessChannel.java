@@ -49,6 +49,7 @@ public class WirelessChannel {
 	private double meanOnDuration;
 	private double meanOffDuration;
 	private int trafficModel;
+	private double interferenceDistance;
 	/**
 	 * Poisson traffic model
 	 */
@@ -125,6 +126,7 @@ public class WirelessChannel {
 		this.meanOnDuration = meanOnDuration;
 		this.trafficModel = trafficModel;
 		this.Ptx = transmitPower;
+		interferenceDistance = SimulationRunner.args.getInterferenceDistance();
 		WirelessChannel.unitTime = unitTime;
         WirelessChannel.bandwidth = bandwidth;
         initializeFreqIntervals();
@@ -337,6 +339,32 @@ public class WirelessChannel {
         usageOfFreqsInIntervals.add(0);
     }
     
+	/**
+	 * Checks whether there is a primary user using the given frequency at a distance
+	 * from which it can cause interference to the secondary users.
+	 * @param freq	Frequency to be checked
+	 * @param zone	Zone to be checked
+	 * @return <ul>
+	 *				<li><i>False </i> if there is primary user which can cause interference
+	 *				<li><i>True </i> otherwise
+	 *		   </ul>
+	 */
+	public boolean isChannelAvailable(int freq, int zone)
+	{
+		Node primary = frequencies.get(freq).get(PRIMARY);
+		if(primary == null)
+			return true;
+		Point2D.Double primaryPosition = primary.getPosition();
+		int iStart, iEnd;
+		iStart = zone==0 ? 0:SimulationRunner.crBase.getNodesInZone().get(zone-1);
+		iEnd = zone==0 ? SimulationRunner.crBase.getNodesInZone().get(0):SimulationRunner.crBase.getNodesInZone().get(zone);
+		for(int i = iStart; i < iEnd; i++){
+			if(primaryPosition.distance(SimulationRunner.crBase.getCRNode(i).getPosition()) < interferenceDistance)
+				return false;
+		}
+		return true;
+	}
+	
 	/**
 	 * Computes the magnitude of a given dB
 	 * @param db dB value to be computed

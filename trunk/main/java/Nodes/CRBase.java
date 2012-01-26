@@ -756,4 +756,8 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 		double utilization = totalNumberOfCommunicatedFrames / capacity;
 		return utilization * 100.0;
 	}
+
+	public ArrayList<Integer> getNodesInZone() {
+		return nodesInZone;
+	}
 }

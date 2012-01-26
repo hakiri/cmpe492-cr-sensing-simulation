@@ -201,12 +201,11 @@ public class CRNode implements Node {
         double averageFalseAlarm,averageMissDetection;
         for (int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
             for(int j=0;j<SimulationRunner.args.getNumberOfFreq();j++){
-                if((SimulationRunner.wc.getFreq(j).get(WirelessChannel.PRIMARY) == null)&&
-																		(sensingDecision.get(i).get(j) == 1)){
+				boolean isChannelAvailable = SimulationRunner.wc.isChannelAvailable(j, i);
+				if(isChannelAvailable && (sensingDecision.get(i).get(j) == 1)){
                     SimulationRunner.crBase.incrementFalseAlarm(i);
                 }
-                else if((SimulationRunner.wc.getFreq(j).get(WirelessChannel.PRIMARY) != null)&&
-																		(sensingDecision.get(i).get(j) == 0)){
+                else if(!isChannelAvailable && (sensingDecision.get(i).get(j) == 0)){
                     SimulationRunner.crBase.incrementMissDetection(i);
                 }
             }
@@ -442,7 +441,8 @@ public class CRNode implements Node {
 		int zoneId = SimulationRunner.crBase.findZone(id);
 			
 		channelCapacity.set(freq,SimulationRunner.wc.currentChannelCapacity(SimulationRunner.crBase, this, freq));
-		if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.PRIMARY) != null){ //checks if collision occured
+		//if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.PRIMARY) != null){ //checks if collision occured
+		if(!SimulationRunner.wc.isChannelAvailable(freq, zoneId)){ //checks if collision occured
 			if(isRegular&&(!lastReport))
 				collisionOccured = true;
 		}
