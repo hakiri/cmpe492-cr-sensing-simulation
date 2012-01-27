@@ -442,7 +442,7 @@ After sensing part is completed, \CR base station assigns communication frequenc
       such that there is not a significant interference.
 \end{enumerate}
 
-These cases are illustrated in Figure \ref{fig:network}. At the left side of the cell secondary link is established over $f_2$ which is not used. Therefore, the $SINR$ value is high enough to have a communication. At the upper right side of the cell secondary link is established over $f_1$ which is used at other side of the cell which is far enough and at the different zone. Therefore, the $SINR$ value includes the interference but not so severe to degrade the communication link. At the lower right side of the cell secondary link uses $f_3$ which is used by primary user in close proximity. In this case collision occurs and the channel capacity is too low to have a valid communication. In each case the channel capacities are evaluated by the Shannon capacity formula.
+These cases are illustrated in Figure \ref{fig:network}. In the figure, there is a secondary link between $SU_A$ and the CR Base over $f_1$ which is not used by any primary user. Therefore, the $SINR$ value is high enough to have a communication. There is another secondary link between $SU_C$ and the CR Base over $f_3$ which is used by $PU_A$ at other side of the cell which is far enough. Therefore, the $SINR$ value includes the interference but not so severe to degrade the communication link. Lastly, there is a secondary link between $SU_B$ and the CR Base uses $f_2$ which is also used by $PU_B$ in close proximity. In this case, collision occurs due to the miss-detection and the channel capacity decreases too much to have a valid communication. In each case the channel capacities are evaluated by the Shannon capacity formula:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
     C = B\,\, \log_2(1+SINR)
@@ -477,7 +477,7 @@ Simulation parameters are shown in Table~\ref{tbl:sim_parameters}.
 \end{table}
 where $N_{PU}$ is the number of PUs.
 
-As simulation output, we collected statistics about false alarm, missed detection, collision, blocking of SUs, dropping of SUs, and channel utilization. Note that in figures we do not plot all probability values for each zone. Instead we plot their mean against number of SUs.
+As simulation output, statistics collected in terms of the false alarm, missed detection, collision, blocking of SUs, dropping of SUs, and the channel utilization by both SUs and PUs. Note that in figures we do not plot all probability values for each zone. Instead we plot their mean against number of SUs.
 
 In simulation, radius of the \CR cell is 1.5 km, and number of PUs is 1500. Also PUs are deployed in a wider area then the SUs. They are deployed in an area with 3 km radius since we cannot assume the perfect overlapping of the primary and secondary system cells.
 
@@ -492,7 +492,7 @@ Figure \ref{fig:probf} illustrates the false alarm probability versus number of 
 \end{figure}
 
 \subsection{$\probm$ and collision analysis}
-Figure \ref{fig:probm} illustrates the missed detection and collision probabilities versus number of SUs in the cell. We observe that the probability of missed detection also decreases with increasing number of secondary users as in the same manner of the probability of false alarm. We also observe that collision probabilities never exceeds the missed detection probabilities. This is a reasonable result since all collisions are caused due to missed detections. Another observation from the graph is that, after some point, collision probability starts increasing. That is why, the system gets overloaded at that point.
+Figure \ref{fig:probm} illustrates the miss-detection and collision probabilities versus the number of SUs cooperating in a zone. We observe that the probability of the miss-detection also decreases with increasing number of secondary users as in the same manner of the probability of false alarm. We also observe that collision probabilities never exceeds the missed detection probabilities. This is a reasonable result since all collisions are caused due to missed detections. Another observation from the graph is that, after some point, collision probability starts increasing. That is why, the system gets overloaded at that point.
 
 Figure \ref{fig:probb} illustrates the blocking and dropping probabilities versus number of SUs in the cell. Both the probability of blocking and dropping stays very low for up at first but they increase almost exponentially when total utilization approaches 100 percent.
 
@@ -517,7 +517,7 @@ Figure \ref{fig:util} illustrates the utilization of PUs, SUs, and total versus 
 \section{\label{sec:conclusion}Conclusion}
 Being aware of surroundings is the most crucial part of the \CR system since it includes sensing the environment for primary activity, finding spectrum holes and vacating the channel or adjusting the communication parameters which is a must for not to disturb the primary users.
 
-In this paper we focused on distributed cooperative sensing with majority cooperation rule. We observed that with a few number of SUs (~350 or less), requirement determined by standards (both probability of false alarm and missed detection should be less than 10 percent \cite{wranstandard}) cannot be satisfied. With increasing number of SUs satisfying this requirements gets easier but when system load becomes excessive (over 90 percent) quality of service for SUs decreases severely in terms of blocking and dropping. Moreover, due to overload in wireless channel, collision probabilities start to increase after that point.
+In this paper, we focused on distributed cooperative sensing with majority cooperation rule. We observed that with a few number of SUs (~350 or less), requirements determined by standards (both probability of false alarm and missed detection should be less than 10 percent \cite{wranstandard}) cannot be satisfied. As the number of SUs increases, these requirements can be easily satisfiable but when system load becomes excessive (over 90 percent) quality of service for SUs decreases severely in terms of blocking and dropping. Moreover, due to overload in wireless channel, collision probabilities start to increase after that point.
 
 \begin{figure}[t]
 \centering
