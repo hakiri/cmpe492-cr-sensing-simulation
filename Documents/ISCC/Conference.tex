@@ -408,8 +408,8 @@ The \CR base station gathers sensing decisions zone by zone and applies the coop
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
     \begin{array}{lcl}
-        \probf & = & \sum\limits_{ k > \frac{N}{2}}^N {N \choose k}(\probflocal)^k\times(1-\probflocal)^{N-k} \\
-        \probm & = & \sum\limits_{ k > \frac{N}{2}}^N {N \choose k}(\probmlocal)^k\times(1-\probmlocal)^{N-k}
+        \probf & = & \sum\limits_{ k > \frac{N}{2}}^N {N \choose k}(\probflocal)^k(1-\probflocal)^{N-k} \\
+        \probm & = & \sum\limits_{ k > \frac{N}{2}}^N {N \choose k}(\probmlocal)^k(1-\probmlocal)^{N-k}
     \end{array}
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -436,10 +436,10 @@ In Figure~\ref{fig:frame_structure}, the communication frame structure is depict
 After sensing part is completed, \CR base station assigns communication frequencies to the SUs who want to receive or transmit data. While choosing which frequencies to assign it takes sensing results into consideration. It can assign a frequency to a user in three cases:
 \begin{enumerate}
 \item No PU is actually using the channel.
-\item There is a PU close by, who uses the channel, but SUs could not detect it (missed detection). This
-      situation causes interference at PU and therefore collision.
 \item There is a PU who uses the channel but it is not close enough to the SU, who uses the same channel,
       such that there is not a significant interference.
+\item There is a PU close by, who uses the channel, but SUs could not detect it (missed detection). This
+      situation causes interference at PU and therefore collision.
 \end{enumerate}
 
 These cases are illustrated in Figure \ref{fig:network}. In the figure, there is a secondary link between $SU_A$ and the \CR base station over $f_1$ which is not used by any primary user. Therefore, the $SINR$ value is high enough to have a communication. There is another secondary link between $SU_B$ and the \CR base station over $f_2$ which is used by $PU_B$ at other side of the cell which is far enough. Therefore, the $SINR$ value includes the interference but not so severe to degrade the communication link. Lastly, there is a secondary link between $SU_C$ and the \CR base station uses $f_3$ which is also used by $PU_C$ in close proximity. In this case, collision occurs due to the miss-detection and the channel capacity decreases too much to have a valid communication. In each case the channel capacities are evaluated by the Shannon capacity formula:
@@ -478,10 +478,10 @@ Simulation parameters are shown in Table~\ref{tbl:sim_parameters} in which table
 
 As simulation output, statistics collected in terms of the false alarm, missed detection, collision, blocking of SUs, dropping of SUs, and the channel utilization by both SUs and PUs. Note that in figures we do not plot all probability values for each zone. Instead we plot their mean against number of SUs.
 
-In simulation, radius of the \CR cell is 1.5 km, and number of PUs is 1500. Also PUs are deployed in a wider area then the SUs. They are deployed in an area with 3 km radius since we cannot assume the perfect overlapping of the primary and secondary system cells.
+In simulation, radius of the \CR cell is 1.5 km, and number of PUs is 1500. Also PUs are deployed in a wider area then the SUs. They are deployed in a circle with {\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}5 km radius since a PU outside of this area cannot be sensed by SUs with respect to the simulation parameters.
 
 \subsection{$\probf$ analysis}
-Figure \ref{fig:probf} illustrates the false alarm probability versus number of SUs in the cell for 1 zone and 36 zones cases. The probability of false alarm decreases with the increasing number of SUs in the 36 zones case because the reliability of the cooperation decision increases with number of users cooperating. This result is expected according to the mathematical model since the cooperated false alarm probability ($\probf$) is obtained by taking powers of local false alarm probabilities ($\probflocal$). However, with increasing number of SUs in the 1 zone case  $\probf$ does not change much since there are already too many users cooperating.
+Figure \ref{fig:probf} illustrates the false alarm probability versus the number of SUs in the cell for 1 zone and 36 zones cases. The probability of false alarm decreases with the increasing number of SUs in the 36 zones case because the reliability of the cooperation decision increases with number of users cooperating. This result is expected according to the mathematical model since the cooperated false alarm probability ($\probf$) is obtained by taking powers of local false alarm probabilities ($\probflocal$). However, with increasing number of SUs in the 1 zone case  $\probf$ does not change much since there are already too many users cooperating. Although the false alarm probability is much smaller in case of 1 zone, it also satisfies the false alarm probability standards in case of 36 zones.
 
 \begin{figure}[t]
 \centering
@@ -491,9 +491,10 @@ Figure \ref{fig:probf} illustrates the false alarm probability versus number of 
 \end{figure}
 
 \subsection{$\probm$ and collision analysis}
-Figure \ref{fig:probm} illustrates the miss-detection and collision probabilities versus the number of SUs cooperating in a cell for 1 zone and 36 zones cases. We observe that in 36 zones case, the probability of the miss-detection also decreases with increasing number of SUs as in the same manner of the probability of false alarm. We also observe that collision probabilities never exceeds the missed detection probabilities. This is a reasonable result since all collisions are caused due to missed detections. Another observation from the graph is that, after some point, collision probability starts increasing. That is why, the system gets overloaded at that point. However, in the 1 zone case, this probabilities again remains still with increasing number of SUs but they are very high such that $\probm$ remains above 0.20 and $\mathbf{P_C}$ remains above 0.10 all the time. This is why in 1 zone case in order to decide that a frequency is used by a PU, that PU should cause interference to at least half of the SUs. Otherwise, although the closer SUs to the PU understands that the frequency is not available, due to the cooperation, the frequency will be decided as available and this causes a miss detection. Moreover, after that miss detection if this frequency is assigned to a SU closer to PU this situation will also cause a collision. Therefore, applying cooperation in whole cell increases both miss detection and collision.
+Figure \ref{fig:probm} illustrates the miss-detection and collision probabilities versus the number of SUs in the cell for 1 zone and 36 zones cases. We observe that, in 36 zones case, the probability of the miss-detection ($\probm$) also decreases with increasing number of SUs as in the same manner of the probability of false alarm. We also observe that collision probabilities ($\mathbf{P_C}$) never exceeds the miss-detection probabilities. This is a reasonable result since all collisions are caused due to missed detections. Another observation from the figure is that, after some point, collision probability starts increasing. That is why, the system gets overloaded at that point. However, in the 1 zone case, this probabilities again remains still with increasing number of SUs but they are very high such that $\probm$ remains above 0.20 and $\mathbf{P_C}$ remains above 0.10 all the time. This is why, in 1 zone case, in order to decide that a frequency is used by a PU, that PU should cause interference to at least half of the SUs. Otherwise, although the closer SUs to the PU understands that the frequency is not available, due to the cooperation, the frequency will be decided as available and this causes a miss detection. Moreover, after that miss detection if this frequency is assigned to a SU closer to the PU will also cause a collision. Therefore, applying cooperation in whole cell increases both miss detection and collision.
 
-Figure \ref{fig:probb} illustrates the blocking and dropping probabilities versus number of SUs in the cell. The dropping probability of 1 zone case is lower than 36 zones dropping due to greater $\probm$ and $\mathbf{P_C}$ of the 1 zone case. Since $\probm$ and $\mathbf{P_C}$ are higher for 1 zone case, the SUs do not understand that they caused collision. Therefore, they do not try to empty the communication frequency they are using, and so faces less drops than 36 zones case. On the other hand, blocking probability of 1 zone case is higher than 36 zones case. This situation occurs because in the 36 zones case, \CR base station can decide that some frequencies are available in some zone while it is not in the other. However, in 1 zone case the \CR base station decides for whole cell. As a result, if a frequency is not available for half of the cell, it is  not used in the entire cell. This situation causes \CR users to find less spectrum holes to initiate a communication and increases their blocking probability.
+\subsection{Blocking and dropping analysis}
+Figure \ref{fig:probb} illustrates the blocking and dropping probabilities versus number of SUs in the cell. The dropping probability of 1 zone case is lower than 36 zones dropping due to greater $\probm$ and $\mathbf{P_C}$ of the 1 zone case. Since $\probm$ and $\mathbf{P_C}$ are higher for 1 zone case, the SUs do not understand that they caused collision. Therefore, they do not try to vacate the communication frequency they are using, and so faces less drops than 36 zones case. On the other hand, blocking probability of 1 zone case is higher than 36 zones case. This situation occurs because in the 36 zones case, \CR base station can decide that some frequencies are available in some zone while it is not in the other. However, in 1 zone case the \CR base station decides for whole cell. As a result, if a frequency is not available for half of the cell, it is  not used in the entire cell. This situation causes \CR users to find less spectrum holes to initiate a communication and increases their blocking probability.
 
 \begin{figure}[t]
 \centering
@@ -504,7 +505,7 @@ SUs} \label{fig:probm}
 
 
 \subsection{Utilization analysis}
-Figure \ref{fig:util} illustrates the utilization of PUs and SUs number of SUs in the cell for 1 zone and 36 zones cases. In both of these cases, SUs utilizes spectrum almost equally. However, in 1 zone case, SUs harms primary communication due to the high $\probm$ and $\mathbf{P_C}$ values.
+Figure \ref{fig:util} illustrates the utilization of PUs and SUs with respect to the number of SUs in the cell for 1 zone and 36 zones cases. In both of these cases, SUs utilizes spectrum almost equally. However, in 1 zone case, SUs harms primary communication due to the high $\probm$ and $\mathbf{P_C}$ values. Note that the total utilization of PUs and SUs can exceed 100 percent because they can use the same frequency at the same time if they are far enough to have an unadequate interference which leads no collision. 
 
 \begin{figure}[t]
 \centering
@@ -514,11 +515,9 @@ Figure \ref{fig:util} illustrates the utilization of PUs and SUs number of SUs i
 \end{figure}
 
 \section{\label{sec:conclusion}Conclusion}
-Being aware of surroundings is the most crucial part of the \CR system since it includes sensing the environment for primary activity, finding spectrum holes and vacating the channel or adjusting the communication parameters which is a must for not to disturb the primary users.
+In this paper, we focused on distributed cooperative sensing with majority cooperation rule in ZoneS approach. We observed that with a few number of SUs (~350 or less), requirements determined by standards (both probability of false alarm and missed detection should be less than 10 percent \cite{wranstandard}) cannot be satisfied. As the number of SUs increases, these requirements can be easily satisfiable but when system load becomes excessive (SU utilization over 50 percent) quality of service for SUs decreases severely in terms of blocking and dropping. Moreover, due to overload in wireless channel, collision probabilities start to increase after that point.
 
-In this paper, we focused on distributed cooperative sensing with majority cooperation rule. We observed that with a few number of SUs (~350 or less), requirements determined by standards (both probability of false alarm and missed detection should be less than 10 percent \cite{wranstandard}) cannot be satisfied. As the number of SUs increases, these requirements can be easily satisfiable but when system load becomes excessive (SU utilization over 50 percent) quality of service for SUs decreases severely in terms of blocking and dropping. Moreover, due to overload in wireless channel, collision probabilities start to increase after that point.
-
-We also compared our results with cooperation in whole cell case (1 zone case) and observed that applying cooperation with multiple zones results in better cooperation in terms of sensing reliability since with multiple zones cooperating in the cell, both miss detection and collision probabilities decrease.
+We also compared our results with cooperation in whole cell case (1 zone case) and observed that applying cooperation with multiple zones results in better cooperation in terms of sensing reliability since with the multiple zones cooperating in a cell, both miss detection and collision probabilities decrease significantly.
 
 \begin{figure}[t]
 \centering
