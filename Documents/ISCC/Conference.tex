@@ -484,31 +484,31 @@ Figure \ref{fig:probf} illustrates the false alarm probability against the numbe
 \subsection{$\probm$ and Collision Analysis}
 Figure \ref{fig:probm} illustrates the missed detection and collision probabilities against the number of SUs in the cell for no zone and 36 zones cases. We observe that, in 36 zones case, the probability of the miss-detection ($\probm$) also decreases with increasing number of SUs as in the same manner for the probability of false alarm. We also observe that collision probabilities ($\mathbf{P_C}$) never exceed the miss-detection probabilities. This is an expected result since all collisions are caused due to missed detections. Another observation from the figure is that, after some point, $P_C$ starts increasing. That is why the system gets overloaded at that point. However, in the no zone case, these probabilities again remains still with increasing number of SUs such that $\probm$ remains above 0.20 and $\mathbf{P_C}$ remains above 0.10 all the time. This is why, in the no zone case, for the proper detection, the PU should cause interference at least half of the SUs. Otherwise, although the closer SUs to the PU realize that the frequency is not available, due to cooperation the overall decision will be for the availability of the frequency, resulting in a missed detection and a probable collision. Therefore, applying cooperation across the cell increases the probabilities of both miss detection and collision.
 
-\subsection{Blocking and dropping analysis}
-Figure \ref{fig:probb} illustrates the blocking and dropping probabilities versus number of SUs in the cell. The dropping probability of 1 zone case is lower than 36 zones dropping due to greater $\probm$ and $\mathbf{P_C}$ of the 1 zone case. Since $\probm$ and $\mathbf{P_C}$ are higher for 1 zone case, the SUs do not understand that they caused collision. Therefore, they do not try to vacate the communication frequency they are using, and so faces less drops than 36 zones case. On the other hand, blocking probability of 1 zone case is higher than 36 zones case. This situation occurs because in the 36 zones case, \CR base station can decide that some frequencies are available in some zone while it is not in the other. However, in 1 zone case the \CR base station decides for whole cell. As a result, if a frequency is not available for half of the cell, it is  not used in the entire cell. This situation causes \CR users to find less spectrum holes to initiate a communication and increases their blocking probability.
+\subsection{Blocking and Dropping Analysis}
+Figure \ref{fig:probb} illustrates the blocking and dropping probabilities against number of SUs in the cell. The dropping probability of no zone case is lower than 36 zones due to greater $\probm$ and $\mathbf{P_C}$ of the no zone case. Since $\probm$ and $\mathbf{P_C}$ are higher for the no zone case, the SUs do not detect the collision. Therefore, they do not try to vacate the communication frequency they use, resulting in fewer drops than 36 zones case. On the other hand, blocking probability of no zone case is higher than 36 zones case. This situation occurs since in the 36 zones case, \CR base station can decide that some frequencies are available in some zones. However, in the no zone case the \CR base station decides for the whole cell. As a result, if a frequency is not available for half of the cell, it is  not used in the entire cell. This situation causes \CR users to find less spectrum holes to initiate a communication and increases their blocking probability.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/pm_c.eps}
-\caption{Probability of Missed Detection and Collision vs Number of
+\caption{Probabilities of Missed Detection and Collision vs Number of
 SUs} \label{fig:probm}
 \end{figure}
 
 
-\subsection{Utilization analysis}
-Figure \ref{fig:util} illustrates the utilization of PUs and SUs with respect to the number of SUs in the cell for 1 zone and 36 zones cases. In both of these cases, SUs utilizes spectrum almost equally. However, in 1 zone case, SUs harms primary communication due to the high $\probm$ and $\mathbf{P_C}$ values. Note that the total utilization of PUs and SUs can exceed 100 percent because they can use the same frequency at the same time if they are far enough to have an unadequate interference which leads no collision. 
+\subsection{Utilization Analysis}
+Figure \ref{fig:util} illustrates the utilization of PUs and SUs with respect to the number of SUs in the cell for the no zone and the 36 zones cases. In both cases, SUs utilize the spectrum almost equally. However, in the no zone case, SUs harm primary communication due to the high $\probm$ and $\mathbf{P_C}$ values. Note that the total utilization of PUs and SUs can exceed 100 percent because they can use the same frequency simultaneously if they are far enough to experience limited interference which leads no collision. 
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/pb_d.eps}
-\caption{Probability of Blocking and Dropping vs Number of SUs}
+\caption{Probabilities of Blocking and Dropping vs Number of SUs}
 \label{fig:probb}
 \end{figure}
 
 \section{\label{sec:conclusion}Conclusion}
-In this paper, we focused on distributed cooperative sensing with majority cooperation rule in ZoneS approach. We observed that with a few number of SUs (~350 or less), requirements determined by standards (both probability of false alarm and missed detection should be less than 10 percent \cite{wranstandard}) cannot be satisfied. As the number of SUs increases, these requirements can be easily satisfiable but when system load becomes excessive (SU utilization over 50 percent) quality of service for SUs decreases severely in terms of blocking and dropping. Moreover, due to overload in wireless channel, collision probabilities start to increase after that point.
+In this paper, we focus on distributed cooperative sensing with majority cooperation rule using the ZoneS approach. We observe that with a few SUs (350 or less), the 0.10 upper bound for false alarm and missed detection probabilities set by the standards cannot be satisfied \cite{wranstandard}. As the number of SUs increases, these requirements can be easily satisfiable, but when the system load becomes excessive (SU utilization over 50\%) quality of service for SUs decreases severely in terms of blocking and dropping. Moreover, due to overload in wireless channel, the collision probabilities start to increase after that point.
 
-We also compared our results with cooperation in whole cell case (1 zone case) and observed that applying cooperation with multiple zones results in better cooperation in terms of sensing reliability since with the multiple zones cooperating in a cell, both miss detection and collision probabilities decrease significantly.
+We also compare our results with cooperation over the whole cell case (no zone case) and observe that applying cooperation with multiple zones results in better cooperation in terms of sensing reliability since with the multiple zones cooperating in a cell, both missed detection and collision probabilities decrease significantly.
 
 \begin{figure}[t]
 \centering
@@ -517,7 +517,7 @@ We also compared our results with cooperation in whole cell case (1 zone case) a
 \end{figure}
 
 \section{\label{sec:future}Future Work}
-As further improvement of this paper, we will combine our simulation with an optimization approach over sensing scheduling. Our aim at this optimization is to minimize the interference caused by secondary users by efficiently assigning the frequencies to be sensed for each secondary users.
+As further improvement, we plan to combine our simulation with an optimization approach over sensing scheduling. Our aim at this optimization is to minimize the interference caused by the secondary users by efficiently assigning the frequencies to be sensed for each secondary user.
 
 \section*{Acknowledgment}
 This work has been supported by the State Planning Organization (DPT) of Republic of Turkey under the project TAM with the Project No. 2007K120610 and COST Action IC0902 Cognitive Radio and Networking for Cooperative Coexistence of Heterogeneous Wireless Networks.
