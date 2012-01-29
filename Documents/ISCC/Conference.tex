@@ -357,7 +357,7 @@ Dynamic access to spectrum requires detecting the free spaces in close proximity
 
 \section{Introduction}
 
-To improve spectrum utilization, opportunistic spectrum access has been proposed wherein devices occupy the spectrum that has been left vacant. The essential part of opportunistic access is finding the free spaces of the spectrum via spectrum sensing. This includes sensing unused spectrum as well as sensing during the \emph{Cognitive Radio} operation periodically for vacating the channel if primary activity is observed. Cooperative sensing and acquiring processing gain have been studied extensively as a promising alternative to improve the sensing performance in low SNR conditions (\cite{ganesan2005css, kattepur2007data, quan2008spatial, quan2009optimal, unnikrishnan2008csp, aysal2008cooperative}).
+To improve spectrum utilization, opportunistic spectrum access has been proposed wherein devices occupy the spectrum that has been left vacant. The essential part of opportunistic access is finding the free spaces of the spectrum via spectrum sensing. This includes sensing unused spectrum as well as sensing during the \emph{Cognitive Radio} operation periodically for vacating the channel if primary activity is observed. Cooperative sensing and acquiring processing gain have been studied extensively as a promising alternative to improve the sensing performance in low SNR conditions \cite{ganesan2005css, kattepur2007data, quan2008spatial, quan2009optimal, unnikrishnan2008csp, aysal2008cooperative}.
 
 We mainly focus on energy detection and distributed cooperative sensing issues to increase the performance of the energy detection method under low SNR conditions \cite{sensingReview2011}. Local sensors individually sense the channels and then send information to the network center where the final decision is made\cite{crSensingCDMA2010}. However, the distance between the cooperating nodes is crucial since the cooperation of distant nodes can increase the false alarm or missed detection rates.
 
@@ -404,7 +404,7 @@ After sensing the signal powers locally, the SUs compare the received power with
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-After each group leader transmits the local sensing decisions, the \CR base station gathers sensing decisions zone by zone and applies the cooperation rule in each zone. Using majority logic as the cooperation rule yields false alarm probability (\probf) and missed detection probability (\probm) according to the following formulations:
+After each group leader transmits the local sensing decisions, the \CR base station gathers sensing decisions zone by zone and applies the cooperation rule in each zone. Using majority logic as the cooperation rule yields false alarm probability ($\probf$) and missed detection probability ($\probm$) according to the following formulations:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
     \begin{array}{lcl}
@@ -496,7 +496,7 @@ SUs} \label{fig:probm}
 
 
 \subsection{Utilization Analysis}
-Figure \ref{fig:util} illustrates the utilization of PUs and SUs with respect to the number of SUs in the cell for the no zone and the 36 zones cases. In both cases, SUs utilize the spectrum almost equally. However, in the no zone case, SUs harm primary communication due to the high $\probm$ and $\mathbf{P_C}$ values. Note that the total utilization of PUs and SUs can exceed 100 percent because they can use the same frequency simultaneously if they are far enough to experience limited interference which leads no collision. 
+Figure \ref{fig:util} illustrates the utilization of PUs and SUs with respect to the number of SUs in the cell for the no zone and the 36 zones cases. In both cases, SUs utilize the spectrum almost equally. However, in the no zone case, SUs harm primary communication due to the high $\probm$ and $\mathbf{P_C}$ values. Note that the total utilization of PUs and SUs can exceed 100\% because they can use the same frequency simultaneously if they are far enough to experience limited interference which leads no collision. 
 
 \begin{figure}[t]
 \centering
