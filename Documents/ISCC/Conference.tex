@@ -301,7 +301,7 @@
 \newcommand{\funcgamma}{\mathbf{\Gamma}}
 \newcommand{\testyi}{T(\overrightarrow{Y_i})}
 
-\newcommand{\CR}{Cognitive Radio }
+\newcommand{\CR}{cognitive radio }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,7 +319,7 @@
 \author{
 \IEEEauthorblockN{
     Bilal Acar\IEEEauthorrefmark{2},
-    Mehmet Akif Ersoy\IEEEauthorrefmark{2}\thanks{\IEEEauthorrefmark{2}This work has been conducted as the BS graduation project of Bilal Acar and Mehmet Akif Ersoy in the Department of Computer Engineering of Bogazici University},
+    Mehmet Akif Ersoy\IEEEauthorrefmark{2}\thanks{\IEEEauthorrefmark{2}This work has been conducted as the BS graduation project of Bilal Acar and Mehmet Akif Ersoy in the Department of Computer Engineering at Bogazici University},
     H. Birkan Yilmaz,
     Salim Eryigit, and
     Tuna Tugcu
@@ -344,7 +344,7 @@ tugcu\}@boun.edu.tr} }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 %\boldmath
-Dynamic access to spectrum requires detecting the free spaces in close proximity. Since non-cooperative sensing methods cannot satisfy most of the basic requirements, different cooperative sensing algorithms has been proposed to overcome this problem. In the previous works, multiple secondary users cooperate to achieve better primary user detection. However, taking into account the measurements from distant users actually aggravates the detection decision. In this paper, we propose the \textit{Zone-based Sensing (ZoneS)} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. The simulations are performed with different parameters and with majority cooperation rule for the users in each zone. The false alarm, missed detection, blocking and dropping probabilities and channel utilization are examined to assess the effectiveness of the zones.
+Dynamic access to spectrum requires detecting the free spaces in close proximity. Since non-cooperative sensing methods cannot satisfy most of the basic requirements, different cooperative sensing algorithms have been proposed to overcome this problem. In the previous works, multiple secondary users cooperate to achieve better primary user detection. However, taking into account the measurements from distant users actually aggravates the detection decision. In this paper, we propose the \textbf{\textit{Zone-based Sensing (ZoneS)}} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. The simulations are performed with different parameters and with majority cooperation rule for the users in each zone. The false alarm, missed detection, blocking and dropping probabilities, and channel utilization are examined to assess the effectiveness of ZoneS. The proposed method enables the utilization of spectrum bands that would be left unused otherwise, while keeping the probabilities of missed detection and false alarm bounded. Furthermore, the coordination among secondary users is achieved without any overhead.
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -357,16 +357,16 @@ Dynamic access to spectrum requires detecting the free spaces in close proximity
 
 \section{Introduction}
 
-To improve spectrum utilization, opportunistic spectrum access has been proposed wherein devices occupy the spectrum that has been left vacant. The essential part of the opportunistic access is finding the free spaces of the spectrum via spectrum sensing. This includes sensing unused spectrum as well as sensing during the \emph{Cognitive Radio} operation periodically for vacating the channel if primary activity is observed. Cooperative sensing and acquiring processing gain have been studied extensively as a promising alternative to improve the sensing performance in low SNR conditions (\cite{ganesan2005css, kattepur2007data, quan2008spatial, quan2009optimal, unnikrishnan2008csp, aysal2008cooperative}).
+To improve spectrum utilization, opportunistic spectrum access has been proposed wherein devices occupy the spectrum that has been left vacant. The essential part of opportunistic access is finding the free spaces of the spectrum via spectrum sensing. This includes sensing unused spectrum as well as sensing during the \emph{Cognitive Radio} operation periodically for vacating the channel if primary activity is observed. Cooperative sensing and acquiring processing gain have been studied extensively as a promising alternative to improve the sensing performance in low SNR conditions (\cite{ganesan2005css, kattepur2007data, quan2008spatial, quan2009optimal, unnikrishnan2008csp, aysal2008cooperative}).
 
-We mainly focus on energy detection and distributed cooperative sensing issues to increase the performance of the energy detection method under low SNR conditions \cite{sensingReview2011}. Local sensors individually sense the channels and then send information to the network center where the final decision is made\cite{crSensingCDMA2010}. However, the distance between the cooperating nodes is crucial since the cooperation of far nodes can increase the false alarm or miss-detection rates.
+We mainly focus on energy detection and distributed cooperative sensing issues to increase the performance of the energy detection method under low SNR conditions \cite{sensingReview2011}. Local sensors individually sense the channels and then send information to the network center where the final decision is made\cite{crSensingCDMA2010}. However, the distance between the cooperating nodes is crucial since the cooperation of distant nodes can increase the false alarm or missed detection rates.
 
-In this paper, we propose the \textit{Zone-based Sensing (ZoneS)} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. We examine the ZoneS method and simulate with different number of \textit{Secondary Users (SU)}. We analyze performance of ZoneS in terms of false alarm, miss-detection probabilities, and utilization. Performance loss is observed in the case of miss-detection while increasing interference level to \textit{Primary Users (PU)}. On the other hand, in the case of false alarm SUs waste available spectrum holes which, again, causes performance loss \cite{parameterOptimization}.
+In this paper, we propose the \textit{Zone-based Sensing (ZoneS)} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. We examine the ZoneS method and simulate with different number of \textit{Secondary Users (SU)}. We analyze the performance of ZoneS in terms of false alarm, missed detection probabilities, and utilization. Performance loss is observed in the case of missed detection due to increasing interference level to \textit{Primary Users (PU)}. On the other hand, in the case of false alarm SUs waste available spectrum holes which, again, causes performance loss \cite{parameterOptimization}.
 
-The rest of the paper is organized as follows: In Section~\ref{sec:system_model}, we overview general channel model, individual and cooperative sensing of the SUs, and sensing algorithm used in simulation. In Section~\ref{sec:results} we present results of the simulation for different number of SUs. We reveal the conclusion in Section~\ref{sec:conclusion}. Finally, in Section~\ref{sec:future} we state future work to optimize the results.
+The rest of the paper is organized as follows: In Section~\ref{sec:system_model}, we overview the general channel model, individual and cooperative sensing of the SUs, and sensing algorithm used in simulation. In Section~\ref{sec:results} we present results of the simulation for different number of SUs. We reveal the conclusion in Section~\ref{sec:conclusion}. Finally, in Section~\ref{sec:future} we state future work to optimize the results.
 
 \section{\label{sec:system_model}System Model}
-\subsection{Channel model}
+\subsection{Channel Model}
 For the transmission channel, we adopt the path loss channel model described in \cite{faramir}. According to this model the received power of a node, which is $d$ km away from the transmitter, is obtained according to\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \beqn
@@ -377,7 +377,7 @@ where $d$ is the distance between the transmitter and the receiver, $l_0$ is the
 
 When there is no transmitter using the sensed channel, the received power is generated by a Gaussian random variate with mean $\mu_0$ (noise floor), and standard deviation $\sigma_0$ (noise deviation).
 
-\subsection{Zone structure}
+\subsection{Zone Structure}
 
 \begin{figure}[!htb]
 \centering
@@ -385,16 +385,16 @@ When there is no transmitter using the sensed channel, the received power is gen
 \caption{Example zone structure.} \label{fig:zone_structure}
 \end{figure}
 
-In Figure~\ref{fig:zone_structure}, the zone structure of an infrastructure based \CR network is depicted. We assume the \CR cells are sectorized as in general practice. We further divide each sector into radial slices, and divide each slice into zones according to the distance from the base station. Each slice corresponds to an angle of $\beta$, and the radius ($r_1$, $r_2$, etc.) forms the zone structure. Thus, $(\beta, \, r_1, \, ... \, r_n)$ defines the zones in the secondary cell.
+In Figure~\ref{fig:zone_structure}, the zone structure of an infrastructure based \CR cell is depicted. We assume the \CR cells are sectorized as in general practice. We further divide each sector into radial slices, and divide each slice into zones according to the distance from the base station. Each slice corresponds to an angle of $\beta$, and the radius ($r_1$, $r_2$, etc.) forms the zone structure. Thus, $(\beta, \, r_1, \, ... \, r_n)$ tuple defines the zones in the secondary cell.
 
-Cooperation among all SUs in the secondary cell does not improve, even worsens, the overall performance. Considering all local decisions in case of an active transmission at the edge of the cell may forbid the use of the frequency all over the cell. Similarly, considering all local decisions may result in missed detection in the close proximity of primary transmission. Therefore, we divide the cell into zones where the cooperation leads to better overall performance in terms of false alarm, missed detection, and utilization.
+Cooperation among all SUs in the secondary cell does not improve, even worsens, the overall performance. Considering all local decisions in case of an active transmission at the edge of the cell may forbid the use of the frequency all over the cell. Similarly, considering all local decisions may result in missed detection in the close proximity of primary transmission. Therefore, we divide the cell into zones where local cooperation leads to better overall performance in terms of false alarm, missed detection, and utilization.
 
-In each zone, all SUs broadcast their sensing measurements with low power. The first SU who broadcasts first (randomly) declares itself as the leader of the zone. The selection of the leader of the zone in this manner is achieved without any messaging overhead. Since all SUs in the zone can hear each other, the leader receives the information about spectrum sensing measurements of the other users in the zone. Therefore, the leader has the information of sensing results in the entire zone. Only the leader reports the zone's sensing decision to the \CR base station. Hence, the bandwidth requirement of the report channel is minimized.
+After waiting for a random duration at the end of the silent period, each SU broadcasts its sensing measurement with low power. An SU that has not heard from any of its neighbors before its own transmission considers itself as the leader of its neighborhood. \textbf{Thus, the selection of the leader of a neighborhood is achieved without any messaging overhead.} Since the leader can hear all SUs in its neighborhood, it receives the spectrum sensing measurements of those users. Only the leader reports its neigborhoods sensing decision to the \CR base station. \textbf{Hence, the bandwidth requirement of the report channel is minimized.}
 
-Since the sensing results are reported for each zone separately, the \CR base station can keep track of available frequencies for each zone. A frequency can be determined as available and unavailable in different zones. So, \textbf{the Cognitive Radio system can utilize even the frequencies, which would be unavailable in other approaches, in the zones distant to the PU}.
+Since the sensing results are reported for each zone separately, the \CR base station can keep track of available frequencies for each zone. A frequency can be determined as available or unavailable in different zones. So, \textbf{the Cognitive Radio system can utilize even the frequencies, which would be unavailable according to other approaches, in the zones distant to the PU}.
 
-\subsection{ZoneS sensing decision}
-After sensing the signal powers locally, the SUs compare the received power with the power threshold and decide whether the channel is available or not. At that point, the decision that there is no transmission in a channel while a primary user is actually communicating is called missed detection. On the contrary, the decision that there is an ongoing transmission while no primary user is actually communicating is called false alarm. Probabilities of these occasions give the sensing reliability and sensing efficiency, respectively \cite{UpToDateSensing}. Therefore, the individual false alarm probability of a SU ($\probflocal$) becomes the probability of noise power being greater than the power threshold and the individual missed detection probability of a SU ($\probmlocal$) becomes the received power being less than the power threshold. This situation is shown in Figure \ref{fig:h0h1}.
+\subsection{ZoneS Sensing Decision}
+After sensing the signal powers locally, the SUs compare the received power with the power threshold and decide whether the channel is available or not. At that point, the decision that there is no transmission in a channel while a primary user is actually communicating is called missed detection. On the contrary, the decision that there is an ongoing transmission while no primary user is actually communicating is called false alarm. Probabilities of these occasions give the sensing reliability and sensing efficiency, respectively \cite{UpToDateSensing}. Therefore, the individual false alarm probability of a SU ($\probflocal$) becomes the probability of noise power being greater than the power threshold, and the individual missed detection probability of a SU ($\probmlocal$) becomes the received power being less than the power threshold. This situation is shown in Figure \ref{fig:h0h1}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[!htb]
 \centering
@@ -404,7 +404,7 @@ After sensing the signal powers locally, the SUs compare the received power with
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The \CR base station gathers sensing decisions zone by zone and applies the cooperation rule in each zone. Using majority as the cooperation rule yields false alarm and missed detection probabilities according to the following formulations:
+After each group leader transmits the local sensing decisions, the \CR base station gathers sensing decisions zone by zone and applies the cooperation rule in each zone. Using majority logic as the cooperation rule yields false alarm probability (\probf) and missed detection probability (\probm) according to the following formulations:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{equation}
     \begin{array}{lcl}
@@ -414,7 +414,7 @@ The \CR base station gathers sensing decisions zone by zone and applies the coop
 \end{equation}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-ZoneS algorithm divides the area into subareas for efficient cooperation. \textbf{These final $\probf$ and $\probm$ values are the probabilities for a single zone, not the whole cell.}
+ZoneS algorithm divides the cell into zones for efficient cooperation. \textbf{These final $\probf$ and $\probm$ values are the probabilities for a single zone, not the whole cell.}
 
 \subsection{Communication}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -424,7 +424,7 @@ ZoneS algorithm divides the area into subareas for efficient cooperation. \textb
 \caption{Communication frame structure.} \label{fig:frame_structure}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-In Figure~\ref{fig:frame_structure}, the communication frame structure is depicted. Each frame starts with sensing scheduling and sensing slots. A simple sensing scheduling method is assumed that assigns half of the frequencies to one half of the nodes in the zone and the other half to the remaining nodes. Collaborative sensing decision is formed and advertised after these slots. Sensing schedule advertisement, slots, and result acknowledgement are followed by communication requests and responses.
+The communication frame structure is depicted in Figure~\ref{fig:frame_structure}. Each frame starts with sensing scheduling and sensing slots. A simple sensing scheduling method, which assigns half of the frequencies to one half of the nodes in the zone and the other half to the remaining nodes, is assumed. Collaborative sensing decision is formed and acknowledged after these slots. Sensing schedule advertisement, slots, and result acknowledgement are followed by data slot requests and assignments.
 
 \begin{figure}[!ht]
 \centering
@@ -433,26 +433,17 @@ In Figure~\ref{fig:frame_structure}, the communication frame structure is depict
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-After sensing part is completed, \CR base station assigns communication frequencies to the SUs who want to receive or transmit data. While choosing which frequencies to assign it takes sensing results into consideration. It can assign a frequency to a user in three cases:
+After the sensing part is completed, \CR base station assigns communication frequencies to the SUs who want to receive or transmit data. While choosing which frequencies to assign, it takes the sensing results into consideration. It can assign a frequency to a user in three cases:
 \begin{enumerate}
 \item No PU is actually using the channel.
-\item There is a PU who uses the channel but it is not close enough to the SU, who uses the same channel,
-      such that there is not a significant interference.
-\item There is a PU close by, who uses the channel, but SUs could not detect it (missed detection). This
-      situation causes interference at PU and therefore collision.
+\item There is a PU who uses the channel, but it is not close enough to the SU who uses the same channel so that there is not significant interference to the PU.
+\item There is a PU close by who uses the channel, but SUs could not detect it (missed detection). This situation causes interference at PU and therefore collision.
 \end{enumerate}
 
-These cases are illustrated in Figure \ref{fig:network}. In the figure, there is a secondary link between $SU_A$ and the \CR base station over $f_1$ which is not used by any primary user. Therefore, the $SINR$ value is high enough to have a communication. There is another secondary link between $SU_B$ and the \CR base station over $f_2$ which is used by $PU_B$ at other side of the cell which is far enough. Therefore, the $SINR$ value includes the interference but not so severe to degrade the communication link. Lastly, there is a secondary link between $SU_C$ and the \CR base station uses $f_3$ which is also used by $PU_C$ in close proximity. In this case, collision occurs due to the miss-detection and the channel capacity decreases too much to have a valid communication. In each case the channel capacities are evaluated by the Shannon capacity formula:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{equation}
-    C = B\,\, \log_2(1+SINR)
-\end{equation}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-where $B$ is the bandwidth of the channel.
+These cases are illustrated in Figure \ref{fig:network}. In the figure, there is a secondary link between $SU_A$ and the \CR base station over $f_1$, which is not used by any primary user. Therefore, $SU_A$ can communicate with the cognitive base station over $f_1$ safely. There is another secondary link between $SU_B$ and the \CR base station over $f_2$, which is at the far side of the cell. Therefore, the use of $f_2$ does not cause significant interference at $PU_B$. Lastly, there is a secondary link between $SU_C$ and the \CR base station uses $f_3$, which is also used by $PU_C$ in close proximity. In this case, collision occurs due to the missed detection and the channel capacity reduces significantly, hindering a valid communication. In each case the channel capacities are evaluated by the Shannon capacity formula.
 
 \section{\label{sec:results}Results}
-\subsection{Simulation parameters and analysis}
-Simulation parameters are shown in Table~\ref{tbl:sim_parameters} in which table $N_{PU}$ is the number of PUs.
+\subsection{Simulation Parameters and Analysis}
 
 \begin{table}[!htb]
 \renewcommand{\arraystretch}{1.2}
@@ -463,25 +454,25 @@ Simulation parameters are shown in Table~\ref{tbl:sim_parameters} in which table
   \hline
   Parameter & & Value\\
   \hline
-  $P_{tx}$ & & -10dB \\
-  $l_0$    & & 38.4dB (Urban) \\
+  $P_{tx}$ & & -10 dB \\
+  $l_0$    & & 38.4 dB (Urban) \\
   $\alpha$ & & 3.5 (Urban)\\
-  $\mu_s$  & & 0dB\\
-  $\sigma_s$ & & 8dB\\
-  $\mu_0$  & & -85dB \\
-  $\sigma_0$ & & 20dB \\
+  $\mu_s$  & & 0 dB\\
+  $\sigma_s$ & & 8 dB\\
+  $\mu_0$  & & -85 dB \\
+  $\sigma_0$ & & 20 dB \\
   $r_{cell}$ & & 1.5 km\\
   $N_{PU}$ & & 1500\\
   \hline
 \end{tabular}
 \end{table}
 
-As simulation output, statistics collected in terms of the false alarm, missed detection, collision, blocking of SUs, dropping of SUs, and the channel utilization by both SUs and PUs. Note that in figures we do not plot all probability values for each zone. Instead we plot their mean against number of SUs.
+Simulation parameters are shown in Table~\ref{tbl:sim_parameters} where $N_PU$ stands for the number of PUs. In the simulations, statistics are collected in terms of false alarm, missed detection, collision, blocking of SUs, dropping of SUs, and channel utilization by both SUs and PUs. The reader should note that we do not plot all probability values for each zone. Instead, we plot their mean against the number of SUs.
 
-In simulation, radius of the \CR cell is 1.5 km, and number of PUs is 1500. Also PUs are deployed in a wider area then the SUs. They are deployed in a circle with {\raise.17ex\hbox{$\scriptstyle\mathtt{\sim}$}}5 km radius since a PU outside of this area cannot be sensed by SUs with respect to the simulation parameters.
+In the simulations, radius of the \CR cell is taken as 1.5 km, and the number of PUs is 1500. Also, the PUs are deployed in a wider area than the SUs. They are deployed in a circle with approximately 5 km radius since a PU outside of this area cannot be sensed by SUs for the given simulation parameters.
 
-\subsection{$\probf$ analysis}
-Figure \ref{fig:probf} illustrates the false alarm probability versus the number of SUs in the cell for 1 zone and 36 zones cases. The probability of false alarm decreases with the increasing number of SUs in the 36 zones case because the reliability of the cooperation decision increases with number of users cooperating. This result is expected according to the mathematical model since the cooperated false alarm probability ($\probf$) is obtained by taking powers of local false alarm probabilities ($\probflocal$). However, with increasing number of SUs in the 1 zone case  $\probf$ does not change much since there are already too many users cooperating. Although the false alarm probability is much smaller in case of 1 zone, it also satisfies the false alarm probability standards in case of 36 zones.
+\subsection{$\probf$ Analysis}
+Figure \ref{fig:probf} illustrates the false alarm probability against the number of SUs in the cell for no zone (single zone) and 36 zones cases. The probability of false alarm decreases with the increasing number of SUs in the 36 zones case because the reliability of the cooperation decision increases with number of users cooperating. This result is expected according to the mathematical model since the cooperative false alarm probability is obtained by taking powers of local false alarm probabilities ($\probflocal$). However, with increasing number of SUs in the no zone case  $\probf$ does not change much since there are already too many users cooperating. Although the false alarm probability for the 36 zones case is higher than that of the no zone case, it is still well below the 0.10 bound defined by the standard \cite{wranstandard}.
 
 \begin{figure}[t]
 \centering
@@ -490,8 +481,8 @@ Figure \ref{fig:probf} illustrates the false alarm probability versus the number
 \label{fig:probf}
 \end{figure}
 
-\subsection{$\probm$ and collision analysis}
-Figure \ref{fig:probm} illustrates the miss-detection and collision probabilities versus the number of SUs in the cell for 1 zone and 36 zones cases. We observe that, in 36 zones case, the probability of the miss-detection ($\probm$) also decreases with increasing number of SUs as in the same manner of the probability of false alarm. We also observe that collision probabilities ($\mathbf{P_C}$) never exceeds the miss-detection probabilities. This is a reasonable result since all collisions are caused due to missed detections. Another observation from the figure is that, after some point, collision probability starts increasing. That is why, the system gets overloaded at that point. However, in the 1 zone case, this probabilities again remains still with increasing number of SUs but they are very high such that $\probm$ remains above 0.20 and $\mathbf{P_C}$ remains above 0.10 all the time. This is why, in 1 zone case, in order to decide that a frequency is used by a PU, that PU should cause interference to at least half of the SUs. Otherwise, although the closer SUs to the PU understands that the frequency is not available, due to the cooperation, the frequency will be decided as available and this causes a miss detection. Moreover, after that miss detection if this frequency is assigned to a SU closer to the PU will also cause a collision. Therefore, applying cooperation in whole cell increases both miss detection and collision.
+\subsection{$\probm$ and Collision Analysis}
+Figure \ref{fig:probm} illustrates the missed detection and collision probabilities against the number of SUs in the cell for no zone and 36 zones cases. We observe that, in 36 zones case, the probability of the miss-detection ($\probm$) also decreases with increasing number of SUs as in the same manner for the probability of false alarm. We also observe that collision probabilities ($\mathbf{P_C}$) never exceed the miss-detection probabilities. This is an expected result since all collisions are caused due to missed detections. Another observation from the figure is that, after some point, $P_C$ starts increasing. That is why the system gets overloaded at that point. However, in the no zone case, these probabilities again remains still with increasing number of SUs such that $\probm$ remains above 0.20 and $\mathbf{P_C}$ remains above 0.10 all the time. This is why, in the no zone case, for the proper detection, the PU should cause interference at least half of the SUs. Otherwise, although the closer SUs to the PU realize that the frequency is not available, due to cooperation the overall decision will be for the availability of the frequency, resulting in a missed detection and a probable collision. Therefore, applying cooperation across the cell increases the probabilities of both miss detection and collision.
 
 \subsection{Blocking and dropping analysis}
 Figure \ref{fig:probb} illustrates the blocking and dropping probabilities versus number of SUs in the cell. The dropping probability of 1 zone case is lower than 36 zones dropping due to greater $\probm$ and $\mathbf{P_C}$ of the 1 zone case. Since $\probm$ and $\mathbf{P_C}$ are higher for 1 zone case, the SUs do not understand that they caused collision. Therefore, they do not try to vacate the communication frequency they are using, and so faces less drops than 36 zones case. On the other hand, blocking probability of 1 zone case is higher than 36 zones case. This situation occurs because in the 36 zones case, \CR base station can decide that some frequencies are available in some zone while it is not in the other. However, in 1 zone case the \CR base station decides for whole cell. As a result, if a frequency is not available for half of the cell, it is  not used in the entire cell. This situation causes \CR users to find less spectrum holes to initiate a communication and increases their blocking probability.
