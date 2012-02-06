@@ -61,58 +61,6 @@ public class PrimaryTrafficGeneratorNodeTest extends TestCase {
 	}
 
 	/**
-	 * Test of getCommunicationFreq method, of class PrimaryTrafficGeneratorNode.
-	 */
-	public void testGetCommunicationFreq() {
-		System.out.println("getCommunicationFreq");
-		PrimaryTrafficGeneratorNode instance = null;
-		int expResult = 0;
-		int result = instance.getCommunicationFreq();
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
-	 * Test of getNumberOfCallAttempts method, of class PrimaryTrafficGeneratorNode.
-	 */
-	public void testGetNumberOfCallAttempts() {
-		System.out.println("getNumberOfCallAttempts");
-		PrimaryTrafficGeneratorNode instance = null;
-		int expResult = 0;
-		int result = instance.getNumberOfCallAttempts();
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
-	 * Test of getNumberOfDrops method, of class PrimaryTrafficGeneratorNode.
-	 */
-	public void testGetNumberOfDrops() {
-		System.out.println("getNumberOfDrops");
-		PrimaryTrafficGeneratorNode instance = null;
-		int expResult = 0;
-		int result = instance.getNumberOfDrops();
-		assertEquals(expResult, result);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
-	 * Test of getComunicationDuration method, of class PrimaryTrafficGeneratorNode.
-	 */
-	public void testGetComunicationDuration() {
-		System.out.println("getComunicationDuration");
-		PrimaryTrafficGeneratorNode instance = null;
-		double expResult = 0.0;
-		double result = instance.getComunicationDuration();
-		assertEquals(expResult, result, 0.0);
-		// TODO review the generated test code and remove the default call to fail.
-		
-	}
-
-	/**
 	 * Test of incrementTotalCommunicationDuration method, of class PrimaryTrafficGeneratorNode.
 	 */
 	public void testIncrementTotalCommunicationDuration() {
