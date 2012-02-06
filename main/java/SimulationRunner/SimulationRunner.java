@@ -32,7 +32,7 @@ public class SimulationRunner {
 	public static SimulationRunner runner;
 	/**
 	 * Currently running GraphicalUserInterface instance
-	 */
+	 */ 
 	public static GraphicalUserInterface guiRunner;
 	
 	/**
