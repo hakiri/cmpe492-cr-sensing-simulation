@@ -260,3 +260,29 @@ Since the last progress report, following operations are completed about the sim
 <li>Channel model is updated to a more realistic one.</li>
 <li>Cooperative sensing is added.</li>
 </ul>
+
+
+= BIBLIOGRAPHY =
+1. Cooperative Spectrum Sensing with Realistic Reporting Channel. X. Li, G. Zhao, X. Wang, and C. Yang. s.l. : IEEE, 2010. ICSP Proceedings.
+
+2. Review of Spectrum Sensing in Cognitive Radio. Herath, L. N. T. Perera and H. M. V. R. Sri Lanka : International Conference on Industrial and Information Systems, ICIIS, 2011.
+
+3. Cognitive Radio: Brain-Empowered Wireless Communications. Haykin, S. s.l. : IEEE JOURNAL ON SELECTED AREAS IN COMMUNICATIONS, 2005, Vol. 23.
+
+4. Optimization of Parameters for Spectrum Sensing in Cognitive Radios. Y. Wang, C. Feng, C. Guo, F. Liu. Beijing : Beijing University of Posts and Telecommunications, IEEE, 2009.
+
+5. Cooperative Spectrum Sensing in a Realistic Cognitive Radio Environment. Liza.J, K.Muthumeenakshi, Radha.S. s.l. : IEEE-International Conference on Recent Trends in Information Technology, 2011.
+
+6. Colt 1.2.0 - API Specification. [Online] CERN. [Cited: 01 15, 2012.] http://acs.lbl.gov/software/colt/api/index.html.
+
+7. B. Khan, A. Al-Fuqaha, M. Guizani, A. Rayes. Network Modelling and Simulation. s.l. : WILEY, 2010.
+
+8. Polydoros, I. Dagres and A. Flexible and Spectrum Aware Radio Access through Measurements and Modelling in Cognitive Radio Systems (FARAMIR). 
+
+9. Cognitive Radio-Based Urban Wireless Broadband in Unused TV Bands. Nekovee, S. Kawade and M. s.l. : 20th International Conference Radioelektronika, 2010.
+
+10. Spectrum Sensing in Cognitive Radio Networks: Up-to-Date Techniques and Future Challenges. Fernando, S. Hussain and X. s.l. : TIC-STH, 2009.
+
+11. Functional Requirements for the 802.22 WRAN Standards. s.l. : IEEE Std. 802.22, 2006.
+
+12. jPlot - A Java Plotting Tool. [Online] [Cited: 01 15, 2012.] http://tcptrace.org/jPlot/.
