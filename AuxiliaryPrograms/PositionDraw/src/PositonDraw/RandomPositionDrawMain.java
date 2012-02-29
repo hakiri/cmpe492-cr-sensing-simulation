@@ -3,48 +3,110 @@ package PositonDraw;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
+import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class RandomPositionDrawMain {
 	
-	int numberOfNodes = 1000;
-	int numberOfClusters = 20;
-	int customerLimit = 75;
-	double width = 2000;
-	double height = 2000;
+	int numberOfNodes = 50;
+	int numberOfClusters = 5;
+	int customerLimit = 15;
+	double width = 150;
+	double height = 150;
 	int maxDigit;
 	String []args = null;
 	ArrayList<Point2D.Double> nodes;
+	ArrayList<Point2D.Double> clusters;
 	RandomEngine randEngine;
 	Uniform uniform;
+	PrintWriter positionFile;
+	Scanner input;
+	static RandomPositionDrawMain rpdm;
+	ArrayList<ArrayList<Integer>> xij = new ArrayList<>();
 	
 	public static void main(String []args)
 	{
-		RandomPositionDrawMain rpdm = new RandomPositionDrawMain(args);
-		rpdm.randomlyPositionNodes();
-		rpdm.outputGamsSourceFile();
+		rpdm = new RandomPositionDrawMain();
+		
+		if(args[0].contains("0")){
+			rpdm.parsePositions(args[1]);
+			Parser parser = new Parser(args[2]);
+			int constt = Integer.parseInt(args[3]);
+			//rpdm.height = rpdm.width = Integer.parseInt(args[4]);
+			parser.parse(rpdm.nodes, rpdm.clusters, rpdm.xij, rpdm.numberOfClusters, rpdm.numberOfNodes);
+			parser.close();
+			
+			DrawCell cell = new DrawCell((int)(rpdm.width), rpdm.numberOfNodes, rpdm.numberOfClusters, constt);
+			for(int i=0;i<rpdm.numberOfClusters;i++)
+				DrawCell.paintClusterCenter(rpdm.clusters.get(i), Color.RED, i);
+			for(int i=0;i<rpdm.numberOfNodes;i++){
+				DrawCell.paintNode(rpdm.nodes.get(i), Color.BLUE, i);
+			}
+		}
+		else{
+			rpdm.numberOfNodes = Integer.parseInt(args[2]);
+			rpdm.numberOfClusters = Integer.parseInt(args[3]);
+			rpdm.customerLimit = Integer.parseInt(args[4]);
+			rpdm.height = rpdm.width = Integer.parseInt(args[5]);
+			rpdm.randomlyPositionNodes(args[1]);
+			rpdm.outputGamsSourceFile();
+		}
 		
 	}
 
-	public RandomPositionDrawMain(String []args)
+	public RandomPositionDrawMain()
 	{
-		this.args = args;
 		nodes = new ArrayList<>();
+		clusters = new ArrayList<>();
 		randEngine = new MersenneTwister(new Date());
 		uniform = new Uniform(randEngine);
-		maxDigit = ((int)Math.log10((int)Math.sqrt(width*width+height*height)))+1;
+		maxDigit = ((int)Math.log10((int)Math.sqrt(4*width*width+4*height*height)))+1;
 		if(maxDigit < ((int)Math.log10(numberOfNodes)+1))
 			maxDigit = ((int)Math.log10(numberOfNodes)+1);
-		maxDigit += 2;
+		maxDigit += 3;
+		
+	}
+
+	void randomlyPositionNodes(String outFile)
+	{
+		try {
+			positionFile = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile))));
+		} catch (FileNotFoundException ex) {
+			System.err.println("Error Occured While Creating Position File!!!");
+		}
+		positionFile.println(numberOfNodes);
+		positionFile.println(numberOfClusters);
+		positionFile.println(width);
+		for(int i=0;i<numberOfNodes;i++){
+			nodes.add(new Point2D.Double(uniform.nextDoubleFromTo(-width, width), uniform.nextDoubleFromTo(-height, height)));
+			positionFile.println(nodes.get(i).x+"\t"+nodes.get(i).y);
+		}
+		positionFile.close();
 	}
 	
-	void randomlyPositionNodes()
+	void parsePositions(String inFile)
 	{
-		for(int i=0;i<numberOfNodes;i++){
-			nodes.add(new Point2D.Double(uniform.nextDoubleFromTo(0, width), uniform.nextDoubleFromTo(0, height)));
+		if(!nodes.isEmpty())
+			nodes.clear();
+		try {
+			input = new Scanner(new FileInputStream(inFile));
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(RandomPositionDrawMain.class.getName()).log(Level.SEVERE, null, ex);
 		}
+		
+		numberOfNodes = input.nextInt();
+		numberOfClusters = input.nextInt();
+		width = height = Double.parseDouble(input.next());
+		for(int i=0;i<numberOfNodes;i++){
+			nodes.add(new Point2D.Double(Double.parseDouble(input.next()), Double.parseDouble(input.next())));
+		}
+		input.close();
 	}
 	
 	public void outputGamsSourceFile()
@@ -125,6 +187,8 @@ public class RandomPositionDrawMain {
         System.out.println("CLUSTERS ..      SUM(J, Y(J)) =E= P;");
         System.out.println("CAPACITY(J) ..   SUM(I, X(I,J)) =L= CAP;");
         System.out.println("MODEL CLUSTER /ALL/ ;");
+		System.out.println("CLUSTER.optfile = 1;");
+		System.out.println("OPTION ResLim=1E75;");
         System.out.println("SOLVE CLUSTER USING MIP MINIMIZING Z ;");
 	}
 }
