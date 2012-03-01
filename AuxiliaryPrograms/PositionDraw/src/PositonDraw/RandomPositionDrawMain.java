@@ -1,5 +1,6 @@
 package PositonDraw;
 
+import Animation.DrawCell;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
@@ -42,7 +43,7 @@ public class RandomPositionDrawMain {
 			parser.parse(rpdm.nodes, rpdm.clusters, rpdm.xij, rpdm.numberOfClusters, rpdm.numberOfNodes);
 			parser.close();
 			
-			DrawCell cell = new DrawCell((int)(rpdm.width), rpdm.numberOfNodes, rpdm.numberOfClusters, constt);
+			DrawCell cell = new DrawCell((int)(rpdm.width), rpdm.numberOfNodes, rpdm.numberOfClusters, constt, rpdm.xij);
 			for(int i=0;i<rpdm.numberOfClusters;i++)
 				DrawCell.paintClusterCenter(rpdm.clusters.get(i), Color.RED, i);
 			for(int i=0;i<rpdm.numberOfNodes;i++){
