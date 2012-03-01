@@ -4,7 +4,6 @@ import Animation.DrawCell;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
-import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,10 +77,10 @@ public class ALAHueristicMain {
 	 */
 	static void drawSolution(){
 		for(int i=0;i<numberOfNodes;i++){
-			DrawCell.paintNode(nodes.get(i), Color.BLUE, i);
+			DrawCell.paintNode(nodes.get(i), i);
 		}
 		for(int i=0;i<numberOfClusters;i++){
-			DrawCell.paintClusterCenter(clusterCenters.get(i), Color.RED, i);
+			DrawCell.paintClusterCenter(clusterCenters.get(i), i);
 		}
 	}
 	
