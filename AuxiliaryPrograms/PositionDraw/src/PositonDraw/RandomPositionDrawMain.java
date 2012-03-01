@@ -4,7 +4,6 @@ import Animation.DrawCell;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
-import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.*;
 import java.util.ArrayList;
@@ -45,9 +44,9 @@ public class RandomPositionDrawMain {
 			
 			DrawCell cell = new DrawCell((int)(rpdm.width), rpdm.numberOfNodes, rpdm.numberOfClusters, constt, rpdm.xij);
 			for(int i=0;i<rpdm.numberOfClusters;i++)
-				DrawCell.paintClusterCenter(rpdm.clusters.get(i), Color.RED, i);
+				DrawCell.paintClusterCenter(rpdm.clusters.get(i), i);
 			for(int i=0;i<rpdm.numberOfNodes;i++){
-				DrawCell.paintNode(rpdm.nodes.get(i), Color.BLUE, i);
+				DrawCell.paintNode(rpdm.nodes.get(i), i);
 			}
 		}
 		else{
