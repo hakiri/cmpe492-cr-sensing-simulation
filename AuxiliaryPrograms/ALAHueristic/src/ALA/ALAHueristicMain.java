@@ -4,6 +4,7 @@
  */
 package ALA;
 
+import Animation.DrawCell;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
@@ -42,7 +43,8 @@ public class ALAHueristicMain {
 		initializeNodePositions();
 		double prevObjVal = 1000000000;
 		double  newObjVal =  999999999;
-		DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters);
+		DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, yij);
+		DrawCell.drawCell(true);
 		int ite = 0;
 		for(;newObjVal < prevObjVal;ite++){
 			try {
