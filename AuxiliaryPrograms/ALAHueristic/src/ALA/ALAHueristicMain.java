@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ALA;
 
 import Animation.DrawCell;
@@ -16,10 +12,6 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author acar
- */
 public class ALAHueristicMain {
 
 	static RandomEngine randEngine = new MersenneTwister(new Date());
@@ -43,7 +35,7 @@ public class ALAHueristicMain {
 		initializeNodePositions();
 		double prevObjVal = 1000000000;
 		double  newObjVal =  999999999;
-		DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, yij);
+		DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, 40, yij);
 		DrawCell.drawCell(true);
 		int ite = 0;
 		for(;newObjVal < prevObjVal;ite++){
@@ -81,6 +73,9 @@ public class ALAHueristicMain {
 		drawSolution();
 	}
 	
+	/**
+	 * Draws the current solution
+	 */
 	static void drawSolution(){
 		for(int i=0;i<numberOfNodes;i++){
 			DrawCell.paintNode(nodes.get(i), Color.BLUE, i);
