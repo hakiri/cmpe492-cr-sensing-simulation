@@ -49,6 +49,8 @@ public class DrawArea extends JPanel{
 			PointColor pc = clusters.get(i);
 			for(int j=0;j<ALAHueristicMain.yij.get(i).size();j++){
 				PointColor pn = nodes.get(ALAHueristicMain.yij.get(i).get(j));
+				if(pc == null || pn == null)
+					continue;
 				g.setColor(Color.BLACK);
 				g.drawLine(pc.x, pc.y, pn.x, pn.y);
 				g.setColor(colors[i%10]);

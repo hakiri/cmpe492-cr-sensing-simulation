@@ -57,7 +57,7 @@ public class DrawCell implements Runnable{
         frame=new JFrame("AREA");
         d.setBackground(Color.WHITE);
         frame.add(d);
-        frame.setSize(radius*unit*2+20, radius*unit*2+41);
+        frame.setSize(radius*unit*2+20, radius*unit*2+51);
 		frame.setLocation(900, 0);
         frame.setVisible(true);
     }

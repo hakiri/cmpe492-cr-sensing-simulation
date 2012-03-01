@@ -12,6 +12,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -24,31 +26,45 @@ public class ALAHueristicMain {
 	static double radius = 1500;
 	static int numberOfNodes = 1500;
 	static int numberOfClusters = 30;
+	static boolean isSimulationOn = true;
 	static ArrayList<Point2D.Double> nodes = new ArrayList<>();
 	static ArrayList<Point2D.Double> clusterCenters = new ArrayList<>();
 	static ArrayList<ArrayList<Integer>> yij = new ArrayList<>();
 	
 	public static void main(String[] args) {
-		if(args.length == 2){
+		if(args.length > 0){
 			numberOfNodes = Integer.parseInt(args[0]);
 			numberOfClusters = Integer.parseInt(args[1]);
+			isSimulationOn = Integer.parseInt(args[2]) != 0;
 		}
 		uniform = new Uniform(randEngine);
 		long begin = System.currentTimeMillis();
 		initializeNodePositions();
 		double prevObjVal = 1000000000;
 		double  newObjVal =  999999999;
-		while(newObjVal < prevObjVal){
-			prevObjVal = newObjVal;
-			clusterCenters.clear();
-			for(int i = 0;i < numberOfClusters ; i++)
-				clusterCenters.add(solveSingleClusterProblem(i));
-			allocateNodes();
-			newObjVal = objectiveValue();
+		DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters);
+		int ite = 0;
+		for(;newObjVal < prevObjVal;ite++){
+			try {
+				prevObjVal = newObjVal;
+				clusterCenters.clear();
+				for(int i = 0;i < numberOfClusters ; i++)
+					clusterCenters.add(solveSingleClusterProblem(i));
+				allocateNodes();
+				newObjVal = objectiveValue();
+				if(isSimulationOn){
+					drawSolution();
+					Thread.sleep(250);
+				}
+			} catch (Exception ex) {
+				Logger.getLogger(ALAHueristicMain.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
 		begin = System.currentTimeMillis() - begin;
 		System.out.println("Objective value of the problem: "+newObjVal);
-		System.out.println("Runtime of the algorithm: "+begin);
+		System.out.println("Number of iterations: "+ite);
+		if(!isSimulationOn)
+			System.out.println("Runtime of the algorithm: "+begin);
 		
 		System.out.println("\n");
 		ArrayList<Integer> clusterSizes = new ArrayList<>();
@@ -60,7 +76,10 @@ public class ALAHueristicMain {
 		System.out.println("Sizes of the clusters in ascending order:");
 		System.out.println(clusterSizes);
 		
-		DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters);
+		drawSolution();
+	}
+	
+	static void drawSolution(){
 		for(int i=0;i<numberOfNodes;i++){
 			DrawCell.paintNode(nodes.get(i), Color.BLUE, i);
 		}
