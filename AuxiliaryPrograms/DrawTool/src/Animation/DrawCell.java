@@ -9,6 +9,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 
+/**
+ * An interface to command DrawArea class objects.
+ */
 public class DrawCell implements Runnable{
 
 	private Thread runner=null;
@@ -24,8 +27,17 @@ public class DrawCell implements Runnable{
 	
 	static int CONST = 40;
 
-	public DrawCell(int crRadius, int numberOfNodes, int numberOfClusters, ArrayList<ArrayList<Integer>> xij) {
-		DrawCell.radius = crRadius/CONST;
+	/**
+	 * Starts a thread for animation/drawing and sets its parameters.
+	 * @param cellRadius		Half of the one side of the square
+	 * @param numberOfNodes		Number of nodes in the area
+	 * @param numberOfClusters	Number of clusters in the area
+	 * @param constt			Drawing scale factor (smaller the value larger the screen)
+	 * @param xij				Data of which node belongs to which cluster.
+	 */
+	public DrawCell(int cellRadius, int numberOfNodes, int numberOfClusters, int constt, ArrayList<ArrayList<Integer>> xij) {
+		DrawCell.CONST = constt;
+		DrawCell.radius = cellRadius/CONST;
 		DrawCell.numberOfNodes = numberOfNodes;
 		DrawCell.numberOfClusters = numberOfClusters;
 		DrawCell.xij = xij;
@@ -55,7 +67,7 @@ public class DrawCell implements Runnable{
 		finished = true;
 	}
 	
-	public void draw()
+	private void draw()
     {
         frame=new JFrame("AREA");
         d.setBackground(Color.WHITE);
@@ -65,30 +77,51 @@ public class DrawCell implements Runnable{
         frame.setVisible(true);
     }
 	
-	public static void paintClusterCenter(Point2D.Double n, Color c, int id)
+	/**
+	 * Draws a cluster center with given id and position.
+	 * @param n		Position of the cluster center
+	 * @param id	ID of the cluster center
+	 */
+	public static void paintClusterCenter(Point2D.Double n, int id)
 	{
-		PointColor p = new PointColor(n, (int)(pointRadius), c, unit);
+		PointColor p = new PointColor(n, (int)(pointRadius), Color.RED, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintClusterCenter(id, p);
 	}
 	
-	public static void paintNode(Point2D.Double n, Color c, int id)
+	/**
+	 * Draws a node with given id and position.
+	 * @param n		Position of the node
+	 * @param id	ID of the node
+	 */
+	public static void paintNode(Point2D.Double n, int id)
 	{
-		PointColor p = new PointColor(n, (int)(pointRadius), c, unit);
+		PointColor p = new PointColor(n, (int)(pointRadius), Color.BLUE, unit);
 		p.convertCoordinate(radius*unit);
 		d.paintNode(id, p);
 	}
 	
+	/**
+	 * Return whether the thread is finished or not
+	 * @return True if thread is finished false otherwise
+	 */
 	public boolean isFinished()
 	{
 		return finished;
 	}
 	
+	/**
+	 * Terminates the main thread
+	 */
 	public void terminate()
 	{
 		finished=true;
 	}
 	
+	/**
+	 * Set draw cell status of the object
+	 * @param status
+	 */
 	public static void drawCell(boolean status)
 	{
 		d.setDrawCell(status);

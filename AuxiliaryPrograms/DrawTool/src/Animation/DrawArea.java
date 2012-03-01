@@ -5,6 +5,9 @@ import java.awt.Graphics;
 import java.util.HashMap;
 import javax.swing.JPanel;
 
+/**
+ * This class extends JPanel to perform cell, cluster, and node structure specific drawing operations.
+ */
 public class DrawArea extends JPanel{
 
 	private int radius;
@@ -13,14 +16,20 @@ public class DrawArea extends JPanel{
 	private Color[] colors = new Color[10]; 
 	private boolean drawCell;
     
-    public DrawArea(int cellRadius, int numberOfCrNodes, int numberOfPriNodes) {
+	/**
+	 * Creates a square DrawArea object.
+	 * @param cellRadius		Half of the one side of the square
+	 * @param numberOfNodes		Number of nodes
+	 * @param numberOfClusters	Number of clusters
+	 */
+	public DrawArea(int cellRadius, int numberOfNodes, int numberOfClusters) {
         super();
 		this.radius = cellRadius;
 		clusters = new HashMap<Integer, PointColor>();
-		for(int i=0;i<numberOfPriNodes;i++)
+		for(int i=0;i<numberOfClusters;i++)
 			clusters.put(i, null);
 		nodes = new HashMap<Integer, PointColor>();
-		for(int i=0;i<numberOfCrNodes;i++)
+		for(int i=0;i<numberOfNodes;i++)
 			nodes.put(i, null);
 		colors[0] = Color.BLUE;
 		colors[1] = Color.CYAN;
@@ -72,30 +81,56 @@ public class DrawArea extends JPanel{
 		}
 	}
 	
+	/**
+	 * Draws a cluster center with given id and position.
+	 * @param id	ID of the cluster center
+	 * @param p		Position of the cluster center
+	 */
 	public void paintClusterCenter(Integer id, PointColor p)
 	{
 		clusters.put(id, p);
 		repaint();
 	}
 	
+	/**
+	 * Draws a node with given id and position.
+	 * @param id	ID of the node
+	 * @param p		Position of the node
+	 */
 	public void paintNode(Integer id, PointColor p)
 	{
 		nodes.put(id, p);
 		repaint();
 	}
 
+	/**
+	 * Returns the current positions of the nodes
+	 * @return Hash table that contains the positions of the nodes
+	 */
 	public HashMap<Integer, PointColor> getNodes() {
 		return nodes;
 	}
 
+	/**
+	 * Returns the current positions of the cluster centers
+	 * @return Hash table that contains the positions of the cluster centers
+	 */
 	public HashMap<Integer, PointColor> getClusterCenters() {
 		return clusters;
 	}
 
+	/**
+	 * Returns true if a circular cell is drawn
+	 * @return <b>True</b> if a circular cell is drawn, <b>False</b> otherwise
+	 */
 	public boolean isDrawCell() {
 		return drawCell;
 	}
 
+	/**
+	 * Set draw cell status of the object
+	 * @param drawCell
+	 */
 	public void setDrawCell(boolean drawCell) {
 		this.drawCell = drawCell;
 	}
