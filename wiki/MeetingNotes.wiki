@@ -1,6 +1,25 @@
 #summary Meeting Reports
 #labels Featured,Phase-Requirements
 
+= Report of Meeting Monday, Feb 27, 2012 =
+
+== Issues & Decisions ==
+<dl>
+ <dt>1. Dynamic zone approach and modelling zones as clusters are discussed.</dt>
+
+ <dt>2. Optimization steps of sensing scheduling are discussed.</dt>
+ 
+ <dt>3. In order to solve clustering problem GAMS model implementation for exact solution and implementation of heuristic from _*K. Fleszar, K.S. Hindi, "An effective VNS for the capacitated p-median problem", European Journal of Operational Research (2008)*_ for fast but sub-optimal solution is decided.</dt>
+</dl>
+== Attendees ==
+   * Bilal Acar _(Developer)_
+   * Mehmet Akif Ersoy _(Developer)_
+   * Necati Aras _(Supervisor)_
+   * Tuna Tugcu _(Supervisor)_
+   * Salim Eryigit _(Assistant Supervisor)_
+----
+
+
 = Report of Meeting Thursday, Dec 29, 2011 =
 
 == Issues & Decisions ==
