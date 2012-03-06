@@ -14,8 +14,8 @@ public class VNSMain {
     static int numberOfNodes = 1500;
     static int numberOfClusters = 30;
 	static int capacity = 75;
-    static ArrayList<Point2D.Double> nodes = new ArrayList<Point2D.Double>();
-    static ArrayList<Point2D.Double> clusterCenters = new ArrayList<Point2D.Double>();
+    static ArrayList<Point2D.Double> nodes = new ArrayList<>();
+    static ArrayList<Point2D.Double> clusterCenters = new ArrayList<>();
     static Uniform uniform;
 	public static void main(String []args){
 		uniform = new Uniform(new MersenneTwister(new Date()));

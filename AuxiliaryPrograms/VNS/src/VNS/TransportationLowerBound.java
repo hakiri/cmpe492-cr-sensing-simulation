@@ -5,7 +5,7 @@ import ilog.concert.*;
 
 public class TransportationLowerBound {
     
-	public static double solve(boolean isGAP) {
+	public static double solve(boolean exportModel) {
 		double objVal = 0;
 		try {
 			IloCplex cplex = new IloCplex();
@@ -17,10 +17,7 @@ public class TransportationLowerBound {
 			IloNumVar[][] x = new IloNumVar[nbNodes][];
 
 			for (int i = 0; i < nbNodes; i++) {
-				if(isGAP)
-					x[i] = cplex.numVarArray(nbMedians, 0., 1.);
-				else
-					x[i] = cplex.boolVarArray(nbMedians);
+				x[i] = cplex.numVarArray(nbMedians, 0., 1.);
 			} 
 
 			for (int i = 0; i < nbNodes; i++)       // assure that every node is assigned to a cluster
@@ -45,9 +42,10 @@ public class TransportationLowerBound {
 
 			cplex.addMinimize(expr);
 
-			//cplex.exportModel("TransportModel.lp");
+			if(exportModel)
+				cplex.exportModel("TransportModel.lp");
+			
 			if ( cplex.solve() ) {
-//				System.out.println(" - Solution: "); 
 				for (int i = 0; i < nbNodes; ++i) {
 					System.out.print("   " + i + ": ");
 					for (int j = 0; j < nbMedians; ++j)
@@ -55,7 +53,6 @@ public class TransportationLowerBound {
 							System.out.print("" + cplex.getValue(x[i][j]) + "\t");
 					System.out.println();
 				}
-//				System.out.println("   Cost = " + cplex.getObjValue()); 
 				objVal = cplex.getObjValue();
 			}
 			
