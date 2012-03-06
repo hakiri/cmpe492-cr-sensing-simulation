@@ -36,7 +36,7 @@ public class VNS {
 	}
 	
 	/**
-	 * Find a solution in one neighbourhood of a
+	 * Find a solution in one neighborhood of a
 	 * @param a		An initial solution
 	 * @param fStar	A boundary for solution
 	 * @return		A probably better solution
@@ -55,6 +55,11 @@ public class VNS {
 	 *					</ul>
 	 */
 	public boolean isBetterLB(Solution aPrime, Solution a){
+		double lb2=TransportationLowerBound.solve(a, false);
+		if(NativeLowerBound.findObjective(aPrime)>=lb2)
+			return false;
+		if(TransportationLowerBound.solve(aPrime, false)>=lb2)
+			return false;
 		return true;
 	}
 	
@@ -68,9 +73,9 @@ public class VNS {
 	}
 	
 	/**
-	 * Finds the best solution in one neighbourhood of a
+	 * Finds the best solution in one neighborhood of a
 	 * @param a	An initial solution
-	 * @return	Best solution in the neighbourhood
+	 * @return	Best solution in the neighborhood
 	 */
 	public Solution ns(Solution a){
 		return a;
