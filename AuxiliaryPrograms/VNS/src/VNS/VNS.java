@@ -1,6 +1,7 @@
 package VNS;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class VNS {
 	public static class Solution{
@@ -21,6 +22,8 @@ public class VNS {
 		}
 		
 	}
+	
+	HashMap<Solution, Double> solutions = new HashMap<>();
 	
 	/**
 	 * Obtain a good initial solution for VNS procedure

@@ -15,15 +15,15 @@ public class VNSMain {
     static int numberOfClusters = 30;
 	static int capacity = 75;
     static ArrayList<Point2D.Double> nodes = new ArrayList<>();
-    static ArrayList<Point2D.Double> clusterCenters = new ArrayList<>();
+	static VNS.Solution soln;
     static Uniform uniform;
 	public static void main(String []args){
 		uniform = new Uniform(new MersenneTwister(new Date()));
-		
+		soln = new VNS.Solution();
 		parsePositions("untitled8_positions.txt");
-		System.out.println(TransportationLowerBound.solve(false));
+		System.out.println(TransportationLowerBound.solve(soln, false));
 		//System.out.println(TransportationLowerBound.solve(true));
-		System.out.println(NativeLowerBound.findObjective());
+		System.out.println(NativeLowerBound.findObjective(soln));
 	}
 
 	static void randomlyPositionNodes()
@@ -31,13 +31,13 @@ public class VNSMain {
 		for(int i=0;i<numberOfNodes;i++){
 			nodes.add(new Point2D.Double(uniform.nextDoubleFromTo(-1500, 1500), uniform.nextDoubleFromTo(-1500, 1500)));
 		}
-		for(int i=0;i<numberOfClusters;){
-			int ind = uniform.nextIntFromTo(0, numberOfNodes-1);
-			if(clusterCenters.contains(nodes.get(ind)))
-				continue;
-			clusterCenters.add(nodes.get(ind));
-			i++;
-		}
+//		for(int i=0;i<numberOfClusters;){
+//			int ind = uniform.nextIntFromTo(0, numberOfNodes-1);
+//			if(clusterCenters.contains(nodes.get(ind)))
+//				continue;
+//			clusterCenters.add(nodes.get(ind));
+//			i++;
+//		}
 	}
 	
 	static void parsePositions(String inFile)
@@ -59,13 +59,13 @@ public class VNSMain {
 		}
 		input.close();
 		
-		for(int i=0;i<numberOfClusters;){
-			int ind = uniform.nextIntFromTo(0, numberOfNodes-1);
-			if(clusterCenters.contains(nodes.get(ind)))
-				continue;
-			clusterCenters.add(nodes.get(ind));
-			i++;
-		}
+//		for(int i=0;i<numberOfClusters;){
+//			int ind = uniform.nextIntFromTo(0, numberOfNodes-1);
+//			if(clusterCenters.contains(nodes.get(ind)))
+//				continue;
+//			clusterCenters.add(nodes.get(ind));
+//			i++;
+//		}
 	}
 	
     public VNSMain() {

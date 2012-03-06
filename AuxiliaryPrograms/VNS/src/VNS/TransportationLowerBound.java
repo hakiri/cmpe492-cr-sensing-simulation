@@ -5,7 +5,7 @@ import ilog.concert.*;
 
 public class TransportationLowerBound {
     
-	public static double solve(boolean exportModel) {
+	public static double solve(VNS.Solution a, boolean exportModel) {
 		double objVal = 0;
 		try {
 			IloCplex cplex = new IloCplex();
@@ -36,7 +36,7 @@ public class TransportationLowerBound {
 			IloLinearNumExpr expr = cplex.linearNumExpr();	//Construct objective function
 			for (int i = 0; i < nbNodes; ++i) {
 				for (int j = 0; j < nbMedians; ++j) {
-					expr.addTerm(x[i][j], VNSMain.clusterCenters.get(j).distance(VNSMain.nodes.get(i)));
+					expr.addTerm(x[i][j], VNSMain.nodes.get(a.yj.get(j)).distance(VNSMain.nodes.get(i)));
 				}
 			}
 
