@@ -13,7 +13,7 @@ public class VNS {
 		 */
 		public Solution() {
 			for(int i=0;i<VNSMain.numberOfClusters;){
-				int node = VNSMain.uniform.nextIntFromTo(0, VNSMain.numberOfNodes);
+				int node = VNSMain.uniform.nextIntFromTo(0, VNSMain.numberOfNodes-1);
 				if(yj.contains(node))
 					continue;
 				yj.add(node);
@@ -21,18 +21,51 @@ public class VNS {
 			}
 		}
 		
+		Solution(Solution rhs){
+			this.xij = new ArrayList<>();
+			this.yj = new ArrayList<>();
+			for(int i=0;i<rhs.yj.size();i++)
+				this.yj.add(new Integer(rhs.yj.get(i)));
+		}
+		
 	}
 	
 	HashMap<Solution, Double> solutions = new HashMap<>();
+
+	public VNS() {
+	}
 	
 	/**
 	 * Obtain a good initial solution for VNS procedure
 	 * @return Good arbitrary solution
 	 */
 	public Solution vnslb(){
-		Solution a0 = new Solution();
-		
-		return a0;
+		Solution a = new Solution();
+		a = nslb(a,Double.NEGATIVE_INFINITY);
+		int r = 1;
+		for(int k=1;k<VNSMain.numberOfClusters/5;k++){
+			int i;
+			for(i=0;i<r;i++){
+				Solution aPrime = new Solution(a);
+				int ind = -1;
+				for(int j=0;j<k;){
+					int node = VNSMain.uniform.nextIntFromTo(0, VNSMain.numberOfNodes-1);
+					if(aPrime.yj.contains(node))
+						continue;
+					 ind = VNSMain.uniform.nextIntFromTo(ind+1, VNSMain.numberOfClusters-k+j);
+					 aPrime.yj.set(ind, node);
+					 j++;
+				}
+				aPrime = nslb(aPrime,Double.NEGATIVE_INFINITY);
+				if(TransportationLowerBound.solve(aPrime, false) < TransportationLowerBound.solve(a, false)){
+					a=aPrime;
+					break;
+				}
+			}
+//			if(i<r)
+//				k=-1;
+		}
+		return a;
 	}
 	
 	/**
@@ -42,6 +75,24 @@ public class VNS {
 	 * @return		A probably better solution
 	 */
 	public Solution nslb(Solution a, double fStar){
+		Solution aPrime = new Solution(a);
+		
+		for(int i=0;i<VNSMain.numberOfClusters;i++){
+			int initialMedian = a.yj.get(i);
+			for(int j=0;j<VNSMain.numberOfNodes;j++){
+				if(aPrime.yj.contains(j) || j == initialMedian)
+					continue;
+				aPrime.yj.set(i, j);
+				if(isBetterLB(aPrime, a)){
+					if(TransportationLowerBound.solve(aPrime, false) < fStar)
+						return aPrime;
+					a = new Solution(aPrime);
+					//i = -1;
+					break;
+				}
+				aPrime.yj.set(i, initialMedian);
+			}
+		}
 		return a;
 	}
 	
@@ -78,6 +129,23 @@ public class VNS {
 	 * @return	Best solution in the neighborhood
 	 */
 	public Solution ns(Solution a){
+		Solution aPrime = new Solution(a);
+		//TODO Debug this part
+		for(int i=0;i<VNSMain.numberOfClusters;i++){
+			int initialMedian = a.yj.get(i);
+			for(int j=0;j<VNSMain.numberOfNodes;j++){
+				if(aPrime.yj.contains(j) || j == initialMedian)
+					continue;
+				aPrime.yj.set(i, j);
+				if(isBetter(aPrime, a)){
+					//return ns(aPrime);
+					a = new Solution(aPrime);
+					//i = -1;
+					break;
+				}
+				aPrime.yj.set(i, initialMedian);
+			}
+		}
 		return a;
 	}
 	

@@ -44,15 +44,15 @@ public class TransportationLowerBound {
 
 			if(exportModel)
 				cplex.exportModel("TransportModel.lp");
-			
+			cplex.setOut(null);
 			if ( cplex.solve() ) {
-				for (int i = 0; i < nbNodes; ++i) {
-					System.out.print("   " + i + ": ");
-					for (int j = 0; j < nbMedians; ++j)
-						if(cplex.getValue(x[i][j]) != 0.0)
-							System.out.print("" + cplex.getValue(x[i][j]) + "\t");
-					System.out.println();
-				}
+//				for (int i = 0; i < nbNodes; ++i) {
+//					System.out.print("   " + i + ": ");
+//					for (int j = 0; j < nbMedians; ++j)
+//						if(cplex.getValue(x[i][j]) != 0.0)
+//							System.out.print("" + cplex.getValue(x[i][j]) + "\t");
+//					System.out.println();
+//				}
 				objVal = cplex.getObjValue();
 			}
 			

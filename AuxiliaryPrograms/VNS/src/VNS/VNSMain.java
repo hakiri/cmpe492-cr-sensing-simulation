@@ -11,19 +11,22 @@ import java.util.Scanner;
 
 public class VNSMain {
 	
-    static int numberOfNodes = 1500;
+    static int numberOfNodes = 150;
     static int numberOfClusters = 30;
-	static int capacity = 75;
+	static int capacity = 8;
     static ArrayList<Point2D.Double> nodes = new ArrayList<>();
 	static VNS.Solution soln;
     static Uniform uniform;
 	public static void main(String []args){
 		uniform = new Uniform(new MersenneTwister(new Date()));
 		soln = new VNS.Solution();
-		parsePositions("untitled8_positions.txt");
-		System.out.println(TransportationLowerBound.solve(soln, false));
+		//parsePositions("untitled8_positions.txt");
+		randomlyPositionNodes();
+		VNS vns = new VNS();
+		vns.vnslb();
+		//System.out.println(TransportationLowerBound.solve(soln, false));
 		//System.out.println(TransportationLowerBound.solve(true));
-		System.out.println(NativeLowerBound.findObjective(soln));
+		//System.out.println(NativeLowerBound.findObjective(soln));
 	}
 
 	static void randomlyPositionNodes()
