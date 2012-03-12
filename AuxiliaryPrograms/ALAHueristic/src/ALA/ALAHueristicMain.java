@@ -29,6 +29,7 @@ public class ALAHueristicMain {
 	public static void main(String[] args) {
 		String fileName = "";
 		boolean random = false;
+		boolean guiOn = true;
 		if(args.length > 0){
 			random = Integer.parseInt(args[0]) == 0;
 			if(random)
@@ -37,6 +38,7 @@ public class ALAHueristicMain {
 				fileName = args[1];
 			numberOfClusters = Integer.parseInt(args[2]);
 			isSimulationOn = Integer.parseInt(args[3]) != 0;
+			guiOn = Integer.parseInt(args[4]) != 0;
 
 		}
 		uniform = new Uniform(randEngine);
@@ -47,8 +49,10 @@ public class ALAHueristicMain {
 			parsePositions(fileName);
 		double prevObjVal = 1000000000;
 		double  newObjVal =  999999999;
-		DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, 40, yij);
-		DrawCell.drawCell(true);
+		if(guiOn){
+			DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, 40, yij);
+			DrawCell.drawCell(true);
+		}
 		int ite = 0;
 		for(;newObjVal < prevObjVal;ite++){
 			try {
@@ -58,7 +62,7 @@ public class ALAHueristicMain {
 					clusterCenters.add(solveSingleClusterProblem(i));
 				allocateNodes();
 				newObjVal = objectiveValue();
-				if(isSimulationOn){
+				if(guiOn && isSimulationOn){
 					drawSolution();
 					Thread.sleep(250);
 				}
@@ -73,7 +77,7 @@ public class ALAHueristicMain {
 		begin = System.currentTimeMillis() - begin;
 		System.out.println("Objective value of the problem: "+newObjVal);
 		System.out.println("Number of iterations: "+ite);
-		if(!isSimulationOn)
+		if(!guiOn || !isSimulationOn)
 			System.out.println("Runtime of the algorithm: "+begin);
 		
 		System.out.println("\n");
@@ -85,8 +89,9 @@ public class ALAHueristicMain {
 		Collections.sort(clusterSizes);
 		System.out.println("Sizes of the clusters in ascending order:");
 		System.out.println(clusterSizes);
-		
-		drawSolution();
+		if(guiOn){
+			drawSolution();
+		}
 	}
 	
 	/**
