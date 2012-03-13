@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package PositonDraw;
 
 import java.awt.geom.Point2D;
@@ -13,12 +9,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author acar
+ * This classes parses GAMS solution file and determined cluster structures accordingly.
  */
 public class Parser {
 	Scanner in;
 
+	/**
+	 * Creates a Parser object which opens the file with the given name.
+	 * @param filename Name of the file to be parsed.
+	 */
 	public Parser(String filename) {
 		try {
 			in = new Scanner(new FileInputStream(filename));
@@ -27,7 +26,17 @@ public class Parser {
 		}
 	}
 	
-	ArrayList<Integer> parse(ArrayList<Point2D.Double> nodes, ArrayList<Point2D.Double> clusters, ArrayList<ArrayList<Integer>> xij, int numberOfClusters, int numberOfNodes)
+	/**
+	 * This method parses the file and determines the cluster structures.
+	 * @param nodes				Positions of the nodes (as input to the method).
+	 * @param clusters			Positions of the clusters (as output of the method).
+	 * @param xij				(Information about which node belongs to which cluster (as output of the method).
+	 * @param numberOfClusters	Number of clusters (as input to the method).
+	 * @param numberOfNodes		Number of nodes (as input to the method).
+	 * @param yj				Index of the nodes that are selected as cluster centers (as output of the method).
+	 * @return					The method return the objective value of the parsed solution (as a string not number).
+	 */
+	public String parse(ArrayList<Point2D.Double> nodes, ArrayList<Point2D.Double> clusters, ArrayList<ArrayList<Integer>> xij, int numberOfClusters, int numberOfNodes, ArrayList<Integer> yj)
 	{
 		for(int i=0;i<numberOfClusters;i++){
 			xij.add(new ArrayList<Integer>());
@@ -41,9 +50,7 @@ public class Parser {
 		in.nextLine();
 		in.nextLine();
 		in.nextLine();
-		
-		ArrayList<Integer> yj = new ArrayList<>();
-		
+				
 		for(int i = 0; i < numberOfNodes * numberOfNodes ; i++){
 			String line = in.nextLine();
 			String [] list = line.split(" +");
@@ -86,10 +93,23 @@ public class Parser {
 				}
 			}
 		}
-		return yj;
+		String objVal = "";
+		while(in.hasNextLine()){
+			String line = in.nextLine();
+			if(line.contains(new String("---- VAR Z"))){
+				String [] list = line.split(" +");
+				objVal = list[4];
+				break;
+			}
+		}
+		
+		return objVal;
 	}
 	
-	void close(){
+	/**
+	 * Closes the input file.
+	 */
+	public void closeFile(){
 		in.close();
 	}
 }
