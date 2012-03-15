@@ -24,6 +24,7 @@ public class DrawCell implements Runnable{
 	private static DrawArea d;
 	private JFrame frame;
 	static ArrayList<ArrayList<Integer>> xij = new ArrayList<>();
+	static boolean drawDot;
 	
 	static int CONST = 40;
 
@@ -35,12 +36,13 @@ public class DrawCell implements Runnable{
 	 * @param constt			Drawing scale factor (smaller the value larger the screen)
 	 * @param xij				Data of which node belongs to which cluster.
 	 */
-	public DrawCell(int cellRadius, int numberOfNodes, int numberOfClusters, int constt, ArrayList<ArrayList<Integer>> xij) {
+	public DrawCell(int cellRadius, int numberOfNodes, int numberOfClusters, int constt, ArrayList<ArrayList<Integer>> xij, boolean drawDot) {
 		DrawCell.CONST = constt;
 		DrawCell.radius = cellRadius/CONST;
 		DrawCell.numberOfNodes = numberOfNodes;
 		DrawCell.numberOfClusters = numberOfClusters;
 		DrawCell.xij = xij;
+		DrawCell.drawDot = drawDot;
 		finished = false;
 		
 		d = new DrawArea(radius*unit, numberOfNodes, numberOfClusters);

@@ -1,6 +1,7 @@
 package Animation;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.HashMap;
 import javax.swing.JPanel;
@@ -58,6 +59,7 @@ public class DrawArea extends JPanel{
 	public void paint(Graphics g)
 	{
 		super.paint(g);
+		g.setFont(new Font(g.getFont().getName(), Font.PLAIN, 10));
 		for(int i=0;i<DrawCell.numberOfClusters;i++){
 			PointColor pc = clusters.get(i);
 			for(int j=0;j<DrawCell.xij.get(i).size();j++){
@@ -67,17 +69,24 @@ public class DrawArea extends JPanel{
 				g.setColor(Color.BLACK);
 				g.drawLine(pc.x, pc.y, pn.x, pn.y);
 				g.setColor(colors[i%10]);
-				g.fillOval((int)(pn.x - pn.r/2.0), (int)(pn.y - pn.r/2.0), (int)(pn.r), (int)(pn.r));
+				if(DrawCell.drawDot)
+					g.fillOval((int)(pn.x - pn.r/2.0), (int)(pn.y - pn.r/2.0), (int)(pn.r), (int)(pn.r));
+				else
+					g.drawString(String.valueOf(DrawCell.xij.get(i).get(j)), pn.x, pn.y);
 			}
 		}
 		
 		g.setColor(Color.RED);
+		g.setFont(new Font(g.getFont().getName(), Font.BOLD, 24));
 		for(Integer i:clusters.keySet()){
 			PointColor p = clusters.get(i);
 			if(p==null)
 				continue;
 			
-			g.fillOval(p.x-p.r, p.y-p.r, 2*p.r, 2*p.r);
+			if(DrawCell.drawDot)
+				g.fillOval(p.x-p.r, p.y-p.r, 2*p.r, 2*p.r);
+			else
+				g.drawString(String.valueOf(i), p.x, p.y);
 		}
 	}
 	
