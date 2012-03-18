@@ -1,6 +1,7 @@
 package Animation;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
@@ -25,8 +26,9 @@ public class DrawCell implements Runnable{
 	private JFrame frame;
 	static ArrayList<ArrayList<Integer>> xij = new ArrayList<>();
 	static boolean drawDot;
+	static Dimension screenDimension;
 	
-	static int CONST = 40;
+	static double CONST = 40;
 
 	/**
 	 * Starts a thread for animation/drawing and sets its parameters.
@@ -36,9 +38,15 @@ public class DrawCell implements Runnable{
 	 * @param constt			Drawing scale factor (smaller the value larger the screen)
 	 * @param xij				Data of which node belongs to which cluster.
 	 */
-	public DrawCell(int cellRadius, int numberOfNodes, int numberOfClusters, int constt, ArrayList<ArrayList<Integer>> xij, boolean drawDot) {
-		DrawCell.CONST = constt;
-		DrawCell.radius = cellRadius/CONST;
+	public DrawCell(int cellRadius, int numberOfNodes, int numberOfClusters, ArrayList<ArrayList<Integer>> xij, boolean drawDot) {
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		screenDimension = toolkit.getScreenSize();
+		int screenHeight = screenDimension.height;
+		double c = (2.0*cellRadius*unit)/(screenHeight-131);
+		
+		DrawCell.CONST = c;
+		
+		DrawCell.radius = (int)(cellRadius/CONST);
 		DrawCell.numberOfNodes = numberOfNodes;
 		DrawCell.numberOfClusters = numberOfClusters;
 		DrawCell.xij = xij;
@@ -75,7 +83,7 @@ public class DrawCell implements Runnable{
         d.setBackground(Color.WHITE);
         frame.add(d);
         frame.setSize(radius*unit*2+20, radius*unit*2+51);
-		frame.setLocation(900, 0);
+		frame.setLocation(screenDimension.width - radius*unit*2-40, 0);
         frame.setVisible(true);
     }
 	
