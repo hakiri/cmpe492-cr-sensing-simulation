@@ -112,6 +112,34 @@ public class ATLHueristicMain {
 		Collections.sort(clusterSizes);
 		System.out.println("Sizes of the clusters in ascending order:");
 		System.out.println(clusterSizes);
+		ArrayList<Integer> groupSizeNumber = new ArrayList<>(Collections.nCopies(7, 0));
+		for (Integer cluster : clusterSizes) {
+			int groupSize, index;
+			if(cluster<=25){
+				groupSize = cluster - 1 + (cluster % 2);
+				index = (groupSize - 1)/2 - 6;
+				groupSizeNumber.set(index, groupSizeNumber.get(index)+1);
+			}
+			else if(cluster<=50){
+				int newCluster = cluster/2;
+				groupSize = newCluster - 1 + (newCluster % 2);
+				index = (groupSize - 1)/2 - 6;
+				int disposed = cluster - groupSize*2;
+				groupSizeNumber.set(index, groupSizeNumber.get(index)+1);
+				groupSizeNumber.set(index+(disposed/2), groupSizeNumber.get(index+(disposed/2))+1);
+			}
+			else{
+				int newCluster = cluster/3;
+				groupSize = newCluster - 1 + (newCluster % 2);
+				index = (groupSize - 1)/2 - 6;
+				int disposed = cluster - groupSize*3;
+				int inc = disposed/2;
+				groupSizeNumber.set(index, groupSizeNumber.get(index)+1+(2-inc));
+				groupSizeNumber.set(index+1, groupSizeNumber.get(index+1)+inc);
+			}
+			
+		}
+		System.out.println(groupSizeNumber);
 		if(guiOn){
 			drawSolution();
 		}
