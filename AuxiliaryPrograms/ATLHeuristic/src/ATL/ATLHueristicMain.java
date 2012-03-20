@@ -14,6 +14,9 @@ import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Solves capacitated clustering problem with Tranpostation-Location Heuristic.
+ */
 public class ATLHueristicMain {
 
 	static RandomEngine randEngine = new MersenneTwister(new Date());
@@ -23,14 +26,49 @@ public class ATLHueristicMain {
 	static int numberOfClusters = 30;
 	static int clusterCapacity = 70;
 	static boolean isSimulationOn = true;
+	static boolean guiOn = true;
 	static ArrayList<Point2D.Double> nodes = new ArrayList<>();
 	static ArrayList<Point2D.Double> clusterCenters = new ArrayList<>();
 	static ArrayList<ArrayList<Integer>> yij = new ArrayList<>();
 	
+	/**
+	 * Main method of program which parses command line arguments and run the algorithm.
+	 * @param args
+	 */
 	public static void main(String[] args) {
+		DrawCell cell = parseArguments(args);
+		
+		double prevObjVal = 1000000000;
+		double  newObjVal =  999999999;
+		long begin = System.currentTimeMillis();
+		int ite = 0;
+		for(;newObjVal < prevObjVal;ite++){
+			try {
+				prevObjVal = newObjVal;
+				clusterCenters.clear();
+				for(int i = 0;i < numberOfClusters ; i++)
+					clusterCenters.add(solveEuclideanLocationProblem(i));
+				newObjVal = allocateNodes();
+				if(guiOn && isSimulationOn){
+					drawSolution();
+					Thread.sleep(250);
+				}
+			} catch (Exception ex) {
+				Logger.getLogger(ATLHueristicMain.class.getName()).log(Level.SEVERE, null, ex);
+			}
+		}
+		clusterCenters.clear();
+		for(int i = 0;i < numberOfClusters ; i++)
+			clusterCenters.add(solveOneMedian(i));
+		newObjVal = objectiveValue();
+		begin = System.currentTimeMillis() - begin;
+		outputReport(begin, ite, newObjVal);
+	}
+	
+	static DrawCell parseArguments(String []args){
 		String fileName = "";
 		boolean random = false;
-		boolean guiOn = true;
+		guiOn = true;
 		if(args.length > 0){
 			random = Integer.parseInt(args[0]) == 0;
 			if(random)
@@ -49,39 +87,21 @@ public class ATLHueristicMain {
 			initializeNodePositions();
 		else
 			parsePositions(fileName);
-		double prevObjVal = 1000000000;
-		double  newObjVal =  999999999;
+		
 		if(guiOn){
 			DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, yij,true);
 			DrawCell.drawCell(true);
+			return cell;
 		}
-		long begin = System.currentTimeMillis();
-		int ite = 0;
-		for(;newObjVal < prevObjVal;ite++){
-			try {
-				prevObjVal = newObjVal;
-				clusterCenters.clear();
-				for(int i = 0;i < numberOfClusters ; i++)
-					clusterCenters.add(solveSingleClusterProblem(i));
-				newObjVal = allocateNodes();
-				//newObjVal = objectiveValue();
-				if(guiOn && isSimulationOn){
-					drawSolution();
-					Thread.sleep(250);
-				}
-			} catch (Exception ex) {
-				Logger.getLogger(ATLHueristicMain.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-		clusterCenters.clear();
-		for(int i = 0;i < numberOfClusters ; i++)
-			clusterCenters.add(solveOneMedian(i));
-		newObjVal = objectiveValue();
-		begin = System.currentTimeMillis() - begin;
-		System.out.println("Objective value of the problem: "+newObjVal);
-		System.out.println("Number of iterations: "+ite);
+		return null;
+	}
+	
+	static void outputReport(long runTime, int numberOfIterations, double objVal){
+		
+		System.out.println("Objective value of the problem: "+objVal);
+		System.out.println("Number of iterations: "+numberOfIterations);
 		if(!guiOn || !isSimulationOn)
-			System.out.println("Runtime of the algorithm: "+begin);
+			System.out.println("Runtime of the algorithm: "+runTime);
 		
 		System.out.println("\n");
 		ArrayList<Integer> clusterSizes = new ArrayList<>();
@@ -135,11 +155,12 @@ public class ATLHueristicMain {
 	}
 	
 	/**
-	 * Solves a single facility location problem for a given cluster and returns its cluster center.
+	 * Solves a single facility location problem with squared Euclidean distances
+	 * for a given cluster and returns its cluster center.
 	 * @param cluster Cluster id for which the facility location problem will be solved.
 	 * @return Cluster center of the given cluster.
 	 */
-	static Point2D.Double solveSingleClusterProblem(int cluster)
+	static Point2D.Double solveSquaredEuclideanLocationProblem(int cluster)
 	{
 		double x1Numerator=0, x2Numerator=0;
 		int numberOfNodesInCluster = yij.get(cluster).size();
@@ -152,6 +173,47 @@ public class ATLHueristicMain {
 		return new Point2D.Double(x1Numerator/numberOfNodesInCluster, x2Numerator/numberOfNodesInCluster);
 	}
 	
+	/**
+	 * Solves a single facility location problem with Euclidean distances
+	 * for a given cluster and returns its cluster center.
+	 * @param cluster Cluster id for which the facility location problem will be solved.
+	 * @return Cluster center of the given cluster.
+	 */
+	static Point2D.Double solveEuclideanLocationProblem(int cluster)
+	{
+		int numberOfNodesInCluster = yij.get(cluster).size();
+		if(numberOfNodesInCluster == 0)
+			return new Point2D.Double(0, 0);
+		Point2D.Double xt = solveSquaredEuclideanLocationProblem(cluster);
+		Point2D.Double xt1 = new Point2D.Double();
+		double denumerator = 0;
+		int j=0;
+		double eps = 0.0001;
+		for(;true;j++){
+			
+			for(int i=0;i<numberOfNodesInCluster;i++){
+				xt1.x += (nodes.get(yij.get(cluster).get(i)).x)/(nodes.get(yij.get(cluster).get(i)).distance(xt)+eps);
+				xt1.y += (nodes.get(yij.get(cluster).get(i)).y)/(nodes.get(yij.get(cluster).get(i)).distance(xt)+eps);
+				denumerator += 1/(nodes.get(yij.get(cluster).get(i)).distance(xt)+eps);
+			}
+			xt1.x /= denumerator;
+			xt1.y /= denumerator;
+			
+			if(xt.distance(xt1) < 0.01)
+				break;
+			xt = xt1;
+			xt1 = new Point2D.Double();
+			denumerator = 0;
+		}
+		return xt1;
+	}
+	
+	/**
+	 * Solves one median problem for a given cluster
+	 * @param cluster	Id of the cluster
+	 * @return	New cluster center according to solution of one median which is
+	 *			typically on a node in the cluster
+	 */
 	static Point2D.Double solveOneMedian(int cluster)
 	{
 		ArrayList<Double> distances = new ArrayList<>();
@@ -174,34 +236,37 @@ public class ATLHueristicMain {
 	 */
 	static void initializeNodePositions()
 	{
+		ArrayList<ArrayList<Integer>> indexes = new ArrayList<>();
+		for(int i=0;i<4;i++){
+			indexes.add(new ArrayList<Integer>());
+			for(int j=(i*numberOfClusters)/4;j<((i+1)*numberOfClusters)/4;j++){
+				indexes.get(i).add(j);
+			}
+		}
+		
 		for(int i=0;i<numberOfClusters;i++)
 			yij.add(new ArrayList<Integer>());
 		
 		for(int i=0;i<numberOfNodes;i++){
 			nodes.add(deployNode(radius));
-			if(i < numberOfClusters)
-				yij.get(i).add(i);
-			else if(nodes.get(i).x >= 0 && nodes.get(i).y >= 0){
-				int cluster = uniform.nextIntFromTo(0, numberOfClusters/4);
-				yij.get(cluster).add(i);
-			}
-			else if(nodes.get(i).x <= 0 && nodes.get(i).y >= 0){
-				int cluster = uniform.nextIntFromTo(numberOfClusters/4 + 1, numberOfClusters/2);
-				yij.get(cluster).add(i);
-			}
-			else if(nodes.get(i).x <= 0 && nodes.get(i).y <= 0){
-				int cluster = uniform.nextIntFromTo(numberOfClusters/2, (3*numberOfClusters)/4);
-				yij.get(cluster).add(i);
-			}
-			else if(nodes.get(i).x >= 0 && nodes.get(i).y <= 0){
-				int cluster = uniform.nextIntFromTo((3*numberOfClusters)/4, numberOfClusters - 1);
-				yij.get(cluster).add(i);
-			}
+			assignRandomCluster(indexes, i);
 		}
 	}
 	
+	/**
+	 * Parse positions of the nodes from a given file.
+	 * @param inFile Name of the file to be parsed
+	 */
 	static void parsePositions(String inFile)
 	{
+		ArrayList<ArrayList<Integer>> indexes = new ArrayList<>();
+		for(int i=0;i<4;i++){
+			indexes.add(new ArrayList<Integer>());
+			for(int j=(i*numberOfClusters)/4;j<((i+1)*numberOfClusters)/4;j++){
+				indexes.get(i).add(j);
+			}
+		}
+		
 		for(int i=0;i<numberOfClusters;i++)
 			yij.add(new ArrayList<Integer>());
 		
@@ -219,26 +284,83 @@ public class ATLHueristicMain {
 		Double.parseDouble(input.next());
 		for(int i=0;i<numberOfNodes;i++){
 			nodes.add(new Point2D.Double(Double.parseDouble(input.next()), Double.parseDouble(input.next())));
-			if(i < numberOfClusters)
-				yij.get(i).add(i);
-			else if(nodes.get(i).x >= 0 && nodes.get(i).y >= 0){
-				int cluster = uniform.nextIntFromTo(0, numberOfClusters/4);
-				yij.get(cluster).add(i);
-			}
-			else if(nodes.get(i).x <= 0 && nodes.get(i).y >= 0){
-				int cluster = uniform.nextIntFromTo(numberOfClusters/4 + 1, numberOfClusters/2);
-				yij.get(cluster).add(i);
-			}
-			else if(nodes.get(i).x <= 0 && nodes.get(i).y <= 0){
-				int cluster = uniform.nextIntFromTo(numberOfClusters/2, (3*numberOfClusters)/4);
-				yij.get(cluster).add(i);
-			}
-			else if(nodes.get(i).x >= 0 && nodes.get(i).y <= 0){
-				int cluster = uniform.nextIntFromTo((3*numberOfClusters)/4, numberOfClusters - 1);
-				yij.get(cluster).add(i);
-			}
+			assignRandomCluster(indexes, i);
 		}
 		input.close();
+	}
+	
+	/**
+	 * Assignes the given node to a random cluster.
+	 * @param indexes	Indexes of available cluster centers
+	 * @param nodeId	Id of the node to be assigned
+	 */
+	private static void assignRandomCluster(ArrayList<ArrayList<Integer>> indexes, int nodeId){
+		if(nodeId < numberOfClusters)
+			yij.get(nodeId).add(nodeId);
+		else if(nodes.get(nodeId).x >= 0 && nodes.get(nodeId).y >= 0){
+			if(indexes.get(0).isEmpty()){
+				for(int j=0;j<4;j++){
+					if(!indexes.get(j).isEmpty()){
+						yij.get(indexes.get(j).get(0)).add(nodeId);
+						break;
+					}
+				}
+				return;
+			}
+			int ind = uniform.nextIntFromTo(0, indexes.get(0).size() - 1);
+			int cluster = indexes.get(0).get(ind);
+			yij.get(cluster).add(nodeId);
+			if(yij.get(cluster).size() >= clusterCapacity)
+				indexes.get(0).remove(ind);
+		}
+		else if(nodes.get(nodeId).x <= 0 && nodes.get(nodeId).y >= 0){
+			if(indexes.get(1).isEmpty()){
+				for(int j=0;j<4;j++){
+					if(!indexes.get(j).isEmpty()){
+						yij.get(indexes.get(j).get(0)).add(nodeId);
+						break;
+					}
+				}
+				return;
+			}
+			int ind = uniform.nextIntFromTo(0, indexes.get(1).size() - 1);
+			int cluster = indexes.get(1).get(ind);
+			yij.get(cluster).add(nodeId);
+			if(yij.get(cluster).size() >= clusterCapacity)
+				indexes.get(1).remove(ind);
+		}
+		else if(nodes.get(nodeId).x <= 0 && nodes.get(nodeId).y <= 0){
+			if(indexes.get(2).isEmpty()){
+				for(int j=0;j<4;j++){
+					if(!indexes.get(j).isEmpty()){
+						yij.get(indexes.get(j).get(0)).add(nodeId);
+						break;
+					}
+				}
+				return;
+			}
+			int ind = uniform.nextIntFromTo(0, indexes.get(2).size() - 1);
+			int cluster = indexes.get(2).get(ind);
+			yij.get(cluster).add(nodeId);
+			if(yij.get(cluster).size() >= clusterCapacity)
+				indexes.get(2).remove(ind);
+		}
+		else if(nodes.get(nodeId).x >= 0 && nodes.get(nodeId).y <= 0){
+			if(indexes.get(3).isEmpty()){
+				for(int j=0;j<4;j++){
+					if(!indexes.get(j).isEmpty()){
+						yij.get(indexes.get(j).get(0)).add(nodeId);
+						break;
+					}
+				}
+				return;
+			}
+			int ind = uniform.nextIntFromTo(0, indexes.get(3).size() - 1);
+			int cluster = indexes.get(3).get(ind);
+			yij.get(cluster).add(nodeId);
+			if(yij.get(cluster).size() >= clusterCapacity)
+				indexes.get(3).remove(ind);
+		}
 	}
 	
 	/**
