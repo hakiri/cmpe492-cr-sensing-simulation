@@ -50,7 +50,7 @@ public class ALAHueristicMain {
 		double prevObjVal = 1000000000;
 		double  newObjVal =  999999999;
 		if(guiOn){
-			DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, 40, yij);
+			DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, yij,true);
 			DrawCell.drawCell(true);
 		}
 		int ite = 0;
