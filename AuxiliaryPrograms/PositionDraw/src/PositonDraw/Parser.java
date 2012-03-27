@@ -41,6 +41,17 @@ public class Parser {
 		for(int i=0;i<numberOfClusters;i++){
 			xij.add(new ArrayList<Integer>());
 		}
+		
+		String objVal = "";
+		while(in.hasNextLine()){
+			String line = in.nextLine();
+			if(line.contains(new String("**** OBJECTIVE VALUE"))){
+				String [] list = line.split(" +");
+				objVal = list[3];
+				break;
+			}
+		}
+		
 		while(in.hasNextLine()){
 			String line = in.nextLine();
 			if(line.contains(new String("---- VAR X")))
@@ -93,15 +104,7 @@ public class Parser {
 				}
 			}
 		}
-		String objVal = "";
-		while(in.hasNextLine()){
-			String line = in.nextLine();
-			if(line.contains(new String("---- VAR Z"))){
-				String [] list = line.split(" +");
-				objVal = list[4];
-				break;
-			}
-		}
+		
 		
 		return objVal;
 	}

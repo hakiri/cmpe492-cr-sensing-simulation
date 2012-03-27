@@ -40,7 +40,6 @@ public class RandomPositionDrawMain {
 	 *             <ul>
 	 *                  <li>Second parameter is the name of the file that contains position of the nodes for the solution</li>
 	 *                  <li>Third parameter is the name of the GAMS solution file</li>
-	 *                  <li>Forth parameter is drawing scale</li>
 	 *             </ul>
 	 *             <br></br>If the first argument is "1" it commands the program to generate a GAMS model with the given parameters:
 	 *             <ul>
@@ -58,7 +57,6 @@ public class RandomPositionDrawMain {
 		if(args[0].contains("0")){
 			rpdm.parsePositions(args[1]);
 			Parser parser = new Parser(args[2]);
-			int constt = Integer.parseInt(args[3]);
 			String objVal;
 			ArrayList<Integer> yj = new ArrayList<>();
 			objVal = parser.parse(rpdm.nodes, rpdm.clusters, rpdm.xij, rpdm.numberOfClusters, rpdm.numberOfNodes,yj);
@@ -73,7 +71,7 @@ public class RandomPositionDrawMain {
 			System.out.println("Sizes of the clusters in ascending order:");
 			System.out.println(clusterSizes);
 			
-			DrawCell cell = new DrawCell((int)(rpdm.radius), rpdm.numberOfNodes, rpdm.numberOfClusters, constt, rpdm.xij);
+			DrawCell cell = new DrawCell((int)(rpdm.radius), rpdm.numberOfNodes, rpdm.numberOfClusters, rpdm.xij,true);
 			for(int i=0;i<rpdm.numberOfClusters;i++)
 				DrawCell.paintClusterCenter(rpdm.clusters.get(i), i);
 			for(int i=0;i<rpdm.numberOfNodes;i++){
@@ -253,7 +251,6 @@ public class RandomPositionDrawMain {
 		System.out.println("If the first argument is \"0\" it commands the program to draw a given solution with the following parameters:");
 		System.out.println("---Second parameter is the name of the file that contains position of the nodes for the solution");
 		System.out.println("---Third parameter is the name of the GAMS solution file");
-		System.out.println("---Forth parameter is drawing scale\n");
 		System.out.println("If the first argument is \"1\" it commands the program to generate a GAMS model with the given parameters:");
 		System.out.println("---Second parameter is the name of the file to write the positions of the nodes in the model");
 		System.out.println("---Third parameter is number of nodes");
