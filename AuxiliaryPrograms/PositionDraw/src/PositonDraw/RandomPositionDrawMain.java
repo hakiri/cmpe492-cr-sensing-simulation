@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 
 /**
  * The main class to generate a random GAMS model for a clustering problem with the given parameters.
@@ -30,8 +31,9 @@ public class RandomPositionDrawMain {
 	Uniform uniform;
 	PrintWriter positionFile;
 	Scanner input;
-	static RandomPositionDrawMain rpdm;
+	static RandomPositionDrawMain mainApp;
 	ArrayList<ArrayList<Integer>> xij = new ArrayList<>();
+	public static GraphicalUserInterface guiRunner = null;
 	
 	/**
 	 * The main method of the program. It generates a GAMS model or draws a given solution
@@ -52,39 +54,49 @@ public class RandomPositionDrawMain {
 	 */
 	public static void main(String []args)
 	{
-		rpdm = new RandomPositionDrawMain();
+		mainApp = new RandomPositionDrawMain();
 		
-		if(args[0].contains("0")){
-			rpdm.parsePositions(args[1]);
+		if(args.length == 0){
+			SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				guiRunner = new GraphicalUserInterface();
+				guiRunner.setLocationRelativeTo(null);
+				guiRunner.setVisible(true);
+			}
+			});
+		}
+		else if(args[0].contains("0")){
+			mainApp.parsePositions(args[1]);
 			Parser parser = new Parser(args[2]);
 			String objVal;
 			ArrayList<Integer> yj = new ArrayList<>();
-			objVal = parser.parse(rpdm.nodes, rpdm.clusters, rpdm.xij, rpdm.numberOfClusters, rpdm.numberOfNodes,yj);
+			objVal = parser.parse(mainApp.nodes, mainApp.clusters, mainApp.xij, mainApp.numberOfClusters, mainApp.numberOfNodes,yj);
 			parser.closeFile();
 			
 			ArrayList<Integer> clusterSizes = new ArrayList<>();
-			for(int i=0;i<rpdm.numberOfClusters;i++){
-				clusterSizes.add(rpdm.xij.get(i).size());
+			for(int i=0;i<mainApp.numberOfClusters;i++){
+				clusterSizes.add(mainApp.xij.get(i).size());
 			}
 			Collections.sort(clusterSizes);
 			System.out.println("Objective value: "+objVal);
 			System.out.println("Sizes of the clusters in ascending order:");
 			System.out.println(clusterSizes);
 			
-			DrawCell cell = new DrawCell((int)(rpdm.radius), rpdm.numberOfNodes, rpdm.numberOfClusters, rpdm.xij,true);
-			for(int i=0;i<rpdm.numberOfClusters;i++)
-				DrawCell.paintClusterCenter(rpdm.clusters.get(i), i);
-			for(int i=0;i<rpdm.numberOfNodes;i++){
-				DrawCell.paintNode(rpdm.nodes.get(i), i);
+			DrawCell cell = new DrawCell((int)(mainApp.radius), mainApp.numberOfNodes, mainApp.numberOfClusters, mainApp.xij,true);
+			for(int i=0;i<mainApp.numberOfClusters;i++)
+				DrawCell.paintClusterCenter(mainApp.clusters.get(i), i);
+			for(int i=0;i<mainApp.numberOfNodes;i++){
+				DrawCell.paintNode(mainApp.nodes.get(i), i);
 			}
 		}
 		else if(args[0].contains("1")){
-			rpdm.numberOfNodes = Integer.parseInt(args[2]);
-			rpdm.numberOfClusters = Integer.parseInt(args[3]);
-			rpdm.customerLimit = Integer.parseInt(args[4]);
-			rpdm.radius = Integer.parseInt(args[5]);
-			rpdm.randomlyPositionNodes(args[1]);
-			rpdm.outputGamsSourceFile();
+			mainApp.numberOfNodes = Integer.parseInt(args[2]);
+			mainApp.numberOfClusters = Integer.parseInt(args[3]);
+			mainApp.customerLimit = Integer.parseInt(args[4]);
+			mainApp.radius = Integer.parseInt(args[5]);
+			mainApp.randomlyPositionNodes(args[1]);
+			mainApp.outputGamsSourceFile("gamsmodel.gms");
 		}
 		else{
 			help();
@@ -159,87 +171,94 @@ public class RandomPositionDrawMain {
 	/**
 	 * Outputs a GAMS model according to the given parameters.
 	 */
-	public void outputGamsSourceFile()
+	public void outputGamsSourceFile(String outFile)
 	{
-		System.out.println("SETS");
-		System.out.print("\tI /1");
+		PrintWriter gamsModelOut = null;
+		try {
+			gamsModelOut = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFile))));
+		} catch (FileNotFoundException ex) {
+			System.err.println("Error Occured While Creating Position File!!!");
+		}
+		gamsModelOut.println("SETS");
+		gamsModelOut.print("\tI /1");
 		for(int i = 2;i <=numberOfNodes ; i++){
 			
-			System.out.print(", "+i);
+			gamsModelOut.print(", "+i);
 		}
-		System.out.println("/");
+		gamsModelOut.println("/");
 		
-		System.out.print("\tJ /1");
+		gamsModelOut.print("\tJ /1");
 		for(int i = 2;i <= numberOfNodes ; i++){
 			
-			System.out.print(", "+i);
+			gamsModelOut.print(", "+i);
 		}
-		System.out.println("/;");
+		gamsModelOut.println("/;");
 		
 		//DISTANCE PART START
-		System.out.println("TABLE D(I,J)  distance");
+		gamsModelOut.println("TABLE D(I,J)  distance");
 		
 		for(int j=0;j<maxDigit;j++)
-			System.out.print(" ");
+			gamsModelOut.print(" ");
 		for(int i = 1;i <= numberOfNodes ; i++){
-			System.out.print(i);
+			gamsModelOut.print(i);
 			int reduction = (int)Math.log10(i)+1;
 			for(int j=0;j<maxDigit-reduction;j++)
-				System.out.print(" ");
+				gamsModelOut.print(" ");
 		}
-		System.out.println();
+		gamsModelOut.println();
 		
 		
 		for(int i = 1;i <= numberOfNodes ; i++){
 			
 			
-			System.out.print(i);
+			gamsModelOut.print(i);
 			int reduction = (int)Math.log10(i)+1;
 			for(int j=0;j<maxDigit-reduction;j++)
-				System.out.print(" ");
+				gamsModelOut.print(" ");
 			
 			for(int j=0;j<numberOfNodes;j++){
 				//System.out.print(nodes.get(i).distance(nodes.get(j))+"\t");
 				int dist = (int)nodes.get(i-1).distance(nodes.get(j));
-				System.out.print(dist);
+				gamsModelOut.print(dist);
 				if(dist == 0)
 					reduction = 1;
 				else
 					reduction = (int)Math.log10(dist)+1;
 				for(int k=0;k<maxDigit-reduction;k++)
-					System.out.print(" ");
+					gamsModelOut.print(" ");
 			}
 			if(i<numberOfNodes )
-				System.out.println();
+				gamsModelOut.println();
 			else
-				System.out.println(" ;");
+				gamsModelOut.println(" ;");
 		}
 		
 		//DISTANCE PART END
-		System.out.println("SCALAR  P  number of clusters  /"+numberOfClusters+"/");
-        System.out.println("        CAP  customer limit    /"+customerLimit+"/;");
-		System.out.println("VARIABLES");
-        System.out.println("           X(I,J)  whether customer i belong to cluster j in cases");
-        System.out.println("           Y(J)    whether customer j is cluster center or not");
-        System.out.println("           Z       total sum of distances from all cluster centers to all nodes in their clusters");
-        System.out.println("BINARY VARIABLE X;");
-        System.out.println("BINARY VARIABLE Y;");
-        System.out.println("FREE VARIABLE Z;");
-        System.out.println("EQUATIONS");
-        System.out.println("           COST                 define objective function");
-        System.out.println("           ASSIGNMENT(I)        assign each node to a cluster");
-        System.out.println("           CLUSTERCENTER(I,J)   assign nodes to other nodes only if it is cluster center");
-        System.out.println("           CLUSTERS             number of clusters");
-        System.out.println("           CAPACITY(J)          capacity of cluster j;");
-        System.out.println("COST ..                 Z  =E=  SUM((I,J), D(I,J)*X(I,J)) ;");
-        System.out.println("ASSIGNMENT(I) ..        SUM(J, X(I,J))  =E=  1 ;");
-        System.out.println("CLUSTERCENTER(I,J) ..   X(I,J)  =L=  Y(J) ;");
-        System.out.println("CLUSTERS ..             SUM(J, Y(J)) =E= P;");
-        System.out.println("CAPACITY(J) ..          SUM(I, X(I,J)) =L= CAP;");
-        System.out.println("MODEL CLUSTER /ALL/ ;");
-		System.out.println("CLUSTER.optfile = 1;");
-		System.out.println("OPTION ResLim=1E75;");
-        System.out.println("SOLVE CLUSTER USING MIP MINIMIZING Z ;");
+		gamsModelOut.println("SCALAR  P  number of clusters  /"+numberOfClusters+"/");
+        gamsModelOut.println("        CAP  customer limit    /"+customerLimit+"/;");
+		gamsModelOut.println("VARIABLES");
+        gamsModelOut.println("           X(I,J)  whether customer i belong to cluster j in cases");
+        gamsModelOut.println("           Y(J)    whether customer j is cluster center or not");
+        gamsModelOut.println("           Z       total sum of distances from all cluster centers to all nodes in their clusters");
+        gamsModelOut.println("BINARY VARIABLE X;");
+        gamsModelOut.println("BINARY VARIABLE Y;");
+        gamsModelOut.println("FREE VARIABLE Z;");
+        gamsModelOut.println("EQUATIONS");
+        gamsModelOut.println("           COST                 define objective function");
+        gamsModelOut.println("           ASSIGNMENT(I)        assign each node to a cluster");
+        gamsModelOut.println("           CLUSTERCENTER(I,J)   assign nodes to other nodes only if it is cluster center");
+        gamsModelOut.println("           CLUSTERS             number of clusters");
+        gamsModelOut.println("           CAPACITY(J)          capacity of cluster j;");
+        gamsModelOut.println("COST ..                 Z  =E=  SUM((I,J), D(I,J)*X(I,J)) ;");
+        gamsModelOut.println("ASSIGNMENT(I) ..        SUM(J, X(I,J))  =E=  1 ;");
+        gamsModelOut.println("CLUSTERCENTER(I,J) ..   X(I,J)  =L=  Y(J) ;");
+        gamsModelOut.println("CLUSTERS ..             SUM(J, Y(J)) =E= P;");
+        gamsModelOut.println("CAPACITY(J) ..          SUM(I, X(I,J)) =L= CAP;");
+        gamsModelOut.println("MODEL CLUSTER /ALL/ ;");
+		gamsModelOut.println("CLUSTER.optfile = 1;");
+		gamsModelOut.println("OPTION ResLim=1E75;");
+        gamsModelOut.println("SOLVE CLUSTER USING MIP MINIMIZING Z ;");
+		gamsModelOut.close();
 	}
 	
 	/**
