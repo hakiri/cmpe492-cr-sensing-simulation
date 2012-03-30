@@ -1,10 +1,11 @@
 package PositonDraw;
 
+import ALA.ALAHueristicMain;
+import ATL.ATLHueristicMain;
 import Animation.DrawCell;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.logging.Level;
@@ -23,13 +24,17 @@ public class GraphicalUserInterface extends JFrame{
 	 * Progress bar to show progress of the simulation
 	 */
 	public static JProgressBar progressBar;
-	private JPanel panel, tabDrawSolutionPanel, tabGenerateModelPanel, drawSolutionPanel, generateModelPanel;
+	private JPanel panel, tabDrawSolutionPanel, tabGenerateModelPanel, tabAlaPanel, tabAtlPanel, drawSolutionPanel, generateModelPanel, alaPanel, atlPanel;
 	private JTabbedPane tabPane;
 	private JTextField numberOfNodesTextField,numberOfClustersTextField,clusterCapacityTextField,nodesPositionOutputTextField,
-					   nodesPositionInputTextField,gamsModelOutputTextField,gamsSolutionTextField, radiusTextField;
-	private JLabel label1,label2,label3,label4,label5,label6,label7,label8;
-	private JButton startGenerateModelSimulation, closeButton, gamsModelOutputBrowseButton, nodesPositionOutputBrowseButton, nodesPositionInputBrowseButton,
-					gamsSolutionBrowseButton, startDrawSolution;
+					   nodesPositionInputTextField,gamsModelOutputTextField,gamsSolutionTextField, radiusTextField,
+					   alaNodesPositionInputTextField,alaNumberOfNodesTextField,alaNumberOfClustersTextField;
+	private JLabel label1,label2,label3,label4,label5,label6,label7,label8,label9,label10,label11,label12,label13,label14,label15,label16;
+	private JButton startGenerateModelSimulation, closeButton, gamsModelOutputBrowseButton, nodesPositionOutputBrowseButton,
+			        nodesPositionInputBrowseButton, alaNodesPositionInputBrowseButton,
+					gamsSolutionBrowseButton, startDrawSolution, startAla;
+	private JRadioButton alaRandomButton, alaFileButton;
+	private ButtonGroup randomFileButtonGroup;
 	
 	private final static int labelPos = 12;
 	private final static int itemPos = 175;
@@ -77,6 +82,10 @@ public class GraphicalUserInterface extends JFrame{
 				tabDrawSolutionPanel.setLayout(null);
 				tabGenerateModelPanel = new JPanel();
 				tabGenerateModelPanel.setLayout(null);
+				tabAlaPanel = new JPanel();
+				tabAlaPanel.setLayout(null);
+				tabAtlPanel = new JPanel();
+				tabAtlPanel.setLayout(null);
 				
 				tabPane = new JTabbedPane();
 				panel.add(tabPane);
@@ -85,10 +94,13 @@ public class GraphicalUserInterface extends JFrame{
 				
 				initDrawSolutionOptionsGUI();
 				initGenerateModelOptionsGUI();
+				initAlaOptionsGUI();
 				createButtons();
 				
 				tabPane.add("Draw Solution", tabDrawSolutionPanel);
 				tabPane.add("Generate Model", tabGenerateModelPanel);
+				tabPane.add("ALA Heuristic", tabAlaPanel);
+				tabPane.add("ATL Heuristic", tabAtlPanel);
 				
 				createButtons();
 			}
@@ -403,6 +415,139 @@ public class GraphicalUserInterface extends JFrame{
 		generateModelPanel.setBounds(panelPos, 10, panelWidth, y);
 	}
 	
+	private void initAlaOptionsGUI()
+	{
+		alaPanel = new JPanel();
+		alaPanel.setBorder(BorderFactory.createTitledBorder(""));
+		alaPanel.setLayout(null);
+		int y = 5;
+		randomFileButtonGroup = new ButtonGroup();
+		{
+			alaRandomButton = new JRadioButton("Random Instance");
+			alaPanel.add(alaRandomButton);
+			alaRandomButton.setBounds(labelPos, y, 120, 23);
+			alaRandomButton.setSelected(false);
+			randomFileButtonGroup.add(alaRandomButton);
+			alaRandomButton.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if(alaRandomButton.isSelected()){
+						alaNumberOfNodesTextField.setEnabled(true);
+						alaNodesPositionInputTextField.setEnabled(false);
+						alaNodesPositionInputBrowseButton.setEnabled(false);
+					}
+				}
+			});
+			alaRandomButton.addKeyListener(keyAdapter);
+		}
+		{
+			alaFileButton = new JRadioButton("File Instance");
+			alaPanel.add(alaFileButton);
+			alaFileButton.setBounds(itemPos, y, 120, 23);
+			alaFileButton.setSelected(true);
+			randomFileButtonGroup.add(alaFileButton);
+			alaFileButton.addItemListener(new ItemListener() {
+
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if(alaFileButton.isSelected()){
+						alaNumberOfNodesTextField.setEnabled(false);
+						alaNodesPositionInputTextField.setEnabled(true);
+						alaNodesPositionInputBrowseButton.setEnabled(true);
+					}
+				}
+			});
+			alaFileButton.addKeyListener(keyAdapter);
+		}
+		y+=35;
+		{
+			label9 = new JLabel();
+			alaPanel.add(label9);
+			label9.setText("Positions of Nodes");
+			label9.setBounds(labelPos, y, 165, 16);
+		}
+		{
+			alaNodesPositionInputTextField = new JTextField();
+			alaPanel.add(alaNodesPositionInputTextField);
+			alaNodesPositionInputTextField.setBounds(itemPos, y, 300, 25);
+			alaNodesPositionInputTextField.setText("nodes.pos");
+			alaNodesPositionInputTextField.setEditable(false);
+			alaNodesPositionInputTextField.addKeyListener(keyAdapter);
+			alaNodesPositionInputTextField.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					super.mouseClicked(e);
+					browseAlaNodePositionsInputFile();
+				}
+				
+			});
+			
+		}
+		{
+			alaNodesPositionInputBrowseButton = new JButton();
+			alaPanel.add(alaNodesPositionInputBrowseButton);
+			alaNodesPositionInputBrowseButton.setText("Browse");
+			alaNodesPositionInputBrowseButton.setBounds(itemPos+310, y, 120, 23);
+			alaNodesPositionInputBrowseButton.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					browseAlaNodePositionsInputFile();
+				}
+
+			});
+		}
+		y += 35;
+		{
+			label10 = new JLabel();
+			alaPanel.add(label10);
+			label10.setText("Number of Nodes");
+			label10.setBounds(labelPos, y, 165, 16);
+		}
+		{
+			alaNumberOfNodesTextField = new JTextField();
+			alaPanel.add(alaNumberOfNodesTextField);
+			alaNumberOfNodesTextField.setBounds(itemPos, y, 120, 25);
+			alaNumberOfNodesTextField.setText("1500");
+			alaNumberOfNodesTextField.addKeyListener(keyAdapter);
+			alaNumberOfNodesTextField.setEnabled(false);
+		}
+		
+		{
+			label11 = new JLabel();
+			alaPanel.add(label11);
+			label11.setText("Number of Clusters");
+			label11.setBounds(itemPos+145, y, 165, 16);
+		}
+		{
+			alaNumberOfClustersTextField = new JTextField();
+			alaPanel.add(alaNumberOfClustersTextField);
+			alaNumberOfClustersTextField.setBounds(2*itemPos-labelPos+145, y, 120, 25);
+			alaNumberOfClustersTextField.setText("30");
+			alaNumberOfClustersTextField.addKeyListener(keyAdapter);
+		}
+		y += 35;
+		{
+			startAla = new JButton();
+			alaPanel.add(startAla);
+			startAla.setText("Start");
+			startAla.setBounds(itemPos+310, y, 120, 23);
+			startAla.addMouseListener(new MouseAdapter() {
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					startGMDS();
+				}
+
+			});
+		}
+		y+=35;
+		tabAlaPanel.add(alaPanel);
+		alaPanel.setBounds(panelPos, 10, panelWidth, y);
+	}
+	
 	private void createButtons()
 	{
 		{
@@ -456,13 +601,52 @@ public class GraphicalUserInterface extends JFrame{
 			JOptionPane.showMessageDialog(this, "Objective Value of The Solution: "+objVal,
 					"Solution", JOptionPane.INFORMATION_MESSAGE);
 		}
-		else{
+		else if(tabPane.getSelectedIndex() == 1){
 			RandomPositionDrawMain.mainApp.numberOfNodes = Integer.parseInt(numberOfNodesTextField.getText());
 			RandomPositionDrawMain.mainApp.numberOfClusters = Integer.parseInt(numberOfClustersTextField.getText());
 			RandomPositionDrawMain.mainApp.customerLimit = Integer.parseInt(clusterCapacityTextField.getText());
 			RandomPositionDrawMain.mainApp.radius = Integer.parseInt(radiusTextField.getText());
 			RandomPositionDrawMain.mainApp.randomlyPositionNodes(nodesPositionOutputTextField.getText());
 			RandomPositionDrawMain.mainApp.outputGamsSourceFile(gamsModelOutputTextField.getText());
+		}
+		else if(tabPane.getSelectedIndex() == 2){
+			String []args = new String[5];
+			if(alaRandomButton.isSelected()){
+				args[0]="0";
+				args[1]=alaNumberOfNodesTextField.getText();
+			}
+			else{
+				args[0]="1";
+				args[1]=alaNodesPositionInputTextField.getText();
+			}
+			args[2]=alaNumberOfClustersTextField.getText();
+			args[3]="1";
+			args[4]="1";
+			HeuristicThread ht = new HeuristicThread(args, HeuristicThread.ALA);
+		}
+	}
+	
+	private class HeuristicThread implements Runnable{
+		private Thread runner=null;
+		String []args;
+		public static final int ALA = 1;
+		public static final int ATA = 2;
+		int heuristic;
+		public HeuristicThread(String []args,int heuristic) {
+			this.heuristic = heuristic;
+			this.args = args;
+			if(runner==null){
+				runner=new Thread(this);            //Create the thread
+				runner.start();			//Start the thread: This method will call run method below
+			}
+		}
+
+		@Override
+		public void run() {
+			if(heuristic == ALA)
+				ALAHueristicMain.main(args);
+			else
+				ATLHueristicMain.main(args);
 		}
 	}
 	
@@ -484,6 +668,16 @@ public class GraphicalUserInterface extends JFrame{
 		}
 		String fileName = jfc.getSelectedFile().getAbsolutePath();
 		nodesPositionInputTextField.setText(fileName);
+	}
+	
+	private void browseAlaNodePositionsInputFile(){
+		JFileChooser jfc = new JFileChooser();
+		jfc.addChoosableFileFilter(createFileFilter("2D Positions of The Nodes", true, "pos"));
+		if(jfc.showOpenDialog(this) != JFileChooser.APPROVE_OPTION){
+			return;
+		}
+		String fileName = jfc.getSelectedFile().getAbsolutePath();
+		alaNodesPositionInputTextField.setText(fileName);
 	}
 	
 	private void browseNodePositionsOutputFile(){
