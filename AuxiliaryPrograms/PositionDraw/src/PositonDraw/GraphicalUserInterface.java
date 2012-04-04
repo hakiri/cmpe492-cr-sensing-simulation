@@ -3,6 +3,7 @@ package PositonDraw;
 import ALA.ALAHueristicMain;
 import ATL.ATLHueristicMain;
 import Animation.DrawCell;
+import FrequencyAssignment.AssignFrequencies;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
 import java.awt.event.*;
@@ -742,8 +743,14 @@ public class GraphicalUserInterface extends JFrame{
 			}
 			Collections.sort(clusterSizes);
 			
+			ArrayList<Double> objValues;
+			objValues = AssignFrequencies.findGroupsInClusters(RandomPositionDrawMain.mainApp.numberOfClusters, RandomPositionDrawMain.mainApp.radius, 
+															   RandomPositionDrawMain.mainApp.xij, RandomPositionDrawMain.mainApp.nodes, 
+															   RandomPositionDrawMain.mainApp.groups);
+			
 			DrawCell cell = new DrawCell((int)(RandomPositionDrawMain.mainApp.radius), RandomPositionDrawMain.mainApp.numberOfNodes, 
-										 RandomPositionDrawMain.mainApp.numberOfClusters, RandomPositionDrawMain.mainApp.xij,true,null);
+										 RandomPositionDrawMain.mainApp.numberOfClusters, RandomPositionDrawMain.mainApp.xij,true,
+										 RandomPositionDrawMain.mainApp.groups);
 			for(int i=0;i<RandomPositionDrawMain.mainApp.numberOfClusters;i++)
 				DrawCell.paintClusterCenter(RandomPositionDrawMain.mainApp.clusters.get(i), i);
 			for(int i=0;i<RandomPositionDrawMain.mainApp.numberOfNodes;i++){
