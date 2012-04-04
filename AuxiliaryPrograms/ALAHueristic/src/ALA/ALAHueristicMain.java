@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 public class ALAHueristicMain {
 
@@ -27,6 +28,10 @@ public class ALAHueristicMain {
 	static ArrayList<ArrayList<Integer>> yij = new ArrayList<>();
 	
 	public static void main(String[] args) {
+		randEngine = new MersenneTwister(new Date());
+		nodes = new ArrayList<>();
+		clusterCenters = new ArrayList<>();
+		yij = new ArrayList<>();
 		String fileName = "";
 		boolean random = false;
 		boolean guiOn = true;
@@ -49,8 +54,9 @@ public class ALAHueristicMain {
 			parsePositions(fileName);
 		double prevObjVal = 1000000000;
 		double  newObjVal =  999999999;
+		DrawCell cell = null;
 		if(guiOn){
-			DrawCell cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, yij,true);
+			cell = new DrawCell((int)radius, numberOfNodes, numberOfClusters, yij,true,null);
 			DrawCell.drawCell(true);
 		}
 		int ite = 0;
@@ -59,7 +65,7 @@ public class ALAHueristicMain {
 				prevObjVal = newObjVal;
 				clusterCenters.clear();
 				for(int i = 0;i < numberOfClusters ; i++)
-					clusterCenters.add(solveSingleClusterProblem(i));
+					clusterCenters.add(solveEuclideanLocationProblem(i));
 				allocateNodes();
 				newObjVal = objectiveValue();
 				if(guiOn && isSimulationOn){
@@ -91,6 +97,9 @@ public class ALAHueristicMain {
 		System.out.println(clusterSizes);
 		if(guiOn){
 			drawSolution();
+			JOptionPane.showMessageDialog(null, "Objective value of the problem: "+newObjVal+
+												"\nNumber of iterations: "+ite, "ALA Solution", JOptionPane.INFORMATION_MESSAGE);
+			cell.terminate();
 		}
 	}
 	
@@ -143,11 +152,12 @@ public class ALAHueristicMain {
 	}
 	
 	/**
-	 * Solves a single facility location problem for a given cluster and returns its cluster center.
+	 * Solves a single facility location problem with squared Euclidean distances
+	 * for a given cluster and returns its cluster center.
 	 * @param cluster Cluster id for which the facility location problem will be solved.
 	 * @return Cluster center of the given cluster.
 	 */
-	static Point2D.Double solveSingleClusterProblem(int cluster)
+	static Point2D.Double solveSquaredEuclideanLocationProblem(int cluster)
 	{
 		double x1Numerator=0, x2Numerator=0;
 		int numberOfNodesInCluster = yij.get(cluster).size();
@@ -158,6 +168,41 @@ public class ALAHueristicMain {
 			x2Numerator += nodes.get(yij.get(cluster).get(i)).y;
 		}
 		return new Point2D.Double(x1Numerator/numberOfNodesInCluster, x2Numerator/numberOfNodesInCluster);
+	}
+	
+	/**
+	 * Solves a single facility location problem with Euclidean distances
+	 * for a given cluster and returns its cluster center.
+	 * @param cluster Cluster id for which the facility location problem will be solved.
+	 * @return Cluster center of the given cluster.
+	 */
+	static Point2D.Double solveEuclideanLocationProblem(int cluster)
+	{
+		int numberOfNodesInCluster = yij.get(cluster).size();
+		if(numberOfNodesInCluster == 0)
+			return new Point2D.Double(0, 0);
+		Point2D.Double xt = solveSquaredEuclideanLocationProblem(cluster);
+		Point2D.Double xt1 = new Point2D.Double();
+		double denumerator = 0;
+		int j=0;
+		double eps = 0.0001;
+		for(;true;j++){
+			
+			for(int i=0;i<numberOfNodesInCluster;i++){
+				xt1.x += (nodes.get(yij.get(cluster).get(i)).x)/(nodes.get(yij.get(cluster).get(i)).distance(xt)+eps);
+				xt1.y += (nodes.get(yij.get(cluster).get(i)).y)/(nodes.get(yij.get(cluster).get(i)).distance(xt)+eps);
+				denumerator += 1/(nodes.get(yij.get(cluster).get(i)).distance(xt)+eps);
+			}
+			xt1.x /= denumerator;
+			xt1.y /= denumerator;
+			
+			if(xt.distance(xt1) < 0.01)
+				break;
+			xt = xt1;
+			xt1 = new Point2D.Double();
+			denumerator = 0;
+		}
+		return xt1;
 	}
 	
 	static Point2D.Double solveOneMedian(int cluster)
