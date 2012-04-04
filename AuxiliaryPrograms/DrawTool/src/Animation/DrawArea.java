@@ -14,7 +14,8 @@ public class DrawArea extends JPanel{
 	private int radius;
 	private HashMap<Integer, PointColor> clusters;
 	private HashMap<Integer, PointColor> nodes;
-	private Color[] colors = new Color[10]; 
+	private Color[] colors = new Color[10];
+	private Color[] lineColors = new Color[3];
 	private boolean drawCell;
     
 	/**
@@ -32,16 +33,20 @@ public class DrawArea extends JPanel{
 		nodes = new HashMap<Integer, PointColor>();
 		for(int i=0;i<numberOfNodes;i++)
 			nodes.put(i, null);
-		colors[0] = Color.BLUE;
-		colors[1] = Color.CYAN;
-		colors[2] = Color.DARK_GRAY;
-		colors[3] = Color.GRAY;
-		colors[4] = Color.GREEN;
-		colors[5] = Color.LIGHT_GRAY;
-		colors[6] = Color.MAGENTA;
-		colors[7] = Color.ORANGE;
-		colors[8] = Color.PINK;
-		colors[9] = Color.YELLOW;
+		//colors[0] = Color.BLUE;
+		colors[0] = Color.CYAN;
+		colors[1] = Color.DARK_GRAY;
+		colors[2] = Color.GRAY;
+		//colors[4] = Color.GREEN;
+		colors[3] = Color.LIGHT_GRAY;
+		colors[4] = Color.MAGENTA;
+		colors[5] = Color.ORANGE;
+		//colors[8] = Color.PINK;
+		colors[6] = Color.YELLOW;
+		
+		lineColors[0] = Color.BLUE;
+		lineColors[1] = Color.PINK;
+		lineColors[2] = Color.GREEN;
 		this.drawCell = false;
     }
     
@@ -63,12 +68,25 @@ public class DrawArea extends JPanel{
 		for(int i=0;i<DrawCell.numberOfClusters;i++){
 			PointColor pc = clusters.get(i);
 			for(int j=0;j<DrawCell.xij.get(i).size();j++){
+				int nodeIndex = DrawCell.xij.get(i).get(j);
 				PointColor pn = nodes.get(DrawCell.xij.get(i).get(j));
 				if(pc == null || pn == null)
 					continue;
-				g.setColor(Color.BLACK);
+				if(DrawCell.groups == null)
+					g.setColor(Color.BLACK);
+				else{
+					int k;
+					for(k = 0; k < DrawCell.groups.get(i).size();k++){
+						if(DrawCell.groups.get(i).get(k).contains(nodeIndex)){
+							g.setColor(lineColors[k]);
+							break;
+						}
+					}
+					if(k == DrawCell.groups.get(i).size())
+						g.setColor(Color.BLACK);
+				}
 				g.drawLine(pc.x, pc.y, pn.x, pn.y);
-				g.setColor(colors[i%10]);
+				g.setColor(colors[i%7]);
 				if(DrawCell.drawDot)
 					g.fillOval((int)(pn.x - pn.r/2.0), (int)(pn.y - pn.r/2.0), (int)(pn.r), (int)(pn.r));
 				else

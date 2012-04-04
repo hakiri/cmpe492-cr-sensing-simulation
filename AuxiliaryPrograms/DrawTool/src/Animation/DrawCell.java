@@ -27,6 +27,7 @@ public class DrawCell implements Runnable{
 	static ArrayList<ArrayList<Integer>> xij = new ArrayList<>();
 	static boolean drawDot;
 	static Dimension screenDimension;
+	static ArrayList<ArrayList<ArrayList<Integer>>> groups;
 	
 	static double CONST = 40;
 
@@ -38,14 +39,14 @@ public class DrawCell implements Runnable{
 	 * @param constt			Drawing scale factor (smaller the value larger the screen)
 	 * @param xij				Data of which node belongs to which cluster.
 	 */
-	public DrawCell(int cellRadius, int numberOfNodes, int numberOfClusters, ArrayList<ArrayList<Integer>> xij, boolean drawDot) {
+	public DrawCell(int cellRadius, int numberOfNodes, int numberOfClusters, ArrayList<ArrayList<Integer>> xij, boolean drawDot, ArrayList<ArrayList<ArrayList<Integer>>> groups) {
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		screenDimension = toolkit.getScreenSize();
 		int screenHeight = screenDimension.height;
 		double c = (2.0*cellRadius*unit)/(screenHeight-131);
 		
 		DrawCell.CONST = c;
-		
+		DrawCell.groups = groups;
 		DrawCell.radius = (int)(cellRadius/CONST);
 		DrawCell.numberOfNodes = numberOfNodes;
 		DrawCell.numberOfClusters = numberOfClusters;
@@ -63,8 +64,8 @@ public class DrawCell implements Runnable{
 	@Override
 	public void run() {
 		draw();
-		WindowEvent wev = new WindowEvent(frame, JFrame.EXIT_ON_CLOSE);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		WindowEvent wev = new WindowEvent(frame, JFrame.HIDE_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 		while(!finished){
 			try {
@@ -73,6 +74,9 @@ public class DrawCell implements Runnable{
 				Logger.getLogger(DrawCell.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
+		
+		WindowEvent wev2 = new WindowEvent(frame, WindowEvent.WINDOW_CLOSING);
+		Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev2);
 		
 		finished = true;
 	}
