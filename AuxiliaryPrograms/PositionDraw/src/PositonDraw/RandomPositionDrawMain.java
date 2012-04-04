@@ -34,6 +34,7 @@ public class RandomPositionDrawMain {
 	static RandomPositionDrawMain mainApp;
 	ArrayList<ArrayList<Integer>> xij = new ArrayList<>();
 	public static GraphicalUserInterface guiRunner = null;
+	ArrayList<ArrayList<ArrayList<Integer>>> groups = new ArrayList<>();
 	
 	/**
 	 * The main method of the program. It generates a GAMS model or draws a given solution
@@ -78,12 +79,15 @@ public class RandomPositionDrawMain {
 			for(int i=0;i<mainApp.numberOfClusters;i++){
 				clusterSizes.add(mainApp.xij.get(i).size());
 			}
+			mainApp.findGroupsInClusters();
+			//int indexLargestCluster = clusterSizes.indexOf(Collections.max(clusterSizes));
 			Collections.sort(clusterSizes);
 			System.out.println("Objective value: "+objVal);
 			System.out.println("Sizes of the clusters in ascending order:");
 			System.out.println(clusterSizes);
 			
-			DrawCell cell = new DrawCell((int)(mainApp.radius), mainApp.numberOfNodes, mainApp.numberOfClusters, mainApp.xij,true);
+			DrawCell cell = new DrawCell((int)(mainApp.radius), mainApp.numberOfNodes, mainApp.numberOfClusters, mainApp.xij,true,mainApp.groups);
+			//DrawCell cell = new DrawCell((int)(mainApp.radius), mainApp.numberOfNodes, mainApp.numberOfClusters, mainApp.xij,true,null);
 			for(int i=0;i<mainApp.numberOfClusters;i++)
 				DrawCell.paintClusterCenter(mainApp.clusters.get(i), i);
 			for(int i=0;i<mainApp.numberOfNodes;i++){
@@ -120,6 +124,62 @@ public class RandomPositionDrawMain {
 		
 	}
 
+	public void findGroupsInClusters(){
+		ArrayList<ArrayList<Integer>> capacities = new ArrayList<>();
+		groups = new ArrayList<>();
+		for(int i=0;i<numberOfClusters;i++){
+			groups.add(new ArrayList<ArrayList<Integer>>());
+			capacities.add(new ArrayList<Integer>());
+		}
+		
+		for (int i=0;i<numberOfClusters;i++) {
+			int cluster = xij.get(i).size();
+			int groupSize;
+			if(cluster<=25){
+				groupSize = cluster - 1 + (cluster % 2);
+				capacities.get(i).add(groupSize);
+			}
+			else if(cluster<=50){
+				int newCluster = cluster/2;
+				groupSize = newCluster - 1 + (newCluster % 2);
+				capacities.get(i).add(groupSize);
+				int disposed = cluster - groupSize*2;
+				capacities.get(i).add(groupSize+disposed-(disposed%2));
+			}
+			else{
+				int newCluster = cluster/3;
+				groupSize = newCluster - 1 + (newCluster % 2);
+				capacities.get(i).add(groupSize);
+				int disposed = cluster - groupSize*3;
+				int inc = disposed/2;
+				capacities.get(i).add(groupSize+inc*2-(inc/2)*2);
+				newCluster = cluster - capacities.get(i).get(0) - capacities.get(i).get(1);
+				groupSize = newCluster - 1 + (newCluster % 2);
+				capacities.get(i).add(groupSize);
+			}
+		}
+		
+		ArrayList<Integer> clusterSizes = new ArrayList<>();
+		for(int i=0;i<numberOfClusters;i++){
+			clusterSizes.add(xij.get(i).size());
+		}
+		
+		for(int i=0;i<numberOfClusters;i++){
+			int dispose = clusterSizes.get(i);
+			for(int j=0;j<capacities.get(i).size();j++){
+				dispose -= capacities.get(i).get(j);
+			}
+			System.out.print(clusterSizes.get(i));
+			long time = System.currentTimeMillis();
+			double obj = FrequencyAssignDistSum.solve(capacities.get(i), createNodesArrayForCluster(i, dispose), radius, groups.get(i));
+			time = System.currentTimeMillis() - time;
+			System.out.println("\t"+time+"\t"+obj);
+		}
+		for(int i=0;i<numberOfClusters;i++){
+			backTraceNodesInGroups(i);
+		}
+	}
+	
 	/**
 	 * Creates an output file and writes number of nodes, number of clusters, radius of the circle, and the positions of the nodes in that file.
 	 * @param outFile Name of the output file
@@ -143,6 +203,37 @@ public class RandomPositionDrawMain {
 			i++;
 		}
 		positionFile.close();
+	}
+	
+	/**
+	 * Creates an output file and writes number of nodes, number of clusters, radius of the circle, and the positions of the nodes in that file.
+	 * @param outFile Name of the output file
+	 */
+	public ArrayList<Point2D.Double> createNodesArrayForCluster(int clusterIndex, int dispose)
+	{
+		int clusterSize = xij.get(clusterIndex).size();
+		ArrayList<Point2D.Double> clusterNodes = new ArrayList<>(clusterSize);
+		for(int i=0;i<clusterSize-dispose;i++){
+			Point2D.Double p = nodes.get(xij.get(clusterIndex).get(i));
+			clusterNodes.add(p);
+		}
+		return clusterNodes;
+	}
+	
+	/**
+	 * Creates an output file and writes number of nodes, number of clusters, radius of the circle, and the positions of the nodes in that file.
+	 * @param outFile Name of the output file
+	 */
+	public void backTraceNodesInGroups(int clusterIndex)
+	{
+		int numberOfGroups = groups.get(clusterIndex).size();
+		for(int k=0;k<numberOfGroups;k++){
+			int groupSize = groups.get(clusterIndex).get(k).size();
+			for(int i = 0; i< groupSize;i++){
+				int actualIndex = xij.get(clusterIndex).get(groups.get(clusterIndex).get(k).get(i));
+				groups.get(clusterIndex).get(k).set(i, actualIndex);
+			}
+		}
 	}
 	
 	/**

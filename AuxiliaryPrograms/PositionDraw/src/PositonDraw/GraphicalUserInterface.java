@@ -743,7 +743,7 @@ public class GraphicalUserInterface extends JFrame{
 			Collections.sort(clusterSizes);
 			
 			DrawCell cell = new DrawCell((int)(RandomPositionDrawMain.mainApp.radius), RandomPositionDrawMain.mainApp.numberOfNodes, 
-										 RandomPositionDrawMain.mainApp.numberOfClusters, RandomPositionDrawMain.mainApp.xij,true);
+										 RandomPositionDrawMain.mainApp.numberOfClusters, RandomPositionDrawMain.mainApp.xij,true,null);
 			for(int i=0;i<RandomPositionDrawMain.mainApp.numberOfClusters;i++)
 				DrawCell.paintClusterCenter(RandomPositionDrawMain.mainApp.clusters.get(i), i);
 			for(int i=0;i<RandomPositionDrawMain.mainApp.numberOfNodes;i++){
