@@ -124,18 +124,29 @@ private double sensingSlotDur = 0.0;
 			for(int i = 1;i<=dNumber;i++)
 				setOfD.add(radius * Math.sqrt((double)i/dNumber));									//Create set of d's
 			
-			numberOfCrNodes = 0;
-			for(int i = 0; i<numberOfZones ; i++){
-				int sectorNumber = Integer.parseInt(gui.getZoneSectorNos().get(i).getText());		//Get sector number CR nodes will be in
-				int alphaNumber = Integer.parseInt(gui.getZoneAlphaNos().get(i).getText());			//Get alpha number CR nodes will be in
-				int dNmber = Integer.parseInt(gui.getZoneDNos().get(i).getText());					//Get d interval CR nodes will be in
-				int numberOfCrUsersInZone = Integer.parseInt(gui.getZoneCRUsers().get(i).getText());	//Get number of CR nodes in zone
-				numberOfCrNodes += numberOfCrUsersInZone;
-				sectorNumbers.add(sectorNumber);
-				alphaNumbers.add(alphaNumber);
-				numbersOfCrUsersInZone.add(numberOfCrUsersInZone);
-				dNumbers.add(dNmber);
+			int noZones = numberOfZones;
+
+			int crUsers = numberOfCrNodes = Integer.parseInt(gui.getNoCRNodes().getText());
+			for(int k=0;k<dNumber;k++){
+				for(int j=0;j<numberOfSectors;j++){
+					for(int l=0;l<numberOfAlphaSlices;l++){
+						int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
+						if(numberOfZones == 1){
+							numberInZone = crUsers;
+						}
+						else{
+							numberInZone = crUsers / numberOfZones;
+						}
+						sectorNumbers.add(j);
+						alphaNumbers.add(l);
+						numbersOfCrUsersInZone.add(numberInZone);
+						dNumbers.add(k);
+						crUsers -= numberInZone;
+						numberOfZones--;
+					}
+				}
 			}
+			numberOfZones = noZones;
 			
 			seedModel = gui.getSeedModel().getSelectedIndex();
 			if(seedModel != 0){				//If seed model is not random
@@ -698,6 +709,10 @@ private double sensingSlotDur = 0.0;
 		this.logFileDirectory = logFileDirectory;
 	}
 
+	/**
+	 * Returns the maximum distance between two nodes which could cause interference
+	 * @return Maximum distance between two nodes which could cause interference
+	 */
 	public double getInterferenceDistance() {
 		return interferenceDistance;
 	}

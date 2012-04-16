@@ -2,9 +2,9 @@ package Animation;
 
 import SimulationRunner.SimulationRunner;
 import jPlot.ApplicationFrame;
-import jPlot.Constant;
 import jPlot.jPlot;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 
 /**
@@ -19,6 +19,7 @@ public class SimultaneousPlot {
 	int xs;
 	static int numberOfPlots = 0;
 	private int xlocation=680, ylocation;
+	private Dimension windowDimension;
 	
 	/**
 	 * Creates a new plotter object with no x value and y value.
@@ -34,7 +35,14 @@ public class SimultaneousPlot {
 		this.xs = xs;
 		plot = new Plot(xs, yPerX, xLabel, yLabel, xUnits, yUnits);
 		plotted = false;
-		ylocation = numberOfPlots*380;
+		xlocation = DrawCell.windowWidth;
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenDimension = toolkit.getScreenSize();
+		int screenHeight = screenDimension.height - 100;
+		int windowsHeight = screenHeight / 2;
+		int windowsWidth = screenDimension.width - DrawCell.windowWidth - 20;
+		windowDimension = new Dimension(windowsWidth, windowsHeight);
+		ylocation = numberOfPlots*windowsHeight;
 		numberOfPlots++;
 	}
 	
@@ -103,13 +111,14 @@ public class SimultaneousPlot {
 		/* Add the new application frame to the list */
 
 		/* Set the fram size to the dimension above */
-		ApplicationFrame.setSize(new Dimension(Constant.CASCADE_WIDTH-170, Constant.CASCADE_HEIGHT-100));
+		//ApplicationFrame.setSize(new Dimension(Constant.CASCADE_WIDTH-170, Constant.CASCADE_HEIGHT-100));
+		ApplicationFrame.setSize(windowDimension);
 		/* Set the title of the frame window */
 		ApplicationFrame.setTitle(title);
 		/* Validates the size of all components within the frame. (Needed for correct display). */
 		ApplicationFrame.validate();
 		/* Setting the location at which the frame is to be displayed on the screen */
-		ApplicationFrame.setLocation(xlocation+135, ylocation);
+		ApplicationFrame.setLocation(xlocation+5, ylocation);
 		/* Display the frame */
 		ApplicationFrame.show();
 		plotted = true;
