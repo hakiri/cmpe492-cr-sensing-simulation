@@ -1,6 +1,6 @@
 package ALA;
 
-import Animation.DrawCell;
+import DrawTool.DrawCell;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
