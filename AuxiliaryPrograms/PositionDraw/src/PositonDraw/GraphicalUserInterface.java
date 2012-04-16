@@ -2,7 +2,7 @@ package PositonDraw;
 
 import ALA.ALAHueristicMain;
 import ATL.ATLHueristicMain;
-import Animation.DrawCell;
+import DrawTool.DrawCell;
 import FrequencyAssignment.AssignFrequencies;
 import java.awt.BorderLayout;
 import java.awt.Toolkit;
@@ -744,6 +744,9 @@ public class GraphicalUserInterface extends JFrame{
 			Collections.sort(clusterSizes);
 			
 			ArrayList<Double> objValues;
+//			objValues = AssignFrequencies.instance().findGroupsInClusters(RandomPositionDrawMain.mainApp.numberOfClusters, RandomPositionDrawMain.mainApp.radius, 
+//															   RandomPositionDrawMain.mainApp.xij, RandomPositionDrawMain.mainApp.nodes, 
+//															   RandomPositionDrawMain.mainApp.groups);
 			objValues = AssignFrequencies.findGroupsInClusters(RandomPositionDrawMain.mainApp.numberOfClusters, RandomPositionDrawMain.mainApp.radius, 
 															   RandomPositionDrawMain.mainApp.xij, RandomPositionDrawMain.mainApp.nodes, 
 															   RandomPositionDrawMain.mainApp.groups);

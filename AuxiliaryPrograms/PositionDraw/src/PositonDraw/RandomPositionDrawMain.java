@@ -1,6 +1,6 @@
 package PositonDraw;
 
-import Animation.DrawCell;
+import DrawTool.DrawCell;
 import FrequencyAssignment.AssignFrequencies;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
@@ -98,12 +98,12 @@ public class RandomPositionDrawMain {
 			}
 		}
 		else if(args[0].contains("1")){
-			mainApp.numberOfNodes = Integer.parseInt(args[2]);
-			mainApp.numberOfClusters = Integer.parseInt(args[3]);
-			mainApp.customerLimit = Integer.parseInt(args[4]);
-			mainApp.radius = Integer.parseInt(args[5]);
+			mainApp.numberOfNodes = Integer.parseInt(args[3]);
+			mainApp.numberOfClusters = Integer.parseInt(args[4]);
+			mainApp.customerLimit = Integer.parseInt(args[5]);
+			mainApp.radius = Integer.parseInt(args[6]);
 			mainApp.randomlyPositionNodes(args[1]);
-			mainApp.outputGamsSourceFile("gamsmodel.gms");
+			mainApp.outputGamsSourceFile(args[2]);
 		}
 		else{
 			help();
@@ -283,5 +283,21 @@ public class RandomPositionDrawMain {
 		System.out.println("---Forth parameter is number of clusters");
 		System.out.println("---Fifth parameter is the maximum number of customers per cluster");
 		System.out.println("---Sixth parameter is the radius of the circle in which the nodes will be deployed uniformly");
+	}
+	
+	public void printNodePositionsForCluster(int clusterId){
+		try {
+			positionFile = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream("cluster"+clusterId+".pos"))));
+		} catch (FileNotFoundException ex) {
+			System.err.println("Error Occured While Creating Position File!!!");
+		}
+		positionFile.println(xij.get(clusterId).size());
+		positionFile.println(1);
+		positionFile.println(1500);
+		for(int j=0;j<xij.get(clusterId).size();){
+			positionFile.println(nodes.get(xij.get(clusterId).get(j)).x+"\t"+nodes.get(xij.get(clusterId).get(j)).y);
+			j++;
+		}
+		positionFile.close();
 	}
 }
