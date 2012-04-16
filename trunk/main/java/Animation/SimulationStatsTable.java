@@ -306,8 +306,6 @@ public class SimulationStatsTable extends JFrame{
 		
 		JOptionPane.showMessageDialog(this, "File \""+f.getName()+"\" Saved!", "Save", JOptionPane.INFORMATION_MESSAGE);
 		pw.close();
-		
-		
 	}
 	
 	private FileFilter createFileFilter(String description, boolean showExtensionInDescription, String...extensions)

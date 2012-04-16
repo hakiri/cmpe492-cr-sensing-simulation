@@ -62,7 +62,7 @@ public class DrawArea extends JPanel{
 		g.setColor(Color.RED);
         g.drawOval(0, 0, primaryRadius*2, primaryRadius*2);
         g.setColor(Color.BLACK);
-        g.drawOval(primaryRadius - cellRadius, primaryRadius - cellRadius, cellRadius*2, cellRadius*2);
+        //g.drawOval(primaryRadius - cellRadius, primaryRadius - cellRadius, cellRadius*2, cellRadius*2);
 		int tx,ty;
 		int sectorInc = 360/numberOfSectors;
 		for(int degree=0;degree<360;degree+=sectorInc){
@@ -89,8 +89,8 @@ public class DrawArea extends JPanel{
 			int zoneEndDegree = sectorNumber*sectorInc+alphaInc*(alphaNumber+1);
 			double dminVal = dNumber == 0 ? 0:Cell.getSet_of_d().get(dNumber-1);
 			double dmaxVal = Cell.getSet_of_d().get(dNumber);
-			dminVal /= 100;
-			dmaxVal /= 100;
+			dminVal /= DrawCell.scale;
+			dmaxVal /= DrawCell.scale;
 			dminVal *= DrawCell.unit;
 			dmaxVal *= DrawCell.unit;
 			int dmin = (int)dminVal;

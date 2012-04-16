@@ -441,7 +441,6 @@ public class CRNode implements Node {
 		int zoneId = SimulationRunner.crBase.findZone(id);
 			
 		channelCapacity.set(freq,SimulationRunner.wc.currentChannelCapacity(SimulationRunner.crBase, this, freq));
-		//if(SimulationRunner.wc.getFreq(freq).get(WirelessChannel.PRIMARY) != null){ //checks if collision occured
 		if(!SimulationRunner.wc.isChannelAvailable(freq, zoneId)){ //checks if collision occured
 			if(isRegular&&(!lastReport))
 				collisionOccured = true;

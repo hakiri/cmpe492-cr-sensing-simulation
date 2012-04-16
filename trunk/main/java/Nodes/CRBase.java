@@ -757,6 +757,10 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 		return utilization * 100.0;
 	}
 
+	/**
+	 * Returns IDs of nodes is zones.
+	 * @return IDs of nodes is zones.
+	 */
 	public ArrayList<Integer> getNodesInZone() {
 		return nodesInZone;
 	}

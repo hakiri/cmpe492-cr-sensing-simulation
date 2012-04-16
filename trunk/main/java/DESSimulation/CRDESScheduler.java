@@ -308,15 +308,6 @@ public class CRDESScheduler extends SimEnt{
      */
 	private void senseResultAdvertise()
 	{
-		int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
-        double falseAlarmsForAZone=0.0,missDetectionsForAZone=0.0,collisionsForAZone=0.0,dropsForAZone=0.0,blocksForAZone=0.0,
-                callsForAZone=0.0,callAttemptsForAZone=0.0,communicatedFramesForAZone=0.0;
-        double blockProb, dropProb,collisionProb,estimatedCollisionProb;
-        String falseAlarmsString="",missDetectionsString="",collisionsString="",dropsString="",blocksString="",
-                throughputString="",commFramesString="",callsString="",callAttemptsString="";
-        String probFalseAlarmString="",probMissDetectionString="",probCollisionString="",probDropsString="",probBlocksString="";
-        /*Write time to log file*/
-		double msec = (double)(Scheduler.instance().getTime())/unitTime;
 //		int hour = (int)(msec/3600000.0);
 //		msec -= hour*3600000.0;
 //		int min = (int)(msec/60000.0);
@@ -329,89 +320,103 @@ public class CRDESScheduler extends SimEnt{
 //        CRNode.writeLogFileProb(String.format(Locale.US,"Block prob: %.4f --- Drop prob: %.4f --- Collision prob: %.4f --- Estimated Collision prob: %.4f", blockProb,dropProb,collisionProb,estimatedCollisionProb));
 		//Reports statistics
         if(CRNode.reportingFrames.contains((int)currentFrame)){
-            //calculate drop,block and collision probabilities
-            for(int i=0;i<SimulationRunner.crBase.numberOfCRNodes();i++){
-                totalBlocks += SimulationRunner.crBase.getCRNode(i).getNumberOfBlocks();
-                totalDrops += SimulationRunner.crBase.getCRNode(i).getNumberOfDrops();
-                totalCallAttempts += SimulationRunner.crBase.getCRNode(i).getNumberOfCallAttempts();
-                totalCalls += SimulationRunner.crBase.getCRNode(i).getNumberOfCalls();
-                totalCollisions += SimulationRunner.crBase.getCRNode(i).getNumberOfCollision();
-                totalFrames += SimulationRunner.crBase.getCRNode(i).getNumberOfFramesCommunicated();
-                totalEstimatedCollisions += SimulationRunner.crBase.getCRNode(i).getEstimatedNumberOfCollison();
-            }
-            if(totalCallAttempts == 0){
-                blockProb = 0.0;
-            }else{
-                blockProb = (double)totalBlocks/totalCallAttempts;
-            }
-            if(totalCalls == 0){
-                dropProb = 0.0;
-            }
-            else{
-                dropProb = (double)totalDrops/totalCalls;
-            }
-            if(totalFrames == 0){
-                collisionProb = 0.0;
-                estimatedCollisionProb = 0.0;
-            }
-            else{
-                collisionProb = (double)totalCollisions/totalFrames;
-                estimatedCollisionProb = (double)totalEstimatedCollisions/totalFrames;
-            }
-            ArrayList<Double> probs = new ArrayList<Double>();
-            probs.add(blockProb);
-            probs.add(dropProb);
-            probs.add(collisionProb);
-            probs.add(estimatedCollisionProb);
-            SimulationRunner.plotProbs.addPoint(Scheduler.instance().getTime(), probs);
-            //Calculates statistics and probabilities for each zone
-            for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
-                falseAlarmsForAZone = SimulationRunner.crBase.getFalseAlarm(i);
-                missDetectionsForAZone = SimulationRunner.crBase.getMissDetection(i);
-                collisionsForAZone = SimulationRunner.crBase.getCollisions(i);
-                blocksForAZone = SimulationRunner.crBase.getBlocks(i);
-                dropsForAZone = SimulationRunner.crBase.getDrops(i);
-                callsForAZone = SimulationRunner.crBase.getNumberOfCalls(i);
-                callAttemptsForAZone = SimulationRunner.crBase.getNumberOfCallAttempts(i);
-                communicatedFramesForAZone = SimulationRunner.crBase.getTotalCommunicatedFrames(i);
-                //Strings for the log file
-                falseAlarmsString += String.valueOf(falseAlarmsForAZone)+";";
-                missDetectionsString += String.valueOf(missDetectionsForAZone)+";";
-                collisionsString += String.valueOf(collisionsForAZone)+";";
-                blocksString += String.valueOf(blocksForAZone)+";";
-                dropsString += String.valueOf(dropsForAZone)+";";
-                if(communicatedFramesForAZone != 0.0)
-                    throughputString += String.valueOf(SimulationRunner.crBase.getTotalBitsTransmitted(i)/(communicatedFramesForAZone*commDur))+";";
-                else
-                    throughputString += String.valueOf(0.0)+";";
-                commFramesString += String.valueOf(communicatedFramesForAZone)+";";
-                callsString += String.valueOf(callsForAZone)+";";
-                callAttemptsString += String.valueOf(callAttemptsForAZone)+";";
-                //Calculation of probabilities and strings for the probability log file
-                if(callAttemptsForAZone == 0.0){
-                    probBlocksString += String.valueOf(0.0)+";";
-                }else{
-                    probBlocksString += String.valueOf(blocksForAZone/callAttemptsForAZone)+";";
-                }
-                if(callsForAZone == 0.0){
-                    probDropsString += String.valueOf(0.0)+";";
-                }else{
-                    probDropsString += String.valueOf(dropsForAZone/callsForAZone)+";";
-                }
-                if(communicatedFramesForAZone == 0.0){
-                    probCollisionString += String.valueOf(0.0)+";";
-                }else{
-                    probCollisionString += String.valueOf(collisionsForAZone/communicatedFramesForAZone)+";";
-                }
-                probFalseAlarmString += String.valueOf((falseAlarmsForAZone/currentFrame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
-                probMissDetectionString += String.valueOf((missDetectionsForAZone/currentFrame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
-            }
-            CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarmsString+missDetectionsString+collisionsString
-                    +blocksString+dropsString+throughputString+commFramesString+callsString+callAttemptsString,msec));
-            CRNode.writeProbabilityLogFile(String.format(Locale.US, "%.2f;"+probFalseAlarmString+probMissDetectionString
-                    +probCollisionString+probBlocksString+probDropsString,msec));
+            logSimulationStats();
         }
         CRNode.fuseSensingResults((double)(Scheduler.instance().getTime())/unitTime);	//Log average of SNR values sensed by the CR nodes
+	}
+	
+	private void logSimulationStats()
+	{
+		/*Write time to log file*/
+		double msec = (double)(Scheduler.instance().getTime())/unitTime;
+		int totalBlocks=0,totalDrops=0,totalCallAttempts=0,totalCollisions=0,totalCalls=0,totalFrames = 0,totalEstimatedCollisions = 0;
+        double falseAlarmsForAZone=0.0,missDetectionsForAZone=0.0,collisionsForAZone=0.0,dropsForAZone=0.0,blocksForAZone=0.0,
+                callsForAZone=0.0,callAttemptsForAZone=0.0,communicatedFramesForAZone=0.0;
+        double blockProb, dropProb,collisionProb,estimatedCollisionProb;
+        String falseAlarmsString="",missDetectionsString="",collisionsString="",dropsString="",blocksString="",
+                throughputString="",commFramesString="",callsString="",callAttemptsString="";
+        String probFalseAlarmString="",probMissDetectionString="",probCollisionString="",probDropsString="",probBlocksString="";
+		//calculate drop,block and collision probabilities
+		for (CRNode node : SimulationRunner.crBase) {
+			totalBlocks += node.getNumberOfBlocks();
+			totalDrops += node.getNumberOfDrops();
+			totalCallAttempts += node.getNumberOfCallAttempts();
+			totalCalls += node.getNumberOfCalls();
+			totalCollisions += node.getNumberOfCollision();
+			totalFrames += node.getNumberOfFramesCommunicated();
+			totalEstimatedCollisions += node.getEstimatedNumberOfCollison();
+		}
+		if(totalCallAttempts == 0){
+			blockProb = 0.0;
+		}else{
+			blockProb = (double)totalBlocks/totalCallAttempts;
+		}
+		if(totalCalls == 0){
+			dropProb = 0.0;
+		}
+		else{
+			dropProb = (double)totalDrops/totalCalls;
+		}
+		if(totalFrames == 0){
+			collisionProb = 0.0;
+			estimatedCollisionProb = 0.0;
+		}
+		else{
+			collisionProb = (double)totalCollisions/totalFrames;
+			estimatedCollisionProb = (double)totalEstimatedCollisions/totalFrames;
+		}
+		ArrayList<Double> probs = new ArrayList<Double>();
+		probs.add(blockProb);
+		probs.add(dropProb);
+		probs.add(collisionProb);
+		probs.add(estimatedCollisionProb);
+		SimulationRunner.plotProbs.addPoint(Scheduler.instance().getTime(), probs);
+		//Calculates statistics and probabilities for each zone
+		for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
+			falseAlarmsForAZone = SimulationRunner.crBase.getFalseAlarm(i);
+			missDetectionsForAZone = SimulationRunner.crBase.getMissDetection(i);
+			collisionsForAZone = SimulationRunner.crBase.getCollisions(i);
+			blocksForAZone = SimulationRunner.crBase.getBlocks(i);
+			dropsForAZone = SimulationRunner.crBase.getDrops(i);
+			callsForAZone = SimulationRunner.crBase.getNumberOfCalls(i);
+			callAttemptsForAZone = SimulationRunner.crBase.getNumberOfCallAttempts(i);
+			communicatedFramesForAZone = SimulationRunner.crBase.getTotalCommunicatedFrames(i);
+			//Strings for the log file
+			falseAlarmsString += String.valueOf(falseAlarmsForAZone)+";";
+			missDetectionsString += String.valueOf(missDetectionsForAZone)+";";
+			collisionsString += String.valueOf(collisionsForAZone)+";";
+			blocksString += String.valueOf(blocksForAZone)+";";
+			dropsString += String.valueOf(dropsForAZone)+";";
+			if(communicatedFramesForAZone != 0.0)
+				throughputString += String.valueOf(SimulationRunner.crBase.getTotalBitsTransmitted(i)/(communicatedFramesForAZone*commDur))+";";
+			else
+				throughputString += String.valueOf(0.0)+";";
+			commFramesString += String.valueOf(communicatedFramesForAZone)+";";
+			callsString += String.valueOf(callsForAZone)+";";
+			callAttemptsString += String.valueOf(callAttemptsForAZone)+";";
+			//Calculation of probabilities and strings for the probability log file
+			if(callAttemptsForAZone == 0.0){
+				probBlocksString += String.valueOf(0.0)+";";
+			}else{
+				probBlocksString += String.valueOf(blocksForAZone/callAttemptsForAZone)+";";
+			}
+			if(callsForAZone == 0.0){
+				probDropsString += String.valueOf(0.0)+";";
+			}else{
+				probDropsString += String.valueOf(dropsForAZone/callsForAZone)+";";
+			}
+			if(communicatedFramesForAZone == 0.0){
+				probCollisionString += String.valueOf(0.0)+";";
+			}else{
+				probCollisionString += String.valueOf(collisionsForAZone/communicatedFramesForAZone)+";";
+			}
+			probFalseAlarmString += String.valueOf((falseAlarmsForAZone/currentFrame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
+			probMissDetectionString += String.valueOf((missDetectionsForAZone/currentFrame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
+		}
+		CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarmsString+missDetectionsString+collisionsString
+				+blocksString+dropsString+throughputString+commFramesString+callsString+callAttemptsString,msec));
+		CRNode.writeProbabilityLogFile(String.format(Locale.US, "%.2f;"+probFalseAlarmString+probMissDetectionString
+				+probCollisionString+probBlocksString+probDropsString,msec));
 	}
 	
 	private void commScheduleAdvertise()

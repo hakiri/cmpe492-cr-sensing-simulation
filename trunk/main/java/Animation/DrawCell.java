@@ -2,6 +2,7 @@ package Animation;
 
 import Nodes.Node;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;
@@ -47,6 +48,8 @@ public class DrawCell implements Runnable{
 	 */
 	int numberOfPriNodes;
 	static int unit = 12;
+	static Dimension screenDimension;
+	static double scale;
 	/**
 	 * Radius of a node
 	 */
@@ -65,8 +68,13 @@ public class DrawCell implements Runnable{
 	 * @param numberOfPriNodes	Number of primary nodes in the cell
 	 */
 	public DrawCell(int priRadius, int crRadius, int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
-		DrawCell.primaryRadius = priRadius/100;
-		DrawCell.radius = crRadius/100;
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		screenDimension = toolkit.getScreenSize();
+		int screenHeight = screenDimension.height;
+		scale = (2.0*priRadius*unit)/(screenHeight-96);
+		
+		DrawCell.primaryRadius = (int)(priRadius/scale);
+		DrawCell.radius = (int)(crRadius/scale);
 		this.numberOfSectors = numberOfSectors;
 		this.numberOfAlpha = numberOfAlpha;
 		this.numberOfCrNodes=numberOfCrNodes;
@@ -96,6 +104,7 @@ public class DrawCell implements Runnable{
 		finished = true;
 	}
 	
+	static int windowWidth;
 	/**
 	 * Draws the initial cell
 	 */
@@ -104,7 +113,8 @@ public class DrawCell implements Runnable{
         frame=new JFrame("AREA");
         d.setBackground(Color.WHITE);
         frame.add(d);
-        frame.setSize(primaryRadius*unit*2+20, primaryRadius*unit*2+41);
+		windowWidth = primaryRadius*unit*2+25;
+        frame.setSize(primaryRadius*unit*2+20, primaryRadius*unit*2+51);
         frame.setVisible(true);
     }
 	

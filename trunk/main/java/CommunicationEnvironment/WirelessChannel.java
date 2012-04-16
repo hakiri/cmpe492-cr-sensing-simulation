@@ -179,16 +179,16 @@ public class WirelessChannel {
 		double distance = transmitter.getPosition().distance(receiver.getPosition());
 		double signal_db = generateReceivedPower(distance);
 		double noise_db = noiseFloor + noiseNormal.nextDouble();
-		double interfacePower;
+		double interferencePower;
 		if(frequencies.get(freq).get(PRIMARY) != null){	//If the frequency is occupied
 			interference_db = generateReceivedPower(receiver, freq);
-			interfacePower = dbmToMag(interference_db);
+			interferencePower = dbmToMag(interference_db);
 		}
 		else
-			interfacePower = 0.0;
+			interferencePower = 0.0;
 		double noise_Power = dbmToMag(noise_db);
 		double signalPower = dbmToMag(signal_db);
-		double mag = signalPower / (interfacePower + noise_Power);
+		double mag = signalPower / (interferencePower + noise_Power);
 		double capacity = Math.log1p(mag) / Math.log(2);
 		capacity *= bandwidth;
 		return capacity;
