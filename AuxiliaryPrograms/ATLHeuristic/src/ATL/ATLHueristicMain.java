@@ -1,6 +1,7 @@
 package ATL;
 
-import Animation.DrawCell;
+import DrawTool.DrawCell;
+import FrequencyAssignment.AssignFrequencies;
 import cern.jet.random.Uniform;
 import cern.jet.random.engine.MersenneTwister;
 import cern.jet.random.engine.RandomEngine;
@@ -152,6 +153,10 @@ public class ATLHueristicMain {
 			
 		}
 		if(guiOn){
+			ArrayList<Double> objValues;
+			ArrayList<ArrayList<ArrayList<Integer>>> groups = new ArrayList<>();
+			objValues = AssignFrequencies.findGroupsInClusters(numberOfClusters, radius, yij, nodes, groups);
+			DrawCell.setGroups(groups);
 			drawSolution();
 			JOptionPane.showMessageDialog(null, "Objective value of the problem: "+objVal+
 												"\nNumber of iterations: "+numberOfIterations, "ATL Solution", JOptionPane.INFORMATION_MESSAGE);
