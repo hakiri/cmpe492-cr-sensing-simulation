@@ -128,6 +128,11 @@ public class CRNode implements Node {
      * all related data will be logged in the log file.
      */
     public static ArrayList<Integer> reportingFrames;
+	
+	private final static int MAJORITY = 0;
+	private final static int OR = 1;
+	
+	private static int cooperationRule;
     
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
@@ -145,6 +150,7 @@ public class CRNode implements Node {
         this.expoCommDuration = new Exponential((1.0 / SimulationRunner.wc.getMeanOnDuration()), SimulationRunner.randEngine);
 		CRNode.powerThreshold = SimulationRunner.args.getPowerThreshold();
         CRNode.reportingFrames = new ArrayList<Integer>();
+		cooperationRule = OR;
     }
 
     /**
@@ -247,10 +253,18 @@ public class CRNode implements Node {
                 averageReceivedPower.get(i).set(j, (averageReceivedPower.get(i).get(j) / SimulationRunner.crBase.getFrequency_list().get(i).get(j))); // gets the current crnode 
 			                                                                                        //number that listens to this freq.
 				//If more than half of the CR nodes sensing a channel decides that the channel is busy then it is decided busy
-				if(sensingDecision.get(i).get(j) > SimulationRunner.crBase.getFrequency_list().get(i).get(j) / 2)
-					sensingDecision.get(i).set(j,1);
-				else	//Vacant otherwise
-					sensingDecision.get(i).set(j,0);
+				if(cooperationRule == MAJORITY){
+					if(sensingDecision.get(i).get(j) > SimulationRunner.crBase.getFrequency_list().get(i).get(j) / 2)
+						sensingDecision.get(i).set(j,1);
+					else	//Vacant otherwise
+						sensingDecision.get(i).set(j,0);
+				}
+				else if(cooperationRule == OR){
+					if(sensingDecision.get(i).get(j) > 0)
+						sensingDecision.get(i).set(j,1);
+					else	//Vacant otherwise
+						sensingDecision.get(i).set(j,0);
+				}
             }
         }
         calculate_Pf_Pm();
