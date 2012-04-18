@@ -35,14 +35,16 @@ public class SimultaneousPlot {
 		this.xs = xs;
 		plot = new Plot(xs, yPerX, xLabel, yLabel, xUnits, yUnits);
 		plotted = false;
-		xlocation = DrawCell.windowWidth;
-		Toolkit toolkit = Toolkit.getDefaultToolkit();
-		Dimension screenDimension = toolkit.getScreenSize();
-		int screenHeight = screenDimension.height - 100;
-		int windowsHeight = screenHeight / 2;
-		int windowsWidth = screenDimension.width - DrawCell.windowWidth - 20;
-		windowDimension = new Dimension(windowsWidth, windowsHeight);
-		ylocation = numberOfPlots*windowsHeight;
+		if(!SimulationRunner.args.isBatchMode()){
+			xlocation = DrawCell.windowWidth;
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			Dimension screenDimension = toolkit.getScreenSize();
+			int screenHeight = screenDimension.height - 100;
+			int windowsHeight = screenHeight / 2;
+			int windowsWidth = screenDimension.width - DrawCell.windowWidth - 20;
+			windowDimension = new Dimension(windowsWidth, windowsHeight);
+			ylocation = numberOfPlots*windowsHeight;
+		}
 		numberOfPlots++;
 	}
 	
