@@ -1,7 +1,12 @@
 package FrequencyAssignment;
 
 import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AssignFrequencies {
 	
@@ -66,6 +71,38 @@ public class AssignFrequencies {
 		return objectiveValues;
 	}
 	
+	public static ArrayList<Double> findGroupsInClusters(int numberOfClusters, double radius, ArrayList<ArrayList<Integer>> xij, ArrayList<Point2D.Double> nodes,
+									 ArrayList<ArrayList<ArrayList<Integer>>> groups, ArrayList<ArrayList<Integer>> capacities){
+		
+		ArrayList<Double> objectiveValues = new ArrayList<>();
+		for(int i=0;i<numberOfClusters;i++){
+			groups.add(new ArrayList<ArrayList<Integer>>());
+		}
+		
+		ArrayList<Integer> clusterSizes = new ArrayList<>();
+		for(int i=0;i<numberOfClusters;i++){
+			clusterSizes.add(xij.get(i).size());
+		}
+		
+		for(int i=0;i<numberOfClusters;i++){
+			int dispose = clusterSizes.get(i);
+			for(int j=0;j<capacities.get(i).size();j++){
+				dispose -= capacities.get(i).get(j);
+			}
+			System.out.print(clusterSizes.get(i));
+			long time = System.currentTimeMillis();
+			//double obj = FrequencyAssignDistSum.solve2(capacities.get(i), createNodesArrayForCluster(i, dispose, xij, nodes), radius, groups.get(i));
+			double obj = FrequencyAssignDistSum.solveWithWkijSummation(capacities.get(i), createNodesArrayForCluster(i, dispose, xij, nodes), radius, groups.get(i));
+			time = System.currentTimeMillis() - time;
+			System.out.println("\t"+time+"\t"+obj);
+			objectiveValues.add(obj);
+		}
+		for(int i=0;i<numberOfClusters;i++){
+			backTraceNodesInGroups(i, xij, groups);
+		}
+		return objectiveValues;
+	}
+	
 	/**
 	 * Creates an output file and writes number of nodes, number of clusters, radius of the circle, and the positions of the nodes in that file.
 	 * @param outFile Name of the output file
@@ -96,5 +133,53 @@ public class AssignFrequencies {
 				groups.get(clusterIndex).get(k).set(i, actualIndex);
 			}
 		}
+	}
+	
+	public static void main(String []args){
+		int numberOfClusters;
+		double radius;
+		ArrayList<ArrayList<Integer>> xij;
+		ArrayList<Point2D.Double> nodes;
+		ArrayList<ArrayList<ArrayList<Integer>>> groups;
+		ArrayList<ArrayList<Integer>> capacities;
+		Scanner sc = null;
+		try {
+			sc = new Scanner(new File(args[0]));
+		} catch (FileNotFoundException ex) {
+			Logger.getLogger(AssignFrequencies.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		int numberOfNodes = sc.nextInt();
+		numberOfClusters = sc.nextInt();
+		radius = 250;
+		nodes = new ArrayList<>(numberOfNodes);
+		xij = new ArrayList<>(numberOfClusters);
+		capacities = new ArrayList<>();
+		for(int i=0;i<numberOfClusters;i++){
+			xij.add(new ArrayList<Integer>());
+			capacities.add(new ArrayList<Integer>());
+		}
+		groups = new ArrayList<>();
+		
+		for(int i=0;i<numberOfNodes;i++){
+			double x = Double.parseDouble(sc.next());
+			double y = Double.parseDouble(sc.next());
+			int cluster = sc.nextInt() - 1;
+			nodes.add(new Point2D.Double(x, y));
+			xij.get(cluster).add(i);
+		}
+		int numberOfGroups = sc.nextInt();
+		for(int i = 0;i<numberOfClusters;i++){
+			sc.nextInt();
+			for(int j=0;j<numberOfGroups;j++){
+				capacities.get(i).add(sc.nextInt());
+			}
+		}
+		
+		findGroupsInClusters(numberOfClusters, radius, xij, nodes, groups, capacities);
+		System.out.println(groups);
+	}
+	
+	private static void parse(){
+		
 	}
 }

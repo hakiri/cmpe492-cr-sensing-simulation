@@ -81,7 +81,7 @@ public class FrequencyAssignDistSum {
 			
 			cplex.addMaximize(expr);
 			
-			//cplex.setOut(null);
+			cplex.setOut(null);
 			//cplex.exportModel("model.lp");
 			if ( cplex.solve() ) {
 				for (int i = 0; i < numberOfNodes; ++i) {
