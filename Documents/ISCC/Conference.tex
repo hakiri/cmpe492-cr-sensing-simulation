@@ -360,7 +360,7 @@ To improve spectrum utilization, opportunistic spectrum access has been proposed
 
 We mainly focus on energy detection and distributed cooperative sensing issues to increase the performance of the energy detection method under low SNR conditions \cite{sensingReview2011}. Local sensors individually sense the channels and then send information to the network center where the final decision is made\cite{crSensingCDMA2010}. However, the distance between the cooperating nodes is crucial since the cooperation of distant nodes can increase false alarm or missed detection rates. For example, when there is a \textit{Primary User (PU)} at the edge of the cell, the \textit{Secondary Users (SU)} in the opposite part of the cell may not detect its presence. So, the frequency used by this PU may be decided as idle. If this frequency is assigned to a SU in the close proximity of this PU, this situation will result in collision.
 
-In this paper, we propose the \textit{Zone-based Sensing (ZoneS)} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. In this method, we divide the secondary cell into several zones with approximately equal areas and each zone decides whether a frequency is idle or not within its area by fusing the sensing results of the SUs in that zone. Since the zones are much smaller than the cell, the cooperation between the SUs in a zone does not cause a problem as in the case of cooperation in the whole cell. We examine the ZoneS method and simulate with different number of SUs. We analyze the performance of ZoneS in terms of false alarm, missed detection, collision blocking and dropping probabilities, and utilization. Performance loss is observed in the case of missed detection due to increasing interference level to PUs. On the other hand, in the case of false alarm SUs waste available spectrum holes which, again, causes performance loss \cite{parameterOptimization}.
+In this paper, we propose the \textit{Zone-based Sensing (ZoneS)} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. In this method, we divide the secondary cell into several zones with approximately equal areas and each zone decides whether a frequency is idle or not within its area by fusing the sensing results of the SUs in that zone. Since the zones are much smaller than the cell, the cooperation between the SUs in a zone does not cause a problem as in the case of cooperation in the whole cell. Yet, the same frequency may be assigned to other zones in the cell to make sure that it is sensed at different parts of the cell. We examine the ZoneS method and simulate with different number of SUs. We analyze the performance of ZoneS in terms of false alarm, missed detection, collision blocking and dropping probabilities, and utilization. Performance loss is observed in the case of missed detection due to increasing interference level to PUs. On the other hand, in the case of false alarm SUs waste available spectrum holes which, again, causes performance loss \cite{parameterOptimization}.
 
 The rest of the paper is organized as follows: In Section~\ref{sec:system_model}, we overview the general channel model, individual and cooperative sensing of the SUs, and sensing algorithm used in simulation. In Section~\ref{sec:results} we present results of the simulation for different number of SUs. We reveal the conclusion in Section~\ref{sec:conclusion}. Finally, in Section~\ref{sec:future} we state future work to optimize the results.
 \section{\label{sec:system_model}System Model}
@@ -490,6 +490,13 @@ SUs} \label{fig:probm}
 \subsection{$\probm$ and $\mathbf{P_C}$ Analysis}
 Figure \ref{fig:probm} illustrates the missed detection and collision probabilities against the number of SUs in the cell for no zone and 36 zones cases. We observe that, in 36 zones case, the probability of the missed detection also decreases with increasing number of SUs as in the same manner for the probability of false alarm. We also observe that collision probabilities ($\mathbf{P_C}$) never exceed the miss-detection probabilities. This is an expected result since all collisions are caused due to missed detections. Another observation from the figure is that, after some point, $\mathbf{P_C}$ starts increasing. That is why the system gets overloaded at that point. However, in the no zone case, these probabilities again remains still with increasing number of SUs such that $\probm$ remains above 0.20 and $\mathbf{P_C}$ remains above 0.10 all the time. This is why, in the no zone case, for the proper detection, the PU should cause interference at least half of the SUs. Otherwise, although the closer SUs to the PU realize that the frequency is not available, due to cooperation the overall decision will be for the availability of the frequency, resulting in a missed detection and a probable collision. Therefore, applying cooperation across the cell increases the probabilities of both miss detection and collision.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/pb_d.eps}
+\caption{Probabilities of Blocking and Dropping vs Number of SUs}
+\label{fig:probb}
+\end{figure}
+
 \subsection{Blocking and Dropping Analysis}
 Figure \ref{fig:probb} illustrates the blocking and dropping probabilities against number of SUs in the cell. The dropping probability of no zone case is lower than 36 zones due to greater $\probm$ and $\mathbf{P_C}$ of the no zone case. Since $\probm$ and $\mathbf{P_C}$ are higher for the no zone case, the SUs do not detect the collision. Therefore, they do not try to vacate the communication frequency they use, resulting in fewer drops than 36 zones case. On the other hand, blocking probability of no zone case is higher than 36 zones case. This situation occurs since in the 36 zones case, \CR base station can decide that some frequencies are available in some zones. However, in the no zone case the \CR base station decides for the whole cell. As a result, if a frequency is not available for half of the cell, it is  not used in the entire cell. This situation causes \CR users to find less spectrum holes to initiate a communication and increases their blocking probability.
 
@@ -498,21 +505,14 @@ Figure \ref{fig:util} illustrates the utilization of PUs and SUs with respect to
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/pb_d.eps}
-\caption{Probabilities of Blocking and Dropping vs Number of SUs}
-\label{fig:probb}
+\includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/util.eps}
+\caption{Utilization of Wireless Channel} \label{fig:util}
 \end{figure}
 
 \section{\label{sec:conclusion}Conclusion}
 In this paper, we focus on distributed cooperative sensing with majority cooperation rule using the ZoneS approach. We observe that with a few SUs (350 or less), the 0.10 upper bound for false alarm and missed detection probabilities set by the standards cannot be satisfied \cite{wranstandard}. As the number of SUs increases, these requirements can be easily satisfiable, but when the system load becomes excessive (SU utilization over 50\%) quality of service for SUs decreases severely in terms of blocking and dropping. Moreover, due to overload in wireless channel, the collision probabilities start to increase after that point.
 
 We also compare our results with cooperation over the whole cell case (no zone case) and observe that applying cooperation with multiple zones results in better cooperation in terms of sensing reliability since with the multiple zones cooperating in a cell, both missed detection and collision probabilities decrease significantly.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/util.eps}
-\caption{Utilization of Wireless Channel} \label{fig:util}
-\end{figure}
 
 \section{\label{sec:future}Future Work}
 As further improvement, we plan to combine our simulation with an optimization approach over sensing scheduling. Our aim at this optimization is to minimize the interference caused by the secondary users by efficiently assigning the frequencies to be sensed for each secondary user.
