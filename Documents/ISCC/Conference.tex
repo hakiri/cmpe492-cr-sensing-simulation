@@ -366,8 +366,7 @@ The rest of the paper is organized as follows: In Section~\ref{sec:system_model}
 \section{\label{sec:system_model}System Model}
 
 \subsection{Channel Model}
-
-For the transmission channel, we adopt the path loss channel model described in \cite{faramir}. According to this model the received power of a node, which is $d$ km away from the transmitter, is obtained according to\\
+For the transmission channel, we adopt the path loss channel model described in \cite{faramir}, which includes log-normal shadowing. According to this model the received power of a node, which is $d$ km away from the transmitter, is obtained according to\\
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \beqn
     P_{rx} = P_{tx} - l_0 - 10\,\, \alpha \,\, log(d) + s(\mu_s, \sigma_s)
