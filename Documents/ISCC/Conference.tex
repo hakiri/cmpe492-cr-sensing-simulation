@@ -358,12 +358,11 @@ Dynamic access to spectrum requires detecting the free spaces in close proximity
 \section{Introduction}
 To improve spectrum utilization, opportunistic spectrum access has been proposed wherein devices occupy the spectrum that has been left vacant. The essential part of opportunistic access is finding the free spaces of the spectrum via spectrum sensing. This includes sensing unused spectrum as well as sensing during the \emph{Cognitive Radio} operation periodically for vacating the channel if primary activity is observed. Cooperative sensing and acquiring processing gain have been studied extensively as a promising alternative to improve the sensing performance in low SNR conditions \cite{ganesan2005css, kattepur2007data, quan2008spatial, quan2009optimal, unnikrishnan2008csp, aysal2008cooperative}.
 
-We mainly focus on energy detection and distributed cooperative sensing issues to increase the performance of the energy detection method under low SNR conditions \cite{sensingReview2011}. Local sensors individually sense the channels and then send information to the network center where the final decision is made\cite{crSensingCDMA2010}. However, the distance between the cooperating nodes is crucial since the cooperation of distant nodes can increase the false alarm or missed detection rates.
+We mainly focus on energy detection and distributed cooperative sensing issues to increase the performance of the energy detection method under low SNR conditions \cite{sensingReview2011}. Local sensors individually sense the channels and then send information to the network center where the final decision is made\cite{crSensingCDMA2010}. However, the distance between the cooperating nodes is crucial since the cooperation of distant nodes can increase false alarm or missed detection rates. For example, when there is a \textit{Primary User (PU)} at the edge of the cell, the \textit{Secondary Users (SU)} in the opposite part of the cell may not detect its presence. So, the frequency used by this PU may be decided as idle. If this frequency is assigned to a SU in the close proximity of this PU, this situation will result in collision.
 
-In this paper, we propose the \textit{Zone-based Sensing (ZoneS)} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. We examine the ZoneS method and simulate with different number of \textit{Secondary Users (SU)}. We analyze the performance of ZoneS in terms of false alarm, missed detection, collision blocking and dropping probabilities, and utilization. Performance loss is observed in the case of missed detection due to increasing interference level to \textit{Primary Users (PU)}. On the other hand, in the case of false alarm SUs waste available spectrum holes which, again, causes performance loss \cite{parameterOptimization}.
+In this paper, we propose the \textit{Zone-based Sensing (ZoneS)} method, which is a distributed cooperative sensing method that circumvents the problems that arise from the cooperation between distant nodes. In this method, we divide the secondary cell into several zones with approximately equal areas and each zone decides whether a frequency is idle or not within its area by fusing the sensing results of the SUs in that zone. Since the zones are much smaller than the cell, the cooperation between the SUs in a zone does not cause a problem as in the case of cooperation in the whole cell. We examine the ZoneS method and simulate with different number of SUs. We analyze the performance of ZoneS in terms of false alarm, missed detection, collision blocking and dropping probabilities, and utilization. Performance loss is observed in the case of missed detection due to increasing interference level to PUs. On the other hand, in the case of false alarm SUs waste available spectrum holes which, again, causes performance loss \cite{parameterOptimization}.
 
 The rest of the paper is organized as follows: In Section~\ref{sec:system_model}, we overview the general channel model, individual and cooperative sensing of the SUs, and sensing algorithm used in simulation. In Section~\ref{sec:results} we present results of the simulation for different number of SUs. We reveal the conclusion in Section~\ref{sec:conclusion}. Finally, in Section~\ref{sec:future} we state future work to optimize the results.
-\newpage
 \section{\label{sec:system_model}System Model}
 
 \subsection{Channel Model}
@@ -472,14 +471,21 @@ Simulation parameters are shown in Table~\ref{tbl:sim_parameters} where $N_{PU}$
 
 In the simulations, radius of the \CR cell is taken as 1.5 km, and the number of PUs is 1500. Also, the PUs are deployed in a wider area than the SUs. They are deployed in a circle with approximately 5 km radius since a PU outside of this area cannot be sensed by SUs for the given simulation parameters.
 
-\subsection{$\probf$ Analysis}
-Figure \ref{fig:probf} illustrates the false alarm probability against the number of SUs in the cell for no zone (single zone) and 36 zones cases. The probability of false alarm decreases with the increasing number of SUs in the 36 zones case because the reliability of the cooperation decision increases with number of users cooperating. This result is expected according to the mathematical model since the cooperative false alarm probability is obtained by taking powers of local false alarm probabilities. However, with increasing number of SUs in the no zone case  $\probf$ does not change much since there are already too many users cooperating. Although the false alarm probability for the 36 zones case is higher than that of the no zone case, it is still well below the 0.10 bound defined by the standard \cite{wranstandard}.
-
-\begin{figure}[t]
+\begin{figure}[b]
 \centering
 \includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/pf.eps}
 \caption{Probability of False Alarm vs Number of SUs.}
 \label{fig:probf}
+\end{figure}
+
+\subsection{$\probf$ Analysis}
+Figure \ref{fig:probf} illustrates the false alarm probability against the number of SUs in the cell for no zone (single zone) and 36 zones cases. The probability of false alarm decreases with the increasing number of SUs in the 36 zones case because the reliability of the cooperation decision increases with number of users cooperating. This result is expected according to the mathematical model since the cooperative false alarm probability is obtained by taking powers of local false alarm probabilities. However, with increasing number of SUs in the no zone case  $\probf$ does not change much since there are already too many users cooperating. Although the false alarm probability for the 36 zones case is higher than that of the no zone case, it is still well below the 0.10 bound defined by the standard \cite{wranstandard}.
+
+\begin{figure}[b]
+\centering
+\includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/pm_c.eps}
+\caption{Probabilities of Missed Detection and Collision vs Number of
+SUs} \label{fig:probm}
 \end{figure}
 
 \subsection{$\probm$ and $\mathbf{P_C}$ Analysis}
@@ -487,14 +493,6 @@ Figure \ref{fig:probm} illustrates the missed detection and collision probabilit
 
 \subsection{Blocking and Dropping Analysis}
 Figure \ref{fig:probb} illustrates the blocking and dropping probabilities against number of SUs in the cell. The dropping probability of no zone case is lower than 36 zones due to greater $\probm$ and $\mathbf{P_C}$ of the no zone case. Since $\probm$ and $\mathbf{P_C}$ are higher for the no zone case, the SUs do not detect the collision. Therefore, they do not try to vacate the communication frequency they use, resulting in fewer drops than 36 zones case. On the other hand, blocking probability of no zone case is higher than 36 zones case. This situation occurs since in the 36 zones case, \CR base station can decide that some frequencies are available in some zones. However, in the no zone case the \CR base station decides for the whole cell. As a result, if a frequency is not available for half of the cell, it is  not used in the entire cell. This situation causes \CR users to find less spectrum holes to initiate a communication and increases their blocking probability.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.99\columnwidth,keepaspectratio] {figs/pm_c.eps}
-\caption{Probabilities of Missed Detection and Collision vs Number of
-SUs} \label{fig:probm}
-\end{figure}
-
 
 \subsection{Utilization Analysis}
 Figure \ref{fig:util} illustrates the utilization of PUs and SUs with respect to the number of SUs in the cell for the no zone and the 36 zones cases. In both cases, SUs utilize the spectrum almost equally. However, in the no zone case, SUs harm primary communication due to the high $\probm$ and $\mathbf{P_C}$ values. Note that the total utilization of PUs and SUs can exceed 100\% because they can use the same frequency simultaneously if they are far enough to experience limited interference which leads no collision. 
