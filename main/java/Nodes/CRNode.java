@@ -130,7 +130,7 @@ public class CRNode implements Node {
     public static ArrayList<Integer> reportingFrames;
 	
 	private final static int MAJORITY = 0;
-	private final static int OR = 1;
+	private final static int NK = 1;
 	
 	private static int cooperationRule;
     
@@ -150,7 +150,7 @@ public class CRNode implements Node {
         this.expoCommDuration = new Exponential((1.0 / SimulationRunner.wc.getMeanOnDuration()), SimulationRunner.randEngine);
 		CRNode.powerThreshold = SimulationRunner.args.getPowerThreshold();
         CRNode.reportingFrames = new ArrayList<Integer>();
-		cooperationRule = OR;
+		cooperationRule = NK;
     }
 
     /**
@@ -259,8 +259,8 @@ public class CRNode implements Node {
 					else	//Vacant otherwise
 						sensingDecision.get(i).set(j,0);
 				}
-				else if(cooperationRule == OR){
-					if(sensingDecision.get(i).get(j) > 0)
+				else if(cooperationRule == NK){
+					if(sensingDecision.get(i).get(j) > (SimulationRunner.crBase.getFrequency_list().get(i).get(j)*4)/10)
 						sensingDecision.get(i).set(j,1);
 					else	//Vacant otherwise
 						sensingDecision.get(i).set(j,0);
