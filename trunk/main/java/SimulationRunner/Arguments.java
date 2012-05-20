@@ -306,6 +306,7 @@ private double sensingSlotDur = 0.0;
 		noiseFloor = -85.0;
 		noiseStdDev = 20;
 		powerThreshold = -69;
+		//powerThreshold = -60;
 		seedModel = 0;
 		seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
 													  (int)System.currentTimeMillis());
@@ -716,4 +717,9 @@ private double sensingSlotDur = 0.0;
 	public double getInterferenceDistance() {
 		return interferenceDistance;
 	}
+	
+	public final static int MAJORITY = 0;
+	public final static int NK = 1;
+	
+	public static int cooperationRule = 0;
 }
