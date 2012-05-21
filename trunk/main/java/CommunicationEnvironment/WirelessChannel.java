@@ -1,5 +1,6 @@
 package CommunicationEnvironment;
 
+import Heuristic.ATLHueristic;
 import Nodes.CRNode;
 import Nodes.Node;
 import Nodes.PrimaryTrafficGeneratorNode;
@@ -355,11 +356,9 @@ public class WirelessChannel {
 		if(primary == null)
 			return true;
 		Point2D.Double primaryPosition = primary.getPosition();
-		int iStart, iEnd;
-		iStart = zone==0 ? 0:SimulationRunner.crBase.getNodesInZone().get(zone-1);
-		iEnd = zone==0 ? SimulationRunner.crBase.getNodesInZone().get(0):SimulationRunner.crBase.getNodesInZone().get(zone);
-		for(int i = iStart; i < iEnd; i++){
-			if(primaryPosition.distance(SimulationRunner.crBase.getCRNode(i).getPosition()) < interferenceDistance)
+		for(int i=0;i<ATLHueristic.yij.get(zone).size();i++){
+			int crInZone = ATLHueristic.yij.get(zone).get(i);
+			if(primaryPosition.distance(SimulationRunner.crBase.getCRNode(crInZone).getPosition()) < interferenceDistance)
 				return false;
 		}
 		return true;

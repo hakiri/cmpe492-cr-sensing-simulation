@@ -4,6 +4,8 @@ import Animation.DrawCell;
 import CommunicationEnvironment.Cell;
 import CommunicationEnvironment.WirelessChannel;
 import DES.Scheduler;
+import Heuristic.ATLHueristic;
+import Heuristic.FAHMain;
 import SimulationRunner.SimulationRunner;
 import cern.jet.random.Uniform;
 import java.awt.Color;
@@ -16,6 +18,8 @@ import java.util.ArrayList;
  * It also keeps information about which CR node belongs which zone
  */
 public class CRBase extends ArrayList<CRNode> implements Node{
+
+// <editor-fold defaultstate="collapsed" desc="Attributes">
 	/**
 	 * Position of the node
      */
@@ -37,10 +41,6 @@ public class CRBase extends ArrayList<CRNode> implements Node{
      */
     private ArrayList<ArrayList<Integer>> frequency_list;
     /**
-     * The number of frequencies to be listened per crnode
-     */
-    private static int number_of_freq_per_crnode;
-    /**
      * Current available or not decision for all of the listened frequencies.
      */
     private ArrayList<ArrayList<Integer>> currentSensingDecisions = null;
@@ -55,32 +55,10 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     /**
      * Uniform distribution
      */
-    private static Uniform uniform ;
-    
+    private static Uniform uniform ;    
 	/**
-	 * Keeps sector number, alpha number, d number, and number of CR nodes of a zone
-	 */
-	public ArrayList<ArrayList<Integer>> registeredZones;
-	/**
-	 * Index of sector number in zone array
-	 */
-	public static final int SECTOR = 0;
-	/**
-	 * Index of alpha number in zone array
-	 */
-	public static final int ALPHA = 1;
-	/**
-	 * Index of d number in zone array
-	 */
-	public static final int D = 2;
-	/**
-	 * Index of number of CR nodes in zone array
-	 */
-	public static final int CRNODES = 3;
-    /**
      * Cumulative total of crnodes in zones.
      */
-    private ArrayList<Integer> nodesInZone;
     private ArrayList<Double> falseAlarm;
     private ArrayList<Double> missDetection;
     private ArrayList<Double> collisions;
@@ -90,32 +68,30 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     private ArrayList<Double> totalCommunicatedFrames;
     private ArrayList<Double> numberOfCalls;
     private ArrayList<Double> numberOfCallAttempts;
+// </editor-fold>
+	
     /**
      * Creates a CRBase at the given position.
      * @param pos Position of the Base station
      * @param id Id of the CRBase
-     * @param number_of_freq_per_crnode The number of the frequencies that a CRNode is going to listen in a frame.
      */
-    public CRBase(Point2D.Double pos,int id,int number_of_freq_per_crnode){
+    public CRBase(Point2D.Double pos,int id){
 		super();
         this.id = id;
         this.position = new Point2D.Double(pos.x, pos.y);
         this.velocity = 0.0;
         this.frequency_to_be_listen=0;
-        CRBase.number_of_freq_per_crnode = number_of_freq_per_crnode;
         CRBase.uniform = new Uniform(SimulationRunner.randEngine);
-		this.currentSensingDecisions = new ArrayList<ArrayList<Integer>>();
-        this.registeredZones = new ArrayList<ArrayList<Integer>>();
-		this.nodesInZone = new ArrayList<Integer>();
-        this.falseAlarm = new ArrayList<Double>();
-        this.missDetection = new ArrayList<Double>();
-        this.collisions = new ArrayList<Double>();
-        this.blocks = new ArrayList<Double>();
-        this.drops = new ArrayList<Double>();
-        this.totalNumberOfBitsTransmitted = new ArrayList<Double>();
-        this.totalCommunicatedFrames = new ArrayList<Double>();
-        this.numberOfCalls = new ArrayList<Double>();
-        this.numberOfCallAttempts = new ArrayList<Double>();
+		this.currentSensingDecisions = new ArrayList<>();
+        this.falseAlarm = new ArrayList<>();
+        this.missDetection = new ArrayList<>();
+        this.collisions = new ArrayList<>();
+        this.blocks = new ArrayList<>();
+        this.drops = new ArrayList<>();
+        this.totalNumberOfBitsTransmitted = new ArrayList<>();
+        this.totalCommunicatedFrames = new ArrayList<>();
+        this.numberOfCalls = new ArrayList<>();
+        this.numberOfCallAttempts = new ArrayList<>();
     }
 
 	@Override
@@ -179,16 +155,17 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     }
     
     /**
-     * Takes number_of_freq_per_crnode frequencies from frequency list by
+     * Takes numberOfFreq frequencies from frequency list by
      * paying attention to the order of the frequencies.
 	 * @param startFromFirst If true the deployed frequency values will start from the first frequency
+	 * @param numberOfFreq   Number of frequencies to be sensed
      * @return number_of_freq_per_crnode frequencies
      */
-    public ArrayList<Integer> deploy_freq(boolean startFromFirst){
-        ArrayList<Integer> freq = new ArrayList<Integer>(number_of_freq_per_crnode);
+    public ArrayList<Integer> deploy_freq(boolean startFromFirst, int numberOfFreq){
+        ArrayList<Integer> freq = new ArrayList<>(numberOfFreq);
 		if(startFromFirst)
 			frequency_to_be_listen = 0;
-        for(int i=0;i<number_of_freq_per_crnode;i++){
+        for(int i=0;i<numberOfFreq;i++){
             freq.add(frequency_to_be_listen);
             frequency_to_be_listen=(frequency_to_be_listen+1) % SimulationRunner.wc.numberOfFreq();
         }
@@ -200,22 +177,23 @@ public class CRBase extends ArrayList<CRNode> implements Node{
      * updates frequency list.
      */
     public void assignFrequencies(){
-        frequency_list = new ArrayList<ArrayList<Integer>>();
-		for(int j=0;j<registeredZones.size();j++){
+        frequency_list = new ArrayList<>();
+		
+		for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
 			frequency_list.add(new ArrayList<Integer>());
-			for(int i=0;i<SimulationRunner.wc.numberOfFreq();i++){
-				frequency_list.get(j).add(0);
+			int numberOfFreqPerGroup = (int)Math.ceil((double)SimulationRunner.wc.numberOfFreq()/FAHMain.groups.get(i).size());
+			for(int j=0;j<SimulationRunner.wc.numberOfFreq();j++){
+				frequency_list.get(i).add(0);
 			}
 		
-			int iStart, iEnd;
-			iStart = j==0 ? 0:nodesInZone.get(j-1);
-			iEnd = j==0 ? nodesInZone.get(0):nodesInZone.get(j);
 			
-			for(int i=iStart;i<iEnd;i++){
-				ArrayList<Integer> frequencies = deploy_freq(i==iStart);
-				get(i).setFrequencyList(frequencies); //assigns new freq list for crnode
-				for(int k=0;k<CRBase.number_of_freq_per_crnode;k++){ //updates the frequency_list
-					frequency_list.get(j).set(frequencies.get(k), (frequency_list.get(j).get(frequencies.get(k)) + 1));
+			for(int j=0;j<FAHMain.groups.get(i).size();j++){
+				ArrayList<Integer> frequencies = deploy_freq(j==0,numberOfFreqPerGroup);
+				for(int k = 0; k < FAHMain.groups.get(i).get(j).size();k++){
+					get(FAHMain.groups.get(i).get(j).get(k)).setFrequencyList(frequencies); //assigns new freq list for crnode
+				}
+				for(int k=0;k<numberOfFreqPerGroup;k++){ //updates the frequency_list
+					frequency_list.get(i).set(frequencies.get(k), (frequency_list.get(i).get(frequencies.get(k)) + FAHMain.groups.get(i).get(j).size()));
 				}
 			}
 		}
@@ -233,15 +211,13 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 		
 		handoffCollidedUsersInZones();
 		
-		ArrayList<Integer> readyToCommInZone = new ArrayList<Integer>();
+		ArrayList<Integer> readyToCommInZone = new ArrayList<>();
 		int totalNumberOfReadytoComm = 0;
-		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
-			int iStart, iEnd;
-			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
-			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
+		for(int zoneNumber=0;zoneNumber<SimulationRunner.args.getNumberOfZones();zoneNumber++){
 			
 			readyToCommInZone.add(0);
-			for(int crInZone=iStart;crInZone<iEnd;crInZone++){ //finding the max distance btw crbase and crnodes
+			for(int i=0;i<ATLHueristic.yij.get(zoneNumber).size();i++){
+				int crInZone = ATLHueristic.yij.get(zoneNumber).get(i);
 				if(get(crInZone).getReadytoComm()){
 					readyToCommInZone.set(zoneNumber, readyToCommInZone.get(zoneNumber) + 1);
 					totalNumberOfReadytoComm++;
@@ -254,10 +230,8 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 			int zone=getAZone(readyToCommInZone);
 			if(zone == -1)
 				break;
-			int iStart, iEnd;
-			iStart = zone==0 ? 0:nodesInZone.get(zone-1);
-			iEnd = zone==0 ? nodesInZone.get(0):nodesInZone.get(zone);
-			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+			for(int i=0;i<ATLHueristic.yij.get(zone).size();i++){
+				int crInZone = ATLHueristic.yij.get(zone).get(i);
 				if(get(crInZone).getReadytoComm()){
 					int randomFreq = getARandomIndex(free_frequencies.get(zone));
 					get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
@@ -311,8 +285,8 @@ public class CRBase extends ArrayList<CRNode> implements Node{
     
 	private void findFreeFrequencies()
 	{
-		free_frequencies = new ArrayList<ArrayList<Integer>>();
-		for(int zoneNumber = 0 ; zoneNumber < registeredZones.size() ; zoneNumber++){
+		free_frequencies = new ArrayList<>();
+		for(int zoneNumber = 0 ; zoneNumber < SimulationRunner.args.getNumberOfZones() ; zoneNumber++){
 			//checks averagesnr values of the frequencies and adds frequencies to the free_frequencies list
 			//if there was no collision in the previous measurement 
 			free_frequencies.add(new ArrayList<Integer>());
@@ -339,7 +313,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	
 	private int getAZone(ArrayList<Integer> numberOfCollidedOrReadyToCommCRNodes)
 	{
-		ArrayList<Integer> availableZones = new ArrayList<Integer>();
+		ArrayList<Integer> availableZones = new ArrayList<>();
 		for(int i=0;i<free_frequencies.size();i++)
 			if(!free_frequencies.get(i).isEmpty() && numberOfCollidedOrReadyToCommCRNodes.get(i) != 0)
 				availableZones.add(i);
@@ -355,10 +329,10 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	
 	private void handoffCollidedUsersInZones()
 	{
-		ArrayList<Integer> collidedInZone = new ArrayList<Integer>();
+		ArrayList<Integer> collidedInZone = new ArrayList<>();
 		int totalNumberOfCollided = 0;
 		//these loops finds the number of collided crnodes for each zone(and releases their comm_freq)
-		for(int i=0;i<registeredZones.size();i++)
+		for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++)
 			collidedInZone.add(0);
 		for(int i=0;i<size();i++){
 			if(get(i).getIsCollided()){
@@ -373,10 +347,9 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 			int zone = getAZone(collidedInZone);
 			if(zone == -1)
 				break;
-			int iStart, iEnd;
-			iStart = zone==0 ? 0:nodesInZone.get(zone-1);
-			iEnd = zone==0 ? nodesInZone.get(0):nodesInZone.get(zone);
-			for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+			
+			for(int i=0;i<ATLHueristic.yij.get(zone).size();i++){
+				int crInZone = ATLHueristic.yij.get(zone).get(i);
 				if(get(crInZone).getIsCollided()){
 					int randomFreq = getARandomIndex(free_frequencies.get(zone));
 					get(crInZone).setCommunication_frequency(free_frequencies.get(zone).get(randomFreq));
@@ -403,26 +376,26 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 		
 		//this loop is for collided crnodes which cannot find a new comm_freq to talk.
 		//updates number of drops for crnodes, updates commOrNot to false,
-		for(int zoneNumber=0;zoneNumber<registeredZones.size();zoneNumber++){
-			int iStart, iEnd;
-			iStart = zoneNumber==0 ? 0:nodesInZone.get(zoneNumber-1);
-			iEnd = zoneNumber==0 ? nodesInZone.get(0):nodesInZone.get(zoneNumber);
+		for(int zoneNumber=0;zoneNumber<SimulationRunner.args.getNumberOfZones();zoneNumber++){
 			
 			if(collidedInZone.get(zoneNumber) > 0){
-				for(int crInZone=iStart;crInZone<iEnd;crInZone++){
+				for(int i=0;i<ATLHueristic.yij.get(zoneNumber).size();i++){
+					int crInZone = ATLHueristic.yij.get(zoneNumber).get(i);
 					if(get(crInZone).getIsCollided()){
 						if(get(crInZone).getCommunication_frequency() == -1){
 							get(crInZone).setNumberOfDrops(get(crInZone).getNumberOfDrops() + 1);
 							incrementDrop(zoneNumber);
-							double msec = Scheduler.instance().getTime();
-							int hour = (int)(msec/3600000.0);
-							msec -= hour*3600000.0;
-							int min = (int)(msec/60000.0);
-							msec -= min*60000.0;
-							int sec = (int)(msec/1000.0);
-							msec-= sec*1000.0;
+							// <editor-fold defaultstate="collapsed" desc="Time Calculations">
+//							double msec = Scheduler.instance().getTime();
+//							int hour = (int)(msec/3600000.0);
+//							msec -= hour*3600000.0;
+//							int min = (int)(msec/60000.0);
+//							msec -= min*60000.0;
+//							int sec = (int)(msec/1000.0);
+//							msec-= sec*1000.0;
 							
 //							CRNode.writeLogFile("Time: " + String.format(Locale.US,"%2d:%2d:%2d:%.2f", hour,min,sec,msec) + " -- number: " + crInZone + " is dropped");
+							//</editor-fold>
 							if(SimulationRunner.args.isAnimationOn()){
 								SimulationRunner.crSensor.setInactiveDuration(crInZone, true);
 							}
@@ -443,14 +416,14 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	 * @param currentDecisions	Current channel state decisions for all frequencies
      */
     public void setLastSensingResults(ArrayList<ArrayList<Integer>> currentDecisions) {
-		this.lastSensingDecisions = new ArrayList<ArrayList<Integer>>();
+		this.lastSensingDecisions = new ArrayList<>();
 		for(int i=0;i<this.currentSensingDecisions.size();i++){
 			this.lastSensingDecisions.add(new ArrayList<Integer>());
 			for(int j=0;j<this.currentSensingDecisions.get(i).size();j++){
 				this.lastSensingDecisions.get(i).add(this.currentSensingDecisions.get(i).get(j));
 			}
 		}
-		this.currentSensingDecisions = new ArrayList<ArrayList<Integer>>();
+		this.currentSensingDecisions = new ArrayList<>();
 		for(int i=0;i<currentDecisions.size();i++){
 			this.currentSensingDecisions.add(new ArrayList<Integer>());
 			for(int j=0;j<currentDecisions.get(i).size();j++){
@@ -474,13 +447,8 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	 * @param d Distance section of the zone
 	 * @param crnodes Total number of crnodes in that zone
 	 */
-    public void registerZones(ArrayList<Integer> sector, ArrayList<Integer> alpha, ArrayList<Integer> d, ArrayList<Integer> crnodes){
-        for(int i=0;i<sector.size();i++){
-			ArrayList<Integer> zone = new ArrayList<Integer>();
-			zone.add(sector.get(i));
-			zone.add(alpha.get(i));
-			zone.add(d.get(i));
-			registeredZones.add(zone);
+    public void registerZones(){
+        for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
 			missDetection.add(0.0);
 			falseAlarm.add(0.0);
             collisions.add(0.0);
@@ -490,26 +458,9 @@ public class CRBase extends ArrayList<CRNode> implements Node{
             totalCommunicatedFrames.add(0.0);
             numberOfCalls.add(0.0);
             numberOfCallAttempts.add(0.0);
-			if(nodesInZone.size() > 0)
-				nodesInZone.add(crnodes.get(i) + nodesInZone.get(nodesInZone.size() - 1));
-			else
-				nodesInZone.add(crnodes.get(i));
 		}
     }
     
-	/**
-	 * Takes id of crnode then finds that crnode's zone, after this, calls deployNodeinZone function
-	 * with the corresponding zone parameters.
-	 * @param id Id of CRNode
-	 * @return Point of the CRNode
-	 */
-    public Point2D.Double deployNodeinZone(int id){
-        for(int i=0;i<nodesInZone.size();i++){
-            if(id < nodesInZone.get(i))
-				return Cell.deployNodeinZone(registeredZones.get(i).get(0), registeredZones.get(i).get(1), registeredZones.get(i).get(2));
-        }
-		return new Point2D.Double(0.0,0.0);
-    }
 	
 	/**
 	 * Finds zone ID of a given CR node
@@ -518,10 +469,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	 */
 	public int findZone(int id)
 	{
-		for(int i=0;i<nodesInZone.size();i++)
-			if(id<nodesInZone.get(i))
-				return i;
-		return 0;
+		return get(id).getZoneId();
 	}
 	
 	/**
@@ -530,12 +478,7 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 	 */
 	public double farthestZoneDistance()
 	{
-		int d = 0;
-		for(int i = 0 ; i<registeredZones.size() ; i++){
-			if(registeredZones.get(i).get(D) > d)
-				d = registeredZones.get(i).get(D);
-		}
-		return Cell.set_of_d.get(d);
+		return Cell.getRadius();
 	}
     
     /**
@@ -545,15 +488,10 @@ public class CRBase extends ArrayList<CRNode> implements Node{
      */
     public double  farthestDistanceInZone(int zoneId)
     {
-        int iStart,iEnd;
         double distance=0.0,temp_dist;
-        if(zoneId == 0)
-            iStart=0;
-        else
-            iStart = nodesInZone.get(zoneId-1);
-        iEnd = nodesInZone.get(zoneId);
-        for(int i=iStart;i<iEnd;i++){
-            temp_dist = get(i).getPosition().distance(position);
+        
+        for(int i=0;i<ATLHueristic.yij.get(zoneId).size();i++){
+            temp_dist = get(ATLHueristic.yij.get(zoneId).get(i)).getPosition().distance(position);
             if(temp_dist>distance)
                 distance = temp_dist;
         }
@@ -755,13 +693,5 @@ public class CRBase extends ArrayList<CRNode> implements Node{
 		double capacity = CRNode.getTotalNumberOfFrames()*SimulationRunner.args.getNumberOfFreq();
 		double utilization = totalNumberOfCommunicatedFrames / capacity;
 		return utilization * 100.0;
-	}
-
-	/**
-	 * Returns IDs of nodes is zones.
-	 * @return IDs of nodes is zones.
-	 */
-	public ArrayList<Integer> getNodesInZone() {
-		return nodesInZone;
 	}
 }

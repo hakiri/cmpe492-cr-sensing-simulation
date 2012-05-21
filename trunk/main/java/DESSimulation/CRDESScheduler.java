@@ -5,6 +5,7 @@ import DES.Event;
 import DES.Scheduler;
 import DES.Scheduler.EventHandle;
 import DES.SimEnt;
+import Heuristic.FAHMain;
 import Nodes.CRBase;
 import Nodes.CRNode;
 import SimulationRunner.GraphicalUserInterface;
@@ -95,7 +96,7 @@ public class CRDESScheduler extends SimEnt{
 	/**
 	 * Number of sensing slots in CR frame
 	 */
-	private int numberOfSlots;
+	private int maxNumberOfSlots;
 	/**
 	 * Duration of sensing slots
 	 */
@@ -129,20 +130,19 @@ public class CRDESScheduler extends SimEnt{
 	 * Creates a DES scheduler that performs frame action for CR sensor nodes
 	 * @param simulationDuration			Duration of the simulation in unit time
 	 * @param unitTime						Unit of time in milliseconds
-	 * @param numberOfSlots					Number of sensing slots in the frame
 	 * @param slotDur						Duration of the sensing slots in terms of unit time
 	 * @param senseScheduleAdvertisement	Duration of the sensing schedule advertisement in terms of unit time
 	 * @param commScheduleAdvertisement		Duration of the communication schedule advertisement in terms of unit time
 	 * @param commDur						Duration of the communication in terms of unit time
 	 * @param senseResultAdvertisement		Duration of the sensing result advertisement in terms of unit time
 	 */
-	public CRDESScheduler(double simulationDuration,double unitTime, int numberOfSlots, double slotDur,
+	public CRDESScheduler(double simulationDuration,double unitTime, double slotDur,
 			double senseScheduleAdvertisement, double commScheduleAdvertisement, double commDur,
 			double senseResultAdvertisement)
 	{
 		this.simulationDuration = simulationDuration*unitTime;	//Perform simulation for every half of time unit
 		this.unitTime = unitTime;
-		this.numberOfSlots = numberOfSlots;
+		this.maxNumberOfSlots = FAHMain.maxSlots;
 		this.slotDur = slotDur*unitTime;
 		this.senseScheduleAdvertisement = senseScheduleAdvertisement*unitTime;
 		this.commScheduleAdvertisement = commScheduleAdvertisement*unitTime;
@@ -150,7 +150,7 @@ public class CRDESScheduler extends SimEnt{
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
 		finished = false;
 		currentFrame = 0;
-		this.frameDuration = senseScheduleAdvertisement + numberOfSlots*slotDur + senseResultAdvertisement + commScheduleAdvertisement + commDur;
+		this.frameDuration = senseScheduleAdvertisement + FAHMain.maxSlots*slotDur + senseResultAdvertisement + commScheduleAdvertisement + commDur;
 		CRNode.setTotalNumberOfFrames((int)(simulationDuration / this.frameDuration));
 	}
 	
@@ -175,7 +175,8 @@ public class CRDESScheduler extends SimEnt{
 	public void recv(SimEnt src, Event ev) {
 		if(ev instanceof SenseScheduleAdvertiseEvent){
 			currentFrame++;
-			senseScheduleAdvertise();
+			if(currentFrame == 1)
+				senseScheduleAdvertise();
 			senseSlotEvent.setSlotNumber(0);
 			send(this,senseSlotEvent,senseScheduleAdvertisement);
 		}
@@ -183,7 +184,7 @@ public class CRDESScheduler extends SimEnt{
 			SensingSlotEvent sse = (SensingSlotEvent) ev;
 			sensingSlot(sse.slotNumber);
 			senseSlotEvent.setSlotNumber(sse.slotNumber+1);
-			if(senseSlotEvent.slotNumber<numberOfSlots)
+			if(senseSlotEvent.slotNumber<maxNumberOfSlots)
 				send(this,senseSlotEvent,slotDur);
 			else
 				send(this,senseResultAdverEvent,slotDur);
@@ -244,8 +245,8 @@ public class CRDESScheduler extends SimEnt{
 		primaryUtil /= (simulationDuration*SimulationRunner.args.getNumberOfFreq());
 		primaryUtilization = String.valueOf(primaryUtil);
 		CRNode.writeLogFile("\nPrimary Utilization:;"+primaryUtilization);
-		CRNode.writeProbabilityLogFile("Primary Utilization;"+primaryUtilization);
-		CRNode.writeProbabilityLogFile("Secondary Utilization;"+String.valueOf(SimulationRunner.crBase.utilization()));
+		CRNode.writeProbabilityLogFileWithEndLine("Primary Utilization;"+primaryUtilization);
+		CRNode.writeProbabilityLogFileWithEndLine("Secondary Utilization;"+String.valueOf(SimulationRunner.crBase.utilization()));
 		if(finished){	//If the thread is terminated
 			if(SimulationRunner.args.isBatchMode())
 				System.out.println("Simulation Terminated");
@@ -365,13 +366,14 @@ public class CRDESScheduler extends SimEnt{
 			collisionProb = (double)totalCollisions/totalFrames;
 			estimatedCollisionProb = (double)totalEstimatedCollisions/totalFrames;
 		}
-		ArrayList<Double> probs = new ArrayList<Double>();
+		ArrayList<Double> probs = new ArrayList<>();
 		probs.add(blockProb);
 		probs.add(dropProb);
 		probs.add(collisionProb);
 		probs.add(estimatedCollisionProb);
 		SimulationRunner.plotProbs.addPoint(Scheduler.instance().getTime(), probs);
 		//Calculates statistics and probabilities for each zone
+		int numberOfSlots;
 		for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
 			falseAlarmsForAZone = SimulationRunner.crBase.getFalseAlarm(i);
 			missDetectionsForAZone = SimulationRunner.crBase.getMissDetection(i);
@@ -410,12 +412,13 @@ public class CRDESScheduler extends SimEnt{
 			}else{
 				probCollisionString += String.valueOf(collisionsForAZone/communicatedFramesForAZone)+";";
 			}
-			probFalseAlarmString += String.valueOf((falseAlarmsForAZone/currentFrame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
-			probMissDetectionString += String.valueOf((missDetectionsForAZone/currentFrame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
+			numberOfSlots = (int)Math.ceil((double)SimulationRunner.args.getNumberOfFreq()/FAHMain.groups.get(i).size());
+			probFalseAlarmString += String.valueOf((falseAlarmsForAZone/currentFrame)/numberOfSlots)+";";
+			probMissDetectionString += String.valueOf((missDetectionsForAZone/currentFrame)/numberOfSlots)+";";
 		}
 		CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarmsString+missDetectionsString+collisionsString
 				+blocksString+dropsString+throughputString+commFramesString+callsString+callAttemptsString,msec));
-		CRNode.writeProbabilityLogFile(String.format(Locale.US, "%.2f;"+probFalseAlarmString+probMissDetectionString
+		CRNode.writeProbabilityLogFileWithEndLine(String.format(Locale.US, "%.2f;"+probFalseAlarmString+probMissDetectionString
 				+probCollisionString+probBlocksString+probDropsString,msec));
 	}
 	
@@ -517,5 +520,13 @@ public class CRDESScheduler extends SimEnt{
      */
 	public double getFrameDuration() {
 		return frameDuration;
+	}
+
+	public int getNumberOfSlots() {
+		return maxNumberOfSlots;
+	}
+
+	public void setNumberOfSlots(int numberOfSlots) {
+		this.maxNumberOfSlots = numberOfSlots;
 	}
 }
