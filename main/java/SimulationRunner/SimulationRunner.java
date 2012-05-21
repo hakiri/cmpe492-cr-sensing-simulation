@@ -7,6 +7,8 @@ import CommunicationEnvironment.*;
 import DES.Scheduler;
 import DESSimulation.CRDESScheduler;
 import DESSimulation.DESPrimaryTrafficGenerator;
+import Heuristic.ATLHueristic;
+import Heuristic.FAHMain;
 import MultiThreadedSimulation.CRSensorThread;
 import MultiThreadedSimulation.PrimaryTrafficGenerator;
 import Nodes.*;
@@ -50,7 +52,7 @@ public class SimulationRunner {
 			runner.startSimulationInBatchMode();
 			return;
 		}
-		if(args.length == 6){
+		if(args.length == 4){
 			SimulationRunner.args = new Arguments();
 			if(!SimulationRunner.args.parseArguments(args)){
 				return;
@@ -166,15 +168,14 @@ public class SimulationRunner {
 		wc = new WirelessChannel(args.getNumberOfFreq(), args.getTransmitPower(), args.getAverageNumberOfCalls(), 
 								 args.getAverageCallDur(), args.getTrafficModel(), args.getTimeUnit(), args.getBandwidth());//Create a wireless channel
 
-		cell = new Cell(null, args.getRadius(), args.getNumberOfSectors(), args.getAlphaInDegrees(), args.getSetOfD());//Create a cell
+		cell = new Cell(null, args.getRadius());//Create a cell
 
-		crBase = new CRBase(new Point2D.Double(0, 0),0,args.getNumberOfSensingSlots()); //Create a CR base station in the origin
+		crBase = new CRBase(new Point2D.Double(0, 0),0); //Create a CR base station in the origin
 		Cell.setBaseStation(crBase);
-		crBase.registerZones(args.getSectorNumbers(), args.getAlphaNumbers(), args.getdNumbers(), args.getNumbersOfCrUsersInZone());
+		crBase.registerZones();
 
 		if(args.isAnimationOn()){
-			drawCell = new DrawCell((int)args.getPrimaryRadius(), (int)args.getRadius(), args.getNumberOfSectors(), args.getNumberOfAlphaSlices(), (int)args.getdNumber(),
-									args.getNumberOfCrNodes(), args.getNumberOfPriNodes());
+			drawCell = new DrawCell((int)args.getPrimaryRadius(), (int)args.getRadius(), args.getNumberOfCrNodes(), args.getNumberOfPriNodes());
 			priTrafGen = new PrimaryTrafficGenerator();
 			priTrafGenDes = null;
 		}
@@ -185,11 +186,12 @@ public class SimulationRunner {
 		}
 
 		for(int i = 0; i<args.getNumberOfCrNodes() ;i++){
-			crBase.addCRNode(new CRNode(i,crBase.deployNodeinZone(i), 0));
+			crBase.addCRNode(new CRNode(i,Cell.deployNodeinCell(), 0));
 			if(args.isAnimationOn())
 				DrawCell.paintCrNode(crBase.getCRNode(i), Color.GRAY);
 		}
-		
+		ATLHueristic.solve();
+		FAHMain.solve();
 		ArrayList<Integer> tempArray = new ArrayList<Integer>();
 		tempArray.add(1);
 		tempArray.add(1);
@@ -243,14 +245,14 @@ public class SimulationRunner {
 				priTrafGenDes.registerNode(priTrafGenNodes.get(i));
 		}
 		if(args.isAnimationOn()){	//TODO Resolve racing conditions
-			crSensor = new CRSensorThread((int)args.getSimulationDuration(), args.getTimeUnit(), args.getNumberOfSensingSlots(), args.getSensingSlotDur(),
+			crSensor = new CRSensorThread((int)args.getSimulationDuration(), args.getTimeUnit(), args.getSensingSlotDur(),
 										  args.getSenseScheduleAdvertisementDur(), args.getCommScheduleAdvertisementDur(),
 										  args.getCommDur(), args.getSenseResultAdvertisementDur());
 			crDesScheduler = null;
 		}
 		else{
 			crSensor = null;
-			crDesScheduler = new CRDESScheduler((int)args.getSimulationDuration(), args.getTimeUnit(), args.getNumberOfSensingSlots(), args.getSensingSlotDur(),
+			crDesScheduler = new CRDESScheduler((int)args.getSimulationDuration(), args.getTimeUnit(), args.getSensingSlotDur(),
 												args.getSenseScheduleAdvertisementDur(), args.getCommScheduleAdvertisementDur(),
 												args.getCommDur(), args.getSenseResultAdvertisementDur());
 		}
@@ -272,7 +274,7 @@ public class SimulationRunner {
 			return;
 		
 		crSensor = null;
-		crDesScheduler = new CRDESScheduler((int)args.getSimulationDuration(), args.getTimeUnit(), args.getNumberOfSensingSlots(), args.getSensingSlotDur(),
+		crDesScheduler = new CRDESScheduler((int)args.getSimulationDuration(), args.getTimeUnit(), args.getSensingSlotDur(),
 											args.getSenseScheduleAdvertisementDur(), args.getCommScheduleAdvertisementDur(),
 											args.getCommDur(), args.getSenseResultAdvertisementDur());
 		

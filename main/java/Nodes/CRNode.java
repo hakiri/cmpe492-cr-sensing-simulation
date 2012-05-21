@@ -1,5 +1,6 @@
 package Nodes;
 
+import ATL.ATLHueristicMain;
 import CommunicationEnvironment.WirelessChannel;
 import java.awt.geom.Point2D;
 import java.io.BufferedWriter;
@@ -13,10 +14,12 @@ import java.util.Locale;
 import DES.Event;
 import DES.Scheduler;
 import DES.SimEnt;
+import Heuristic.ATLHueristic;
+import Heuristic.FAHMain;
 import SimulationRunner.ParetoDistribution;
 import SimulationRunner.SimulationRunner;
 import cern.jet.random.Exponential;
-import cern.jet.random.Normal;
+import java.util.Collections;
 
 /**
  * This class basic operations of a CR node. It also concerns with logging operations
@@ -133,7 +136,8 @@ public class CRNode implements Node {
 	private final static int NK = 1;
 	
 	private static int cooperationRule;
-    
+    private int zoneId;
+	private int groupId;
     /**
      * Creates a CRNode with the given frequencies, position and velocity values.
      * @param id ID of this CR node
@@ -149,7 +153,7 @@ public class CRNode implements Node {
         this.expoInterarrival = new Exponential(SimulationRunner.wc.getMeanOffDuration(), SimulationRunner.randEngine);
         this.expoCommDuration = new Exponential((1.0 / SimulationRunner.wc.getMeanOnDuration()), SimulationRunner.randEngine);
 		CRNode.powerThreshold = SimulationRunner.args.getPowerThreshold();
-        CRNode.reportingFrames = new ArrayList<Integer>();
+        CRNode.reportingFrames = new ArrayList<>();
 		cooperationRule = NK;
     }
 
@@ -158,6 +162,10 @@ public class CRNode implements Node {
      * @param sensingSlot	Current sensing slot of the CR frame.
      */
     public void sense(int sensingSlot) {
+		if(freq_list_to_listen == null)
+			return;
+		if(sensingSlot >= freq_list_to_listen.size())
+			return;
 		int frequency = freq_list_to_listen.get(sensingSlot);
 		double receivedPower = SimulationRunner.wc.generateReceivedPower(this, frequency);
         receievedPowers.put(frequency, receivedPower);
@@ -227,8 +235,8 @@ public class CRNode implements Node {
                 totalFalseAlarm += SimulationRunner.crBase.getFalseAlarm(i);
                 totalMissDetection += SimulationRunner.crBase.getMissDetection(i);
             }
-            averageFalseAlarm = ((totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
-            averageMissDetection = ((totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame)/SimulationRunner.args.getNumberOfSensingSlots();
+            averageFalseAlarm = ((totalFalseAlarm/SimulationRunner.args.getNumberOfZones())/frame)/FAHMain.maxSlots;
+            averageMissDetection = ((totalMissDetection/SimulationRunner.args.getNumberOfZones())/frame)/FAHMain.maxSlots;
             ArrayList<Double> probs = new ArrayList<Double>();
             probs.add(averageFalseAlarm);
             probs.add(averageMissDetection);
@@ -331,14 +339,16 @@ public class CRNode implements Node {
         String justComma = "",zones="";
         try {
             probabilityLogFileWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_name))));
+			writeProbabilityLogFile(";");
             for(int i=0;i<SimulationRunner.args.getNumberOfZones();i++){
                 justComma += ";";
                 zones += String.valueOf(i) + ". zone;";
+				writeProbabilityLogFile(String.valueOf(ATLHueristic.yij.get(i).size())+";");
             }
-            writeProbabilityLogFile(String.format(Locale.US, "Time;Probability of False Alarm"+justComma
+            writeProbabilityLogFileWithEndLine(String.format(Locale.US, "\nTime;Probability of False Alarm"+justComma
                     +"Probability of Miss Detection"+justComma+"Probability of Collision"+justComma
                     +"Probability of Block"+justComma+"Probability of Drop"+justComma));
-            writeProbabilityLogFile(String.format(Locale.US, ";"+zones+zones+zones+zones+zones));
+            writeProbabilityLogFileWithEndLine(String.format(Locale.US, ";"+zones+zones+zones+zones+zones));
         } catch (IOException ex) {
             System.err.println("Error during file operations in probability log file creation");
         }
@@ -356,8 +366,16 @@ public class CRNode implements Node {
      * Writes the input string into the probability log file.
      * @param log_string String
      */
-    public static void writeProbabilityLogFile(String log_string) {
+    public static void writeProbabilityLogFileWithEndLine(String log_string) {
         probabilityLogFileWriter.println(log_string);
+    }
+	
+	/**
+     * Writes the input string into the probability log file.
+     * @param log_string String
+     */
+    public static void writeProbabilityLogFile(String log_string) {
+        probabilityLogFileWriter.print(log_string);
     }
     
     /**
@@ -392,7 +410,8 @@ public class CRNode implements Node {
             receievedPowers.put(frequencies.get(i), 0.0); //adding all the frequency values to the 
             //hash table with 0.0 initial snr value
         }
-        freq_list_to_listen = frequencies;
+        freq_list_to_listen = new ArrayList<>(Collections.nCopies(frequencies.size(), -1));
+		Collections.copy(freq_list_to_listen, frequencies);
     }
 
     /**
@@ -914,5 +933,21 @@ public class CRNode implements Node {
 	@Override
 	public int getId() {
 		return id;
+	}
+
+	public int getZoneId() {
+		return zoneId;
+	}
+
+	public void setZoneId(int zoneId) {
+		this.zoneId = zoneId;
+	}
+
+	public int getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
 	}
 }

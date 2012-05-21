@@ -2,6 +2,7 @@ package MultiThreadedSimulation;
 
 import Animation.DrawCell;
 import Animation.SimulationStatsTable;
+import Heuristic.FAHMain;
 import Nodes.CRNode;
 import SimulationRunner.GraphicalUserInterface;
 import SimulationRunner.SimulationRunner;
@@ -83,20 +84,19 @@ public class CRSensorThread implements Runnable{
 	 * Creates a thread that performs simulation action for CR sensor nodes
 	 * @param simulationDuration			Duration of the simulation in unit time
 	 * @param unitTime						Unit of time in milliseconds
-	 * @param numberOfSlots					Number of sensing slots in the frame
 	 * @param slotDur						Duration of the sensing slots in terms of unit time
 	 * @param senseScheduleAdvertisement	Duration of the sensing schedule advertisement in terms of unit time
 	 * @param commScheduleAdvertisement		Duration of the communication schedule advertisement in terms of unit time
 	 * @param commDur						Duration of the communication in terms of unit time
 	 * @param senseResultAdvertisement		Duration of the sensing result advertisement in terms of unit time
 	 */
-	public CRSensorThread(double simulationDuration,double unitTime, int numberOfSlots, double slotDur,
+	public CRSensorThread(double simulationDuration,double unitTime, double slotDur,
 			double senseScheduleAdvertisement, double commScheduleAdvertisement, double commDur,
 			double senseResultAdvertisement)
 	{
 		this.remainingSimulationDuration = simulationDuration*unitTime;
 		this.unitTime = unitTime;
-		this.numberOfSlots = numberOfSlots;
+		this.numberOfSlots = FAHMain.maxSlots;
 		this.slotDur = slotDur*unitTime;
 		this.senseScheduleAdvertisement = senseScheduleAdvertisement*unitTime;
 		this.commScheduleAdvertisement = commScheduleAdvertisement*unitTime;
@@ -355,12 +355,12 @@ public class CRSensorThread implements Runnable{
                 else{
                     probCollisionString += String.valueOf(collisionsForAZone/communicatedFramesForAZone)+";";
                 }
-                probFalseAlarmString += String.valueOf(((falseAlarmsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
-                probMissDetectionString += String.valueOf(((missDetectionsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
+//                probFalseAlarmString += String.valueOf(((falseAlarmsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
+//                probMissDetectionString += String.valueOf(((missDetectionsForAZone/SimulationRunner.args.getNumbersOfCrUsersInAZone(i))/frame)/SimulationRunner.args.getNumberOfSensingSlots())+";";
             }
             CRNode.writeLogFile(String.format(Locale.US, "%.2f;"+falseAlarmsString+missDetectionsString+collisionsString
                     +blocksString+dropsString+throughputString+commFramesString+callsString+callAttemptsString,msec));
-            CRNode.writeProbabilityLogFile(String.format(Locale.US, "%.2f;"+probFalseAlarmString+probMissDetectionString
+            CRNode.writeProbabilityLogFileWithEndLine(String.format(Locale.US, "%.2f;"+probFalseAlarmString+probMissDetectionString
                     +probCollisionString+probBlocksString+probDropsString,msec));
         }
         CRNode.fuseSensingResults((double)(totalSimulationDuration-remainingSimulationDuration)/unitTime);	//Log average of SNR values sensed by the CR nodes

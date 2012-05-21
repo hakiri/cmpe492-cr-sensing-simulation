@@ -4,7 +4,6 @@ import Nodes.CRBase;
 import Nodes.Node;
 import SimulationRunner.SimulationRunner;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import cern.jet.random.Uniform;
 
 /**
@@ -25,25 +24,9 @@ public class Cell {
      */
     static double primaryRadius;
     /**
-     * Number of sectors in the network coverage. "number_of_sectors" must divide 
-     * 360 without remainder
-     */
-    static int number_of_sectors;
-    /**
-     * This is the corresponding angle at the baseStation for a zone.
-     * "alpha" must divide (360/number_of_sectors) without remainder
-     */
-    static int alpha;
-    /**
      * Uniform distribution to set random positions to nodes
      */
     private static Uniform uniform;
-    /**
-     * List of all distances between the baseStation and the zones which are in 
-     * the same sector and have the same angle interval with the baseStation.
-     * Distances must be in the ascending order.
-     */
-    public static ArrayList<Double> set_of_d;
     
     /**
      * Constructor of the Cell
@@ -53,25 +36,11 @@ public class Cell {
      * @param alpha Corresponding angle for a zone at the baseStation
      * @param set_of_d List of distances
      */
-    public Cell(CRBase baseStation,double radius,int number_of_sectors, int alpha, ArrayList<Double> set_of_d) {
+    public Cell(CRBase baseStation,double radius) {
         Cell.baseStation = baseStation;
         Cell.radius = radius;
 		Cell.primaryRadius = SimulationRunner.args.getPrimaryRadius();
         
-        if((360%number_of_sectors) == 0){   //this condition should be granted.
-            Cell.number_of_sectors = number_of_sectors; 
-        }
-        else{
-            Cell.number_of_sectors = 3; //if this is the case then assing a default value for number_of_sectors
-        }
-        if(((360/number_of_sectors)%alpha) == 0){   //this condition should be granted.
-            Cell.alpha = alpha; 
-        }
-        else{
-            Cell.alpha = 40;    //if this is the case then assing a default value for alpha
-        }
-        
-        Cell.set_of_d = set_of_d;
         Cell.uniform = new Uniform(SimulationRunner.randEngine);
     }
     
@@ -96,12 +65,29 @@ public class Cell {
         return position_of_node;
     }
     
+	/**
+     * Finds a random position for a node in a circle with given radius.
+	 * @param radius Radius of the circle in which the node will be deployed.
+     * @return Position of the node.
+     */
+    private static Point2D.Double deployNode(double radius){
+        Point2D.Double position_of_node = new Point2D.Double(0, 0); //initializes the position of the node
+        while(true){
+			position_of_node.x = uniform.nextDoubleFromTo(-radius, radius);
+			position_of_node.y = uniform.nextDoubleFromTo(-radius, radius);
+			if(position_of_node.distance(new Point2D.Double(0, 0))<radius)
+				break;
+		}
+        
+        return position_of_node;
+    }
+	
     /**
      * Finds a random position for a node in the Cell.
      * @return Position of the node.
      */
     public static Point2D.Double deployNodeinCell(){
-        return deployNode(0,360,0,radius);
+        return deployNode(radius);
     }
 	
 	/**
@@ -109,31 +95,7 @@ public class Cell {
      * @return Position of the node.
      */
     public static Point2D.Double deployNodeinPrimaryCell(){
-        return deployNode(0,360,0,primaryRadius);
-    }
-    
-    /**
-     * Finds a random position for a node in a specified zone.
-	 * <p>
-	 * <b>Note:</b> All the parameter values starts from zero.
-     * @param sector_number Sector number of the node.
-     * @param angle_number Angle number in the sector of the node.
-     * @param distance_number Distance of the zone to the center.
-     * @return Position of the node.
-     */
-    public static Point2D.Double deployNodeinZone(int sector_number,int angle_number,int distance_number){
-        double min_angle = (360/number_of_sectors)*sector_number + alpha*angle_number ; 
-        double max_angle = min_angle + alpha ;  //finds the angle values that random point
-                                                //supposed to be in that angle intervals.
-        double min_distance,max_distance;
-        if(distance_number == 0){   //likewise the angles, finds the corresponding min and max distances.
-            min_distance = 0;
-        }
-        else{
-            min_distance = set_of_d.get(distance_number - 1);
-        }
-        max_distance = set_of_d.get(distance_number);
-        return deployNode(min_angle,max_angle,min_distance,max_distance);   //calls the deployNode function
+        return deployNode(primaryRadius);
     }
     
 	/**
@@ -193,38 +155,6 @@ public class Cell {
     }
     
     /**
-     * Sets a new alpha value for the Cell.
-     * @param alpha Alpha
-     */
-    public static void setAlpha(int alpha) {
-        Cell.alpha = alpha;
-    }
-    
-    /**
-     * Gets the current alpha value of the Cell.
-     * @return Alpha
-     */
-    public static int getAlpha() {
-        return alpha;
-    }
-    
-    /**
-     * Sets a new number of sectors value for the Cell.
-     * @param number_of_sectors Number of sectors in the Cell
-     */
-    public static void setNumber_of_sectors(int number_of_sectors) {
-        Cell.number_of_sectors = number_of_sectors;
-    }
-    
-    /**
-     * Gets the current number of sectors value of the Cell.
-     * @return Number of sectors
-     */
-    public static int getNumber_of_sectors() {
-        return number_of_sectors;
-    }
-    
-    /**
      * Sets a new radius value for the Cell.
      * @param radius Radius of the Cell.
      */
@@ -239,22 +169,4 @@ public class Cell {
     public static double getRadius() {
         return radius;
     }
-    
-    /**
-     * Sets a new distance list for the Cell.
-     * @param set_of_d Distance list
-     */
-    public static void setSet_of_d(ArrayList<Double> set_of_d) {
-        Cell.set_of_d = set_of_d;
-    }
-    
-    /**
-     * Gets the current distance list of the Cell.
-     * @return Distance list
-     */
-    public static ArrayList<Double> getSet_of_d() {
-        return set_of_d;
-    }
-    
-    
 }

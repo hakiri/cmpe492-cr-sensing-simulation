@@ -212,7 +212,7 @@ public class GraphicalUserInterface extends JFrame{
 			mainPanel.add(noCRNodes);
 			noCRNodes.setToolTipText("Number of CR Users in The CR Cell");
 			noCRNodes.setBounds(itemPos, y, 120, 23);
-			noCRNodes.setText("792");
+			noCRNodes.setText("1500");
 			noCRNodes.addKeyListener(keyAdapter);
 			
 			noCRNodes.addMouseListener(new MouseAdapter() {
@@ -435,7 +435,7 @@ public class GraphicalUserInterface extends JFrame{
 						commScheduleField.setText("10");
 						commDurField.setText("630");
 						noPriNodes.setText("1500");
-						noCRNodes.setText("792");
+						noCRNodes.setText("1500");
 						noFreqs.setText("60");
 						noSlotField.setText("30");
 					}

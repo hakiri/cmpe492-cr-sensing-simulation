@@ -1,7 +1,5 @@
 package Animation;
 
-import CommunicationEnvironment.Cell;
-import SimulationRunner.SimulationRunner;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -21,7 +19,6 @@ public class DrawArea extends JPanel{
 	 * Radius multiplied with unit
 	 */
     private int cellRadius;
-	private int numberOfSectors, numberOfAlpha, numberOfDSections;
 	private HashMap<Integer, PointColor> primaryNodes;
 	private HashMap<Integer, PointColor> crNodes;
 	private HashMap<Integer, PointColor> crNodeCollisionWarning;
@@ -31,28 +28,22 @@ public class DrawArea extends JPanel{
 	 * Creates an animation window.
      * @param priRadius         Radius of the primary users cell
      * @param cellRadius		Radius of the secondary users cell
-	 * @param numberOfSectors	Number of sectors in the cell
-	 * @param numberOfAlpha		Number of alpha slices in a sector
-	 * @param numberOfDSections Number of distance sections in a alpha slice
 	 * @param numberOfCrNodes	Number of CR nodes in the zone
 	 * @param numberOfPriNodes	Number of Primary nodes in the cell
 	 */
-    public DrawArea(int priRadius, int cellRadius,int numberOfSectors, int numberOfAlpha, int numberOfDSections, int numberOfCrNodes, int numberOfPriNodes) {
+    public DrawArea(int priRadius, int cellRadius, int numberOfCrNodes, int numberOfPriNodes) {
         super();
 		this.primaryRadius = priRadius;
 		this.cellRadius = cellRadius;
-		this.numberOfSectors = numberOfSectors;
-		this.numberOfAlpha = numberOfAlpha;
-		primaryNodes = new HashMap<Integer, PointColor>();
+		primaryNodes = new HashMap<>();
 		for(int i=0;i<numberOfPriNodes;i++)
 			primaryNodes.put(i, null);
-		crNodes = new HashMap<Integer, PointColor>();
+		crNodes = new HashMap<>();
 		for(int i=0;i<numberOfCrNodes;i++)
 			crNodes.put(i, null);
-		crNodeCollisionWarning = new HashMap<Integer, PointColor>();
+		crNodeCollisionWarning = new HashMap<>();
 		for(int i=0;i<numberOfCrNodes;i++)
 			crNodeCollisionWarning.put(i, null);
-		this.numberOfDSections = 3;
     }
     
 	@Override
@@ -62,52 +53,7 @@ public class DrawArea extends JPanel{
 		g.setColor(Color.RED);
         g.drawOval(0, 0, primaryRadius*2, primaryRadius*2);
         g.setColor(Color.BLACK);
-        //g.drawOval(primaryRadius - cellRadius, primaryRadius - cellRadius, cellRadius*2, cellRadius*2);
-		int tx,ty;
-		int sectorInc = 360/numberOfSectors;
-		for(int degree=0;degree<360;degree+=sectorInc){
-			tx=primaryRadius+(int)(cellRadius*Math.cos(((double)(degree)/180.0)*Math.PI));
-			ty=primaryRadius-(int)(cellRadius*Math.sin(((double)(degree)/180.0)*Math.PI));
-			g.drawLine(primaryRadius, primaryRadius, tx, ty);
-		}
-		
-		g.setColor(Color.ORANGE);
-		int alphaInc = sectorInc/numberOfAlpha;
-		for(int degree=alphaInc;degree<360;degree+=alphaInc){
-			if(degree % sectorInc == 0)
-				continue;
-			tx=primaryRadius+(int)(cellRadius*Math.cos(((double)(degree)/180.0)*Math.PI));
-			ty=primaryRadius-(int)(cellRadius*Math.sin(((double)(degree)/180.0)*Math.PI));
-			g.drawLine(primaryRadius, primaryRadius, tx, ty);
-		}
-		g.setColor(Color.BLUE);
-		for(int i = 0; i<SimulationRunner.crBase.registeredZones.size() ; i++){
-			int sectorNumber = SimulationRunner.crBase.registeredZones.get(i).get(0);
-			int alphaNumber = SimulationRunner.crBase.registeredZones.get(i).get(1);
-			int dNumber = SimulationRunner.crBase.registeredZones.get(i).get(2);
-			int zoneBegDegree = sectorNumber*sectorInc+alphaInc*alphaNumber;
-			int zoneEndDegree = sectorNumber*sectorInc+alphaInc*(alphaNumber+1);
-			double dminVal = dNumber == 0 ? 0:Cell.getSet_of_d().get(dNumber-1);
-			double dmaxVal = Cell.getSet_of_d().get(dNumber);
-			dminVal /= DrawCell.scale;
-			dmaxVal /= DrawCell.scale;
-			dminVal *= DrawCell.unit;
-			dmaxVal *= DrawCell.unit;
-			int dmin = (int)dminVal;
-			int dmax = (int)dmaxVal;
-			tx=primaryRadius+(int)(dmin*Math.cos(((double)(zoneBegDegree)/180.0)*Math.PI));
-			ty=primaryRadius-(int)(dmin*Math.sin(((double)(zoneBegDegree)/180.0)*Math.PI));
-			int tx2=primaryRadius+(int)(dmax*Math.cos(((double)(zoneBegDegree)/180.0)*Math.PI));
-			int ty2=primaryRadius-(int)(dmax*Math.sin(((double)(zoneBegDegree)/180.0)*Math.PI));
-			g.drawLine(tx, ty, tx2, ty2);
-			tx=primaryRadius+(int)(dmin*Math.cos(((double)(zoneEndDegree)/180.0)*Math.PI));
-			ty=primaryRadius-(int)(dmin*Math.sin(((double)(zoneEndDegree)/180.0)*Math.PI));
-			tx2=primaryRadius+(int)(dmax*Math.cos(((double)(zoneEndDegree)/180.0)*Math.PI));
-			ty2=primaryRadius-(int)(dmax*Math.sin(((double)(zoneEndDegree)/180.0)*Math.PI));
-			g.drawLine(tx, ty, tx2, ty2);
-			g.drawArc(primaryRadius-dmin, primaryRadius-dmin, 2*dmin, 2*dmin, zoneBegDegree, alphaInc);
-			g.drawArc(primaryRadius-dmax, primaryRadius-dmax, 2*dmax, 2*dmax, zoneBegDegree, alphaInc);
-		}
+        g.drawOval(primaryRadius - cellRadius, primaryRadius - cellRadius, cellRadius*2, cellRadius*2);
     }
 
 	@Override

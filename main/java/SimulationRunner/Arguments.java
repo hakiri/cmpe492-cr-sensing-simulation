@@ -14,10 +14,6 @@ import javax.swing.JOptionPane;
  */
 public class Arguments {
 	private String logFileDirectory = null;
-	private int numberOfSectors = 0;
-	private double dNumber = 0;
-	private int numberOfAlphaSlices = 0;
-	private int alphaInDegrees;
 	private double radius = 0;
 	private double primaryRadius = 0;
 	private double interferenceDistance;
@@ -30,26 +26,19 @@ public class Arguments {
 	private long simulationDuration = 0;
 
 	private int numberOfFreq = 0;
-	private int numberOfSensingSlots = 0;
 	private double transmitPower = 0;
 	private double powerThreshold = 0;
 	private double noiseFloor = 0;
 	private double noiseStdDev = 0;
 	
 	private int numberOfZones = 0;
-private double sensingSlotDur = 0.0;
+	private double sensingSlotDur = 0.0;
 	private double senseScheduleAdvertisementDur = 0.0;
 	private double commScheduleAdvertisementDur = 0.0;
 	private double commDur = 0.0;
 	private double senseResultAdvertisementDur = 0.0;
-	private ArrayList<Double> setOfD = null;
 	private int bandwidth;
 	private int seed = 0;
-	
-	private ArrayList<Integer> sectorNumbers = null;
-	private ArrayList<Integer> dNumbers = null;
-	private ArrayList<Integer> alphaNumbers = null;
-	private ArrayList<Integer> numbersOfCrUsersInZone = null;
 	
 	private double timeUnit = 1;
 	
@@ -65,11 +54,6 @@ private double sensingSlotDur = 0.0;
 	 * Creates an arguments object that holds all related parameters of simulation.
 	 */
 	public Arguments() {
-		setOfD = new ArrayList<Double>();
-		sectorNumbers = new ArrayList<Integer>();
-		dNumbers = new ArrayList<Integer>();
-		alphaNumbers = new ArrayList<Integer>();
-		numbersOfCrUsersInZone = new ArrayList<Integer>();
 		progress = 0;
 	}
 	
@@ -92,12 +76,7 @@ private double sensingSlotDur = 0.0;
 			commDur = Double.parseDouble(gui.getCommDurField().getText());
 			senseResultAdvertisementDur = Double.parseDouble(gui.getSensingResultField().getText());
 			
-			numberOfSectors = Integer.parseInt(gui.getSectorNo().getText());			//Get number of sectors in the cell
-			dNumber = Integer.parseInt(gui.getdNo().getText());				//Get number of d's
-			numberOfAlphaSlices = Integer.parseInt(gui.getAlphaNo().getText());			//Get number of alpha's
-			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;							//Evaluate the angle associated to alpha
 			radius = Double.parseDouble(gui.getRadiusField().getText())*100;			//Get radius of the cell
-			
 			
 			numberOfFreq = Integer.parseInt(gui.getNoFreqs().getText());						//Get number of frequencies
 			transmitPower = Double.parseDouble(gui.getTransmitPower().getText());							//Get max SNR value
@@ -110,7 +89,6 @@ private double sensingSlotDur = 0.0;
 			primaryRadius = radius + interferenceDistance;
 			
 			numberOfPriNodes = Integer.parseInt(gui.getNoPriNodes().getText());	//Get number of primary nodes
-			numberOfSensingSlots = Integer.parseInt(gui.getNoSlotField().getText());		//Get max number of frequencies a node can sense
 			numberOfZones = Integer.parseInt(gui.getNoZones().getText());		//Get the number of zones to be simulated
 			
 			averageNumberOfCalls = Double.parseDouble(gui.getNoCalls().getText());		//Get number of calls per hour
@@ -120,33 +98,6 @@ private double sensingSlotDur = 0.0;
 			simulationDuration *= 60000;
 			
 			bandwidth = Integer.parseInt(gui.getChannelBandwithField().getText())*1000;
-			
-			for(int i = 1;i<=dNumber;i++)
-				setOfD.add(radius * Math.sqrt((double)i/dNumber));									//Create set of d's
-			
-			int noZones = numberOfZones;
-
-			int crUsers = numberOfCrNodes = Integer.parseInt(gui.getNoCRNodes().getText());
-			for(int k=0;k<dNumber;k++){
-				for(int j=0;j<numberOfSectors;j++){
-					for(int l=0;l<numberOfAlphaSlices;l++){
-						int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
-						if(numberOfZones == 1){
-							numberInZone = crUsers;
-						}
-						else{
-							numberInZone = crUsers / numberOfZones;
-						}
-						sectorNumbers.add(j);
-						alphaNumbers.add(l);
-						numbersOfCrUsersInZone.add(numberInZone);
-						dNumbers.add(k);
-						crUsers -= numberInZone;
-						numberOfZones--;
-					}
-				}
-			}
-			numberOfZones = noZones;
 			
 			seedModel = gui.getSeedModel().getSelectedIndex();
 			if(seedModel != 0){				//If seed model is not random
@@ -221,7 +172,6 @@ private double sensingSlotDur = 0.0;
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Frame options
-			numberOfSensingSlots = input.nextInt();			//Get max number of frequencies a node can sense
 			sensingSlotDur = Double.parseDouble(input.next());
 			senseScheduleAdvertisementDur = Double.parseDouble(input.next());
 			senseResultAdvertisementDur = Double.parseDouble(input.next());
@@ -235,31 +185,13 @@ private double sensingSlotDur = 0.0;
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Zone options
-			numberOfSectors = input.nextInt();				//Get number of sectors in the cell
-			dNumber = input.nextInt();				//Get number of d's
-			numberOfAlphaSlices = input.nextInt();				//Get number of alpha's
-			alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;	//Evaluate the angle associated to alpha
 			radius = Double.parseDouble(input.next())*100;			//Get radius of the cell
 			primaryRadius = radius + 1500;
 			numberOfZones = input.nextInt();		//Get the number of zones to be simulated
 			
 			input.nextLine();
 			input.nextLine();						//Start parsing Individual Zone options
-			numberOfCrNodes = 0;
-			for(int i = 0; i<numberOfZones ; i++){
-				int sectorNumber = input.nextInt();				//Get sector number CR nodes will be in
-				int dNmber = input.nextInt();					//Get d interval CR nodes will be in
-				int alphaNumber = input.nextInt();				//Get alpha number CR nodes will be in
-				int numberOfCrUsersInZone = input.nextInt();	//Get number of CR nodes in zone
-				numberOfCrNodes += numberOfCrUsersInZone;
-				sectorNumbers.add(sectorNumber);
-				alphaNumbers.add(alphaNumber);
-				numbersOfCrUsersInZone.add(numberOfCrUsersInZone);
-				dNumbers.add(dNmber);
-			}
-			
-			for(int i = 1;i<=dNumber;i++)
-				setOfD.add(radius * Math.sqrt((double)i/dNumber));					//Create set of d's
+			numberOfCrNodes = 0;		//TODO Change file format accordingly
 
 			timeUnit = 1;
 		} catch(InputMismatchException ime) {
@@ -300,12 +232,12 @@ private double sensingSlotDur = 0.0;
 		
 		logFileDirectory = args[2];
 		
-		simulationDuration = 240;				//Get duration of the simulation in terms of min
+		simulationDuration = 300;				//Get duration of the simulation in terms of min
 		simulationDuration *= 60000;
 		transmitPower = -10.0;			//Get transmit power value in terms of dB
 		noiseFloor = -85.0;
 		noiseStdDev = 20;
-		powerThreshold = -69;
+		powerThreshold = -62.5;
 		//powerThreshold = -60;
 		seedModel = 0;
 		seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
@@ -314,83 +246,28 @@ private double sensingSlotDur = 0.0;
 		averageNumberOfCalls = 0.5;		//Get number of calls per hour
 		averageCallDur = 2.0;			//Get call duration in terms of min
 
-		numberOfSensingSlots = 30;			//Get max number of frequencies a node can sense
-		sensingSlotDur = 1.0;
-		senseScheduleAdvertisementDur = 1.0;
-		senseResultAdvertisementDur = 1.0;
-		commScheduleAdvertisementDur = 1.0;
-		commDur = 63;
+		sensingSlotDur = 10.0;
+		senseScheduleAdvertisementDur = 10.0;
+		senseResultAdvertisementDur = 10.0;
+		commScheduleAdvertisementDur = 10.0;
+		commDur = 630;
 
 		numberOfFreq = 60;			//Get number of frequencies
 		bandwidth = 8000000;
 
-		numberOfSectors = Integer.parseInt(args[3]);		//Get number of sectors in the cell
-		numberOfAlphaSlices = Integer.parseInt(args[4]);	//Get number of alpha's
-		dNumber = Integer.parseInt(args[5]);				//Get number of d's
-		alphaInDegrees = (360/numberOfSectors)/numberOfAlphaSlices;	//Evaluate the angle associated to alpha
 		radius = 1500;			//Get radius of the cell
 		interferenceDistance = powerThreshold - transmitPower + 38.4;
 		interferenceDistance /= (-35);
 		interferenceDistance = Math.pow(10, interferenceDistance)*1000.0;
 		primaryRadius = radius + interferenceDistance;
-		int noZones = numberOfSectors*numberOfAlphaSlices*(int)dNumber;
-		numberOfZones = noZones;		//Get the number of zones to be simulated
+		numberOfZones = Integer.parseInt(args[3]);		//Get the number of zones to be simulated
 
 		numberOfCrNodes = crUsers;
-		for(int k=0;k<dNumber;k++){
-			for(int j=0;j<numberOfSectors;j++){
-				for(int l=0;l<numberOfAlphaSlices;l++){
-					int numberInZone = numberOfCrNodes/(int)(dNumber*dNumber);
-					if(numberOfZones == 1){
-						numberInZone = crUsers;
-					}
-					else{
-						numberInZone = crUsers / numberOfZones;
-					}
-					sectorNumbers.add(j);
-					alphaNumbers.add(l);
-					numbersOfCrUsersInZone.add(numberInZone);
-					dNumbers.add(k);
-					crUsers -= numberInZone;
-					numberOfZones--;
-				}
-			}
-		}
-		numberOfZones = noZones;
 
-		for(int i = 1;i<=dNumber;i++)
-			setOfD.add(radius * Math.sqrt((double)i/dNumber));					//Create set of d's
-
-		timeUnit = 1;
-
-		
+		timeUnit = 1;		
 		return true;
 	}
 	
-	/**
-	 * Returns number of alpha slices in a sector
-	 * @return Number of alpha slices in a sector
-	 */
-	public int getNumberOfAlphaSlices() {
-		return numberOfAlphaSlices;
-	}
-
-	/**
-	 * Returns the degree of alpha slices
-	 * @return The degree of alpha slices
-	 */
-	public int getAlphaInDegrees() {
-		return alphaInDegrees;
-	}
-
-	/**
-	 * Returns alpha numbers of registered zones
-	 * @return Alpha numbers of registered zones
-	 */
-	public ArrayList<Integer> getAlphaNumbers() {
-		return alphaNumbers;
-	}
-
 	/**
 	 * Returns whether the animation is on or not
 	 * @return Whether the animation is on or not
@@ -437,30 +314,6 @@ private double sensingSlotDur = 0.0;
 	 */
 	public double getCommScheduleAdvertisementDur() {
 		return commScheduleAdvertisementDur;
-	}
-
-	/**
-	 * Returns number of d segments in a slice
-	 * @return Number of d segments in a slice
-	 */
-	public double getdNumber() {
-		return dNumber;
-	}
-
-	/**
-	 * Returns d numbers of registered zones
-	 * @return d numbers of registered zones
-	 */
-	public ArrayList<Integer> getdNumbers() {
-		return dNumbers;
-	}
-
-	/**
-	 * Returns number of sensing slots
-	 * @return Number of sensing slots
-	 */
-	public int getNumberOfSensingSlots() {
-		return numberOfSensingSlots;
 	}
 
 	/**
@@ -512,44 +365,11 @@ private double sensingSlotDur = 0.0;
 	}
 
 	/**
-	 * Returns number of CR users in registered zones
-	 * @return Number of CR users in registered zones
-	 */
-	public ArrayList<Integer> getNumbersOfCrUsersInZone() {
-		return numbersOfCrUsersInZone;
-	}
-    
-    /**
-	 * Returns number of CR users in a zone
-     * @param zoneId Id of the zone
-     * @return Number of CR users in a zone
-	 */
-	public Integer getNumbersOfCrUsersInAZone(int zoneId) {
-		return numbersOfCrUsersInZone.get(zoneId);
-	}
-    
-	/**
 	 * Returns radius of cell in terms of 100 meters
 	 * @return Radius of cell in terms of 100 meters
 	 */
 	public double getRadius() {
 		return radius;
-	}
-
-	/**
-	 * Returns sectors of registered zones
-	 * @return Sectors of registered zones
-	 */
-	public ArrayList<Integer> getSectorNumbers() {
-		return sectorNumbers;
-	}
-
-	/**
-	 * Returns number of sectors in a cell
-	 * @return Number of sectors in a cell
-	 */
-	public int getNumberOfSectors() {
-		return numberOfSectors;
 	}
 
 	/**
@@ -583,15 +403,7 @@ private double sensingSlotDur = 0.0;
 	public double getSenseScheduleAdvertisementDur() {
 		return senseScheduleAdvertisementDur;
 	}
-
-	/**
-	 * Returns set of maximum distances of zones
-	 * @return Set of maximum distances of zones
-	 */
-	public ArrayList<Double> getSetOfD() {
-		return setOfD;
-	}
-
+	
 	/**
 	 * Returns total simulation duration
 	 * @return Total simulation duration
