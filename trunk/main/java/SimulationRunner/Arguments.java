@@ -37,6 +37,7 @@ public class Arguments {
 	private double commScheduleAdvertisementDur = 0.0;
 	private double commDur = 0.0;
 	private double senseResultAdvertisementDur = 0.0;
+	private double totalFrameDuration = 0.0;
 	private int bandwidth;
 	private int seed = 0;
 	
@@ -237,7 +238,7 @@ public class Arguments {
 		transmitPower = -10.0;			//Get transmit power value in terms of dB
 		noiseFloor = -85.0;
 		noiseStdDev = 20;
-		powerThreshold = -62.5;
+		powerThreshold = -60;
 		//powerThreshold = -60;
 		seedModel = 0;
 		seed = RandomSeedTable.getSeedAtRowColumn((int)System.currentTimeMillis(),
@@ -250,7 +251,8 @@ public class Arguments {
 		senseScheduleAdvertisementDur = 10.0;
 		senseResultAdvertisementDur = 10.0;
 		commScheduleAdvertisementDur = 10.0;
-		commDur = 630;
+		commDur = 0;
+		totalFrameDuration = 1000.0;
 
 		numberOfFreq = 60;			//Get number of frequencies
 		bandwidth = 8000000;
@@ -306,6 +308,10 @@ public class Arguments {
 	 */
 	public double getCommDur() {
 		return commDur;
+	}
+
+	public double getTotalFrameDuration() {
+		return totalFrameDuration;
 	}
 
 	/**

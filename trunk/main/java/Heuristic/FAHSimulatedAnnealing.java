@@ -221,6 +221,13 @@ public class FAHSimulatedAnnealing {
 	 */
 	public static double solve(ArrayList<Point2D.Double> nodes, ArrayList<Integer> caps, ArrayList<ArrayList<Integer>> groups) {
 		System.out.println(nodes.size());
+		if(caps.size() == 1 && nodes.size() % 2 == 1){
+			groups.add(new ArrayList<Integer>(caps.get(0)));
+			for(int j=0; j<caps.get(0);j++){
+				groups.get(0).add(j);
+			}
+			return 0;
+		}
 		//System.out.println("Group capacities: "+caps);
 		uniform = new Uniform(SimulationRunner.randEngine);
 		capacities = caps;

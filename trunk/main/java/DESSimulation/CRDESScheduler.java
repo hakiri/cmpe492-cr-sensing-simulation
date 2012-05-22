@@ -146,11 +146,13 @@ public class CRDESScheduler extends SimEnt{
 		this.slotDur = slotDur*unitTime;
 		this.senseScheduleAdvertisement = senseScheduleAdvertisement*unitTime;
 		this.commScheduleAdvertisement = commScheduleAdvertisement*unitTime;
-		this.commDur = (commDur*unitTime);
+		this.frameDuration = SimulationRunner.args.getTotalFrameDuration();
+		
 		this.senseResultAdvertisement = senseResultAdvertisement*unitTime;
+		this.commDur = (SimulationRunner.args.getTotalFrameDuration() -
+								(senseScheduleAdvertisement + FAHMain.maxSlots*slotDur + senseResultAdvertisement + commScheduleAdvertisement))*unitTime;
 		finished = false;
 		currentFrame = 0;
-		this.frameDuration = senseScheduleAdvertisement + FAHMain.maxSlots*slotDur + senseResultAdvertisement + commScheduleAdvertisement + commDur;
 		CRNode.setTotalNumberOfFrames((int)(simulationDuration / this.frameDuration));
 	}
 	
